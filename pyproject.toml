@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pretty-loguru"        
+version = "0.1.0"
+description = "A Loguru-based logger with Rich panels, ASCII art headers, blocks and more."
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+  { name="JonesHong", email="latte831104@gmail.com" }
+]
+dependencies = [
+  "loguru>=0.6.0",
+  "rich>=12.0.0",
+  "art>=5.0.0"
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent"
+]
+keywords = ["logging", "loguru", "rich", "ascii", "art"]
+
+[project.urls]
+"Source" = "https://github.com/JonesHong/pretty-loguru"
+"Tracker" = "https://github.com/JonesHong/pretty-loguru/issues"
