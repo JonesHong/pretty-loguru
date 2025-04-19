@@ -6,7 +6,6 @@ from .logger_base import _logger, console
 from .logger_block import print_block
 from .logger_types import EnhancedLogger
 
-
 # ASCII 字符檢查的正則表達式
 # 僅匹配英文、數字和標準 ASCII 符號
 ASCII_PATTERN = re.compile(r'^[\x00-\x7F]+$')
@@ -22,6 +21,7 @@ def is_ascii_only(text: str) -> bool:
     Returns:
         bool: 如果只包含 ASCII 字符則返回 True，否則返回 False
     """
+    # 使用正則表達式檢查文本是否符合 ASCII 範圍
     return bool(ASCII_PATTERN.match(text))
 
 
@@ -49,16 +49,18 @@ def print_ascii_header(
     """
     # 檢查是否包含非 ASCII 字符
     if not is_ascii_only(text):
+        # 發出警告，並移除非 ASCII 字符
         _logger.warning(f"ASCII art only supports ASCII characters. Text '{text}' contains non-ASCII characters.")
         text = re.sub(r'[^\x00-\x7F]+', '', text)  # 移除非 ASCII 字符
         _logger.warning(f"Non-ASCII characters removed. Using: '{text}'")
-        if not text:  # 如果移除後為空
+        if not text:  # 如果移除後為空，則拋出異常
             raise ValueError("Text contains only non-ASCII characters. Cannot create ASCII art.")
     
     # 使用 art 庫生成 ASCII 藝術
     try:
         ascii_art = text2art(text, font=font)
     except Exception as e:
+        # 捕獲生成 ASCII 藝術時的異常並記錄
         _logger.error(f"Failed to create ASCII art: {str(e)}")
         raise
     
@@ -106,28 +108,30 @@ def print_ascii_block(
     
     # 檢查是否包含非 ASCII 字符
     if not is_ascii_only(header_text):
+        # 發出警告，並移除非 ASCII 字符
         _logger.warning(f"ASCII art only supports ASCII characters. Text '{header_text}' contains non-ASCII characters.")
         header_text = re.sub(r'[^\x00-\x7F]+', '', header_text)  # 移除非 ASCII 字符
         _logger.warning(f"Non-ASCII characters removed. Using: '{header_text}'")
-        if not header_text:  # 如果移除後為空
+        if not header_text:  # 如果移除後為空，則拋出異常
             raise ValueError("ASCII header contains only non-ASCII characters. Cannot create ASCII art.")
     
     # 生成 ASCII 藝術
     try:
         ascii_art = text2art(header_text, font=ascii_font)
     except Exception as e:
+        # 捕獲生成 ASCII 藝術時的異常並記錄
         _logger.error(f"Failed to create ASCII art: {str(e)}")
         raise
     
     # 將 ASCII 藝術添加到消息列表的開頭
     full_message_list = [ascii_art] + message_list
     
-    # 使用現有的 print_block 函數
+    # 使用現有的 print_block 函數打印區塊
     print_block(title, full_message_list, border_style, log_level)
 
 
 # 添加到 _logger 並註解其類型
-# 這只是動態添加，實際類型檢查需要借助 logger_types.py 中的類型標註
+# 動態添加方法到 _logger，方便外部調用
 _logger.ascii_header = print_ascii_header
 _logger.ascii_block = print_ascii_block
 _logger.is_ascii_only = is_ascii_only

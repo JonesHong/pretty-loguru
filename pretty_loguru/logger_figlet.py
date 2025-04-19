@@ -37,24 +37,26 @@ def print_figlet_header(
         ImportError: 如果 pyfiglet 未安裝
     """
     try:
-        import pyfiglet
+        import pyfiglet  # 動態導入 pyfiglet，避免未安裝時出錯
     except ImportError:
-        _logger.error("pyfiglet is not installed. Please install it with: pip install pyfiglet")
-        raise ImportError("pyfiglet is not installed. Please install it with: pip install pyfiglet")
+        # 如果未安裝 pyfiglet，記錄錯誤並拋出異常
+        _logger.error("pyfiglet 未安裝。請使用以下命令安裝: pip install pyfiglet")
+        raise ImportError("pyfiglet 未安裝。請使用以下命令安裝: pip install pyfiglet")
     
     # 檢查是否包含非 ASCII 字符
     if not is_ascii_only(text):
-        _logger.warning(f"FIGlet only supports ASCII characters. Text '{text}' contains non-ASCII characters.")
+        _logger.warning(f"FIGlet 僅支持 ASCII 字符。文本 '{text}' 包含非 ASCII 字符。")
         text = re.sub(r'[^\x00-\x7F]+', '', text)  # 移除非 ASCII 字符
-        _logger.warning(f"Non-ASCII characters removed. Using: '{text}'")
+        _logger.warning(f"已移除非 ASCII 字符。使用: '{text}'")
         if not text:  # 如果移除後為空
-            raise ValueError("Text contains only non-ASCII characters. Cannot create FIGlet art.")
+            raise ValueError("文本僅包含非 ASCII 字符，無法生成 FIGlet 藝術。")
     
     # 使用 pyfiglet 生成 FIGlet 藝術
     try:
         figlet_art = pyfiglet.figlet_format(text, font=font)
     except Exception as e:
-        _logger.error(f"Failed to create FIGlet art: {str(e)}")
+        # 捕獲生成 FIGlet 藝術時的異常
+        _logger.error(f"生成 FIGlet 藝術失敗: {str(e)}")
         raise
     
     # 創建一個帶有邊框的 Panel
@@ -98,27 +100,29 @@ def print_figlet_block(
         ImportError: 如果 pyfiglet 未安裝
     """
     try:
-        import pyfiglet
+        import pyfiglet  # 動態導入 pyfiglet，避免未安裝時出錯
     except ImportError:
-        _logger.error("pyfiglet is not installed. Please install it with: pip install pyfiglet")
-        raise ImportError("pyfiglet is not installed. Please install it with: pip install pyfiglet")
+        # 如果未安裝 pyfiglet，記錄錯誤並拋出異常
+        _logger.error("pyfiglet 未安裝。請使用以下命令安裝: pip install pyfiglet")
+        raise ImportError("pyfiglet 未安裝。請使用以下命令安裝: pip install pyfiglet")
     
     # 如果沒有提供 FIGlet 標題，則使用普通標題
     header_text = figlet_header if figlet_header is not None else title
     
     # 檢查是否包含非 ASCII 字符
     if not is_ascii_only(header_text):
-        _logger.warning(f"FIGlet only supports ASCII characters. Text '{header_text}' contains non-ASCII characters.")
+        _logger.warning(f"FIGlet 僅支持 ASCII 字符。文本 '{header_text}' 包含非 ASCII 字符。")
         header_text = re.sub(r'[^\x00-\x7F]+', '', header_text)  # 移除非 ASCII 字符
-        _logger.warning(f"Non-ASCII characters removed. Using: '{header_text}'")
+        _logger.warning(f"已移除非 ASCII 字符。使用: '{header_text}'")
         if not header_text:  # 如果移除後為空
-            raise ValueError("FIGlet header contains only non-ASCII characters. Cannot create FIGlet art.")
+            raise ValueError("FIGlet 標題僅包含非 ASCII 字符，無法生成 FIGlet 藝術。")
     
     # 生成 FIGlet 藝術
     try:
         figlet_art = pyfiglet.figlet_format(header_text, font=figlet_font)
     except Exception as e:
-        _logger.error(f"Failed to create FIGlet art: {str(e)}")
+        # 捕獲生成 FIGlet 藝術時的異常
+        _logger.error(f"生成 FIGlet 藝術失敗: {str(e)}")
         raise
     
     # 將 FIGlet 藝術添加到消息列表的開頭
@@ -145,8 +149,9 @@ def get_figlet_fonts():
         ImportError: 如果 pyfiglet 未安裝
     """
     try:
-        from pyfiglet import FigletFont
-        return FigletFont.getFonts()
+        from pyfiglet import FigletFont  # 動態導入 FigletFont 類
+        return FigletFont.getFonts()  # 返回所有可用字體
     except ImportError:
-        _logger.error("pyfiglet is not installed. Please install it with: pip install pyfiglet")
-        raise ImportError("pyfiglet is not installed. Please install it with: pip install pyfiglet")
+        # 如果未安裝 pyfiglet，記錄錯誤並拋出異常
+        _logger.error("pyfiglet 未安裝。請使用以下命令安裝: pip install pyfiglet")
+        raise ImportError("pyfiglet 未安裝。請使用以下命令安裝: pip install pyfiglet")
