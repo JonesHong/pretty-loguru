@@ -5,7 +5,13 @@ import time
 import sys
 import os
 import random
-sys.path.append(r'C:\work\pretty-loguru')
+# 確保本地路徑優先
+sys.path.insert(0, r'C:\work\pretty-loguru')
+
+# 驗證一下導入的是哪個模組
+import pretty_loguru
+print(pretty_loguru.__file__)
+
 
 
 # 加入模塊搜索路徑（根據實際路徑調整）
