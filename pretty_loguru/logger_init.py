@@ -10,7 +10,7 @@ import os
 import warnings
 from pathlib import Path
 from types import FrameType
-from typing import cast, Optional, Dict, Any, Union, Literal, List
+from typing import cast, Optional, Dict, Any, Union, Literal
 
 from .logger_base import _logger, LoggerClear, init_logger, LOG_NAME_FORMATS
 
@@ -49,7 +49,6 @@ def logger_start(
     timestamp_format=None,
     log_base_path=None,
     log_file_settings: Optional[Dict[str, Any]] = None,
-    tag_filter_config: Optional[Dict[str, List[str]]] = None,
     custom_config: Optional[Dict[str, Any]] = None
 ):
     """
@@ -71,11 +70,6 @@ def logger_start(
         timestamp_format (str, optional): 時間戳格式，用於自定義時間顯示方式，默認為 "%Y%m%d-%H%M%S"。
         log_base_path (Union[str, Path], optional): 日誌基礎路徑，覆蓋預設的 log_path。
         log_file_settings (Dict[str, Any], optional): 日誌檔案的其他設定，如壓縮、保留時間等。
-        tag_filter_config (Dict[str, List[str]], optional): 標籤過濾配置，可包含下列鍵：
-            - console_only: 僅顯示在控制台的標籤列表
-            - file_only: 僅寫入文件的標籤列表
-            - console_exclude: 不顯示在控制台的標籤列表
-            - file_exclude: 不寫入文件的標籤列表
         custom_config (Dict[str, Any], optional): 自定義日誌配置，可包含任意 init_logger 支援的參數。
 
     Returns:
@@ -89,7 +83,6 @@ def logger_start(
         5. logger_start(log_name_preset="daily") - 使用每日一檔的命名方式。
         6. logger_start(log_name_format="{date}_{process_id}.log") - 自定義日誌檔案名格式。
         7. logger_start(timestamp_format="%Y-%m-%d") - 自定義時間戳格式。
-        8. logger_start(tag_filter_config={"console_only": ["dev", "debug"]}) - 設置標籤過濾規則。
     """
     # 處理向後兼容性: 如果提供了 folder 參數但沒有提供 service_name，則使用 folder
     if folder is not None and service_name is None:
@@ -142,7 +135,6 @@ def logger_start(
         "log_name_format": log_name_format,
         "timestamp_format": timestamp_format,
         "log_file_settings": log_file_settings,
-        "tag_filter_config": tag_filter_config,
     }
     
     # 合併自定義配置（如果有）

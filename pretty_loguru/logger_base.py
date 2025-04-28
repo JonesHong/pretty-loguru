@@ -31,12 +31,10 @@ LOG_NAME_FORMATS = {
     "detailed": "[{process_id}]_{date}_{time}.log",  # 詳細格式，包含日期和時間
 }
 
-# 預設的標籤過濾配置
-DEFAULT_TAG_CONFIG = {
-    "console_only": [],      # 僅顯示在控制台的標籤
-    "file_only": [],         # 僅寫入文件的標籤
-    "console_exclude": [],   # 不顯示在控制台的標籤
-    "file_exclude": [],      # 不寫入文件的標籤
+# 輸出目標類型
+OUTPUT_DESTINATIONS = {
+    "console_only": "to_console_only",    # 僅顯示在控制台
+    "file_only": "to_log_file_only",      # 僅寫入文件 
 }
 
 
@@ -54,7 +52,7 @@ class LogLevelEnum(Enum):
     CRITICAL = "CRITICAL"
 
 
-# 日誌輸出的格式設定 - 修正後版本
+# 日誌輸出的格式設定
 logger_format = (
     "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
     "<level>{level: <8}{process}</level> | "
@@ -63,89 +61,31 @@ logger_format = (
 )
 
 
-def create_tag_filter(filter_config: Dict[str, List[str]]) -> Dict[str, Callable]:
+def create_destination_filters() -> Dict[str, Callable]:
     """
-    創建基於標籤的過濾器函數
-
-    Args:
-        filter_config: 過濾器配置，包含 console_only, file_only, console_exclude, file_exclude 鍵
+    創建基於目標的過濾器函數
 
     Returns:
         Dict[str, Callable]: 包含控制台和文件過濾器的字典
     """
-    # 獲取過濾配置
-    console_only = set(filter_config.get("console_only", []))
-    file_only = set(filter_config.get("file_only", []))
-    console_exclude = set(filter_config.get("console_exclude", []))
-    file_exclude = set(filter_config.get("file_exclude", []))
-
     # 控制台過濾器
     def console_filter(record):
-        # 檢查是否有舊的過濾設置（向後兼容）
+        # 如果記錄明確標記為只輸出到文件，則不在控制台顯示
         if record["extra"].get("to_log_file_only", False):
             return False
-            
-        # 獲取記錄中的標籤
-        tags = set(_parse_tags(record["extra"].get("tags", "")))
-        
-        # 檢查標籤過濾規則
-        # 1. 如果有 console_only 標籤且記錄沒有任何這些標籤，則過濾掉
-        if console_only and not any(tag in console_only for tag in tags):
-            return False
-            
-        # 2. 如果記錄有任何 console_exclude 標籤，則過濾掉
-        if any(tag in console_exclude for tag in tags):
-            return False
-            
-        # 3. 如果記錄有任何 file_only 標籤且沒有在 console_only 中，則過濾掉
-        if any(tag in file_only for tag in tags) and not any(tag in console_only for tag in tags):
-            return False
-            
         return True
 
     # 文件過濾器
     def file_filter(record):
-        # 檢查是否有舊的過濾設置（向後兼容）
+        # 如果記錄明確標記為只輸出到控制台，則不寫入文件
         if record["extra"].get("to_console_only", False):
             return False
-            
-        # 獲取記錄中的標籤
-        tags = set(_parse_tags(record["extra"].get("tags", "")))
-        
-        # 檢查標籤過濾規則
-        # 1. 如果有 file_only 標籤且記錄沒有任何這些標籤，則過濾掉
-        if file_only and not any(tag in file_only for tag in tags):
-            return False
-            
-        # 2. 如果記錄有任何 file_exclude 標籤，則過濾掉
-        if any(tag in file_exclude for tag in tags):
-            return False
-            
-        # 3. 如果記錄有任何 console_only 標籤且沒有在 file_only 中，則過濾掉
-        if any(tag in console_only for tag in tags) and not any(tag in file_only for tag in tags):
-            return False
-            
         return True
 
     return {
         "console": console_filter,
         "file": file_filter
     }
-
-
-def _parse_tags(tags_str: str) -> List[str]:
-    """
-    解析標籤字符串為標籤列表，處理空字符串的情況
-
-    Args:
-        tags_str: 標籤字符串，以逗號分隔
-
-    Returns:
-        List[str]: 標籤列表
-    """
-    if not tags_str:
-        return []
-    return [tag.strip() for tag in tags_str.split(",") if tag.strip()]
 
 
 def format_log_filename(
@@ -212,7 +152,6 @@ def init_logger(
     log_name_format: Optional[str] = None,
     timestamp_format: Optional[str] = None,
     log_file_settings: Optional[Dict[str, Any]] = None,
-    tag_filter_config: Optional[Dict[str, List[str]]] = None,
 ):
     """
     初始化日誌系統
@@ -226,11 +165,6 @@ def init_logger(
         log_name_format (Optional[str]): 日誌檔案名稱格式，可以是自定義格式或 LOG_NAME_FORMATS 中的預定義格式。
         timestamp_format (Optional[str]): 時間戳格式，用於自定義時間顯示方式。
         log_file_settings (Optional[Dict[str, Any]]): 日誌檔案的其他設定，如壓縮、保留時間等。
-        tag_filter_config (Optional[Dict[str, List[str]]]): 標籤過濾器配置，可以包含以下鍵:
-            - console_only: 僅顯示在控制台的標籤列表
-            - file_only: 僅寫入文件的標籤列表
-            - console_exclude: 不顯示在控制台的標籤列表
-            - file_exclude: 不寫入文件的標籤列表
 
     如果 log_path 為 None，就在當前工作目錄下建立 ./logs 資料夾。
     如果提供了 subdirectory，則會在 log_path 下建立相應的子目錄。
@@ -259,9 +193,8 @@ def init_logger(
     _logger.configure(
         extra={
             "folder": process_id,  # 額外資訊：處理程序 ID
-            "to_console_only": False,  # 是否僅輸出到控制台 (向後兼容)
-            "to_log_file_only": False,  # 是否僅輸出到日誌檔案 (向後兼容)
-            "tags": "",  # 標籤，用於過濾
+            "to_console_only": False,  # 是否僅輸出到控制台
+            "to_log_file_only": False,  # 是否僅輸出到日誌檔案
         }
     )
 
@@ -269,9 +202,8 @@ def init_logger(
     log_filename = format_log_filename(process_id, log_name_format, timestamp_format)
     logfile = base / log_filename
     
-    # 5. 創建標籤過濾器
-    filter_config = tag_filter_config or DEFAULT_TAG_CONFIG
-    filters = create_tag_filter(filter_config)
+    # 5. 創建目標過濾器
+    filters = create_destination_filters()
     
     # 處理輪換大小格式
     rotation_value = rotation
@@ -293,7 +225,7 @@ def init_logger(
         "rotation": rotation_value,  # 設定日誌輪換大小，修正後的格式
         "encoding": "utf-8",  # 檔案編碼
         "enqueue": True,  # 使用多線程安全的方式寫入
-        "filter": filters["file"],  # 基於標籤的文件過濾器
+        "filter": filters["file"],  # 文件過濾器
     }
     
     # 合併自定義設置
@@ -313,75 +245,128 @@ def init_logger(
         sys.stderr,
         format=logger_format,  # 使用相同的日誌格式
         level=level,  # 設定日誌級別
-        filter=filters["console"],  # 基於標籤的控制台過濾器
+        filter=filters["console"],  # 控制台過濾器
     )
     
     # 返回完整的日誌文件路徑，方便外部使用
     return str(logfile)
 
 
-# 添加標籤功能的擴展方法 - 修正後版本，直接修改消息
-def _log_with_tags(level, message, *args, tags=None, **kwargs):
+# 新增目標導向日誌方法 - 只輸出到控制台
+def _console_only(level, message, *args, **kwargs):
     """
-    帶有標籤的日誌記錄方法，處理所有類型的空標籤情況
+    僅在控制台顯示的日誌記錄方法
     
     Args:
         level: 日誌級別
         message: 日誌訊息
         *args: 其他位置參數
-        tags: 標籤列表或逗號分隔的標籤字符串
         **kwargs: 其他關鍵字參數
     """
-    # 處理標籤
-    tags_str = ""
+    return _logger.bind(to_console_only=True).log(level, message, *args, **kwargs)
+
+
+# 新增目標導向日誌方法 - 只輸出到文件
+def _file_only(level, message, *args, **kwargs):
+    """
+    僅寫入文件的日誌記錄方法
     
-    # 更全面處理標籤
-    if tags is not None:
-        # 處理各種空標籤情況
-        if isinstance(tags, list):
-            if tags:  # 非空列表
-                tags_str = ", ".join(str(tag) for tag in tags if str(tag).strip())
-        elif isinstance(tags, str):
-            tags_str = tags.strip()
-        else:
-            tags_str = str(tags).strip()
-    
-    # 如果經過處理後標籤非空，則在消息前添加標籤
-    if tags_str:
-        message = f"[{tags_str}] {message}"
-    
-    # 保存標籤用於過濾（即使不顯示在消息中）
-    return _logger.bind(tags=tags_str).log(level, message, *args, **kwargs)
+    Args:
+        level: 日誌級別
+        message: 日誌訊息
+        *args: 其他位置參數
+        **kwargs: 其他關鍵字參數
+    """
+    return _logger.bind(to_log_file_only=True).log(level, message, *args, **kwargs)
 
 
-# 添加標籤版本的各級別日誌方法
-def _debug_with_tags(message, *args, tags=None, **kwargs):
-    return _log_with_tags("DEBUG", message, *args, tags=tags, **kwargs)
+# 控制台專用的各級別日誌方法
+def _console_debug(message, *args, **kwargs):
+    return _console_only("DEBUG", message, *args, **kwargs)
 
-def _info_with_tags(message, *args, tags=None, **kwargs):
-    return _log_with_tags("INFO", message, *args, tags=tags, **kwargs)
+def _console_info(message, *args, **kwargs):
+    return _console_only("INFO", message, *args, **kwargs)
 
-def _success_with_tags(message, *args, tags=None, **kwargs):
-    return _log_with_tags("SUCCESS", message, *args, tags=tags, **kwargs)
+def _console_success(message, *args, **kwargs):
+    return _console_only("SUCCESS", message, *args, **kwargs)
 
-def _warning_with_tags(message, *args, tags=None, **kwargs):
-    return _log_with_tags("WARNING", message, *args, tags=tags, **kwargs)
+def _console_warning(message, *args, **kwargs):
+    return _console_only("WARNING", message, *args, **kwargs)
 
-def _error_with_tags(message, *args, tags=None, **kwargs):
-    return _log_with_tags("ERROR", message, *args, tags=tags, **kwargs)
+def _console_error(message, *args, **kwargs):
+    return _console_only("ERROR", message, *args, **kwargs)
 
-def _critical_with_tags(message, *args, tags=None, **kwargs):
-    return _log_with_tags("CRITICAL", message, *args, tags=tags, **kwargs)
+def _console_critical(message, *args, **kwargs):
+    return _console_only("CRITICAL", message, *args, **kwargs)
 
 
-# 動態擴展 _logger
-_logger.log_with_tags = _log_with_tags
-_logger.debug_t = _debug_with_tags
-_logger.info_t = _info_with_tags
-_logger.success_t = _success_with_tags
-_logger.warning_t = _warning_with_tags
-_logger.error_t = _error_with_tags
-_logger.critical_t = _critical_with_tags
+# 文件專用的各級別日誌方法
+def _file_debug(message, *args, **kwargs):
+    return _file_only("DEBUG", message, *args, **kwargs)
+
+def _file_info(message, *args, **kwargs):
+    return _file_only("INFO", message, *args, **kwargs)
+
+def _file_success(message, *args, **kwargs):
+    return _file_only("SUCCESS", message, *args, **kwargs)
+
+def _file_warning(message, *args, **kwargs):
+    return _file_only("WARNING", message, *args, **kwargs)
+
+def _file_error(message, *args, **kwargs):
+    return _file_only("ERROR", message, *args, **kwargs)
+
+def _file_critical(message, *args, **kwargs):
+    return _file_only("CRITICAL", message, *args, **kwargs)
+
+
+# 開發模式日誌方法 (別名為控制台方法)
+def _dev_debug(message, *args, **kwargs):
+    return _console_debug(message, *args, **kwargs)
+
+def _dev_info(message, *args, **kwargs):
+    return _console_info(message, *args, **kwargs)
+
+def _dev_success(message, *args, **kwargs):
+    return _console_success(message, *args, **kwargs)
+
+def _dev_warning(message, *args, **kwargs):
+    return _console_warning(message, *args, **kwargs)
+
+def _dev_error(message, *args, **kwargs):
+    return _console_error(message, *args, **kwargs)
+
+def _dev_critical(message, *args, **kwargs):
+    return _console_critical(message, *args, **kwargs)
+
+
+# 動態擴展 _logger 的輸出目標方法
+# 控制台專用方法
+_logger.console = _console_only
+_logger.console_debug = _console_debug
+_logger.console_info = _console_info
+_logger.console_success = _console_success
+_logger.console_warning = _console_warning
+_logger.console_error = _console_error
+_logger.console_critical = _console_critical
+
+# 文件專用方法
+_logger.file = _file_only
+_logger.file_debug = _file_debug
+_logger.file_info = _file_info
+_logger.file_success = _file_success
+_logger.file_warning = _file_warning
+_logger.file_error = _file_error
+_logger.file_critical = _file_critical
+
+# 開發模式方法 (別名)
+_logger.dev = _console_only
+_logger.dev_debug = _dev_debug
+_logger.dev_info = _dev_info
+_logger.dev_success = _dev_success
+_logger.dev_warning = _dev_warning
+_logger.dev_error = _dev_error
+_logger.dev_critical = _dev_critical
 
 
 class LoggerClear:
