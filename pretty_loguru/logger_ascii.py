@@ -32,6 +32,7 @@ def print_ascii_header(
     border_style: str = "cyan",
     to_console_only: bool = False,
     to_log_file_only: bool = False,
+    logger_instance = None,
 ) -> None:
     """
     打印 ASCII 藝術標題
@@ -43,16 +44,20 @@ def print_ascii_header(
         border_style: 邊框樣式
         to_console_only: 是否僅輸出到控制台
         to_log_file_only: 是否僅輸出到日誌文件
+        logger_instance: 要使用的 logger 實例，預設為全局 _logger
         
     Raises:
         ValueError: 如果文本包含非 ASCII 字符
     """
+    # 確定要使用的 logger 實例
+    target_logger = _logger if logger_instance is None else logger_instance
+    
     # 檢查是否包含非 ASCII 字符
     if not is_ascii_only(text):
         # 發出警告，並移除非 ASCII 字符
-        _logger.warning(f"ASCII art only supports ASCII characters. Text '{text}' contains non-ASCII characters.")
+        target_logger.warning(f"ASCII art only supports ASCII characters. Text '{text}' contains non-ASCII characters.")
         text = re.sub(r'[^\x00-\x7F]+', '', text)  # 移除非 ASCII 字符
-        _logger.warning(f"Non-ASCII characters removed. Using: '{text}'")
+        target_logger.warning(f"Non-ASCII characters removed. Using: '{text}'")
         if not text:  # 如果移除後為空，則拋出異常
             raise ValueError("Text contains only non-ASCII characters. Cannot create ASCII art.")
     
@@ -61,7 +66,7 @@ def print_ascii_header(
         ascii_art = text2art(text, font=font)
     except Exception as e:
         # 捕獲生成 ASCII 藝術時的異常並記錄
-        _logger.error(f"Failed to create ASCII art: {str(e)}")
+        target_logger.error(f"Failed to create ASCII art: {str(e)}")
         raise
     
     # 創建一個帶有邊框的 Panel
@@ -76,7 +81,7 @@ def print_ascii_header(
     
     # 日誌文件輸出
     if not to_console_only:
-        _logger.opt(ansi=True, depth=1).bind(to_log_file_only=True).log(
+        target_logger.opt(ansi=True, depth=1).bind(to_log_file_only=True).log(
             log_level, f"\n{ascii_art}\n{'=' * 50}"
         )
 
@@ -88,6 +93,7 @@ def print_ascii_block(
     ascii_font: str = "standard",
     border_style: str = "cyan",
     log_level: str = "INFO",
+    logger_instance = None,
 ) -> None:
     """
     打印帶有 ASCII 藝術標題的區塊樣式日誌
@@ -99,19 +105,23 @@ def print_ascii_block(
         ascii_font: ASCII 藝術字體
         border_style: 區塊邊框顏色
         log_level: 日誌級別
+        logger_instance: 要使用的 logger 實例，預設為全局 _logger
         
     Raises:
         ValueError: 如果 ASCII 標題包含非 ASCII 字符
     """
+    # 確定要使用的 logger 實例
+    target_logger = _logger if logger_instance is None else logger_instance
+    
     # 如果沒有提供 ASCII 標題，則使用普通標題
     header_text = ascii_header if ascii_header is not None else title
     
     # 檢查是否包含非 ASCII 字符
     if not is_ascii_only(header_text):
         # 發出警告，並移除非 ASCII 字符
-        _logger.warning(f"ASCII art only supports ASCII characters. Text '{header_text}' contains non-ASCII characters.")
+        target_logger.warning(f"ASCII art only supports ASCII characters. Text '{header_text}' contains non-ASCII characters.")
         header_text = re.sub(r'[^\x00-\x7F]+', '', header_text)  # 移除非 ASCII 字符
-        _logger.warning(f"Non-ASCII characters removed. Using: '{header_text}'")
+        target_logger.warning(f"Non-ASCII characters removed. Using: '{header_text}'")
         if not header_text:  # 如果移除後為空，則拋出異常
             raise ValueError("ASCII header contains only non-ASCII characters. Cannot create ASCII art.")
     
@@ -120,14 +130,14 @@ def print_ascii_block(
         ascii_art = text2art(header_text, font=ascii_font)
     except Exception as e:
         # 捕獲生成 ASCII 藝術時的異常並記錄
-        _logger.error(f"Failed to create ASCII art: {str(e)}")
+        target_logger.error(f"Failed to create ASCII art: {str(e)}")
         raise
     
     # 將 ASCII 藝術添加到消息列表的開頭
     full_message_list = [ascii_art] + message_list
     
     # 使用現有的 print_block 函數打印區塊
-    print_block(title, full_message_list, border_style, log_level)
+    print_block(title, full_message_list, border_style, log_level, logger_instance)
 
 
 # 添加到 _logger 並註解其類型

@@ -91,7 +91,8 @@ def create_destination_filters() -> Dict[str, Callable]:
 def format_log_filename(
     process_id: str,
     log_name_format: Optional[str] = None,
-    timestamp_format: Optional[str] = None
+    timestamp_format: Optional[str] = None,
+    service_name: Optional[str] = None,
 ) -> str:
     """
     根據提供的格式生成日誌檔案名，並處理不合法的文件名字符
@@ -100,6 +101,7 @@ def format_log_filename(
         process_id (str): 進程 ID 或服務名稱
         log_name_format (Optional[str]): 日誌檔案名格式，可以是自定義的格式或 LOG_NAME_FORMATS 中的鍵
         timestamp_format (Optional[str]): 時間戳格式，預設為 "%Y%m%d-%H%M%S"
+        service_name (Optional[str]): 服務名稱，用於在日誌檔案名中使用 {service_name} 變數
         
     Returns:
         str: 格式化後的日誌檔案名，已移除不合法字符
@@ -131,8 +133,20 @@ def format_log_filename(
         "second": now.strftime("%S"),
     }
     
+    # 如果提供了服務名稱，則添加到替換變數中
+    if service_name:
+        format_vars["service_name"] = service_name
+    # 如果沒有提供服務名稱但格式中包含 {service_name}，則使用 process_id 作為 service_name
+    elif "service_name" in log_name_format:
+        format_vars["service_name"] = process_id
+    
     # 替換格式中的變數
-    filename = log_name_format.format(**format_vars)
+    try:
+        filename = log_name_format.format(**format_vars)
+    except KeyError as e:
+        # 處理缺少的變數，使用更友好的錯誤訊息
+        missing_key = str(e).strip("'")
+        raise KeyError(f"日誌檔案名格式 '{log_name_format}' 使用了未提供的變數 '{missing_key}'")
     
     # 替換文件名中的不合法字符
     # Windows 不允許的字符: \ / : * ? " < > |
@@ -152,6 +166,9 @@ def init_logger(
     log_name_format: Optional[str] = None,
     timestamp_format: Optional[str] = None,
     log_file_settings: Optional[Dict[str, Any]] = None,
+    logger_instance = None,
+    service_name: Optional[str] = None,
+    isolate_handlers: bool = True,  # 新增參數控制是否隔離處理器
 ):
     """
     初始化日誌系統
@@ -165,6 +182,8 @@ def init_logger(
         log_name_format (Optional[str]): 日誌檔案名稱格式，可以是自定義格式或 LOG_NAME_FORMATS 中的預定義格式。
         timestamp_format (Optional[str]): 時間戳格式，用於自定義時間顯示方式。
         log_file_settings (Optional[Dict[str, Any]]): 日誌檔案的其他設定，如壓縮、保留時間等。
+        logger_instance: 要初始化的日誌實例，如果為None則使用全局的_logger
+        service_name (Optional[str]): 服務名稱，用於在日誌檔案名中使用 {service_name} 變數
 
     如果 log_path 為 None，就在當前工作目錄下建立 ./logs 資料夾。
     如果提供了 subdirectory，則會在 log_path 下建立相應的子目錄。
@@ -172,6 +191,9 @@ def init_logger(
     Returns:
         str: 日誌檔案的完整路徑
     """
+    # 決定要使用的logger實例
+    target_logger = _logger if logger_instance is None else logger_instance
+    
     # 1. 決定最終要用的資料夾
     if log_path is None:
         base = Path.cwd() / "logs"  # 預設日誌資料夾
@@ -186,20 +208,25 @@ def init_logger(
     base.mkdir(parents=True, exist_ok=True)
 
     # 2. 移除舊的 handler
-    for handler_id in _logger._core.handlers:
-        _logger.remove(handler_id)  # 清除所有舊的日誌處理器
+    if isolate_handlers:
+        # 確保此 logger 實例有自己獨立的處理器
+        handler_ids = list(target_logger._core.handlers.keys())
+        for handler_id in handler_ids:
+            target_logger.remove(handler_id)
+    
 
-    # 3. 設定附加資訊
-    _logger.configure(
-        extra={
-            "folder": process_id,  # 額外資訊：處理程序 ID
-            "to_console_only": False,  # 是否僅輸出到控制台
-            "to_log_file_only": False,  # 是否僅輸出到日誌檔案
-        }
-    )
+    # 3. 設定附加資訊 (如果沒有預先綁定)
+    if not target_logger._core.extra.get("folder", None):
+        target_logger.configure(
+            extra={
+                "folder": process_id,  # 額外資訊：處理程序 ID
+                "to_console_only": False,  # 是否僅輸出到控制台
+                "to_log_file_only": False,  # 是否僅輸出到日誌檔案
+            }
+        )
 
     # 4. 生成日誌檔案名
-    log_filename = format_log_filename(process_id, log_name_format, timestamp_format)
+    log_filename = format_log_filename(process_id, log_name_format, timestamp_format, service_name)
     logfile = base / log_filename
     
     # 5. 創建目標過濾器
@@ -233,7 +260,7 @@ def init_logger(
         file_settings.update(log_file_settings)
     
     # 7. 新增檔案 handler
-    _logger.add(
+    target_logger.add(
         str(logfile),
         format=logger_format,  # 使用定義的日誌格式
         level=level,  # 設定日誌級別
@@ -241,7 +268,7 @@ def init_logger(
     )
 
     # 8. 新增 console handler
-    _logger.add(
+    target_logger.add(
         sys.stderr,
         format=logger_format,  # 使用相同的日誌格式
         level=level,  # 設定日誌級別
@@ -376,7 +403,9 @@ class LoggerClear:
     """
     
     def __init__(
-        self, log_retention=f"{log_rotation}", log_path=log_path
+        self, log_retention=f"{log_rotation}", 
+        log_path=log_path,
+        logger_instance=None
     ) -> None:
         """
         初始化日誌清理器
@@ -391,14 +420,15 @@ class LoggerClear:
             daemon=True,  # 設定為守護線程
         )
         self.__is_running = False  # 標記清理器是否正在運行
+        self.logger = logger_instance or _logger  # 使用提供的 logger 或默認 logger
 
     def start(self):
         """啟動日誌清理線程"""
         if self.__is_running:
-            _logger.info(f"Logger: Already Running...!!!")  # 如果已經在運行，記錄提示
+            self.logger.info(f"Logger: Already Running...!!!")  # 如果已經在運行，記錄提示
         else:
             self.clear_thread.start()  # 啟動清理線程
-            _logger.info(f"Logger: Clear Log Thread Started...!!!")  # 記錄啟動訊息
+            self.logger.info(f"Logger: Clear Log Thread Started...!!!")  # 記錄啟動訊息
             self.__is_running = True  # 更新運行狀態
 
     def __clean_old_log_loop(self, log_path, log_retention):
@@ -439,11 +469,11 @@ class LoggerClear:
                     if is_file and is_expired_days:  # 如果是檔案且過期
                         try:
                             os.remove(file_path)  # 刪除檔案
-                            _logger.info(f"Logger: Clean Log: {file_path}")  # 記錄刪除訊息
+                            self.logger.info(f"Logger: Clean Log: {file_path}")  # 記錄刪除訊息
                         except (PermissionError, OSError) as e:
-                            _logger.warning(f"Logger: Cannot remove log file {file_path}: {str(e)}")  # 記錄錯誤訊息
+                            self.logger.warning(f"Logger: Cannot remove log file {file_path}: {str(e)}")  # 記錄錯誤訊息
         except Exception as e:
-            _logger.error(f"Logger: Failed to clean log files. Exception: {str(e)}")  # 記錄異常訊息
+            self.logger.error(f"Logger: Failed to clean log files. Exception: {str(e)}")  # 記錄異常訊息
 
 
 # 配置 Rich Console，用於美化輸出
