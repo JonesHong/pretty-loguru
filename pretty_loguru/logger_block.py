@@ -26,7 +26,7 @@ def print_block(
     
     # 將日誌寫入到終端，僅顯示在終端中
     target_logger.opt(ansi=True, depth=1).bind(to_console_only=True).log(
-        log_level, "CustomBlock"
+        log_level, f"CustomBlock: {title}"
     )
     
     # 構造區塊內容，將多行訊息合併為單一字串
@@ -50,6 +50,6 @@ def print_block(
     )
 
 
-# 將 print_block 函數動態添加到 _logger 並註解其類型
-# 注意：這僅是動態添加，實際類型檢查需要參考 logger_types.py 中的類型標註
-_logger.block = print_block
+# 不再將 print_block 函數直接添加到 _logger
+# 這將由 logger_factory.py 中的 _add_custom_methods 函數處理
+# _logger.block = print_block

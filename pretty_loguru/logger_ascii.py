@@ -136,12 +136,11 @@ def print_ascii_block(
     # 將 ASCII 藝術添加到消息列表的開頭
     full_message_list = [ascii_art] + message_list
     
-    # 使用現有的 print_block 函數打印區塊
-    print_block(title, full_message_list, border_style, log_level, logger_instance)
+    # 使用 print_block 函數打印區塊，確保傳遞正確的 logger 實例
+    print_block(title, full_message_list, border_style, log_level, target_logger)
 
 
-# 添加到 _logger 並註解其類型
-# 動態添加方法到 _logger，方便外部調用
-_logger.ascii_header = print_ascii_header
-_logger.ascii_block = print_ascii_block
-_logger.is_ascii_only = is_ascii_only
+# 不再直接修改 _logger，這將由 logger_factory.py 中的 _add_custom_methods 函數處理
+# _logger.ascii_header = print_ascii_header
+# _logger.ascii_block = print_ascii_block
+# _logger.is_ascii_only = is_ascii_only
