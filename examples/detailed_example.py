@@ -85,31 +85,29 @@ def example_1_basic_usage():
     return app_logger
 
 
+
 def example_2_multiple_loggers():
     """多個 logger 實例的管理與使用範例"""
     print("\n--- 範例 2: 多個 logger 實例 ---\n")
     
     # 2.1 為不同組件創建不同的 logger
     auth_logger = create_logger(
-        name="auth",
+        name="auth_logger",  # 使用更明確的名稱
         service_name="auth_service", 
-        subdirectory="services/auth",
-        reuse_existing=False  # 確保不重用實例
+        subdirectory="services/auth",  # 每個服務專用子目錄
     )
     
     db_logger = create_logger(
-        name="database",
+        name="db_logger",    # 使用更明確的名稱
         service_name="database_service", 
-        subdirectory="services/db",
-        log_name_preset="hourly",  # 每小時一個日誌檔案
-        reuse_existing=False  # 確保不重用實例
+        subdirectory="services/db",  # 每個服務專用子目錄
+        log_name_preset="hourly"
     )
     
     api_logger = create_logger(
-        name="api",
+        name="api_logger",   # 使用更明確的名稱
         service_name="api_service", 
-        subdirectory="services/api",
-        reuse_existing=False  # 確保不重用實例
+        subdirectory="services/api",  # 每個服務專用子目錄
     )
     
     # 2.2 在不同組件中使用對應的 logger
@@ -331,11 +329,11 @@ def example_6_advanced_features():
     
     # 6.1 使用自定義配置創建 logger
     advanced_logger = create_logger(
-        name="advanced",
-        service_name="advanced_features",  # 這個將被傳遞到 format_log_filename
+        name="advanced_logger",
+        service_name="advanced_features",
         subdirectory="examples/advanced",
-        log_name_format="{date}_{hour}{minute}_{process_id}.log",  # 修改格式，移除 {service_name}
-        timestamp_format="%Y-%m-%d_%H-%M-%S",  # 自定義時間戳格式
+        log_name_preset="daily",  # 使用預設格式而非自定義格式
+        timestamp_format="%Y-%m-%d_%H-%M-%S",
         log_file_settings={
             "rotation": "500 KB",     # 設定輪換大小
             "retention": "1 week",    # 保留時間
@@ -343,14 +341,17 @@ def example_6_advanced_features():
         },
         custom_config={
             "level": "DEBUG",         # 自定義日誌級別
-        }
+        },
     )
+    
+    # 確保立即寫入一些內容
+    advanced_logger.info("進階功能測試開始")
     
     # 6.2 創建強制新實例
     new_instance = create_logger(
-        name="advanced",              # 相同名稱
-        service_name="advanced_new",  # 不同服務名稱
-        reuse_existing=False          # 強制創建新實例
+        name="new_advanced_logger",      # 更明確的名稱
+        service_name="advanced_new",     # 不同服務名稱
+        subdirectory="examples/advanced_new",  # 使用不同子目錄
     )
     
     advanced_logger.info("來自原始 advanced logger 的訊息")
@@ -397,10 +398,10 @@ def example_6_advanced_features():
         # 捕獲並記錄異常和堆疊跟踪
         advanced_logger.opt(exception=True).error(f"操作失敗: {str(e)}")
     
-    # 6.6 ASCII 區塊與不同顏色組合
+    # 6.6 ASCII 區塊與不同顏色組合 - 使用 new_instance 避免日誌混合
     colors = ["red", "green", "blue", "yellow", "magenta", "cyan"]
     for color in colors:
-        advanced_logger.ascii_block(
+        new_instance.ascii_block(
             title=f"{color.upper()} 顏色示例",
             message_list=[
                 f"這是一個使用 {color} 顏色的區塊示例",
@@ -411,7 +412,8 @@ def example_6_advanced_features():
             border_style=color
         )
     
-    return advanced_logger
+    return advanced_logger, new_instance
+
 def main():
     """執行所有範例"""
     print("\n===== pretty_loguru 詳細使用範例 =====\n")
