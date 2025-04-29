@@ -24,7 +24,7 @@ from .core.config import (
     LoggerConfig,
 )
 
-# 導入工廠功能
+# 導入工廠功能 - 注意這裡使用新的 default_logger 函數
 from .factory.creator import (
     create_logger,
     default_logger,
@@ -56,8 +56,18 @@ except ImportError:
     _has_fastapi = False
 
 # 提供向後兼容性的別名
-# 將全局 logger 標記為擴展類型 (向後兼容)
-logger = cast(EnhancedLogger, default_logger)
+# 將全局 logger 變量直接初始化，但使用了 _default_logger_instance 緩存
+# 這樣的方法更簡單，避免使用描述符帶來的複雜性
+_logger_instance = None
+
+def _get_logger():
+    global _logger_instance
+    if _logger_instance is None:
+        _logger_instance = default_logger()
+    return _logger_instance
+
+# 直接在模組級別使用 _get_logger() 函數的結果
+logger = _get_logger()
 
 # 舊函數名的別名 (向後兼容)
 def logger_start(

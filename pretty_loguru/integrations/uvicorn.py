@@ -40,8 +40,12 @@ class InterceptHandler(logging.Handler):
             logger_instance: 要使用的 logger 實例，如果為 None 則使用默認 logger
         """
         super().__init__()
-        from loguru import logger as _default_logger
-        self.logger = logger_instance if logger_instance is not None else _default_logger
+        # 延遲導入，避免循環依賴
+        if logger_instance is None:
+            from ..factory.creator import default_logger
+            self.logger = default_logger()
+        else:
+            self.logger = logger_instance
 
     def emit(self, record: logging.LogRecord) -> None:  # pragma: no cover
         """
@@ -101,6 +105,11 @@ def configure_uvicorn(
     if logger_names is None:
         logger_names = ["uvicorn.asgi", "uvicorn.access", "uvicorn"]
 
+    # 延遲獲取 default_logger
+    if logger_instance is None:
+        from ..factory.creator import default_logger
+        logger_instance = default_logger()
+
     # 先移除所有現有的處理器，避免重複輸出
     root_logger = logging.getLogger()
     if root_logger.handlers:
@@ -127,6 +136,3 @@ def configure_uvicorn(
     # 記錄配置信息
     if logger_instance:
         logger_instance.debug(f"已配置 Uvicorn 日誌，級別: {level}")
-    else:
-        from loguru import logger as _default_logger
-        _default_logger.debug(f"已配置 Uvicorn 日誌，級別: {level}")

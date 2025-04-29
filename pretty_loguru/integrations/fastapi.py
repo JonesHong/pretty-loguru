@@ -58,7 +58,8 @@ if _has_fastapi:
                 sensitive_headers: 敏感頭部字段集合，這些字段的值將被遮蔽
             """
             super().__init__(app)
-            self.logger = logger_instance or default_logger
+            # 使用函數調用而不是直接引用，確保延遲初始化
+            self.logger = logger_instance or default_logger()
             self.exclude_paths = exclude_paths or []
             self.exclude_methods = [m.upper() for m in (exclude_methods or [])]
             self.log_request_body = log_request_body
@@ -197,7 +198,8 @@ if _has_fastapi:
             log_response_body: bool = False,
             **kwargs: Any
         ):
-            self.logger = logger_instance or default_logger
+            # 使用函數調用而不是直接引用，確保延遲初始化
+            self.logger = logger_instance or default_logger()
             self.log_request_body = log_request_body
             self.log_response_body = log_response_body
             super().__init__(*args, **kwargs)

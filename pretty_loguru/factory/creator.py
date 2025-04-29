@@ -1,8 +1,8 @@
 """
-Logger 創建模組
+Logger 創建模組 - 改進版
 
 此模組提供創建和管理 Logger 實例的功能，
-實現了單例模式和工廠模式，確保 Logger 實例的有效隔離和管理。
+實現了單例模式、工廠模式和延遲初始化，確保 Logger 實例的有效隔離和管理。
 """
 
 import inspect
@@ -38,6 +38,9 @@ _cleaner_started = False
 
 # 默認 console 實例，用於共享視覺輸出
 _console = get_console()
+
+# 保存延遲初始化的 default_logger
+_default_logger_instance = None
 
 
 def create_logger(
@@ -119,10 +122,6 @@ def create_logger(
         name = process_id
     
     # 創建唯一的 logger 標識
-    # unique_id = str(uuid.uuid4())[:8] if force_new_instance else ""
-    # logger_id = f"{name}_{service_name or process_id}"
-    # if unique_id:
-    #     logger_id = f"{logger_id}_{unique_id}"
     logger_id = f"{name}_{service_name}"
     
     # 如果想重用實例且不是強制創建新的
@@ -183,7 +182,6 @@ def create_logger(
         "log_file_settings": log_file_settings,
         "service_name": service_name,
         "isolate_handlers": True,
-        # "unique_id": unique_id if force_new_instance else None
     }
     
     # 合併自定義配置
@@ -270,9 +268,22 @@ def list_loggers() -> List[str]:
     return list(_logger_registry.keys())
 
 
-# 創建默認 logger 實例
-default_logger = create_logger(
-    name="default", 
-    start_cleaner=True, 
-    force_new_instance=False
-)
+def default_logger() -> EnhancedLogger:
+    """
+    獲取默認的 logger 實例（延遲初始化）
+    
+    只有在首次呼叫這個函數時，才會創建默認的 logger 實例，
+    避免在導入模組時就立即創建日誌文件。
+    
+    Returns:
+        EnhancedLogger: 默認的 logger 實例
+    """
+    global _default_logger_instance
+    if _default_logger_instance is None:
+        _default_logger_instance = create_logger(
+            name="default", 
+            service_name="default_service",
+            start_cleaner=True, 
+            force_new_instance=False
+        )
+    return _default_logger_instance
