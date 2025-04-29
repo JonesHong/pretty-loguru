@@ -22,12 +22,12 @@ sys.path.insert(0, r'C:\work\pretty-loguru')
 from pretty_loguru import (
     # 工廠函數和預配置 logger
     create_logger, 
-    default_logger,
+    # default_logger,
     get_logger,
     list_loggers,
     
     # 向後兼容的全局 logger
-    logger, 
+    # logger, 
     logger_start,
     
     # 特殊功能函數
@@ -63,13 +63,51 @@ def example_1_basic_usage():
     """基本使用方式範例"""
     print("\n--- 範例 1: 基本使用方式 ---\n")
     
-    # 1.1 使用工廠函數創建 logger
+    # 1.0 檢查配置文件是否存在並載入或創建
+    config_path = Path.cwd() / "logs" / "logger_config.json"
+    
+    if config_path.exists():
+        # 配置文件存在，載入它
+        try:
+            config = LoggerConfig.from_file(config_path)
+            print(f"已從 {config_path} 載入 Logger 配置")
+        except Exception as e:
+            print(f"載入配置失敗: {str(e)}，將創建新配置")
+            # 創建默認配置
+            config = LoggerConfig(
+                level="DEBUG",
+                rotation="10 MB",
+                log_path=Path.cwd() / "logs"
+            )
+            # 保存配置
+            config_path.parent.mkdir(parents=True, exist_ok=True)
+            config.save_to_file(config_path)
+            print(f"已創建並保存新的 Logger 配置到: {config_path}")
+    else:
+        # 配置文件不存在，創建新配置
+        config = LoggerConfig(
+            level="DEBUG",
+            rotation="10 MB",
+            log_path=Path.cwd() / "logs"
+        )
+        # 保存配置
+        config_path.parent.mkdir(parents=True, exist_ok=True)
+        config.save_to_file(config_path)
+        print(f"已創建並保存新的 Logger 配置到: {config_path}")
+    
+    # 1.1 使用載入或創建的配置來創建 logger
     app_logger = create_logger(
-        name="app",                    # logger 名稱 (用於在字典中查找)
-        service_name="example_app",    # 服務名稱 (用於日誌檔案名稱)
-        subdirectory="examples",       # 子目錄 (logs/examples/)
-        log_name_preset="daily",       # 使用每日一檔的命名格式
+        name="app",                   # logger 名稱 (用於在字典中查找)
+        service_name="example_app",   # 服務名稱 (用於日誌檔案名稱)
+        subdirectory="example_1_basic",      # 子目錄 (logs/examples/)
+        log_name_preset="daily",      # 使用每日一檔的命名格式
+        level=config.level,           # 使用配置中的日誌級別
+        rotation=config.rotation,     # 使用配置中的輪換設置
+        log_base_path=config.log_path # 使用配置中的日誌路徑
     )
+    
+    # 記錄使用的配置信息
+    app_logger.info(f"Logger 使用的配置: {config.to_dict()}")
     
     # 1.2 不同級別的日誌記錄
     app_logger.debug("這是一條調試訊息，用於開發時查看詳細資訊")
@@ -102,23 +140,13 @@ def example_1_basic_usage():
     app_logger.info(f"已註冊的所有 logger: {all_loggers}")
     
     # 1.6 使用默認 logger
-    default_logger.info("這條訊息來自默認的 logger 實例")
+    # default_logger().info("這條訊息來自默認的 logger 實例")
     
     # 1.7 向後兼容的全局 logger
-    logger.info("這條訊息來自全局 logger (向後兼容)")
+    # logger.info("這條訊息來自全局 logger (向後兼容)")
     
-    # 1.8 使用 LoggerConfig 進行配置管理
-    config = LoggerConfig(
-        level="DEBUG",
-        rotation="10 MB",
-        log_path=Path.cwd() / "logs" / "config_example"
-    )
-    app_logger.info(f"Logger 配置: {config.to_dict()}")
-    
-    # 將配置保存到文件
-    config_path = Path.cwd() / "logs" / "logger_config.json"
-    config.save_to_file(config_path)
-    app_logger.info(f"Logger 配置已保存到: {config_path}")
+    # 1.8 提供修改配置的選項
+    app_logger.info("如需修改 Logger 配置，可編輯文件: " + str(config_path))
     
     return app_logger
 
@@ -131,20 +159,20 @@ def example_2_multiple_loggers():
     auth_logger = create_logger(
         name="auth_logger",  # 使用更明確的名稱
         service_name="auth_service", 
-        subdirectory="services/auth",  # 每個服務專用子目錄
+        subdirectory="example_2_services/auth",  # 每個服務專用子目錄
     )
     
     db_logger = create_logger(
         name="db_logger",    # 使用更明確的名稱
         service_name="database_service", 
-        subdirectory="services/db",  # 每個服務專用子目錄
+        subdirectory="example_2_services/db",  # 每個服務專用子目錄
         log_name_preset="hourly"
     )
     
     api_logger = create_logger(
         name="api_logger",   # 使用更明確的名稱
         service_name="api_service", 
-        subdirectory="services/api",  # 每個服務專用子目錄
+        subdirectory="example_2_services/api",  # 每個服務專用子目錄
     )
     
     # 2.2 在不同組件中使用對應的 logger
@@ -200,7 +228,7 @@ def example_3_special_formats():
     format_logger = create_logger(
         name="formats",
         service_name="format_demo",
-        subdirectory="examples/formats"
+        subdirectory="example_3_formats"
     )
     
     # 3.1 使用區塊格式
@@ -322,7 +350,7 @@ def example_4_output_targets():
     target_logger = create_logger(
         name="targets",
         service_name="output_targets",
-        subdirectory="examples/targets"
+        subdirectory="example_4_targets"
     )
     
     # 4.1 標準日誌 (同時輸出到控制台和文件)
@@ -372,7 +400,7 @@ def example_5_integrations():
     integration_logger = create_logger(
         name="integrations",
         service_name="integration_demo",
-        subdirectory="examples/integrations"
+        subdirectory="example_5_integrations"
     )
     # 5.2 Uvicorn 整合
     integration_logger.info("配置 Uvicorn 使用 Loguru")
@@ -458,7 +486,7 @@ def example_6_advanced_features():
     advanced_logger = create_logger(
         name="advanced_logger",
         service_name="advanced_features",
-        subdirectory="examples/advanced",
+        subdirectory="example_6_advanced",
         log_name_preset="daily",  # 使用預設格式而非自定義格式
         timestamp_format="%Y-%m-%d_%H-%M-%S",
         log_file_settings={
@@ -476,7 +504,7 @@ def example_6_advanced_features():
     new_instance = create_logger(
         name="advanced_logger",        # 相同名稱
         service_name="advanced_new",   # 不同服務名稱
-        subdirectory="examples/advanced_new",  # 使用不同子目錄
+        subdirectory="example_6_advanced_new",  # 使用不同子目錄
         force_new_instance=True        # 強制創建新實例
     )
     
