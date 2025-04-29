@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pretty-loguru"
-version = "0.1.2"
+version = "0.2.2"
 description = "A Loguru-based logger with Rich panels, ASCII art headers, blocks and more."
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [
-  { name = "JonesHong", email = "you@example.com" }
+  { name = "JonesHong", email = "latte831104@gmail.com" }
 ]
 dependencies = [
   "loguru>=0.6.0",
@@ -23,8 +23,8 @@ classifiers = [
 ]
 
 [project.urls]
-"Source" = "https://github.com/yourusername/pretty-loguru"
-"Tracker" = "https://github.com/yourusername/pretty-loguru/issues"
+"Source" = "https://github.com/JonesHong/pretty-loguru"
+"Tracker" = "https://github.com/JonesHong/pretty-loguru/issues"
 
 [tool.setuptools.packages.find]
 include = ["pretty_loguru*"]
