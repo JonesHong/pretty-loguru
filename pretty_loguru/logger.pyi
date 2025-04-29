@@ -1,169 +1,186 @@
 """
-這是一個類型存根文件 (.pyi)，用於提供精確的類型標註
+類型存根文件 (.pyi)，提供精確的類型標註
 IDE 會優先參考這個文件進行類型檢查和自動完成提示
 """
-from typing import Any, Callable, Dict, List, Optional, Union, overload
-import loguru
+from typing import Any, Callable, Dict, List, Optional, Set, Union, overload, TypeVar
+from pathlib import Path
+import logging
 
-class EnhancedLogger(loguru._logger.Logger):
-    """
-    擴展 loguru 的內部 Logger 類，添加自定義方法的類型提示。
-    此類別提供額外的功能，例如區塊式日誌輸出和 ASCII 標題。
-    """
-    
-    def block(
-        self,
-        title: str,
-        message_list: List[str],
-        border_style: str = ...,
-        log_level: str = ...,
-    ) -> None:
-        """
-        輸出一個帶有邊框的日誌區塊。
+from loguru import logger as _logger
 
-        :param title: 區塊的標題
-        :param message_list: 區塊內的訊息列表
-        :param border_style: 邊框樣式，預設為系統樣式
-        :param log_level: 日誌等級，預設為系統等級
-        """
-        ...
-    
-    def ascii_header(
-        self,
-        text: str,
-        font: str = ...,
-        log_level: str = ...,
-        border_style: str = ...,
-        to_console_only: bool = ...,
-        to_log_file_only: bool = ...,
-    ) -> None:
-        """
-        輸出一個 ASCII 標題。
+# 導入重構後的類型定義
+from .types import (
+    EnhancedLogger,
+    LogLevelType,
+    LogPathType,
+    LogNameFormatType,
+    LogRotationType,
+    LogConfigType,
+)
 
-        :param text: 標題文字
-        :param font: 字體樣式，預設為系統字體
-        :param log_level: 日誌等級，預設為系統等級
-        :param border_style: 邊框樣式，預設為系統樣式
-        :param to_console_only: 是否僅輸出到控制台，預設為 False
-        :param to_log_file_only: 是否僅輸出到日誌文件，預設為 False
-        """
-        ...
-    
-    def ascii_block(
-        self,
-        title: str,
-        message_list: List[str],
-        ascii_header: Optional[str] = ...,
-        ascii_font: str = ...,
-        border_style: str = ...,
-        log_level: str = ...,
-    ) -> None:
-        """
-        輸出一個帶有 ASCII 標題的日誌區塊。
+# 基本類型別名 (向後兼容)
+T = TypeVar('T', bound='EnhancedLogger')
 
-        :param title: 區塊的標題
-        :param message_list: 區塊內的訊息列表
-        :param ascii_header: ASCII 標題文字，預設為 None
-        :param ascii_font: ASCII 字體樣式，預設為系統字體
-        :param border_style: 邊框樣式，預設為系統樣式
-        :param log_level: 日誌等級，預設為系統等級
-        """
-        ...
-    
-    def is_ascii_only(self, text: str) -> bool:
-        """
-        檢查文字是否僅包含 ASCII 字元。
-
-        :param text: 要檢查的文字
-        :return: 如果文字僅包含 ASCII 字元，返回 True，否則返回 False
-        """
-        ...
-
-# 導出的主要 logger 對象
+# 重構後的全局 logger 實例
 logger: EnhancedLogger
 
+# 核心配置常數
+LOG_LEVEL: LogLevelType
+LOG_ROTATION: LogRotationType
+LOG_PATH: Path
+LOG_NAME_FORMATS: Dict[str, str]
+OUTPUT_DESTINATIONS: Dict[str, str]
+
+class LogLevelEnum:
+    """日誌級別枚舉類別"""
+    TRACE: str
+    DEBUG: str
+    INFO: str
+    SUCCESS: str
+    WARNING: str
+    ERROR: str
+    CRITICAL: str
+
+# 工廠函數與管理
+def create_logger(
+    name: Optional[str] = None,
+    file: Optional[str] = None, 
+    service_name: Optional[str] = None,
+    subdirectory: Optional[str] = None, 
+    log_name_format: Optional[str] = None,
+    log_name_preset: Optional[str] = None,
+    timestamp_format: Optional[str] = None,
+    log_base_path: Optional[Union[str, Path]] = None,
+    log_file_settings: Optional[Dict[str, Any]] = None,
+    custom_config: Optional[Dict[str, Any]] = None,
+    reuse_existing: bool = False,
+    start_cleaner: bool = False,
+    force_new_instance: bool = True,
+    level: LogLevelType = "INFO",
+    rotation: LogRotationType = "20 MB",
+) -> EnhancedLogger: ...
+
+def default_logger() -> EnhancedLogger: ...
+def get_logger(name: str) -> Optional[EnhancedLogger]: ...
+def set_logger(name: str, logger_instance: EnhancedLogger) -> None: ...
+def unregister_logger(name: str) -> bool: ...
+def list_loggers() -> List[str]: ...
+
+# 格式化功能
 def print_block(
     title: str,
     message_list: List[str],
-    border_style: str = ...,
-    log_level: str = ...,
-) -> None:
-    """
-    輸出一個帶有邊框的日誌區塊。
-
-    :param title: 區塊的標題
-    :param message_list: 區塊內的訊息列表
-    :param border_style: 邊框樣式，預設為系統樣式
-    :param log_level: 日誌等級，預設為系統等級
-    """
-    ...
+    border_style: str = "cyan",
+    log_level: str = "INFO",
+    logger_instance: Any = None,
+) -> None: ...
 
 def print_ascii_header(
     text: str,
-    font: str = ...,
-    log_level: str = ...,
-    border_style: str = ...,
-    to_console_only: bool = ...,
-    to_log_file_only: bool = ...,
-) -> None:
-    """
-    輸出一個 ASCII 標題。
-
-    :param text: 標題文字
-    :param font: 字體樣式，預設為系統字體
-    :param log_level: 日誌等級，預設為系統等級
-    :param border_style: 邊框樣式，預設為系統樣式
-    :param to_console_only: 是否僅輸出到控制台，預設為 False
-    :param to_log_file_only: 是否僅輸出到日誌文件，預設為 False
-    """
-    ...
+    font: str = "standard",
+    log_level: str = "INFO",
+    border_style: str = "cyan",
+    to_console_only: bool = False,
+    to_log_file_only: bool = False,
+    logger_instance: Any = None,
+) -> None: ...
 
 def print_ascii_block(
     title: str,
     message_list: List[str],
-    ascii_header: Optional[str] = ...,
-    ascii_font: str = ...,
-    border_style: str = ...,
-    log_level: str = ...,
-) -> None:
-    """
-    輸出一個帶有 ASCII 標題的日誌區塊。
+    ascii_header: Optional[str] = None,
+    ascii_font: str = "standard",
+    border_style: str = "cyan",
+    log_level: str = "INFO",
+    logger_instance: Any = None,
+) -> None: ...
 
-    :param title: 區塊的標題
-    :param message_list: 區塊內的訊息列表
-    :param ascii_header: ASCII 標題文字，預設為 None
-    :param ascii_font: ASCII 字體樣式，預設為系統字體
-    :param border_style: 邊框樣式，預設為系統樣式
-    :param log_level: 日誌等級，預設為系統等級
-    """
-    ...
+def is_ascii_only(text: str) -> bool: ...
 
-def is_ascii_only(text: str) -> bool:
-    """
-    檢查文字是否僅包含 ASCII 字元。
+# FIGlet 功能 (可選)
+def print_figlet_header(
+    text: str,
+    font: str = "standard",
+    log_level: str = "INFO",
+    border_style: str = "cyan",
+    to_console_only: bool = False,
+    to_log_file_only: bool = False,
+    logger_instance: Any = None,
+) -> None: ...
 
-    :param text: 要檢查的文字
-    :return: 如果文字僅包含 ASCII 字元，返回 True，否則返回 False
-    """
-    ...
+def print_figlet_block(
+    title: str,
+    message_list: List[str],
+    figlet_header: Optional[str] = None,
+    figlet_font: str = "standard",
+    border_style: str = "cyan",
+    log_level: str = "INFO",
+    logger_instance: Any = None,
+) -> None: ...
 
-def logger_start(file: Optional[str] = None, folder: Optional[str] = None) -> str:
-    """
-    初始化 logger 並開始記錄日誌。
+def get_figlet_fonts() -> Set[str]: ...
 
-    :param file: 日誌文件的名稱，預設為 None
-    :param folder: 日誌文件的資料夾，預設為 None
-    :return: 日誌文件的完整路徑
-    """
-    ...
+# 向後兼容函數
+def logger_start(
+    file: Optional[str] = None, 
+    folder: Optional[str] = None,
+    **kwargs: Any
+) -> str: ...
 
-def uvicorn_init_config() -> None:
-    """
-    初始化 uvicorn 的配置。
-    """
-    ...
+# Uvicorn 集成 (可選)
+class InterceptHandler(logging.Handler):
+    def __init__(self, logger_instance: Optional[Any] = None) -> None: ...
+    def emit(self, record: logging.LogRecord) -> None: ...
 
-log_path: str
-"""
-日誌文件的路徑。
-"""
+def configure_uvicorn(
+    logger_instance: Optional[Any] = None,
+    level: LogLevelType = "INFO",
+    logger_names: Optional[List[str]] = None
+) -> None: ...
+
+def uvicorn_init_config(
+    logger_instance: Optional[Any] = None,
+    level: LogLevelType = "INFO",
+    logger_names: Optional[List[str]] = None
+) -> None: ...
+
+# FastAPI 集成 (可選)
+def setup_fastapi_logging(
+    app: Any,
+    logger_instance: Optional[EnhancedLogger] = None,
+    middleware: bool = True,
+    custom_routes: bool = False,
+    exclude_paths: Optional[List[str]] = None,
+    exclude_methods: Optional[List[str]] = None,
+    log_request_body: bool = False,
+    log_response_body: bool = False,
+) -> None: ...
+
+# 配置類
+class LoggerConfig:
+    level: LogLevelType
+    rotation: LogRotationType
+    log_path: Path
+    format: str
+    
+    def __init__(
+        self,
+        level: Optional[LogLevelType] = None,
+        rotation: Optional[LogRotationType] = None,
+        log_path: Optional[LogPathType] = None,
+        logger_format: Optional[str] = None,
+        env_prefix: str = "PRETTY_LOGURU_"
+    ) -> None: ...
+    
+    @classmethod
+    def from_dict(cls, config_dict: Dict[str, Any]) -> 'LoggerConfig': ...
+    
+    @classmethod
+    def from_file(cls, file_path: Union[str, Path], format: str = "json") -> 'LoggerConfig': ...
+    
+    def to_dict(self) -> Dict[str, Any]: ...
+    
+    def save_to_file(self, file_path: Union[str, Path], format: str = "json") -> None: ...
+
+# 版本信息
+__version__: str

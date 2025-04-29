@@ -1,0 +1,267 @@
+"""
+FIGlet 藝術模組
+
+此模組提供用於生成 FIGlet 文本藝術的功能，
+是 ASCII 藝術的替代選項，支援更多的字體和樣式。
+需要安裝 pyfiglet 庫：pip install pyfiglet
+"""
+
+import re
+from typing import List, Optional, Any, Set
+
+from rich.panel import Panel
+from rich.console import Console
+
+try:
+    import pyfiglet
+    from pyfiglet import FigletFont
+    _has_pyfiglet = True
+except ImportError:
+    _has_pyfiglet = False
+    pyfiglet = None
+    FigletFont = None
+
+from ..types import EnhancedLogger
+from .block import print_block
+from .ascii_art import is_ascii_only
+
+
+def print_figlet_header(
+    text: str,
+    font: str = "standard",
+    log_level: str = "INFO",
+    border_style: str = "cyan",
+    to_console_only: bool = False,
+    to_log_file_only: bool = False,
+    logger_instance: Any = None,
+    console: Optional[Console] = None,
+) -> None:
+    """
+    打印 FIGlet 藝術標題
+    
+    Args:
+        text: 要轉換為 FIGlet 藝術的文本
+        font: FIGlet 藝術字體
+        log_level: 日誌級別
+        border_style: 邊框樣式
+        to_console_only: 是否僅輸出到控制台
+        to_log_file_only: 是否僅輸出到日誌文件
+        logger_instance: 要使用的 logger 實例，如果為 None 則不記錄日誌
+        console: 要使用的 rich console 實例，如果為 None 則創建新的
+        
+    Raises:
+        ValueError: 如果文本包含非 ASCII 字符
+        ImportError: 如果未安裝 pyfiglet 庫
+    """
+    # 檢查 pyfiglet 庫是否已安裝
+    if not _has_pyfiglet:
+        error_msg = "未安裝 'pyfiglet' 庫。請使用 'pip install pyfiglet' 安裝。"
+        if logger_instance:
+            logger_instance.error(error_msg)
+        raise ImportError(error_msg)
+    
+    # 如果沒有提供 console，則創建一個新的
+    if console is None:
+        console = Console()
+    
+    # 檢查是否包含非 ASCII 字符
+    if not is_ascii_only(text):
+        warning_msg = f"FIGlet 只支持 ASCII 字符。文本 '{text}' 包含非 ASCII 字符。"
+        if logger_instance:
+            logger_instance.warning(warning_msg)
+        
+        # 移除非 ASCII 字符
+        cleaned_text = re.sub(r'[^\x00-\x7F]+', '', text)
+        
+        if logger_instance:
+            logger_instance.warning(f"已移除非 ASCII 字符。使用: '{cleaned_text}'")
+        
+        if not cleaned_text:  # 如果移除後為空，則拋出異常
+            raise ValueError("文本僅包含非 ASCII 字符，無法創建 FIGlet 藝術。")
+        
+        text = cleaned_text
+    
+    # 使用 pyfiglet 生成 FIGlet 藝術
+    try:
+        figlet_art = pyfiglet.figlet_format(text, font=font)
+    except Exception as e:
+        error_msg = f"生成 FIGlet 藝術失敗: {str(e)}"
+        if logger_instance:
+            logger_instance.error(error_msg)
+        raise
+    
+    # 創建一個帶有邊框的 Panel
+    panel = Panel(
+        figlet_art,
+        border_style=border_style,
+    )
+    
+    # 控制台輸出
+    if not to_log_file_only:
+        console.print(panel)
+    
+    # 日誌文件輸出
+    if logger_instance and not to_console_only:
+        logger_instance.opt(ansi=True, depth=1).bind(to_log_file_only=True).log(
+            log_level, f"\n{figlet_art}\n{'=' * 50}"
+        )
+
+
+def print_figlet_block(
+    title: str,
+    message_list: List[str],
+    figlet_header: Optional[str] = None,
+    figlet_font: str = "standard",
+    border_style: str = "cyan",
+    log_level: str = "INFO",
+    logger_instance: Any = None,
+    console: Optional[Console] = None,
+) -> None:
+    """
+    打印帶有 FIGlet 藝術標題的區塊樣式日誌
+    
+    Args:
+        title: 區塊的標題
+        message_list: 日誌的內容列表
+        figlet_header: FIGlet 藝術標題文本 (如果不提供，則使用 title)
+        figlet_font: FIGlet 藝術字體
+        border_style: 區塊邊框顏色
+        log_level: 日誌級別
+        logger_instance: 要使用的 logger 實例，如果為 None 則不記錄日誌
+        console: 要使用的 rich console 實例，如果為 None 則創建新的
+        
+    Raises:
+        ValueError: 如果 FIGlet 標題包含非 ASCII 字符
+        ImportError: 如果未安裝 pyfiglet 庫
+    """
+    # 檢查 pyfiglet 庫是否已安裝
+    if not _has_pyfiglet:
+        error_msg = "未安裝 'pyfiglet' 庫。請使用 'pip install pyfiglet' 安裝。"
+        if logger_instance:
+            logger_instance.error(error_msg)
+        raise ImportError(error_msg)
+    
+    # 如果沒有提供 console，則創建一個新的
+    if console is None:
+        console = Console()
+    
+    # 如果沒有提供 FIGlet 標題，則使用普通標題
+    header_text = figlet_header if figlet_header is not None else title
+    
+    # 檢查是否包含非 ASCII 字符
+    if not is_ascii_only(header_text):
+        warning_msg = f"FIGlet 只支持 ASCII 字符。文本 '{header_text}' 包含非 ASCII 字符。"
+        if logger_instance:
+            logger_instance.warning(warning_msg)
+        
+        # 移除非 ASCII 字符
+        cleaned_text = re.sub(r'[^\x00-\x7F]+', '', header_text)
+        
+        if logger_instance:
+            logger_instance.warning(f"已移除非 ASCII 字符。使用: '{cleaned_text}'")
+        
+        if not cleaned_text:  # 如果移除後為空，則拋出異常
+            raise ValueError("FIGlet 標題僅包含非 ASCII 字符，無法創建 FIGlet 藝術。")
+        
+        header_text = cleaned_text
+    
+    # 生成 FIGlet 藝術
+    try:
+        figlet_art = pyfiglet.figlet_format(header_text, font=figlet_font)
+    except Exception as e:
+        error_msg = f"生成 FIGlet 藝術失敗: {str(e)}"
+        if logger_instance:
+            logger_instance.error(error_msg)
+        raise
+    
+    # 將 FIGlet 藝術添加到消息列表的開頭
+    full_message_list = [figlet_art] + message_list
+    
+    # 使用 print_block 函數打印區塊，確保傳遞正確的 logger 實例
+    print_block(title, full_message_list, border_style, log_level, logger_instance, console)
+
+
+def get_figlet_fonts() -> Set[str]:
+    """
+    獲取所有可用的 FIGlet 字體
+    
+    Returns:
+        Set[str]: 可用字體名稱的集合
+        
+    Raises:
+        ImportError: 如果未安裝 pyfiglet 庫
+    """
+    if not _has_pyfiglet:
+        raise ImportError("未安裝 'pyfiglet' 庫。請使用 'pip install pyfiglet' 安裝。")
+    
+    return set(FigletFont.getFonts())
+
+
+def create_figlet_methods(logger_instance: Any, console: Optional[Console] = None) -> bool:
+    """
+    為 logger 實例創建 FIGlet 藝術相關方法
+    
+    Args:
+        logger_instance: 要添加方法的 logger 實例
+        console: 要使用的 rich console 實例，如果為 None 則使用新創建的
+        
+    Returns:
+        bool: 如果成功添加方法則返回 True，否則返回 False
+    """
+    # 檢查 pyfiglet 庫是否已安裝
+    if not _has_pyfiglet:
+        if hasattr(logger_instance, "warning"):
+            logger_instance.warning("未安裝 'pyfiglet' 庫，跳過添加 FIGlet 方法。")
+        return False
+    
+    if console is None:
+        console = Console()
+    
+    # 添加 figlet_header 方法
+    def figlet_header_method(
+        text: str,
+        font: str = "standard",
+        log_level: str = "INFO",
+        border_style: str = "cyan",
+        to_console_only: bool = False,
+        to_log_file_only: bool = False,
+    ) -> None:
+        """
+        logger 實例的 FIGlet 藝術標題方法
+        """
+        print_figlet_header(
+            text, font, log_level, border_style, 
+            to_console_only, to_log_file_only, 
+            logger_instance, console
+        )
+    
+    # 添加 figlet_block 方法
+    def figlet_block_method(
+        title: str,
+        message_list: List[str],
+        figlet_header: Optional[str] = None,
+        figlet_font: str = "standard",
+        border_style: str = "cyan",
+        log_level: str = "INFO",
+    ) -> None:
+        """
+        logger 實例的 FIGlet 藝術區塊方法
+        """
+        print_figlet_block(
+            title, message_list, figlet_header, figlet_font,
+            border_style, log_level, logger_instance, console
+        )
+    
+    # 添加 get_figlet_fonts 方法
+    def get_fonts_method() -> Set[str]:
+        """
+        獲取所有可用的 FIGlet 字體
+        """
+        return get_figlet_fonts()
+    
+    # 將方法添加到 logger 實例
+    logger_instance.figlet_header = figlet_header_method
+    logger_instance.figlet_block = figlet_block_method
+    logger_instance.get_figlet_fonts = get_fonts_method
+    
+    return True
