@@ -1,7 +1,7 @@
 # pretty-loguru
-
 [![PyPI version](https://img.shields.io/pypi/v/pretty-loguru.svg)](https://pypi.org/project/pretty-loguru)
-[![Python Version](https://img.shields.io/pypi/pyversions/pretty-loguru.svg)]
+[![Python Version](https://img.shields.io/pypi/pyversions/pretty-loguru.svg)](https://pypi.org/project/pretty-loguru)
+[![License](https://img.shields.io/pypi/l/pretty-loguru.svg)](https://opensource.org/licenses/MIT)
 
 ## 說明
 

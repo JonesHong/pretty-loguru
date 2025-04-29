@@ -1,8 +1,8 @@
 # pretty-loguru
 
 [![PyPI version](https://img.shields.io/pypi/v/pretty-loguru.svg)](https://pypi.org/project/pretty-loguru)
-[![Python Version](https://img.shields.io/pypi/pyversions/pretty-loguru.svg)]
-
+[![Python Version](https://img.shields.io/pypi/pyversions/pretty-loguru.svg)](https://pypi.org/project/pretty-loguru)
+[![License](https://img.shields.io/pypi/l/pretty-loguru.svg)](https://opensource.org/licenses/MIT)
 ## Description
 
 **pretty-loguru** is a Python logging library that extends the power of [Loguru](https://github.com/Delgan/loguru) with elegant outputs using [Rich](https://github.com/Textualize/rich) panels, ASCII art headers, and customizable blocks. It provides:
@@ -26,14 +26,6 @@ Install via pip:
 pip install pretty-loguru
 ```
 
-For optional features:
-
-```bash
-pip install pretty-loguru[art]  # For ASCII art support
-pip install pretty-loguru[figlet]  # For FIGlet support
-pip install pretty-loguru[fastapi]  # For FastAPI integration
-pip install pretty-loguru[all]  # For all optional dependencies
-```
 
 ## Quick Start
 
