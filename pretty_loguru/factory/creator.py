@@ -45,13 +45,12 @@ _default_logger_instance = None
 
 def create_logger(
     name: Optional[str] = None,
-    file: Optional[str] = None, 
-    service_name: Optional[str] = None,
+    service_tag: Optional[str] = None,
     subdirectory: Optional[str] = None, 
     log_name_format: LogNameFormatType = None,
     log_name_preset: Optional[Literal["default", "daily", "hourly", "minute", "simple", "detailed"]] = None,
     timestamp_format: Optional[str] = None,
-    log_base_path: Optional[LogPathType] = None,
+    log_path: Optional[LogPathType] = None,
     log_file_settings: Optional[LogConfigType] = None,
     custom_config: Optional[LogConfigType] = None,
     reuse_existing: bool = False,
@@ -66,13 +65,12 @@ def create_logger(
     
     Args:
         name: logger 實例的名稱，如果不提供則自動生成
-        file: 指定的文件路徑，若提供則使用該文件名作為 process_id
-        service_name: 服務或模組名稱，用於標識日誌來源
+        service_tag: 服務或模組名稱，用於標識日誌來源
         subdirectory: 日誌子目錄，用於分類不同模組或功能的日誌
-        log_name_format: 日誌檔案名稱格式，可包含變數如 {process_id}, {timestamp}, {date}, {time} 等
+        log_name_format: 日誌檔案名稱格式，可包含變數如 {component_name}, {timestamp}, {date}, {time} 等
         log_name_preset: 預設的日誌檔案名格式，可選值為 "default", "daily", "hourly" 等
         timestamp_format: 時間戳格式，用於自定義時間顯示方式
-        log_base_path: 日誌基礎路徑，覆蓋預設的 log_path
+        log_path: 日誌基礎路徑，覆蓋預設的 log_path
         log_file_settings: 日誌檔案的其他設定，如壓縮、保留時間等
         custom_config: 自定義日誌配置，可包含任意 configure_logger 支援的參數
         reuse_existing: 是否重用同名的既有實例，預設為 False
@@ -98,7 +96,7 @@ def create_logger(
         >>> # 自定義日誌文件配置
         >>> logger = create_logger(
         ...     "worker", 
-        ...     service_name="background_tasks",
+        ...     service_tag="background_tasks",
         ...     log_file_settings={"compression": "zip", "retention": "1 week"}
         ... )
     """
@@ -108,21 +106,19 @@ def create_logger(
     caller_frame = inspect.currentframe().f_back
     caller_file = caller_frame.f_code.co_filename if caller_frame else "unknown"
     
-    # 確定 process_id 的值 (用於日誌文件名)
-    if file is not None:
-        process_id = os.path.splitext(os.path.basename(file))[0]
-    elif service_name is not None:
-        process_id = service_name
+    # 確定 component_name 的值 (用於日誌文件名)
+    if service_tag is not None:
+        component_name = service_tag
     else:
         file_name = os.path.splitext(os.path.basename(caller_file))[0]
-        process_id = file_name
+        component_name = file_name
 
-    # 若未提供 name 參數，使用 process_id 作為 name
+    # 若未提供 name 參數，使用 component_name 作為 name
     if name is None:
-        name = process_id
+        name = component_name
     
     # 創建唯一的 logger 標識
-    logger_id = f"{name}_{service_name}"
+    logger_id = f"{name}_{service_tag}"
     
     # 如果想重用實例且不是強制創建新的
     if reuse_existing and not force_new_instance:
@@ -130,7 +126,7 @@ def create_logger(
             return _logger_registry[name]
         
         # 查找已存在的實例 (基於名稱和服務名稱但不包括唯一ID部分)
-        base_id = f"{name}_{service_name}"
+        base_id = f"{name}_{service_tag}"
         for existing_id, logger_instance in _logger_registry.items():
             if existing_id.startswith(base_id):
                 return logger_instance
@@ -162,8 +158,8 @@ def create_logger(
     ).patch(lambda record: record.update(
         logger_name=name,
         logger_id=logger_id,
-        folder=process_id,
-        service_name=service_name
+        folder=component_name,
+        service_tag=service_tag
     ))
     
     # 使用相同的 console 實例
@@ -173,14 +169,14 @@ def create_logger(
     # 準備日誌初始化參數
     logger_config = {
         "level": level,
-        "process_id": process_id,
+        "component_name": component_name,
         "rotation": rotation,
-        "log_path": log_base_path,
+        "log_path": log_path,
         "subdirectory": subdirectory,
         "log_name_format": log_name_format,
         "timestamp_format": timestamp_format,
         "log_file_settings": log_file_settings,
-        "service_name": service_name,
+        "service_tag": service_tag,
         "isolate_handlers": True,
     }
     
@@ -204,7 +200,7 @@ def create_logger(
     if start_cleaner and not _cleaner_started:
         logger_cleaner = LoggerCleaner(
             logger_instance=new_logger,
-            log_path=log_base_path
+            log_path=log_path
         )
         logger_cleaner.start()
         _cleaner_started = True
@@ -282,8 +278,8 @@ def default_logger() -> EnhancedLogger:
     if _default_logger_instance is None:
         _default_logger_instance = create_logger(
             name="default", 
-            service_name="default_service",
-            start_cleaner=True, 
+            service_tag="default_service",
+            start_cleaner=False, 
             force_new_instance=False
         )
     return _default_logger_instance

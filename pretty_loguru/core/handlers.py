@@ -59,19 +59,19 @@ def create_destination_filters() -> Dict[str, LogFilterType]:
 
 
 def format_filename(
-    process_id: str,
+    component_name: str,
     log_name_format: LogNameFormatType = None,
     timestamp_format: Optional[str] = None,
-    service_name: Optional[str] = None,
+    service_tag: Optional[str] = None,
 ) -> str:
     """
     根據提供的格式生成日誌檔案名，並處理不合法的文件名字符
     
     Args:
-        process_id: 進程 ID 或服務名稱
+        component_name: 進程 ID 或服務名稱
         log_name_format: 日誌檔案名格式，可以是自定義的格式或 LOG_NAME_FORMATS 中的鍵
         timestamp_format: 時間戳格式，預設為 "%Y%m%d-%H%M%S"
-        service_name: 服務名稱，用於在日誌檔案名中使用 {service_name} 變數
+        service_tag: 服務名稱，用於在日誌檔案名中使用 {service_tag} 變數
         
     Returns:
         str: 格式化後的日誌檔案名，已移除不合法字符
@@ -94,7 +94,7 @@ def format_filename(
     
     # 準備替換變數
     format_vars = {
-        "process_id": process_id,
+        "component_name": component_name,
         "timestamp": timestamp,
         "date": now.strftime("%Y%m%d"),
         "time": now.strftime("%H%M%S"),
@@ -107,11 +107,11 @@ def format_filename(
     }
     
     # 如果提供了服務名稱，則添加到替換變數中
-    if service_name:
-        format_vars["service_name"] = service_name
-    # 如果沒有提供服務名稱但格式中包含 {service_name}，則使用 process_id 作為 service_name
-    elif "{service_name}" in log_name_format:
-        format_vars["service_name"] = process_id
+    if service_tag:
+        format_vars["service_tag"] = service_tag
+    # 如果沒有提供服務名稱但格式中包含 {service_tag}，則使用 component_name 作為 service_tag
+    elif "{service_tag}" in log_name_format:
+        format_vars["service_tag"] = component_name
     
     # 替換格式中的變數
     try:

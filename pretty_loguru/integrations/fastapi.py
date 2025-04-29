@@ -273,7 +273,7 @@ if _has_fastapi:
 
     def get_logger_dependency(
         name: Optional[str] = None, 
-        service_name: Optional[str] = None,
+        service_tag: Optional[str] = None,
         **kwargs: Any
     ) -> Callable[[], EnhancedLogger]:
         """
@@ -283,7 +283,7 @@ if _has_fastapi:
         
         Args:
             name: logger 實例的名稱，如果為 None 則使用路由路徑
-            service_name: 服務名稱
+            service_tag: 服務名稱
             **kwargs: 傳遞給 create_logger 的其他參數
             
         Returns:
@@ -305,7 +305,7 @@ if _has_fastapi:
         """
         
         def get_logger() -> EnhancedLogger:
-            return create_logger(name=name, service_name=service_name, **kwargs)
+            return create_logger(name=name, service_tag=service_tag, **kwargs)
         
         return get_logger
 
@@ -339,7 +339,7 @@ if _has_fastapi:
         if logger_instance is None:
             logger_instance = create_logger(
                 name="fastapi", 
-                service_name="fastapi_app",
+                service_tag="fastapi_app",
                 reuse_existing=True
             )
         

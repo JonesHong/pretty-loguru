@@ -44,13 +44,12 @@ class LogLevelEnum:
 # 工廠函數與管理
 def create_logger(
     name: Optional[str] = None,
-    file: Optional[str] = None, 
-    service_name: Optional[str] = None,
+    service_tag: Optional[str] = None,
     subdirectory: Optional[str] = None, 
     log_name_format: Optional[str] = None,
     log_name_preset: Optional[str] = None,
     timestamp_format: Optional[str] = None,
-    log_base_path: Optional[Union[str, Path]] = None,
+    log_path: Optional[Union[str, Path]] = None,
     log_file_settings: Optional[Dict[str, Any]] = None,
     custom_config: Optional[Dict[str, Any]] = None,
     reuse_existing: bool = False,

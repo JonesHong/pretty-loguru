@@ -11,7 +11,8 @@ from pathlib import Path
 from .types import EnhancedLogger
 
 from .core.base import (
-    log_path_global
+    log_path_global,
+    configure_logger,
 )
 # 導入核心配置和功能
 from .core.config import (
@@ -19,6 +20,7 @@ from .core.config import (
     LOG_ROTATION,
     LOG_PATH,
     LOG_NAME_FORMATS,
+    LOGGER_FORMAT,
     OUTPUT_DESTINATIONS,
     LogLevelEnum,
     LoggerConfig,
@@ -55,82 +57,6 @@ try:
 except ImportError:
     _has_fastapi = False
 
-# 提供向後兼容性的別名
-# 將全局 logger 變量直接初始化，但使用了 _default_logger_instance 緩存
-# 這樣的方法更簡單，避免使用描述符帶來的複雜性
-_logger_instance = None
-
-def _get_logger():
-    global _logger_instance
-    if _logger_instance is None:
-        _logger_instance = default_logger()
-    return _logger_instance
-
-# 直接在模組級別使用 _get_logger() 函數的結果
-logger = _get_logger()
-
-# 舊函數名的別名 (向後兼容)
-def logger_start(
-    file: Optional[str] = None, 
-    folder: Optional[str] = None,
-    **kwargs
-) -> str:
-    """
-    初始化 logger 並開始記錄日誌。(向後兼容函數)
-    
-    此函數是 create_logger 的簡化版本，提供與舊版本相同的介面。
-    新代碼應該直接使用 create_logger 函數。
-    
-    Args:
-        file: 日誌文件的名稱，預設為 None
-        folder: 日誌文件的資料夾，預設為 None
-        **kwargs: 其他傳遞給 create_logger 的參數
-        
-    Returns:
-        str: 日誌文件的完整路徑
-    """
-    if folder is not None and 'service_name' not in kwargs:
-        kwargs['service_name'] = folder
-    
-    logger_instance = create_logger(
-        file=file,
-        start_cleaner=True,
-        **kwargs
-    )
-    
-    # 取得進程 ID 或服務名稱
-    process_id = None
-    if file is not None:
-        import os
-        process_id = os.path.splitext(os.path.basename(file))[0]
-    elif 'service_name' in kwargs:
-        process_id = kwargs['service_name']
-    elif folder is not None:
-        process_id = folder
-    
-    return process_id or "default"
-
-# 提供 uvicorn_init_config 別名 (向後兼容)
-if has_uvicorn():
-    def uvicorn_init_config(**kwargs):
-        """
-        初始化 uvicorn 的配置。(向後兼容函數)
-        
-        Args:
-            **kwargs: 傳遞給 configure_uvicorn 的參數
-        """
-        return configure_uvicorn(**kwargs)
-else:
-    def uvicorn_init_config(**kwargs):
-        """
-        初始化 uvicorn 的配置。(向後兼容函數)
-        
-        當 uvicorn 未安裝時，此函數將引發 ImportError。
-        
-        Raises:
-            ImportError: 當 uvicorn 未安裝時
-        """
-        raise ImportError("未安裝 uvicorn 套件，此功能不可用。可使用 'pip install uvicorn' 安裝。")
 
 # 定義對外可見的功能
 __all__ = [
@@ -139,13 +65,15 @@ __all__ = [
     "LOG_LEVEL",
     "LOG_ROTATION",
     "LOG_PATH",
+    "LOGGER_FORMAT",
     "LOG_NAME_FORMATS",
     "OUTPUT_DESTINATIONS",
     "LogLevelEnum",
     "LoggerConfig",
     
-    # 全局 logger (向後兼容)
-    "logger", 
+     # 核心功能
+    "log_path_global",  
+    "configure_logger", 
     
     # 工廠函數與管理
     "create_logger",
@@ -161,9 +89,6 @@ __all__ = [
     "print_ascii_block",
     "is_ascii_only",
     
-    # 初始化函數 (向後兼容)
-    "logger_start",
-    "log_path_global",  # 全域變數，用於儲存日誌路徑
 ]
 
 # 如果 Uvicorn 可用，添加相關功能
@@ -171,7 +96,6 @@ if has_uvicorn():
     __all__.extend([
         "configure_uvicorn",
         "InterceptHandler",
-        "uvicorn_init_config",  # 向後兼容
     ])
 
 # 如果 FastAPI 可用，添加相關功能

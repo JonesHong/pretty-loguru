@@ -20,12 +20,12 @@ LOG_PATH: Path = Path.cwd() / "logs"  # 預設日誌儲存路徑
 
 # 預定義的日誌檔案名格式
 LOG_NAME_FORMATS: Dict[str, str] = {
-    "default": "[{process_id}]{timestamp}.log",  # 預設格式
-    "daily": "{date}_{process_id}.log",  # 每日一檔
-    "hourly": "{date}_{hour}_{process_id}.log",  # 每小時一檔
-    "minute": "{date}_{hour}{minute}_{process_id}.log",  # 每分鐘一檔
-    "simple": "{process_id}.log",  # 簡單格式，只包含進程 ID
-    "detailed": "[{process_id}]_{date}_{time}.log",  # 詳細格式，包含日期和時間
+    "default": "[{component_name}]{timestamp}.log",  # 預設格式
+    "daily": "{date}_{component_name}.log",  # 每日一檔
+    "hourly": "{date}_{hour}_{component_name}.log",  # 每小時一檔
+    "minute": "{date}_{hour}{minute}_{component_name}.log",  # 每分鐘一檔
+    "simple": "{component_name}.log",  # 簡單格式，只包含進程 ID
+    "detailed": "[{component_name}]_{date}_{time}.log",  # 詳細格式，包含日期和時間
 }
 
 # 輸出目標類型

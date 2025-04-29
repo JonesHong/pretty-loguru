@@ -36,14 +36,14 @@ def get_console() -> Console:
 def configure_logger(
     level: LogLevelType = LOG_LEVEL,
     log_path: Optional[LogPathType] = None,
-    process_id: str = "",
+    component_name: str = "",
     rotation: LogRotationType = "20 MB",
     subdirectory: Optional[str] = None,
     log_name_format: LogNameFormatType = None,
     timestamp_format: Optional[str] = None,
     log_file_settings: Optional[LogConfigType] = None,
     logger_instance: Any = None,
-    service_name: Optional[str] = None,
+    service_tag: Optional[str] = None,
     isolate_handlers: bool = True,
     # unique_id: Optional[str] = None,
     logger_format: str = LOGGER_FORMAT,
@@ -54,14 +54,14 @@ def configure_logger(
     Args:
         level: 日誌級別，預設為全域變數 LOG_LEVEL。
         log_path: 日誌儲存路徑，若為 None 則使用預設路徑。
-        process_id: 處理程序 ID，用於標記日誌檔案。
+        component_name: 處理程序 ID，用於標記日誌檔案。
         rotation: 日誌輪換大小，單位為 MB。
         subdirectory: 子目錄名稱，用於分類不同類型的日誌。
         log_name_format: 日誌檔案名稱格式。
         timestamp_format: 時間戳格式，用於自定義時間顯示方式。
         log_file_settings: 日誌檔案的其他設定。
         logger_instance: 要初始化的日誌實例，如果為None則使用全局的_logger
-        service_name: 服務名稱，用於在日誌檔案名中使用 {service_name} 變數
+        service_tag: 服務名稱，用於在日誌檔案名中使用 {service_tag} 變數
         isolate_handlers: 是否隔離不同 logger 實例的處理器，預設為 True
         # unique_id: 唯一ID，用於確保每個logger實例完全獨立
         logger_format: 日誌格式字符串，預設使用 LOGGER_FORMAT
@@ -72,6 +72,21 @@ def configure_logger(
     # 決定要使用的logger實例
     target_logger = _logger if logger_instance is None else logger_instance
     
+
+    # Upsert：若已有先前配置，合併未提供的參數
+    if logger_instance and hasattr(target_logger, "_config"):
+        prev = target_logger._config
+        level = level or prev.get("level", level)
+        log_path = log_path or prev.get("log_path", log_path)
+        component_name = component_name or prev.get("component_name", component_name)
+        rotation = rotation or prev.get("rotation", rotation)
+        subdirectory = subdirectory or prev.get("subdirectory", subdirectory)
+        log_name_format = log_name_format or prev.get("log_name_format", log_name_format)
+        timestamp_format = timestamp_format or prev.get("timestamp_format", timestamp_format)
+        log_file_settings = log_file_settings or prev.get("log_file_settings", log_file_settings)
+        service_tag = service_tag or prev.get("service_tag", service_tag)
+        logger_format = logger_format or prev.get("logger_format", logger_format)
+        
     # 1. 決定最終要用的資料夾
     if log_path is None:
         base = Path.cwd() / "logs"  # 預設日誌資料夾
@@ -98,26 +113,26 @@ def configure_logger(
                 print(f"Warning: Failed to remove handler {handler_id}: {str(e)}")
     
     # 3. 設定附加資訊
-    # 生成唯一的 logger_id，結合 process_id, service_name 和 unique_id
-    # logger_id = f"{process_id}_{service_name}_{unique_id}" if unique_id else f"{process_id}_{service_name}"
-    logger_id = f"{process_id}_{service_name}" 
+    # 生成唯一的 logger_id，結合 component_name, service_tag 和 unique_id
+    # logger_id = f"{component_name}_{service_tag}_{unique_id}" if unique_id else f"{component_name}_{service_tag}"
+    logger_id = f"{component_name}_{service_tag}" 
     
     extra_config = {
-        "folder": process_id,      # 額外資訊：處理程序 ID
+        "folder": component_name,      # 額外資訊：處理程序 ID
         "logger_id": logger_id,    # 唯一的 logger 識別碼
         "to_console_only": False,  # 是否僅輸出到控制台
         "to_log_file_only": False, # 是否僅輸出到日誌檔案
     }
     
     # 如果提供了 service_name，將其添加到額外資訊中
-    if service_name:
-        extra_config["service_name"] = service_name
+    if service_tag:
+        extra_config["service_tag"] = service_tag
     
     # 更新 logger 的額外資訊
     target_logger.configure(extra=extra_config)
 
     # 4. 生成日誌檔案名
-    log_filename = format_filename(process_id, log_name_format, timestamp_format, service_name)
+    log_filename = format_filename(component_name, log_name_format, timestamp_format, service_tag)
     
     # 如果提供了唯一ID，將其添加到檔案名中以確保唯一性
     # if unique_id:
@@ -127,7 +142,7 @@ def configure_logger(
     logfile = base / log_filename
     
     # 輸出調試信息
-    print(f"Logger '{service_name or process_id}' (ID: {logger_id}): 設置日誌文件路徑為 {logfile}")
+    print(f"Logger '{service_tag or component_name}' (ID: {logger_id}): 設置日誌文件路徑為 {logfile}")
     
     # 5. 創建目標過濾器
     filters = create_destination_filters()
@@ -182,6 +197,20 @@ def configure_logger(
         target_logger._handler_ids = {}
     target_logger._handler_ids["file"] = file_handler_id
     target_logger._handler_ids["console"] = console_handler_id
+    
+    # 存儲最新配置
+    target_logger._config = {
+        "level": level,
+        "log_path": log_path,
+        "component_name": component_name,
+        "rotation": rotation,
+        "subdirectory": subdirectory,
+        "log_name_format": log_name_format,
+        "timestamp_format": timestamp_format,
+        "log_file_settings": log_file_settings,
+        "service_tag": service_tag,
+        "logger_format": logger_format,
+    }
     
     # 返回完整的日誌文件路徑，方便外部使用
     return str(logfile)
