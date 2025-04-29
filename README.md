@@ -35,7 +35,7 @@ from pretty_loguru import create_logger, logger, print_block
 # Create a logger with a specific name and configuration
 app_logger = create_logger(
     name="app",
-    service_name="my_application",
+    service_tag="my_application",
     log_name_preset="daily",  # Use daily log files
     subdirectory="services/api"  # Save in logs/services/api/
 )
@@ -78,14 +78,14 @@ from pretty_loguru import create_logger, get_logger, list_loggers
 # Create loggers for different components
 db_logger = create_logger(
     name="database",
-    service_name="db_service",
+    service_tag="db_service",
     subdirectory="database",
     log_name_preset="hourly"
 )
 
 auth_logger = create_logger(
     name="auth",
-    service_name="auth_service",
+    service_tag="auth_service",
     subdirectory="auth",
     level="DEBUG"
 )
@@ -107,39 +107,39 @@ from pretty_loguru import create_logger
 # Daily logs: logs/api/20250429_api_service.log
 api_logger = create_logger(
     name="api",
-    service_name="api_service",
+    service_tag="api_service",
     log_name_preset="daily"
 )
 
 # Hourly logs: logs/worker/20250429_14_worker_service.log
 worker_logger = create_logger(
     name="worker",
-    service_name="worker_service",
+    service_tag="worker_service",
     log_name_preset="hourly"
 )
 
 # Minute-level logs: logs/critical/20250429_1430_critical_service.log
 critical_logger = create_logger(
     name="critical",
-    service_name="critical_service",
+    service_tag="critical_service",
     log_name_preset="minute"
 )
 
 # Custom format
 custom_logger = create_logger(
     name="custom",
-    service_name="custom_service",
-    log_name_format="{year}-{month}-{day}_{service_name}.log"
+    service_tag="custom_service",
+    log_name_format="{year}-{month}-{day}_{service_tag}.log"
 )
 ```
 
 Available presets:
-- `"default"`: "[{process_id}]{timestamp}.log"
-- `"daily"`: "{date}_{process_id}.log"
-- `"hourly"`: "{date}_{hour}_{process_id}.log"
-- `"minute"`: "{date}_{hour}{minute}_{process_id}.log"
-- `"simple"`: "{process_id}.log"
-- `"detailed"`: "[{process_id}]_{date}_{time}.log"
+- `"default"`: "[{component_name}]{timestamp}.log"
+- `"daily"`: "{date}_{component_name}.log"
+- `"hourly"`: "{date}_{hour}_{component_name}.log"
+- `"minute"`: "{date}_{hour}{minute}_{component_name}.log"
+- `"simple"`: "{component_name}.log"
+- `"detailed"`: "[{component_name}]_{date}_{time}.log"
 
 ### Output Targeting
 
@@ -236,7 +236,7 @@ from pretty_loguru import setup_fastapi_logging, create_logger
 # Create a logger for the API
 api_logger = create_logger(
     name="api",
-    service_name="api_service",
+    service_tag="api_service",
     subdirectory="api"
 )
 
@@ -282,10 +282,10 @@ loaded_config = LoggerConfig.from_file("logger_config.json")
 from pretty_loguru import create_logger
 logger = create_logger(
     name="configured",
-    service_name="config_service",
+    service_tag="config_service",
     level=config.level,
     rotation=config.rotation,
-    log_base_path=config.log_path
+    log_path=config.log_path
 )
 ```
 
@@ -298,7 +298,7 @@ from pretty_loguru import create_logger
 
 logger = create_logger(
     name="advanced",
-    service_name="advanced_app",
+    service_tag="advanced_app",
     subdirectory="advanced",
     log_name_preset="daily",
     timestamp_format="%Y-%m-%d_%H-%M-%S",
@@ -320,7 +320,7 @@ For those upgrading from older versions:
 from pretty_loguru import logger, logger_start
 
 # Old-style initialization (still supported)
-process_id = logger_start(
+component_name = logger_start(
     file=__file__,
     folder="my_app"
 )

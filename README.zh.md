@@ -33,8 +33,8 @@ def main_example():
         # 首先，導入日誌模組
         from pretty_loguru import logger, logger_start, is_ascii_only
         # 初始化日誌系統
-        process_id = logger_start(folder="logger_test")
-        logger.info(f"Logger system initialized, process ID: {process_id}")
+        component_name = logger_start(folder="logger_test")
+        logger.info(f"Logger system initialized, process ID: {component_name}")
         logger.info("Logging system feature test example")
         
         # 執行每個測試套件
@@ -332,7 +332,7 @@ from pretty_loguru import init_logger
 init_logger(
     level="DEBUG",
     log_path="logs",
-    process_id="my_app",
+    component_name="my_app",
     rotation="10MB"
 )
 ```

@@ -25,8 +25,8 @@ def main_example():
         # 先導入日誌模塊
         from pretty_loguru import logger,logger_start, is_ascii_only
         # 初始化日志系统
-        process_id = logger_start(folder="logger_test")
-        logger.info(f"日誌系統初始化完成，進程ID: {process_id}")
+        component_name = logger_start(folder="logger_test")
+        logger.info(f"日誌系統初始化完成，進程ID: {component_name}")
         logger.info("日誌系統功能測試示例")
         
         # 執行各項測試
