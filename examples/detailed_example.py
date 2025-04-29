@@ -62,7 +62,6 @@ except ImportError:
 logger = default_logger()  # 獲取默認 logger 實例
 
 
-
 def example_1_basic_usage():
     """基本使用方式範例 (已修正 KeyError，綁定後才套用 custom_fmt，並在後續 restore)"""
     print("\n--- 範例 1: 基本使用方式 ---\n")
@@ -73,11 +72,15 @@ def example_1_basic_usage():
         try:
             config = LoggerConfig.from_file(config_path)
         except:
-            config = LoggerConfig(level="DEBUG", rotation="10 MB", log_path=Path.cwd() / "logs")
+            config = LoggerConfig(
+                level="DEBUG", rotation="10 MB", log_path=Path.cwd() / "logs"
+            )
             config_path.parent.mkdir(parents=True, exist_ok=True)
             config.save_to_file(config_path)
     else:
-        config = LoggerConfig(level="DEBUG", rotation="10 MB", log_path=Path.cwd() / "logs")
+        config = LoggerConfig(
+            level="DEBUG", rotation="10 MB", log_path=Path.cwd() / "logs"
+        )
         config_path.parent.mkdir(parents=True, exist_ok=True)
         config.save_to_file(config_path)
 
@@ -92,28 +95,35 @@ def example_1_basic_usage():
         log_path=config.log_path,
     )
 
-    # 1.2 先做一些無需 user_id 的測試
-    app_logger.info("Logger 使用的配置: " + str(config.to_dict()))
-    app_logger.debug("這是一條調試訊息")
-    app_logger.info("這是一條資訊訊息")
+    # 1.2 無需 user_id 的日誌測試 (涵蓋各級別)
+    app_logger.debug("這是一條調試訊息，用於開發時查看詳細資訊")
+    app_logger.info("這是一條資訊訊息，記錄正常的程序運行情況")
+    app_logger.success("這是一條成功訊息，表示操作已成功完成")
+    app_logger.warning("這是一條警告訊息，提示可能的問題或異常情況")
+    app_logger.error("這是一條錯誤訊息，表示程序遇到錯誤但可以繼續運行")
+    app_logger.critical("這是一條嚴重錯誤訊息，通常表示程序無法繼續運行")
 
     # 1.3 綁定 user_id / session_id
     user_logger = app_logger.bind(user_id="12345", session_id="abc-xyz-123")
 
     # 1.4 僅對 user_logger 套用 custom_fmt
     custom_fmt = (
-        "{time:YYYY-MM-DD HH:mm:ss} | {level: <8}{process} | "
-        "{extra[folder]}:{function}:{line} - {message}"
-        " | user={extra[user_id]} session={extra[session_id]}"
+        "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
+        "<level>{level: <8}{process}</level> | "
+        "<cyan>{extra[folder]}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
+        "<level>{message}</level>"
+        " | <yellow>user={extra[user_id]}</yellow> "
+        "<magenta>session={extra[session_id]}</magenta>"
     )
+
     configure_logger(
         level=config.level,
         log_path=config.log_path,
-        component_name="app",
         rotation=config.rotation,
         subdirectory="example_1_basic",
         logger_instance=user_logger,
         service_tag="example_app",
+        component_name="user_logger",
         isolate_handlers=True,
         logger_format=custom_fmt,
     )
@@ -126,7 +136,6 @@ def example_1_basic_usage():
     configure_logger(
         level=config.level,
         log_path=config.log_path,
-        component_name="app",
         rotation=config.rotation,
         subdirectory="example_1_basic",
         logger_instance=app_logger,
@@ -135,15 +144,40 @@ def example_1_basic_usage():
         logger_format=LOGGER_FORMAT,  # 恢復預設
     )
 
-    # 1.7 測試 global logger，不會再用到 custom_fmt
+    # 1.7 測試全域 logger (原 default_logger)
     logger.info("這條訊息來自全域 default_logger")
 
     # 1.8 列出所有 logger，也不會報錯
     all_loggers = list_loggers()
     app_logger.info(f"已註冊的所有 logger: {all_loggers}")
 
-    return app_logger
+    # 1.9 額外測試：ANSI 顏色支持
+    app_logger.opt(colors=True).info("這是一條帶有<green>顏色</green>的<red>訊息</red>")
 
+    # 1.10 重複使用已創建的 logger
+    same_logger = get_logger("app")  # 返回相同的實例
+    if same_logger:
+        same_logger.info("這條訊息來自重複獲取的相同 logger 實例")
+    else:
+        app_logger.warning("無法重複獲取相同的 logger 實例")
+
+    # 1.11 使用默認 logger
+    default_logger().info("這條訊息來自默認的 logger 實例")
+
+    # 1.12 向後兼容的全域 logger
+    logger.info("這條訊息來自全域 logger (向後兼容)")
+
+    # 1.13 使用 LoggerConfig 進行配置管理示例
+    new_config = LoggerConfig(
+        level="DEBUG", rotation="10 MB", log_path=Path.cwd() / "logs" 
+    )
+    app_logger.info(f"Logger 配置: {new_config.to_dict()}")
+    # 將新配置保存到一個範例路徑
+    example_path = Path.cwd() / "logs" / "logger_config_example.json"
+    new_config.save_to_file(example_path)
+    app_logger.info(f"Logger 配置已保存到: {example_path}")
+
+    return app_logger
 
 
 def example_2_multiple_loggers():
