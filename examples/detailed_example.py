@@ -4,7 +4,7 @@ pretty_loguru 詳細使用範例
 這個範例展示了各種使用方式和進階功能，包括:
 1. 基本的 logger 實例創建與使用
 2. 多個 logger 的管理與使用
-3. 特殊格式輸出 (區塊、ASCII 藝術)
+3. 特殊格式輸出 (區塊、ASCII 藝術、FIGlet)
 4. 不同輸出目標 (控制台、文件)
 5. 與 FastAPI/Uvicorn 的整合
 6. 進階配置與自定義
@@ -23,6 +23,8 @@ from pretty_loguru import (
     # 工廠函數和預配置 logger
     create_logger, 
     default_logger,
+    get_logger,
+    list_loggers,
     
     # 向後兼容的全局 logger
     logger, 
@@ -32,13 +34,29 @@ from pretty_loguru import (
     print_block,
     print_ascii_header,
     print_ascii_block,
+    is_ascii_only,
     
-    # Uvicorn 整合
-    uvicorn_init_config,
+    # 配置相關
+    LOG_PATH,
+    LoggerConfig,
     
-    # 其他
-    log_path,
+    # 整合相關
+    configure_uvicorn,
 )
+
+# 檢查是否有 FIGlet 支援
+try:
+    from pretty_loguru import print_figlet_header, print_figlet_block, get_figlet_fonts
+    _has_figlet = True
+except ImportError:
+    _has_figlet = False
+
+# 檢查是否有 FastAPI 支援
+try:
+    from pretty_loguru import setup_fastapi_logging
+    _has_fastapi = True
+except ImportError:
+    _has_fastapi = False
 
 
 def example_1_basic_usage():
@@ -73,8 +91,15 @@ def example_1_basic_usage():
     )
     
     # 1.5 重複使用已創建的 logger
-    same_logger = create_logger(name="app")  # 返回相同的實例
-    same_logger.info("這條訊息來自重複獲取的相同 logger 實例")
+    same_logger = get_logger("app")  # 返回相同的實例
+    if same_logger:
+        same_logger.info("這條訊息來自重複獲取的相同 logger 實例")
+    else:
+        app_logger.warning("無法重複獲取相同的 logger 實例")
+    
+    # 獲取所有已註冊的 logger 名稱
+    all_loggers = list_loggers()
+    app_logger.info(f"已註冊的所有 logger: {all_loggers}")
     
     # 1.6 使用默認 logger
     default_logger.info("這條訊息來自默認的 logger 實例")
@@ -82,8 +107,20 @@ def example_1_basic_usage():
     # 1.7 向後兼容的全局 logger
     logger.info("這條訊息來自全局 logger (向後兼容)")
     
+    # 1.8 使用 LoggerConfig 進行配置管理
+    config = LoggerConfig(
+        level="DEBUG",
+        rotation="10 MB",
+        log_path=Path.cwd() / "logs" / "config_example"
+    )
+    app_logger.info(f"Logger 配置: {config.to_dict()}")
+    
+    # 將配置保存到文件
+    config_path = Path.cwd() / "logs" / "logger_config.json"
+    config.save_to_file(config_path)
+    app_logger.info(f"Logger 配置已保存到: {config_path}")
+    
     return app_logger
-
 
 
 def example_2_multiple_loggers():
@@ -147,6 +184,10 @@ def example_2_multiple_loggers():
     # 模擬處理幾個請求
     handle_request("user123", "/api/profile")
     handle_request("admin", "/api/users")
+    
+    # 2.5 查看所有已註冊的 logger
+    all_loggers = list_loggers()
+    auth_logger.info(f"已註冊的所有 logger: {all_loggers}")
     
     return auth_logger, db_logger, api_logger
 
@@ -224,7 +265,52 @@ def example_3_special_formats():
     
     format_logger.info(f"'{text1}' 是否只包含 ASCII 字符: {format_logger.is_ascii_only(text1)}")
     format_logger.info(f"'{text2}' 是否只包含 ASCII 字符: {format_logger.is_ascii_only(text2)}")
+    format_logger.info(f"使用全局函數: '{text1}' 是否只包含 ASCII 字符: {is_ascii_only(text1)}")
     
+    # 3.6 使用 FIGlet 藝術 (若可用)
+    try:
+        if _has_figlet:
+            format_logger.info("FIGlet 支援已啟用")
+            
+            # 通過 logger 實例使用 FIGlet
+            if hasattr(format_logger, "figlet_header"):
+                format_logger.figlet_header(
+                    text="FIGLET",
+                    font="slant",
+                    border_style="cyan",
+                    log_level="INFO"
+                )
+                
+                format_logger.figlet_block(
+                    title="FIGlet 區塊示例",
+                    message_list=[
+                        "這是一個使用 FIGlet 藝術的區塊示例",
+                        "FIGlet 提供比 ASCII 藝術更多的字體選項"
+                    ],
+                    figlet_header="DEMO",
+                    figlet_font="big",
+                    border_style="green",
+                    log_level="INFO"
+                )
+                
+                # 列出可用的 FIGlet 字體
+                if hasattr(format_logger, "get_figlet_fonts"):
+                    fonts = format_logger.get_figlet_fonts()
+                    format_logger.info(f"可用的 FIGlet 字體數量: {len(fonts)}")
+                    format_logger.info(f"部分 FIGlet 字體: {list(fonts)[:5]}")
+            
+            # 直接使用 FIGlet 輔助函數
+            print_figlet_header(
+                text="DIRECT",
+                font="standard",
+                border_style="blue",
+                log_level="INFO"
+            )
+        else:
+            format_logger.info("logger 實例不支援 figlet_header 方法")
+    except Exception as e:
+        format_logger.info(f"FIGlet 標題輸出跳過: {type(e).__name__}")
+        
     return format_logger
 
 
@@ -278,49 +364,90 @@ def example_4_output_targets():
     return target_logger
 
 
-def example_5_fastapi_integration():
-    """FastAPI/Uvicorn 整合範例"""
-    print("\n--- 範例 5: FastAPI/Uvicorn 整合 ---\n")
+def example_5_integrations():
+    """整合功能範例"""
+    print("\n--- 範例 5: 整合功能 ---\n")
     
-    # 5.1 創建 FastAPI 應用日誌記錄器
-    fastapi_logger = create_logger(
-        name="fastapi",
-        service_name="fastapi_app",
-        subdirectory="examples/fastapi"
+    # 5.1 創建用於整合示例的 logger
+    integration_logger = create_logger(
+        name="integrations",
+        service_name="integration_demo",
+        subdirectory="examples/integrations"
     )
+    # 5.2 Uvicorn 整合
+    integration_logger.info("配置 Uvicorn 使用 Loguru")
+    try:
+        configure_uvicorn(logger_instance=integration_logger)
+        integration_logger.success("Uvicorn 已配置使用 Loguru")
+    except ImportError as e:
+        integration_logger.warning(f"Uvicorn 整合失敗: {str(e)}")
     
-    # 5.2 配置 Uvicorn 使用 Loguru
-    # 在真實的 FastAPI 應用中，這應該放在應用啟動前
-    uvicorn_init_config()
+    # 5.3 FastAPI 整合 (如果可用)
+    try:
+        if _has_fastapi:
+            integration_logger.info("FastAPI 支援已啟用")
+            integration_logger.info("在真實的 FastAPI 應用中，可以使用 setup_fastapi_logging 函數")
+            
+            # 示例代碼片段
+            fastapi_example = """
+            from fastapi import FastAPI
+            from pretty_loguru import setup_fastapi_logging
+            
+            app = FastAPI()
+            setup_fastapi_logging(
+                app,
+                log_request_body=True,
+                log_response_body=True
+            )
+            
+            @app.get("/")
+            def read_root():
+                return {"message": "Hello World"}
+            """
+            
+            integration_logger.info("FastAPI 整合示例代碼:")
+            for line in fastapi_example.strip().split("\n"):
+                integration_logger.console_info(f"    {line}")
+        else:
+            integration_logger.warning("FastAPI 支援未啟用，請安裝 fastapi 套件以啟用此功能")
+    except ImportError:
+        integration_logger.info("FastAPI 支援未啟用，但不影響其他功能")
+    except Exception as e:
+        integration_logger.info(f"FastAPI 整合示例跳過: {type(e).__name__}")
     
-    # 5.3 模擬 FastAPI 應用日誌
-    fastapi_logger.info("FastAPI 應用已啟動")
-    fastapi_logger.debug("Uvicorn 工作進程 1 已啟動")
+    # 5.4 模擬請求處理日誌
+    integration_logger.info("模擬 Web 應用請求處理")
     
-    # 5.4 模擬請求處理
-    def handle_fastapi_request(request_id, path, method):
-        req_logger = fastapi_logger.bind(
-            request_id=request_id,
+    for i in range(3):
+        req_id = f"req-{i+1:03d}"
+        path = f"/api/items/{random.randint(1, 100)}"
+        method = random.choice(["GET", "POST", "PUT", "DELETE"])
+        
+        req_logger = integration_logger.bind(
+            request_id=req_id,
             path=path,
-            method=method
+            method=method,
+            client_ip="192.168.1.100"
         )
         
+        start_time = time.time()
         req_logger.info(f"收到 {method} 請求: {path}")
-        req_logger.debug("處理請求中...")
-        time.sleep(0.1)  # 模擬處理時間
-        req_logger.info(f"請求 {request_id} 處理完成，狀態碼: 200")
+        
+        # 模擬處理時間
+        time.sleep(random.random() * 0.2)
+        
+        # 模擬不同的響應狀態
+        status_code = random.choice([200, 200, 200, 201, 400, 404, 500])
+        process_time = time.time() - start_time
+        
+        if status_code >= 500:
+            req_logger.error(f"請求 {req_id} 處理出錯，狀態碼: {status_code}，耗時: {process_time:.3f}s")
+        elif status_code >= 400:
+            req_logger.warning(f"請求 {req_id} 處理完成，客戶端錯誤，狀態碼: {status_code}，耗時: {process_time:.3f}s")
+        else:
+            req_logger.success(f"請求 {req_id} 處理成功，狀態碼: {status_code}，耗時: {process_time:.3f}s")
     
-    # 模擬處理多個請求
-    handle_fastapi_request("req-001", "/api/users", "GET")
-    handle_fastapi_request("req-002", "/api/auth/login", "POST")
-    handle_fastapi_request("req-003", "/api/items/42", "GET")
-    
-    # 5.5 模擬優雅關閉
-    fastapi_logger.info("收到關閉訊號")
-    fastapi_logger.info("等待所有連接關閉...")
-    fastapi_logger.info("FastAPI 應用已關閉")
-    
-    return fastapi_logger
+    return integration_logger
 
 
 def example_6_advanced_features():
@@ -339,9 +466,7 @@ def example_6_advanced_features():
             "retention": "1 week",    # 保留時間
             "compression": "zip",     # 壓縮格式
         },
-        custom_config={
-            "level": "DEBUG",         # 自定義日誌級別
-        },
+        level="DEBUG",              # 直接設置日誌級別
     )
     
     # 確保立即寫入一些內容
@@ -349,9 +474,10 @@ def example_6_advanced_features():
     
     # 6.2 創建強制新實例
     new_instance = create_logger(
-        name="new_advanced_logger",      # 更明確的名稱
-        service_name="advanced_new",     # 不同服務名稱
+        name="advanced_logger",        # 相同名稱
+        service_name="advanced_new",   # 不同服務名稱
         subdirectory="examples/advanced_new",  # 使用不同子目錄
+        force_new_instance=True        # 強制創建新實例
     )
     
     advanced_logger.info("來自原始 advanced logger 的訊息")
@@ -414,21 +540,22 @@ def example_6_advanced_features():
     
     return advanced_logger, new_instance
 
+
 def main():
     """執行所有範例"""
     print("\n===== pretty_loguru 詳細使用範例 =====\n")
-    print(f"日誌保存路徑: {log_path}\n")
+    print(f"日誌保存路徑: {LOG_PATH}\n")
     
     # 執行各個範例
     example_1_basic_usage()
     example_2_multiple_loggers()
     example_3_special_formats()
     example_4_output_targets()
-    example_5_fastapi_integration()
+    example_5_integrations()
     example_6_advanced_features()
     
     print("\n\n===== 所有範例已執行完畢 =====")
-    print(f"請查看日誌檔案: {log_path}")
+    print(f"請查看日誌檔案: {LOG_PATH}")
 
 
 if __name__ == "__main__":

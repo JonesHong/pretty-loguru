@@ -10,8 +10,13 @@
 - **Rich Panels**: Display structured log blocks with borders and styles.
 - **ASCII Art Headers**: Generate eye-catching headers using the `art` library.
 - **ASCII Blocks**: Combine ASCII art and block logs for comprehensive sections.
+- **FIGlet Support**: Use FIGlet fonts for even more impressive text art (optional).
+- **Multiple Logger Management**: Create, retrieve, and manage multiple logger instances.
+- **Time-based Log Files**: Auto-organize logs by date, hour, or minute.
+- **Subdirectory Support**: Organize logs in nested directories by component.
 - **Easy Initialization**: One-call setup for both file and console logging.
-- **Uvicorn Integration**: Intercept and unify Uvicorn logs with Loguru formatting.
+- **Framework Integrations**: Ready-to-use integrations with Uvicorn and FastAPI.
+- **Configuration Management**: Load and save configurations from various sources.
 
 ## Installation
 
@@ -21,262 +26,150 @@ Install via pip:
 pip install pretty-loguru
 ```
 
+For optional features:
+
+```bash
+pip install pretty-loguru[art]  # For ASCII art support
+pip install pretty-loguru[figlet]  # For FIGlet support
+pip install pretty-loguru[fastapi]  # For FastAPI integration
+pip install pretty-loguru[all]  # For all optional dependencies
+```
+
 ## Quick Start
 
 ```python
-# Define the main function to run all tests
-import random
-import time
+from pretty_loguru import create_logger, logger, print_block
 
+# Create a logger with a specific name and configuration
+app_logger = create_logger(
+    name="app",
+    service_name="my_application",
+    log_name_preset="daily",  # Use daily log files
+    subdirectory="services/api"  # Save in logs/services/api/
+)
 
-def main_example():
-    try:
-        # First, import the logging module
-        from pretty_loguru import logger, logger_start, is_ascii_only
-        # Initialize the logging system
-        process_id = logger_start(folder="logger_test")
-        logger.info(f"Logger system initialized, process ID: {process_id}")
-        logger.info("Logging system feature test example")
-        
-        # Run each test suite
-        test_basic_logging()
-        time.sleep(1)
-        
-        test_block_logging()
-        time.sleep(1)
-        
-        test_ascii_logging()
-        time.sleep(1)
-        
-        test_mock_application()
-        
-        logger.success("All tests completed!")
-    except Exception as e:
-        print(f"Error initializing logger system: {e}")
-        import traceback
-        traceback.print_exc()
+# Basic logging
+app_logger.info("Application started")
+app_logger.success("Database connected")
+app_logger.warning("Cache nearly full")
+app_logger.error("API request failed")
 
+# Block logging with borders
+app_logger.block(
+    "System Status",
+    [
+        "CPU: 45%",
+        "Memory: 2.3GB / 8GB",
+        "Uptime: 3d 12h 5m",
+        "Status: Operational"
+    ],
+    border_style="green"
+)
 
-def test_basic_logging():
-    """Test basic logging functionality"""
-    from pretty_loguru import logger
-    
-    logger.info("=== Testing Basic Logging ===")
-    logger.debug("This is a debug message")
-    logger.info("This is an info message")
-    logger.success("This is a success message")
-    logger.warning("This is a warning message")
-    logger.error("This is an error message")
-    logger.critical("This is a critical message")
-    logger.info("Basic logging test completed")
-
-
-def test_block_logging():
-    """Test block logging functionality"""
-    from pretty_loguru import logger
-    
-    logger.info("=== Testing Block Logging ===")
-    
-    logger.block(
-        "System Status Summary", 
-        [
-            "CPU Usage: 45%",
-            "Memory Usage: 60%",
-            "Disk Space: 120GB available",
-            "Network Connection: OK",
-            "Service Status: All running"
-        ],
-        border_style="green",
-        log_level="INFO"
-    )
-    
-    logger.block(
-        "Warning Messages", 
-        [
-            "High memory usage detected",
-            "Current growth rate: 5% / min",
-            "Estimated to reach threshold in 30 minutes",
-            "Suggested action: check for memory leaks"
-        ],
-        border_style="yellow",
-        log_level="WARNING"
-    )
-    
-    logger.info("Block logging test completed")
-
-
-def test_ascii_logging():
-    """Test ASCII art logging functionality"""
-    from pretty_loguru import logger, is_ascii_only
-    
-    logger.info("=== Testing ASCII Art Logging ===")
-    
-    # Test ASCII-only check function
-    logger.info("Checking if text contains only ASCII characters:")
-    test_strings = [
-        "Hello World",
-        "Hello 世界",
-        "123-456-789",
-        "Special chars: ©®™",
-        "ASCII symbols: !@#$%^&*()"
-    ]
-    
-    for s in test_strings:
-        result = is_ascii_only(s)
-        logger.info(f"'{s}' only ASCII: {result}")
-    
-    # Display a simple ASCII art header
-    logger.ascii_header(
-        "SYSTEM START",
-        font="standard",
-        border_style="blue",
-        log_level="INFO"
-    )
-    
-    # Display headers in different fonts
-    fonts = ["standard", "slant", "doom", "small", "block"]
-    for font in fonts:
-        try:
-            logger.ascii_header(
-                f"Font: {font}",
-                font=font,
-                border_style="cyan",
-                log_level="INFO"
-            )
-        except Exception as e:
-            logger.error(f"Failed to generate ASCII art with font '{font}': {e}")
-    
-    # Test header containing a non-ASCII character
-    try:
-        logger.ascii_header(
-            "ASCII and café mix",  # contains non-ASCII é
-            font="standard",
-            border_style="magenta",
-            log_level="WARNING"
-        )
-    except ValueError as e:
-        logger.error(f"Expected error: {e}")
-    
-    # Test ASCII art block
-    logger.ascii_block(
-        "System Diagnostics Report", 
-        [
-            "Check Time: " + time.strftime("%Y-%m-%d %H:%M:%S"),
-            "System Load: OK",
-            "Security Status: Good",
-            "Recent Error Count: 0",
-            "Uptime: 24h 12m"
-        ],
-        ascii_header="SYSTEM OK",
-        ascii_font="small",
-        border_style="green",
-        log_level="SUCCESS"
-    )
-    
-    logger.info("ASCII art logging test completed")
-
-
-def test_mock_application():
-    """Simulate a real-world application scenario"""
-    from pretty_loguru import logger
-    
-    logger.info("=== Simulated Application Scenario ===")
-    
-    # Application startup
-    logger.ascii_header(
-        "APP STARTUP",
-        font="slant",
-        border_style="blue",
-        log_level="INFO"
-    )
-    
-    logger.info("Loading configuration...")
-    time.sleep(0.5)
-    logger.success("Configuration loaded successfully")
-    
-    logger.block(
-        "Application Configuration Summary", 
-        [
-            "Application Name: Logging System Test",
-            "Version: 1.0.0",
-            "Environment: Development",
-            "Log Level: DEBUG",
-            "Max Log File Size: 20MB"
-        ],
-        border_style="cyan",
-        log_level="INFO"
-    )
-    
-    logger.info("Connecting to the database...")
-    time.sleep(1)
-    
-    # Randomly simulate an error condition
-    if random.random() < 0.3:
-        logger.error("Database connection failed")
-        logger.ascii_block(
-            "Error Report", 
-            [
-                "Error Type: Database connection failed",
-                "Error Code: DB-5001",
-                "Reason: Unable to resolve hostname",
-                "Attempt Count: 3",
-                "Suggested Action: Check network connection and database service status"
-            ],
-            ascii_header="ERROR",
-            ascii_font="doom",
-            border_style="red",
-            log_level="ERROR"
-        )
-    else:
-        logger.success("Database connected successfully")
-        
-        logger.info("Initializing services...")
-        time.sleep(1.5)
-        logger.success("Services initialized successfully")
-        
-        logger.ascii_block(
-            "System Ready", 
-            [
-                "Start Time: " + time.strftime("%Y-%m-%d %H:%M:%S"),
-                "Registered Modules: User Management, Authorization Center, Data Processing, Report Generation",
-                "System Status: Running",
-                "Listening Port: 8080",
-                "API Version: v2"
-            ],
-            ascii_header="READY",
-            ascii_font="block",
-            border_style="green",
-            log_level="SUCCESS"
-        )
-        
-        # Simulate handling requests
-        for i in range(3):
-            logger.info(f"Received request #{i+1}")
-            time.sleep(0.8)
-            logger.success(f"Request #{i+1} processed successfully")
-    
-    # Application shutdown
-    logger.info("Shutting down services...")
-    time.sleep(1)
-    logger.success("Services shut down safely")
-    
-    logger.ascii_header(
-        "SHUTDOWN",
-        font="standard",
-        border_style="magenta",
-        log_level="INFO"
-    )
-    
-    logger.info("Mock application scenario test completed")
-
-
-if __name__ == "__main__":
-    main_example()
+# ASCII art header
+app_logger.ascii_header(
+    "STARTUP COMPLETE",
+    font="slant",
+    border_style="blue"
+)
 ```
 
 ## Features
 
+### Logger Factory
+
+Create multiple loggers with different configurations:
+
+```python
+from pretty_loguru import create_logger, get_logger, list_loggers
+
+# Create loggers for different components
+db_logger = create_logger(
+    name="database",
+    service_name="db_service",
+    subdirectory="database",
+    log_name_preset="hourly"
+)
+
+auth_logger = create_logger(
+    name="auth",
+    service_name="auth_service",
+    subdirectory="auth",
+    level="DEBUG"
+)
+
+# Get an existing logger by name
+auth_log = get_logger("auth")
+
+# List all registered loggers
+all_loggers = list_loggers()  # Returns ["database", "auth"]
+```
+
+### Time-based Log Files
+
+Choose from various log filename formats:
+
+```python
+from pretty_loguru import create_logger
+
+# Daily logs: logs/api/20250429_api_service.log
+api_logger = create_logger(
+    name="api",
+    service_name="api_service",
+    log_name_preset="daily"
+)
+
+# Hourly logs: logs/worker/20250429_14_worker_service.log
+worker_logger = create_logger(
+    name="worker",
+    service_name="worker_service",
+    log_name_preset="hourly"
+)
+
+# Minute-level logs: logs/critical/20250429_1430_critical_service.log
+critical_logger = create_logger(
+    name="critical",
+    service_name="critical_service",
+    log_name_preset="minute"
+)
+
+# Custom format
+custom_logger = create_logger(
+    name="custom",
+    service_name="custom_service",
+    log_name_format="{year}-{month}-{day}_{service_name}.log"
+)
+```
+
+Available presets:
+- `"default"`: "[{process_id}]{timestamp}.log"
+- `"daily"`: "{date}_{process_id}.log"
+- `"hourly"`: "{date}_{hour}_{process_id}.log"
+- `"minute"`: "{date}_{hour}{minute}_{process_id}.log"
+- `"simple"`: "{process_id}.log"
+- `"detailed"`: "[{process_id}]_{date}_{time}.log"
+
+### Output Targeting
+
+Control where logs appear:
+
+```python
+# Regular log (both console and file)
+logger.info("This appears everywhere")
+
+# Console-only logs
+logger.console_info("This only appears in the console")
+logger.console_warning("Console-only warning")
+logger.dev_info("Development info - console only")
+
+# File-only logs
+logger.file_info("This only appears in the log file")
+logger.file_error("File-only error message")
+```
+
 ### Rich Block Logging
+
+Create structured log blocks with borders:
 
 ```python
 logger.block(
@@ -315,26 +208,133 @@ logger.ascii_block(
 )
 ```
 
-### Uvicorn Integration
+### FIGlet Support (Optional)
+
+If you install pyfiglet, you can use FIGlet fonts:
 
 ```python
-from pretty_loguru import uvicorn_init_config
-uvicorn_init_config()
+logger.figlet_header(
+    "WELCOME",
+    font="big",
+    border_style="magenta"
+)
+
+# List available fonts
+fonts = logger.get_figlet_fonts()
+logger.info(f"Available fonts: {list(fonts)[:5]}")
 ```
 
-## Configuration
+### Framework Integrations
 
-Customize file path, rotation, and level:
+#### Uvicorn Integration
 
 ```python
-from pretty_loguru import init_logger
+from pretty_loguru import configure_uvicorn
 
-init_logger(
-    level="DEBUG",
-    log_path="logs",
-    process_id="my_app",
-    rotation="10MB"
+# Configure Uvicorn to use pretty-loguru
+configure_uvicorn()
+```
+
+#### FastAPI Integration
+
+```python
+from fastapi import FastAPI
+from pretty_loguru import setup_fastapi_logging, create_logger
+
+# Create a logger for the API
+api_logger = create_logger(
+    name="api",
+    service_name="api_service",
+    subdirectory="api"
 )
+
+# Create FastAPI app
+app = FastAPI()
+
+# Configure FastAPI logging
+setup_fastapi_logging(
+    app,
+    logger_instance=api_logger,
+    log_request_body=True,
+    log_response_body=True
+)
+
+@app.get("/")
+def read_root():
+    api_logger.info("Processing root request")
+    return {"Hello": "World"}
+```
+
+### Configuration Management
+
+Manage your logger configurations:
+
+```python
+from pretty_loguru import LoggerConfig
+from pathlib import Path
+
+# Create a configuration
+config = LoggerConfig(
+    level="DEBUG",
+    rotation="10 MB",
+    log_path=Path.cwd() / "logs" / "custom"
+)
+
+# Save to file
+config.save_to_file("logger_config.json")
+
+# Load from file
+loaded_config = LoggerConfig.from_file("logger_config.json")
+
+# Use in logger creation
+from pretty_loguru import create_logger
+logger = create_logger(
+    name="configured",
+    service_name="config_service",
+    level=config.level,
+    rotation=config.rotation,
+    log_base_path=config.log_path
+)
+```
+
+## Advanced Configuration
+
+Customize logger with advanced options:
+
+```python
+from pretty_loguru import create_logger
+
+logger = create_logger(
+    name="advanced",
+    service_name="advanced_app",
+    subdirectory="advanced",
+    log_name_preset="daily",
+    timestamp_format="%Y-%m-%d_%H-%M-%S",
+    log_file_settings={
+        "rotation": "500 KB",
+        "retention": "1 week",
+        "compression": "zip",
+    },
+    level="DEBUG",
+    start_cleaner=True  # Auto-clean old logs
+)
+```
+
+## Backward Compatibility
+
+For those upgrading from older versions:
+
+```python
+from pretty_loguru import logger, logger_start
+
+# Old-style initialization (still supported)
+process_id = logger_start(
+    file=__file__,
+    folder="my_app"
+)
+
+# Using the global logger
+logger.info("Using global logger instance")
 ```
 
 ## Testing
@@ -352,4 +352,3 @@ Contributions welcome! Please open issues and pull requests on [GitHub](https://
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
