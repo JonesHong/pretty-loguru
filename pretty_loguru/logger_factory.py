@@ -5,9 +5,9 @@
 import inspect
 import os
 import warnings
-import sys
-import uuid
-import threading
+# import sys
+# import uuid
+# import threading
 from pathlib import Path
 from typing import cast, Optional, Dict, Any, Union, Literal, List
 
@@ -83,13 +83,15 @@ def create_logger(
     
     # 創建唯一的 logger 標識 - 結合 name 和 service_name，並添加唯一ID
     # 這確保每次調用都創建新的 logger 實例，即使在同一函數內
-    unique_id = str(uuid.uuid4())[:8]
-    logger_id = f"{name}_{service_name or process_id}_{unique_id}"
+    # unique_id = str(uuid.uuid4())[:8]
+    # logger_id = f"{name}_{service_name or process_id}_{unique_id}"
+    logger_id = f"{name}_{service_name}"
     
     # 如果想重用實例且不是強制創建新的
     if reuse_existing and not force_new_instance:
         # 查找已存在的實例 (基於名稱和服務名稱但不包括唯一ID部分)
-        base_id = f"{name}_{service_name or process_id}"
+        # base_id = f"{name}_{service_name or process_id}"
+        base_id = f"{name}_{service_name}"
         for existing_id in _logger_instances:
             if existing_id.startswith(base_id):
                 return _logger_instances[existing_id]
@@ -106,10 +108,10 @@ def create_logger(
             )
             log_name_format = LOG_NAME_FORMATS["default"]
 
-    # 創建新的 logger 實例 - 使用 bind() 方法
     
-    # 先透過 patch 創建獨立的 logger
     
+    # 參考 loguru.__init__.py 內部初始化 Logger寫法
+    # 再透過 patch 創建獨立的 logger
     new_logger  = _Logger(
         core=_Core(),
         exception=None,
@@ -127,6 +129,7 @@ def create_logger(
         folder=process_id,
         service_name=service_name or process_id
     ))
+    # 創建新的 logger 實例 - 使用 bind() 方法
     # new_logger = _base_logger.patch(lambda record: record.update(
     #     logger_name=name,
     #     logger_id=logger_id,
@@ -147,14 +150,9 @@ def create_logger(
         "log_file_settings": log_file_settings,
         "service_name": service_name,
         "isolate_handlers": True,  # 始終隔離處理器
-        "unique_id": unique_id    # 傳遞唯一 ID 到初始化函數
+        # "unique_id": unique_id    # 傳遞唯一 ID 到初始化函數
     }
     
-    # 明確為此 logger 添加新的 handler
-    log_file_path = init_logger(
-        logger_instance=new_logger, 
-        **logger_config
-    )
     
     # 合併自定義配置
     if custom_config:
