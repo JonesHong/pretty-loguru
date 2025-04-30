@@ -50,9 +50,9 @@ class LoggerCleaner:
                 # 如果無法轉換為整數，則使用預設值
                 self.retention_days = 30
                 if logger_instance:
-                    logger_instance.warning(f"無法將 '{log_retention}' 轉換為整數，使用預設值 30 天")
+                    logger_instance.warning(f"Unable to convert '{log_retention}' to an integer, using the default value of 30 days")
                 else:
-                    print(f"Warning: 無法將 '{log_retention}' 轉換為整數，使用預設值 30 天")
+                    print(f"Warning: Unable to convert '{log_retention}' to an integer, using the default value of 30 days")
         else:
             self.retention_days = log_retention
         

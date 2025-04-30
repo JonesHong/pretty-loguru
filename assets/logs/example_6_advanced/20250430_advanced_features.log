@@ -1,0 +1,39 @@
+2025-04-30 14:11:31 | DEBUG   39492 | advanced_features:create_logger:212 - Logger 實例 'advanced_logger' (ID: advanced_logger_advanced_features) 已創建，日誌文件: C:\work\pretty-loguru\logs\example_6_advanced\20250430_advanced_features.log
+2025-04-30 14:11:31 | INFO    39492 | advanced_features:example_6_advanced_features:532 - Advanced features test started
+2025-04-30 14:11:31 | INFO    39492 | advanced_features:example_6_advanced_features:542 - Message from original advanced logger
+2025-04-30 14:11:31 | INFO    39492 | advanced_features:thread_function:549 - Thread T0 started
+2025-04-30 14:11:31 | INFO    39492 | advanced_features:thread_function:549 - Thread T1 started
+2025-04-30 14:11:31 | INFO    39492 | advanced_features:thread_function:549 - Thread T2 started
+2025-04-30 14:11:31 | INFO    39492 | advanced_features:thread_function:549 - Thread T3 started
+2025-04-30 14:11:31 | INFO    39492 | advanced_features:thread_function:549 - Thread T4 started
+2025-04-30 14:11:31 | INFO    39492 | advanced_features:thread_function:551 - Thread T1 processing data
+2025-04-30 14:11:32 | INFO    39492 | advanced_features:thread_function:551 - Thread T3 processing data
+2025-04-30 14:11:32 | INFO    39492 | advanced_features:thread_function:553 - Thread T1 completed
+2025-04-30 14:11:32 | INFO    39492 | advanced_features:thread_function:553 - Thread T3 completed
+2025-04-30 14:11:32 | INFO    39492 | advanced_features:thread_function:551 - Thread T4 processing data
+2025-04-30 14:11:32 | INFO    39492 | advanced_features:thread_function:553 - Thread T4 completed
+2025-04-30 14:11:32 | INFO    39492 | advanced_features:thread_function:551 - Thread T2 processing data
+2025-04-30 14:11:32 | INFO    39492 | advanced_features:thread_function:551 - Thread T0 processing data
+2025-04-30 14:11:33 | INFO    39492 | advanced_features:thread_function:553 - Thread T0 completed
+2025-04-30 14:11:33 | INFO    39492 | advanced_features:thread_function:553 - Thread T2 completed
+2025-04-30 14:11:33 | INFO    39492 | advanced_features:example_6_advanced_features:569 - Processing item 0: Success
+2025-04-30 14:11:33 | WARNING 39492 | advanced_features:example_6_advanced_features:571 - Processing item 1: Skipped
+2025-04-30 14:11:33 | INFO    39492 | advanced_features:example_6_advanced_features:569 - Processing item 2: Success
+2025-04-30 14:11:33 | WARNING 39492 | advanced_features:example_6_advanced_features:571 - Processing item 3: Skipped
+2025-04-30 14:11:33 | INFO    39492 | advanced_features:example_6_advanced_features:569 - Processing item 4: Success
+2025-04-30 14:11:33 | INFO    39492 | advanced_features:example_6_advanced_features:577 - Attempting an operation that may fail
+2025-04-30 14:11:33 | ERROR   39492 | advanced_features:example_6_advanced_features:582 - Operation failed: division by zero
+Traceback (most recent call last):
+
+  File "C:\work\pretty-loguru\examples\detailed_example_en.py", line 619, in <module>
+    main()
+    └ <function main at 0x000001422CA5DBC0>
+
+  File "C:\work\pretty-loguru\examples\detailed_example_en.py", line 612, in main
+    example_6_advanced_features()
+    └ <function example_6_advanced_features at 0x000001422CA5DB20>
+
+> File "C:\work\pretty-loguru\examples\detailed_example_en.py", line 579, in example_6_advanced_features
+    result = 100 / 0
+
+ZeroDivisionError: division by zero

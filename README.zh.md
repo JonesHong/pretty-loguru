@@ -13,6 +13,33 @@
 - **輕鬆初始化**：一次呼叫即可同時設置文件和控制台日誌。
 - **Uvicorn 整合**：攔截並統一 Uvicorn 日誌為 Loguru 格式。
 
+### 效果展示
+
+以下是使用 **pretty-loguru** 的一些效果展示：
+
+#### 基本日誌輸出
+![Rich Panel Example](assets/images/example_1_en.png)
+
+#### 多個 Logger 管理
+![ASCII Header Example](assets/images/example_2_en.png)
+
+#### 特殊格式輸出
+![ASCII Block Example](assets/images/example_3_en.png)
+
+#### 不同輸出目標
+![Application Startup Example](assets/images/example_4_en.png)
+
+#### 整合功能
+![Application Shutdown Example](assets/images/example_5_en.png)
+
+#### 進階功能與自定義
+![Error Report Example 1](assets/images/example_6.1_en.png)
+![Error Report Example 2](assets/images/example_6.2_en.png)
+
+### 範例程式碼
+
+完整範例程式碼請參考 [examples/detailed_example_en.py](examples/detailed_example_en.py)。
+
 ## 安裝
 
 通過 pip 安裝：
@@ -335,14 +362,6 @@ init_logger(
     component_name="my_app",
     rotation="10MB"
 )
-```
-
-## 測試
-
-運行測試套件：
-
-```bash
-pytest tests/
 ```
 
 ## 貢獻

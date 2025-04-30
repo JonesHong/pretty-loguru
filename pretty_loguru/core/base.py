@@ -142,7 +142,7 @@ def configure_logger(
     logfile = base / log_filename
     
     # 輸出調試信息
-    print(f"Logger '{service_tag or component_name}' (ID: {logger_id}): 設置日誌文件路徑為 {logfile}")
+    print(f"Logger '{service_tag or component_name}' (ID: {logger_id}): Log file path set to {logfile}")
     
     # 5. 創建目標過濾器
     filters = create_destination_filters()

@@ -1,0 +1,12 @@
+2025-04-30 14:11:31 | INFO    39492 | integration_demo:example_5_integrations:430 - Configuring Uvicorn to use Loguru
+2025-04-30 14:11:31 | SUCCESS 39492 | integration_demo:example_5_integrations:433 - Uvicorn configured to use Loguru
+2025-04-30 14:11:31 | INFO    39492 | integration_demo:example_5_integrations:440 - FastAPI support enabled
+2025-04-30 14:11:31 | INFO    39492 | integration_demo:example_5_integrations:441 - In a real FastAPI application, you can use the setup_fastapi_logging function
+2025-04-30 14:11:31 | INFO    39492 | integration_demo:example_5_integrations:462 - FastAPI integration example code:
+2025-04-30 14:11:31 | INFO    39492 | integration_demo:example_5_integrations:475 - Simulating web application request processing
+2025-04-30 14:11:31 | INFO    39492 | integration_demo:example_5_integrations:487 - Received PUT request: /api/items/70
+2025-04-30 14:11:31 | SUCCESS 39492 | integration_demo:example_5_integrations:505 - Request req-001 processed successfully, status code: 201, time taken: 0.134s
+2025-04-30 14:11:31 | INFO    39492 | integration_demo:example_5_integrations:487 - Received POST request: /api/items/37
+2025-04-30 14:11:31 | WARNING 39492 | integration_demo:example_5_integrations:501 - Request req-002 completed with client error, status code: 404, time taken: 0.175s
+2025-04-30 14:11:31 | INFO    39492 | integration_demo:example_5_integrations:487 - Received GET request: /api/items/53
+2025-04-30 14:11:31 | SUCCESS 39492 | integration_demo:example_5_integrations:505 - Request req-003 processed successfully, status code: 200, time taken: 0.105s

@@ -1,0 +1,12 @@
+2025-04-30 14:11:31 | DEBUG   39492 | example_app:create_logger:212 - Logger 實例 'app' (ID: app_example_app) 已創建，日誌文件: C:\work\pretty-loguru\logs\example_1_basic\20250430_example_app.log
+2025-04-30 14:11:31 | DEBUG   39492 | example_app:example_1_basic_usage:103 - This is a debug message for detailed information during development
+2025-04-30 14:11:31 | INFO    39492 | example_app:example_1_basic_usage:104 - This is an info message to record normal program operation
+2025-04-30 14:11:31 | SUCCESS 39492 | example_app:example_1_basic_usage:105 - This is a success message indicating successful operation
+2025-04-30 14:11:31 | WARNING 39492 | example_app:example_1_basic_usage:106 - This is a warning message indicating potential issues or anomalies
+2025-04-30 14:11:31 | ERROR   39492 | example_app:example_1_basic_usage:107 - This is an error message indicating an error that can still continue
+2025-04-30 14:11:31 | CRITICAL39492 | example_app:example_1_basic_usage:108 - This is a critical error message indicating the program cannot continue
+2025-04-30 14:11:31 | INFO    39492 | example_app:example_1_basic_usage:156 - All registered loggers: ['default', 'app']
+2025-04-30 14:11:31 | INFO    39492 | example_app:example_1_basic_usage:159 - This is a message with colors and styles
+2025-04-30 14:11:31 | INFO    39492 | example_app:example_1_basic_usage:164 - This message is from the same logger instance retrieved again
+2025-04-30 14:11:31 | INFO    39492 | example_app:example_1_basic_usage:178 - Logger configuration: {'level': 'DEBUG', 'rotation': '10 MB', 'log_path': 'C:\\work\\pretty-loguru\\logs', 'format': '<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}{process}</level> | <cyan>{extra[folder]}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>'}
+2025-04-30 14:11:31 | INFO    39492 | example_app:example_1_basic_usage:182 - Logger configuration saved to: C:\work\pretty-loguru\logs\logger_config_example.json
