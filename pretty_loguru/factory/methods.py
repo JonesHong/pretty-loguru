@@ -5,15 +5,21 @@ Logger 方法擴展模組
 包括自定義輸出方法和格式化方法。
 """
 
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 
 from rich.console import Console
 
 from ..types import EnhancedLogger
 from ..core.base import _console_only, _file_only
+from ..core.target_formatter import add_target_methods
+
+# 直接導入格式化方法模組
 from ..formats.block import create_block_method
 from ..formats.ascii_art import create_ascii_methods
-from ..formats.figlet import create_figlet_methods, _has_pyfiglet
+
+# 這裡的導入方式需要修改
+# 我們直接在 add_format_methods 函數中處理 FIGlet 相關功能
+# 避免導入錯誤
 
 
 def add_output_methods(logger_instance: Any, console: Optional[Console] = None) -> None:
@@ -68,9 +74,25 @@ def add_format_methods(logger_instance: Any, console: Optional[Console] = None) 
     # 添加 ASCII 藝術方法
     create_ascii_methods(logger_instance, console)
     
-    # 如果 pyfiglet 可用，添加 FIGlet 方法
-    if _has_pyfiglet:
-        create_figlet_methods(logger_instance, console)
+    # 嘗試添加 FIGlet 方法
+    try:
+        # 直接在函數中導入 FIGlet 相關功能
+        from ..formats.figlet import create_figlet_methods
+        
+        # 嘗試調用 create_figlet_methods 函數
+        create_result = create_figlet_methods(logger_instance, console)
+        
+        # 如果添加成功，記錄日誌（如果可能）
+        if create_result and hasattr(logger_instance, "debug"):
+            logger_instance.debug("成功添加 FIGlet 相關方法")
+    except ImportError:
+        # 如果導入失敗，記錄日誌（如果可能）
+        if hasattr(logger_instance, "debug"):
+            logger_instance.debug("未安裝 pyfiglet 庫，跳過添加 FIGlet 方法")
+    except Exception as e:
+        # 如果發生其他錯誤，記錄日誌（如果可能）
+        if hasattr(logger_instance, "warning"):
+            logger_instance.warning(f"添加 FIGlet 方法時發生錯誤：{str(e)}")
 
 
 def add_custom_methods(logger_instance: Any, console: Optional[Console] = None) -> None:
@@ -88,6 +110,20 @@ def add_custom_methods(logger_instance: Any, console: Optional[Console] = None) 
     
     # 添加格式化相關方法
     add_format_methods(logger_instance, console)
+    
+    # 檢查 figlet_block 方法是否被正確添加
+    if not hasattr(logger_instance, "figlet_block"):
+        try:
+            # 再次嘗試直接添加 FIGlet 方法
+            from ..formats.figlet import create_figlet_methods
+            create_figlet_methods(logger_instance, console)
+        except ImportError:
+            # 如果無法導入 pyfiglet，則不添加相關方法
+            pass
+        except Exception as e:
+            # 記錄其他錯誤（如果可能）
+            if hasattr(logger_instance, "warning"):
+                logger_instance.warning(f"再次嘗試添加 FIGlet 方法時發生錯誤：{str(e)}")
 
 
 def register_extension_method(

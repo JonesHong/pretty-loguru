@@ -12,37 +12,36 @@ from rich.console import Console
 F = TypeVar('F', bound=Callable)
 
 
+import inspect
+
 def create_target_method(
     original_method: Callable,
     to_console_only: bool = False,
     to_log_file_only: bool = False,
     name_prefix: str = "",
 ) -> Callable:
-    """
-    創建目標導向的格式化方法
-
-    Args:
-        original_method: 原始格式化方法
-        to_console_only: 是否僅輸出到控制台
-        to_log_file_only: 是否僅輸出到文件
-        name_prefix: 方法名稱前綴，用於調試
-
-    Returns:
-        Callable: 修改後的格式化方法
-    """
-    # 如果 to_console_only 和 to_log_file_only 都為 True，這是一個邏輯矛盾
     if to_console_only and to_log_file_only:
         raise ValueError("to_console_only 和 to_log_file_only 不能同時為 True")
 
     def wrapper(*args: Any, **kwargs: Any) -> Any:
+        # 動態計算堆棧深度
+        stack = inspect.stack()
+        depth = 4  # 默認深度（適用於直接調用）
+        for frame in stack:
+            if frame.function == "<module>":
+                depth -= 1  # 如果檢測到模組級調用，增加深度
+                break
+            if frame.function == "wrapper":
+                depth += 1  # 如果檢測到模組級調用，增加深度
+                break
+        
         # 添加目標導向參數
         kwargs['to_console_only'] = to_console_only
         kwargs['to_log_file_only'] = to_log_file_only
+        kwargs['_target_depth'] = depth  # 使用動態計算的深度
         
-        # 調用原始方法
         return original_method(*args, **kwargs)
 
-    # 設置包裝函數的名稱和文檔字符串
     method_type = "console" if to_console_only else "file" if to_log_file_only else "both"
     wrapper.__name__ = f"{name_prefix}_{method_type}" if name_prefix else f"{method_type}_method"
     
@@ -51,7 +50,6 @@ def create_target_method(
         wrapper.__doc__ = f"{original_method.__doc__}\n\n此版本{target_info}。"
     
     return wrapper
-
 
 def add_target_methods(
     logger_instance: Any,
@@ -114,6 +112,8 @@ def ensure_target_parameters(method: Callable) -> Callable:
             kwargs['to_console_only'] = False
         if 'to_log_file_only' not in kwargs:
             kwargs['to_log_file_only'] = False
+        if '_target_depth' not in kwargs:
+            kwargs['_target_depth'] = 4  # 默認深度
         
         return method(*args, **kwargs)
     

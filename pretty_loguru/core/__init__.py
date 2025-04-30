@@ -31,7 +31,13 @@ from .handlers import (
 
 # 導入清理功能
 from .cleaner import LoggerCleaner
-from .target_formatter import create_target_method, add_target_methods, ensure_target_parameters
+
+# 導入目標導向格式化工具
+from .target_formatter import (
+    create_target_method,
+    add_target_methods,
+    ensure_target_parameters,
+)
 
 # 定義對外可見的功能
 __all__ = [
@@ -54,9 +60,9 @@ __all__ = [
     
     # 日誌清理
     "LoggerCleaner",
-    "log_path_global"  # 全域變數，用於儲存日誌路徑
+    "log_path_global",  # 全域變數，用於儲存日誌路徑
     
-    # 目標導向格式化方法
+    # 目標導向格式化工具
     "create_target_method",
     "add_target_methods",
     "ensure_target_parameters",

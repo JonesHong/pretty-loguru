@@ -11,7 +11,7 @@ from rich.panel import Panel
 from rich.console import Console
 
 from ..types import EnhancedLogger
-from ..core import add_target_methods, ensure_target_parameters
+from ..core.target_formatter import add_target_methods, ensure_target_parameters
 
 
 def format_block_message(
@@ -52,6 +52,7 @@ def print_block(
     console: Optional[Console] = None,
     to_console_only: bool = False,
     to_log_file_only: bool = False,
+    _target_depth: int = None,
 ) -> None:
     """
     打印區塊樣式的日誌，並寫入到日誌文件
@@ -65,6 +66,7 @@ def print_block(
         console: 要使用的 rich console 實例，如果為 None 則創建新的
         to_console_only: 是否僅輸出到控制台，預設為 False
         to_log_file_only: 是否僅輸出到日誌文件，預設為 False
+        _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置
     """
     # 如果沒有提供 console，則創建一個新的
     if console is None:
@@ -82,7 +84,8 @@ def print_block(
     # 只有當非僅文件模式時，才輸出到控制台
     if not to_log_file_only and logger_instance is not None:
         # 將日誌寫入到終端，僅顯示在終端中
-        logger_instance.opt(ansi=True, depth=2).bind(to_console_only=True).log(
+        # 使用動態設置的 depth 來捕獲實際調用者的位置
+        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_console_only=True).log(
             log_level, f"CustomBlock: {title}"
         )
         
@@ -95,7 +98,8 @@ def print_block(
         formatted_message = f"{title}\n{'=' * 50}\n{message}\n{'=' * 50}"
 
         # 將格式化後的訊息寫入日誌文件，僅寫入文件中
-        logger_instance.opt(ansi=True, depth=2).bind(to_log_file_only=True).log(
+        # 使用動態設置的 depth 來捕獲實際調用者的位置
+        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_log_file_only=True).log(
             log_level, f"\n{formatted_message}"
         )
 
@@ -119,6 +123,7 @@ def create_block_method(logger_instance: Any, console: Optional[Console] = None)
         log_level: str = "INFO",
         to_console_only: bool = False,
         to_log_file_only: bool = False,
+        _target_depth: int = None,
     ) -> None:
         """
         logger 實例的區塊日誌方法
@@ -130,35 +135,19 @@ def create_block_method(logger_instance: Any, console: Optional[Console] = None)
             log_level: 日誌級別，預設為 "INFO"
             to_console_only: 是否僅輸出到控制台，預設為 False
             to_log_file_only: 是否僅輸出到日誌文件，預設為 False
+            _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置
         """
-        # 構造區塊內容，將多行訊息合併為單一字串
-        message = "\n".join(message_list)
-        panel = Panel(
-            message,
-            title=title,  # 設定區塊標題
-            title_align="left",  # 標題靠左對齊
-            border_style=border_style,  # 設定邊框樣式
-        )
+        # 使用 kwargs 傳遞參數，避免參數重複
+        kwargs = {
+            "border_style": border_style,
+            "log_level": log_level,
+            "logger_instance": logger_instance,
+            "console": console,
+            "_target_depth": _target_depth,  # 傳遞深度
+        }
         
-        # 只有當非僅文件模式時，才輸出到控制台
-        if not to_log_file_only:
-            # 將日誌寫入到終端，僅顯示在終端中 - 使用 depth=1 捕獲正確的調用位置
-            logger_instance.opt(ansi=True, depth=1).bind(to_console_only=True).log(
-                log_level, f"CustomBlock: {title}"
-            )
-            
-            # 打印區塊到終端
-            console.print(panel)
-
-        # 只有當非僅控制台模式時，才輸出到文件
-        if not to_console_only:
-            # 格式化訊息，方便寫入日誌文件
-            formatted_message = f"{title}\n{'=' * 50}\n{message}\n{'=' * 50}"
-
-            # 將格式化後的訊息寫入日誌文件，僅寫入文件中 - 使用 depth=1 捕獲正確的調用位置
-            logger_instance.opt(ansi=True, depth=1).bind(to_log_file_only=True).log(
-                log_level, f"\n{formatted_message}"
-            )
+        # 使用當前方法的 to_console_only 和 to_log_file_only
+        print_block(title, message_list, **kwargs, to_console_only=to_console_only, to_log_file_only=to_log_file_only)
     
     # 將方法添加到 logger 實例
     logger_instance.block = block_method
