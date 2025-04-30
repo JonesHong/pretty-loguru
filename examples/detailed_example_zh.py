@@ -18,9 +18,8 @@ import threading
 
 # 確保本地路徑優先
 import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-
-sys.path.insert(0, r"C:\work\pretty-loguru")
 # 導入 pretty_loguru 模塊
 from pretty_loguru import (
     # 工廠函數和預配置 logger
