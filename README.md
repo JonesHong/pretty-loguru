@@ -23,37 +23,37 @@
 Here are some examples of using **pretty-loguru**:
 
 #### Basic Log Output
-![Basic Example Terminal](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_1_en_terminal.png)
-![Basic Example File 1](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_1_en_file_1.png)
-![Basic Example File 2](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_1_en_file_2.png)
+![Basic Example Terminal](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_1_en_terminal.png)
+![Basic Example File 1](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_1_en_file_1.png)
+![Basic Example File 2](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_1_en_file_2.png)
 
 #### Multiple Logger Management
-![Multiple Logger Example Terminal](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_2_en_terminal.png)
-![Multiple Logger Example File 1](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_2_en_file_1.png)
-![Multiple Logger Example File 2](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_2_en_file_2.png)
-![Multiple Logger Example File 3](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_2_en_file_3.png)
+![Multiple Logger Example Terminal](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_2_en_terminal.png)
+![Multiple Logger Example File 1](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_2_en_file_1.png)
+![Multiple Logger Example File 2](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_2_en_file_2.png)
+![Multiple Logger Example File 3](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_2_en_file_3.png)
 
 #### Special Format Output
-![Special Format Example Terminal](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_3_en_terminal.png)
-![Special Format Example File](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_3_en_file_1.png)
+![Special Format Example Terminal](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_3_en_terminal.png)
+![Special Format Example File](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_3_en_file_1.png)
 
 #### Different Output Targets
-![Different Output Example Terminal](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_4_en_terminal.png)
-![Different Output Example File](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_4_en_file_1.png)
+![Different Output Example Terminal](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_4_en_terminal.png)
+![Different Output Example File](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_4_en_file_1.png)
 
 #### Integrated Features
-![Integrated Example Terminal](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_5_en_terminal.png)
-![Integrated Example File](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_5_en_file_1.png)
+![Integrated Example Terminal](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_5_en_terminal.png)
+![Integrated Example File](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_5_en_file_1.png)
 
 #### Advanced Features and Customization
-![Advanced Features and Customization Example Terminal 1](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_6_en_terminal_1.png)
-![Advanced Features and Customization Example Terminal 2](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_6_en_terminal_2.png)
-![Advanced Features and Customization Example File 1](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_6_en_file_1.png)
-![Advanced Features and Customization Example File 2](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_6_en_file_2.png)
+![Advanced Features and Customization Example Terminal 1](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_6_en_terminal_1.png)
+![Advanced Features and Customization Example Terminal 2](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_6_en_terminal_2.png)
+![Advanced Features and Customization Example File 1](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_6_en_file_1.png)
+![Advanced Features and Customization Example File 2](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_6_en_file_2.png)
 
 ### Example Code
 
-For complete example code, refer to [examples/detailed_example_en.py](https://github.com/JonesHong/pretty-loguru/blob/master/examples/detailed_example_en.py).
+For complete example code, refer to [examples/detailed_example_en.py](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/examples/detailed_example_en.py).
 
 
 ## Installation
