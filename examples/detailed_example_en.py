@@ -173,7 +173,7 @@ def example_1_basic_usage():
 
     # 1.13 Example of configuration management using LoggerConfig
     new_config = LoggerConfig(
-        level="DEBUG", rotation="10 MB", log_path=Path.cwd() / "logs" 
+        level="INFO", rotation="5 KB", log_path=Path.cwd() / "logs" 
     )
     app_logger.info(f"Logger configuration: {new_config.to_dict()}")
     # Save the new configuration to an example path
