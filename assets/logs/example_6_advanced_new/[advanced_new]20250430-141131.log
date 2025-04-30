@@ -1,0 +1,85 @@
+2025-04-30 14:11:31 | INFO    39492 | advanced_new:example_6_advanced_features:543 - Message from new advanced logger instance
+2025-04-30 14:11:33 | INFO    39492 | advanced_new:example_6_advanced_features:587 - 
+RED Color Example
+==================================================
+ ____   _____  ____  
+|  _ \ | ____||  _ \ 
+| |_) ||  _|  | | | |
+|  _ < | |___ | |_| |
+|_| \_\|_____||____/ 
+                     
+
+This is a block example using red color
+Different colors can be used to distinguish different types of messages
+The current color used is: red
+==================================================
+2025-04-30 14:11:33 | INFO    39492 | advanced_new:example_6_advanced_features:587 - 
+GREEN Color Example
+==================================================
+  ____  ____   _____  _____  _   _ 
+ / ___||  _ \ | ____|| ____|| \ | |
+| |  _ | |_) ||  _|  |  _|  |  \| |
+| |_| ||  _ < | |___ | |___ | |\  |
+ \____||_| \_\|_____||_____||_| \_|
+                                   
+
+This is a block example using green color
+Different colors can be used to distinguish different types of messages
+The current color used is: green
+==================================================
+2025-04-30 14:11:33 | INFO    39492 | advanced_new:example_6_advanced_features:587 - 
+BLUE Color Example
+==================================================
+ ____   _      _   _  _____ 
+| __ ) | |    | | | || ____|
+|  _ \ | |    | | | ||  _|  
+| |_) || |___ | |_| || |___ 
+|____/ |_____| \___/ |_____|
+                            
+
+This is a block example using blue color
+Different colors can be used to distinguish different types of messages
+The current color used is: blue
+==================================================
+2025-04-30 14:11:33 | INFO    39492 | advanced_new:example_6_advanced_features:587 - 
+YELLOW Color Example
+==================================================
+__   __ _____  _      _       ___  __        __
+\ \ / /| ____|| |    | |     / _ \ \ \      / /
+ \ V / |  _|  | |    | |    | | | | \ \ /\ / / 
+  | |  | |___ | |___ | |___ | |_| |  \ V  V /  
+  |_|  |_____||_____||_____| \___/    \_/\_/   
+                                               
+
+This is a block example using yellow color
+Different colors can be used to distinguish different types of messages
+The current color used is: yellow
+==================================================
+2025-04-30 14:11:33 | INFO    39492 | advanced_new:example_6_advanced_features:587 - 
+MAGENTA Color Example
+==================================================
+ __  __     _      ____  _____  _   _  _____     _    
+|  \/  |   / \    / ___|| ____|| \ | ||_   _|   / \   
+| |\/| |  / _ \  | |  _ |  _|  |  \| |  | |    / _ \  
+| |  | | / ___ \ | |_| || |___ | |\  |  | |   / ___ \ 
+|_|  |_|/_/   \_\ \____||_____||_| \_|  |_|  /_/   \_\
+                                                      
+
+This is a block example using magenta color
+Different colors can be used to distinguish different types of messages
+The current color used is: magenta
+==================================================
+2025-04-30 14:11:33 | INFO    39492 | advanced_new:example_6_advanced_features:587 - 
+CYAN Color Example
+==================================================
+  ____ __   __    _     _   _ 
+ / ___|\ \ / /   / \   | \ | |
+| |     \ V /   / _ \  |  \| |
+| |___   | |   / ___ \ | |\  |
+ \____|  |_|  /_/   \_\|_| \_|
+                              
+
+This is a block example using cyan color
+Different colors can be used to distinguish different types of messages
+The current color used is: cyan
+==================================================

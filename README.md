@@ -18,6 +18,35 @@
 - **Framework Integrations**: Ready-to-use integrations with Uvicorn and FastAPI.
 - **Configuration Management**: Load and save configurations from various sources.
 
+
+### Showcase
+
+Here are some examples of using **pretty-loguru**:
+
+#### Basic Log Output
+![Rich Panel Example](assets/images/example_1_en.png)
+
+#### Multiple Logger Management
+![ASCII Header Example](assets/images/example_2_en.png)
+
+#### Special Format Output
+![ASCII Block Example](assets/images/example_3_en.png)
+
+#### Different Output Targets
+![Application Startup Example](assets/images/example_4_en.png)
+
+#### Integrated Features
+![Application Shutdown Example](assets/images/example_5_en.png)
+
+#### Advanced Features and Customization
+![Error Report Example 1](assets/images/example_6.1_en.png)
+![Error Report Example 2](assets/images/example_6.2_en.png)
+
+### Example Code
+
+For complete example code, refer to [examples/detailed_example_en.py](examples/detailed_example_en.py).
+
+
 ## Installation
 
 Install via pip:
@@ -329,13 +358,6 @@ component_name = logger_start(
 logger.info("Using global logger instance")
 ```
 
-## Testing
-
-Run the test suite:
-
-```bash
-pytest tests/
-```
 
 ## Contributing
 
