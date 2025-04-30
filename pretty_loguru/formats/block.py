@@ -11,6 +11,7 @@ from rich.panel import Panel
 from rich.console import Console
 
 from ..types import EnhancedLogger
+from ..core import add_target_methods, ensure_target_parameters
 
 
 def format_block_message(
@@ -41,6 +42,7 @@ def format_block_message(
     return f"{title}\n{separator_line}\n{message}\n{separator_line}"
 
 
+@ensure_target_parameters
 def print_block(
     title: str,
     message_list: List[str],
@@ -48,6 +50,8 @@ def print_block(
     log_level: str = "INFO",
     logger_instance: Any = None,
     console: Optional[Console] = None,
+    to_console_only: bool = False,
+    to_log_file_only: bool = False,
 ) -> None:
     """
     打印區塊樣式的日誌，並寫入到日誌文件
@@ -59,16 +63,12 @@ def print_block(
         log_level: 日誌級別，預設為 "INFO"
         logger_instance: 要使用的 logger 實例，如果為 None 則不記錄日誌
         console: 要使用的 rich console 實例，如果為 None 則創建新的
+        to_console_only: 是否僅輸出到控制台，預設為 False
+        to_log_file_only: 是否僅輸出到日誌文件，預設為 False
     """
     # 如果沒有提供 console，則創建一個新的
     if console is None:
         console = Console()
-    
-    # 將日誌寫入到終端，僅顯示在終端中
-    if logger_instance is not None:
-        logger_instance.opt(ansi=True, depth=2).bind(to_console_only=True).log(
-            log_level, f"CustomBlock: {title}"
-        )
     
     # 構造區塊內容，將多行訊息合併為單一字串
     message = "\n".join(message_list)
@@ -79,14 +79,22 @@ def print_block(
         border_style=border_style,  # 設定邊框樣式
     )
     
-    # 打印區塊到終端
-    console.print(panel)
+    # 只有當非僅文件模式時，才輸出到控制台
+    if not to_log_file_only and logger_instance is not None:
+        # 將日誌寫入到終端，僅顯示在終端中
+        logger_instance.opt(ansi=True, depth=2).bind(to_console_only=True).log(
+            log_level, f"CustomBlock: {title}"
+        )
+        
+        # 打印區塊到終端
+        console.print(panel)
 
-    # 格式化訊息，方便寫入日誌文件
-    formatted_message = f"{title}\n{'=' * 50}\n{message}\n{'=' * 50}"
+    # 只有當非僅控制台模式時，才輸出到文件
+    if not to_console_only and logger_instance is not None:
+        # 格式化訊息，方便寫入日誌文件
+        formatted_message = f"{title}\n{'=' * 50}\n{message}\n{'=' * 50}"
 
-    # 將格式化後的訊息寫入日誌文件，僅寫入文件中
-    if logger_instance is not None:
+        # 將格式化後的訊息寫入日誌文件，僅寫入文件中
         logger_instance.opt(ansi=True, depth=2).bind(to_log_file_only=True).log(
             log_level, f"\n{formatted_message}"
         )
@@ -103,21 +111,26 @@ def create_block_method(logger_instance: Any, console: Optional[Console] = None)
     if console is None:
         console = Console()
     
+    @ensure_target_parameters
     def block_method(
         title: str,
         message_list: List[str],
         border_style: str = "cyan",
         log_level: str = "INFO",
+        to_console_only: bool = False,
+        to_log_file_only: bool = False,
     ) -> None:
         """
         logger 實例的區塊日誌方法
-        """
-        # 直接實現，而不是調用 print_block 函數，以便正確捕獲調用位置
-        # 將日誌寫入到終端，僅顯示在終端中 - 使用 depth=1 捕獲正確的調用位置
-        logger_instance.opt(ansi=True, depth=1).bind(to_console_only=True).log(
-            log_level, f"CustomBlock: {title}"
-        )
         
+        Args:
+            title: 區塊的標題
+            message_list: 區塊內的內容列表
+            border_style: 邊框樣式，預設為 "cyan"
+            log_level: 日誌級別，預設為 "INFO"
+            to_console_only: 是否僅輸出到控制台，預設為 False
+            to_log_file_only: 是否僅輸出到日誌文件，預設為 False
+        """
         # 構造區塊內容，將多行訊息合併為單一字串
         message = "\n".join(message_list)
         panel = Panel(
@@ -127,16 +140,28 @@ def create_block_method(logger_instance: Any, console: Optional[Console] = None)
             border_style=border_style,  # 設定邊框樣式
         )
         
-        # 打印區塊到終端
-        console.print(panel)
+        # 只有當非僅文件模式時，才輸出到控制台
+        if not to_log_file_only:
+            # 將日誌寫入到終端，僅顯示在終端中 - 使用 depth=1 捕獲正確的調用位置
+            logger_instance.opt(ansi=True, depth=1).bind(to_console_only=True).log(
+                log_level, f"CustomBlock: {title}"
+            )
+            
+            # 打印區塊到終端
+            console.print(panel)
 
-        # 格式化訊息，方便寫入日誌文件
-        formatted_message = f"{title}\n{'=' * 50}\n{message}\n{'=' * 50}"
+        # 只有當非僅控制台模式時，才輸出到文件
+        if not to_console_only:
+            # 格式化訊息，方便寫入日誌文件
+            formatted_message = f"{title}\n{'=' * 50}\n{message}\n{'=' * 50}"
 
-        # 將格式化後的訊息寫入日誌文件，僅寫入文件中 - 使用 depth=1 捕獲正確的調用位置
-        logger_instance.opt(ansi=True, depth=1).bind(to_log_file_only=True).log(
-            log_level, f"\n{formatted_message}"
-        )
+            # 將格式化後的訊息寫入日誌文件，僅寫入文件中 - 使用 depth=1 捕獲正確的調用位置
+            logger_instance.opt(ansi=True, depth=1).bind(to_log_file_only=True).log(
+                log_level, f"\n{formatted_message}"
+            )
     
     # 將方法添加到 logger 實例
     logger_instance.block = block_method
+    
+    # 添加目標特定方法
+    add_target_methods(logger_instance, "block", block_method)

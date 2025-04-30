@@ -22,19 +22,21 @@ except ImportError:
     FigletFont = None
 
 from ..types import EnhancedLogger
+from ..core import add_target_methods, ensure_target_parameters
 from .block import print_block
 from .ascii_art import is_ascii_only
 
 
+@ensure_target_parameters
 def print_figlet_header(
     text: str,
     font: str = "standard",
     log_level: str = "INFO",
     border_style: str = "cyan",
-    to_console_only: bool = False,
-    to_log_file_only: bool = False,
     logger_instance: Any = None,
     console: Optional[Console] = None,
+    to_console_only: bool = False,
+    to_log_file_only: bool = False,
 ) -> None:
     """
     打印 FIGlet 藝術標題
@@ -44,10 +46,10 @@ def print_figlet_header(
         font: FIGlet 藝術字體
         log_level: 日誌級別
         border_style: 邊框樣式
-        to_console_only: 是否僅輸出到控制台
-        to_log_file_only: 是否僅輸出到日誌文件
         logger_instance: 要使用的 logger 實例，如果為 None 則不記錄日誌
         console: 要使用的 rich console 實例，如果為 None 則創建新的
+        to_console_only: 是否僅輸出到控制台，預設為 False
+        to_log_file_only: 是否僅輸出到日誌文件，預設為 False
         
     Raises:
         ValueError: 如果文本包含非 ASCII 字符
@@ -96,17 +98,18 @@ def print_figlet_header(
         border_style=border_style,
     )
     
-    # 控制台輸出
+    # 控制台輸出 - 僅當非僅文件模式時
     if not to_log_file_only:
         console.print(panel)
     
-    # 日誌文件輸出
+    # 日誌文件輸出 - 僅當非僅控制台模式時
     if logger_instance and not to_console_only:
-        logger_instance.opt(ansi=True, depth=1).bind(to_log_file_only=True).log(
+        logger_instance.opt(ansi=True, depth=2).bind(to_log_file_only=True).log(
             log_level, f"\n{figlet_art}\n{'=' * 50}"
         )
 
 
+@ensure_target_parameters
 def print_figlet_block(
     title: str,
     message_list: List[str],
@@ -116,6 +119,8 @@ def print_figlet_block(
     log_level: str = "INFO",
     logger_instance: Any = None,
     console: Optional[Console] = None,
+    to_console_only: bool = False,
+    to_log_file_only: bool = False,
 ) -> None:
     """
     打印帶有 FIGlet 藝術標題的區塊樣式日誌
@@ -129,6 +134,8 @@ def print_figlet_block(
         log_level: 日誌級別
         logger_instance: 要使用的 logger 實例，如果為 None 則不記錄日誌
         console: 要使用的 rich console 實例，如果為 None 則創建新的
+        to_console_only: 是否僅輸出到控制台，預設為 False
+        to_log_file_only: 是否僅輸出到日誌文件，預設為 False
         
     Raises:
         ValueError: 如果 FIGlet 標題包含非 ASCII 字符
@@ -177,8 +184,34 @@ def print_figlet_block(
     # 將 FIGlet 藝術添加到消息列表的開頭
     full_message_list = [figlet_art] + message_list
     
-    # 使用 print_block 函數打印區塊，確保傳遞正確的 logger 實例
-    print_block(title, full_message_list, border_style, log_level, logger_instance, console)
+    # 構造區塊內容
+    message = "\n".join(full_message_list)
+    panel = Panel(
+        message,
+        title=title,
+        title_align="left",
+        border_style=border_style,
+    )
+    
+    # 只有當非僅文件模式時，才輸出到控制台
+    if not to_log_file_only and logger_instance is not None:
+        # 將日誌寫入到終端，僅顯示在終端中
+        logger_instance.opt(ansi=True, depth=2).bind(to_console_only=True).log(
+            log_level, f"CustomBlock: {title}"
+        )
+        
+        # 打印區塊到終端
+        console.print(panel)
+
+    # 只有當非僅控制台模式時，才輸出到文件
+    if not to_console_only and logger_instance is not None:
+        # 格式化訊息，方便寫入日誌文件
+        formatted_message = f"{title}\n{'=' * 50}\n{message}\n{'=' * 50}"
+
+        # 將格式化後的訊息寫入日誌文件，僅寫入文件中
+        logger_instance.opt(ansi=True, depth=2).bind(to_log_file_only=True).log(
+            log_level, f"\n{formatted_message}"
+        )
 
 
 def get_figlet_fonts() -> Set[str]:
@@ -218,6 +251,7 @@ def create_figlet_methods(logger_instance: Any, console: Optional[Console] = Non
         console = Console()
     
     # 添加 figlet_header 方法
+    @ensure_target_parameters
     def figlet_header_method(
         text: str,
         font: str = "standard",
@@ -228,14 +262,23 @@ def create_figlet_methods(logger_instance: Any, console: Optional[Console] = Non
     ) -> None:
         """
         logger 實例的 FIGlet 藝術標題方法
+        
+        Args:
+            text: 要轉換為 FIGlet 藝術的文本
+            font: FIGlet 藝術字體
+            log_level: 日誌級別
+            border_style: 邊框樣式
+            to_console_only: 是否僅輸出到控制台，預設為 False
+            to_log_file_only: 是否僅輸出到日誌文件，預設為 False
         """
         print_figlet_header(
             text, font, log_level, border_style, 
-            to_console_only, to_log_file_only, 
-            logger_instance, console
+            logger_instance, console,
+            to_console_only, to_log_file_only
         )
     
     # 添加 figlet_block 方法
+    @ensure_target_parameters
     def figlet_block_method(
         title: str,
         message_list: List[str],
@@ -243,13 +286,26 @@ def create_figlet_methods(logger_instance: Any, console: Optional[Console] = Non
         figlet_font: str = "standard",
         border_style: str = "cyan",
         log_level: str = "INFO",
+        to_console_only: bool = False,
+        to_log_file_only: bool = False,
     ) -> None:
         """
         logger 實例的 FIGlet 藝術區塊方法
+        
+        Args:
+            title: 區塊的標題
+            message_list: 日誌的內容列表
+            figlet_header: FIGlet 藝術標題文本 (如果不提供，則使用 title)
+            figlet_font: FIGlet 藝術字體
+            border_style: 區塊邊框顏色
+            log_level: 日誌級別
+            to_console_only: 是否僅輸出到控制台，預設為 False
+            to_log_file_only: 是否僅輸出到日誌文件，預設為 False
         """
         print_figlet_block(
             title, message_list, figlet_header, figlet_font,
-            border_style, log_level, logger_instance, console
+            border_style, log_level, logger_instance, console,
+            to_console_only, to_log_file_only
         )
     
     # 添加 get_figlet_fonts 方法
@@ -263,5 +319,9 @@ def create_figlet_methods(logger_instance: Any, console: Optional[Console] = Non
     logger_instance.figlet_header = figlet_header_method
     logger_instance.figlet_block = figlet_block_method
     logger_instance.get_figlet_fonts = get_fonts_method
+    
+    # 添加目標特定方法
+    add_target_methods(logger_instance, "figlet_header", figlet_header_method)
+    add_target_methods(logger_instance, "figlet_block", figlet_block_method)
     
     return True

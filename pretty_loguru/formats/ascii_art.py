@@ -21,6 +21,7 @@ except ImportError:
         return f"[Art library not installed: {text}]"
 
 from ..types import EnhancedLogger
+from ..core import add_target_methods, ensure_target_parameters
 from .block import print_block, format_block_message
 
 
@@ -43,15 +44,16 @@ def is_ascii_only(text: str) -> bool:
     return bool(ASCII_PATTERN.match(text))
 
 
+@ensure_target_parameters
 def print_ascii_header(
     text: str,
     font: str = "standard",
     log_level: str = "INFO",
     border_style: str = "cyan",
-    to_console_only: bool = False,
-    to_log_file_only: bool = False,
     logger_instance: Any = None,
     console: Optional[Console] = None,
+    to_console_only: bool = False,
+    to_log_file_only: bool = False,
 ) -> None:
     """
     打印 ASCII 藝術標題
@@ -61,10 +63,10 @@ def print_ascii_header(
         font: ASCII 藝術字體
         log_level: 日誌級別
         border_style: 邊框樣式
-        to_console_only: 是否僅輸出到控制台
-        to_log_file_only: 是否僅輸出到日誌文件
         logger_instance: 要使用的 logger 實例，如果為 None 則不記錄日誌
         console: 要使用的 rich console 實例，如果為 None 則創建新的
+        to_console_only: 是否僅輸出到控制台，預設為 False
+        to_log_file_only: 是否僅輸出到日誌文件，預設為 False
         
     Raises:
         ValueError: 如果文本包含非 ASCII 字符
@@ -113,17 +115,18 @@ def print_ascii_header(
         border_style=border_style,
     )
     
-    # 控制台輸出
+    # 控制台輸出 - 僅當非僅文件模式時
     if not to_log_file_only:
         console.print(panel)
     
-    # 日誌文件輸出
+    # 日誌文件輸出 - 僅當非僅控制台模式時
     if logger_instance and not to_console_only:
         logger_instance.opt(ansi=True, depth=2).bind(to_log_file_only=True).log(
             log_level, f"\n{ascii_art}\n{'=' * 50}"
         )
 
 
+@ensure_target_parameters
 def print_ascii_block(
     title: str,
     message_list: List[str],
@@ -133,6 +136,8 @@ def print_ascii_block(
     log_level: str = "INFO",
     logger_instance: Any = None,
     console: Optional[Console] = None,
+    to_console_only: bool = False,
+    to_log_file_only: bool = False,
 ) -> None:
     """
     打印帶有 ASCII 藝術標題的區塊樣式日誌
@@ -146,6 +151,8 @@ def print_ascii_block(
         log_level: 日誌級別
         logger_instance: 要使用的 logger 實例，如果為 None 則不記錄日誌
         console: 要使用的 rich console 實例，如果為 None 則創建新的
+        to_console_only: 是否僅輸出到控制台，預設為 False
+        to_log_file_only: 是否僅輸出到日誌文件，預設為 False
         
     Raises:
         ValueError: 如果 ASCII 標題包含非 ASCII 字符
@@ -194,30 +201,27 @@ def print_ascii_block(
     # 將 ASCII 藝術添加到消息列表的開頭
     full_message_list = [ascii_art] + message_list
     
-    # 使用 print_block 函數打印區塊，確保傳遞正確的 logger 實例
-    # print_block(title, full_message_list, border_style, log_level, logger_instance, console)
-      # 如果提供了 logger 實例，我們應該通過調整 depth 來確保捕獲正確的調用位置
-    if logger_instance is not None:
-        # print_block 會添加額外的堆棧深度，所以直接在這裡實現，而不是調用 print_block
+    # 構造區塊內容，將多行訊息合併為單一字串
+    message = "\n".join(full_message_list)
+    panel = Panel(
+        message,
+        title=title,  # 設定區塊標題
+        title_align="left",  # 標題靠左對齊
+        border_style=border_style,  # 設定邊框樣式
+    )
+    
+    # 只有當非僅文件模式時，才輸出到控制台
+    if not to_log_file_only and logger_instance is not None:
         # 將日誌寫入到終端，僅顯示在終端中
         logger_instance.opt(ansi=True, depth=2).bind(to_console_only=True).log(
             log_level, f"CustomBlock: {title}"
         )
         
-        # 構造區塊內容，將多行訊息合併為單一字串
-        message = "\n".join(full_message_list)
-        
-        # 創建 Rich Panel
-        panel = Panel(
-            message,
-            title=title,  # 設定區塊標題
-            title_align="left",  # 標題靠左對齊
-            border_style=border_style,  # 設定邊框樣式
-        )
-        
         # 打印區塊到終端
         console.print(panel)
 
+    # 只有當非僅控制台模式時，才輸出到文件
+    if not to_console_only and logger_instance is not None:
         # 格式化訊息，方便寫入日誌文件
         formatted_message = f"{title}\n{'=' * 50}\n{message}\n{'=' * 50}"
 
@@ -225,9 +229,6 @@ def print_ascii_block(
         logger_instance.opt(ansi=True, depth=2).bind(to_log_file_only=True).log(
             log_level, f"\n{formatted_message}"
         )
-    else:
-        # 如果沒有提供 logger 實例，則使用 print_block 函數
-        print_block(title, full_message_list, border_style, log_level, logger_instance, console)
 
 
 def create_ascii_methods(logger_instance: Any, console: Optional[Console] = None) -> None:
@@ -245,6 +246,7 @@ def create_ascii_methods(logger_instance: Any, console: Optional[Console] = None
     logger_instance.is_ascii_only = is_ascii_only
    
     # 添加 ascii_header 方法
+    @ensure_target_parameters
     def ascii_header_method(
         text: str,
         font: str = "standard",
@@ -255,8 +257,15 @@ def create_ascii_methods(logger_instance: Any, console: Optional[Console] = None
     ) -> None:
         """
         logger 實例的 ASCII 藝術標題方法
+        
+        Args:
+            text: 要轉換為 ASCII 藝術的文本
+            font: ASCII 藝術字體
+            log_level: 日誌級別
+            border_style: 邊框樣式
+            to_console_only: 是否僅輸出到控制台，預設為 False
+            to_log_file_only: 是否僅輸出到日誌文件，預設為 False
         """
-        # 直接實現，而不是調用 print_ascii_header，以便正確捕獲調用位置
         if not _has_art:
             logger_instance.error("未安裝 'art' 庫。請使用 'pip install art' 安裝。")
             return
@@ -289,17 +298,18 @@ def create_ascii_methods(logger_instance: Any, console: Optional[Console] = None
             border_style=border_style,
         )
         
-        # 控制台輸出
+        # 控制台輸出 - 僅當非僅文件模式時
         if not to_log_file_only:
             console.print(panel)
         
-        # 日誌文件輸出 - 使用 depth=1 捕獲正確的調用位置
+        # 日誌文件輸出 - 僅當非僅控制台模式時
         if not to_console_only:
             logger_instance.opt(ansi=True, depth=1).bind(to_log_file_only=True).log(
                 log_level, f"\n{ascii_art}\n{'=' * 50}"
             )
     
     # 添加 ascii_block 方法
+    @ensure_target_parameters
     def ascii_block_method(
         title: str,
         message_list: List[str],
@@ -307,11 +317,22 @@ def create_ascii_methods(logger_instance: Any, console: Optional[Console] = None
         ascii_font: str = "standard",
         border_style: str = "cyan",
         log_level: str = "INFO",
+        to_console_only: bool = False,
+        to_log_file_only: bool = False,
     ) -> None:
         """
         logger 實例的 ASCII 藝術區塊方法
+        
+        Args:
+            title: 區塊的標題
+            message_list: 區塊內的內容列表
+            ascii_header: ASCII 藝術標題文本 (如果不提供，則使用 title)
+            ascii_font: ASCII 藝術字體
+            border_style: 邊框樣式，預設為 "cyan"
+            log_level: 日誌級別，預設為 "INFO"
+            to_console_only: 是否僅輸出到控制台，預設為 False
+            to_log_file_only: 是否僅輸出到日誌文件，預設為 False
         """
-        # 直接實現，而不是調用 print_ascii_block，以便正確捕獲調用位置
         if not _has_art:
             logger_instance.error("未安裝 'art' 庫。請使用 'pip install art' 安裝。")
             return
@@ -344,16 +365,8 @@ def create_ascii_methods(logger_instance: Any, console: Optional[Console] = None
         # 將 ASCII 藝術添加到消息列表的開頭
         full_message_list = [ascii_art] + message_list
         
-        # 直接實現區塊輸出，而不是調用 print_block
-        # 將日誌寫入到終端，僅顯示在終端中 - 使用 depth=1 捕獲正確的調用位置
-        logger_instance.opt(ansi=True, depth=1).bind(to_console_only=True).log(
-            log_level, f"CustomBlock: {title}"
-        )
-        
         # 構造區塊內容，將多行訊息合併為單一字串
         message = "\n".join(full_message_list)
-        
-        # 創建 Rich Panel
         panel = Panel(
             message,
             title=title,  # 設定區塊標題
@@ -361,18 +374,22 @@ def create_ascii_methods(logger_instance: Any, console: Optional[Console] = None
             border_style=border_style,  # 設定邊框樣式
         )
         
-        # 打印區塊到終端
-        console.print(panel)
+        # 只有當非僅文件模式時，才輸出到控制台
+        if not to_log_file_only:
+            # 將日誌寫入到終端，僅顯示在終端中 - 使用 depth=1 捕獲正確的調用位置
+            logger_instance.opt(ansi=True, depth=1).bind(to_console_only=True).log(
+                log_level, f"CustomBlock: {title}"
+            )
+            
+            # 打印區塊到終端
+            console.print(panel)
 
-        # 格式化訊息，方便寫入日誌文件
-        formatted_message = f"{title}\n{'=' * 50}\n{message}\n{'=' * 50}"
+        # 只有當非僅控制台模式時，才輸出到文件
+        if not to_console_only:
+            # 格式化訊息，方便寫入日誌文件
+            formatted_message = f"{title}\n{'=' * 50}\n{message}\n{'=' * 50}"
 
-        # 將格式化後的訊息寫入日誌文件，僅寫入文件中 - 使用 depth=1 捕獲正確的調用位置
-        logger_instance.opt(ansi=True, depth=1).bind(to_log_file_only=True).log(
-            log_level, f"\n{formatted_message}"
-        )
-    
-    
-    # 將方法添加到 logger 實例
-    logger_instance.ascii_header = ascii_header_method
-    logger_instance.ascii_block = ascii_block_method
+            # 將格式化後的訊息寫入日誌文件，僅寫入文件中 - 使用 depth=1 捕獲正確的調用位置
+            logger_instance.opt(ansi=True, depth=1).bind(to_log_file_only=True).log(
+                log_level, f"\n{formatted_message}"
+            )

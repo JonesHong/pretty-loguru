@@ -90,9 +90,47 @@ class EnhancedLoggerProtocol(Protocol):
         message_list: List[str],
         border_style: str = "cyan",
         log_level: str = "INFO",
+        to_console_only: bool = False,
+        to_log_file_only: bool = False,
     ) -> None:
         """
         輸出一個帶有邊框的日誌區塊。
+
+        :param title: 區塊的標題
+        :param message_list: 區塊內的訊息列表
+        :param border_style: 邊框樣式，預設為 "cyan"
+        :param log_level: 日誌級別，預設為 "INFO"
+        :param to_console_only: 是否僅輸出到控制台，預設為 False
+        :param to_log_file_only: 是否僅輸出到日誌文件，預設為 False
+        """
+        ...
+    
+    def console_block(
+        self,
+        title: str,
+        message_list: List[str],
+        border_style: str = "cyan",
+        log_level: str = "INFO",
+    ) -> None:
+        """
+        輸出一個帶有邊框的日誌區塊，僅輸出到控制台。
+
+        :param title: 區塊的標題
+        :param message_list: 區塊內的訊息列表
+        :param border_style: 邊框樣式，預設為 "cyan"
+        :param log_level: 日誌級別，預設為 "INFO"
+        """
+        ...
+    
+    def file_block(
+        self,
+        title: str,
+        message_list: List[str],
+        border_style: str = "cyan",
+        log_level: str = "INFO",
+    ) -> None:
+        """
+        輸出一個帶有邊框的日誌區塊，僅輸出到日誌文件。
 
         :param title: 區塊的標題
         :param message_list: 區塊內的訊息列表
@@ -121,6 +159,40 @@ class EnhancedLoggerProtocol(Protocol):
         :param to_log_file_only: 是否僅輸出到日誌文件，預設為 False
         """
         ...
+    
+    def console_ascii_header(
+        self,
+        text: str,
+        font: str = "standard",
+        log_level: str = "INFO",
+        border_style: str = "cyan",
+    ) -> None:
+        """
+        輸出一個 ASCII 標題，僅輸出到控制台。
+
+        :param text: 標題文字
+        :param font: 字體樣式，預設為 "standard"
+        :param log_level: 日誌級別，預設為 "INFO"
+        :param border_style: 邊框樣式，預設為 "cyan"
+        """
+        ...
+    
+    def file_ascii_header(
+        self,
+        text: str,
+        font: str = "standard",
+        log_level: str = "INFO",
+        border_style: str = "cyan",
+    ) -> None:
+        """
+        輸出一個 ASCII 標題，僅輸出到日誌文件。
+
+        :param text: 標題文字
+        :param font: 字體樣式，預設為 "standard"
+        :param log_level: 日誌級別，預設為 "INFO"
+        :param border_style: 邊框樣式，預設為 "cyan"
+        """
+        ...
 
     def ascii_block(
         self,
@@ -130,9 +202,55 @@ class EnhancedLoggerProtocol(Protocol):
         ascii_font: str = "standard",
         border_style: str = "cyan",
         log_level: str = "INFO",
+        to_console_only: bool = False,
+        to_log_file_only: bool = False,
     ) -> None:
         """
         輸出一個帶有 ASCII 標題的日誌區塊。
+
+        :param title: 區塊的標題
+        :param message_list: 區塊內的訊息列表
+        :param ascii_header: ASCII 標題文字，預設為 None
+        :param ascii_font: ASCII 字體樣式，預設為 "standard"
+        :param border_style: 邊框樣式，預設為 "cyan"
+        :param log_level: 日誌級別，預設為 "INFO"
+        :param to_console_only: 是否僅輸出到控制台，預設為 False
+        :param to_log_file_only: 是否僅輸出到日誌文件，預設為 False
+        """
+        ...
+    
+    def console_ascii_block(
+        self,
+        title: str,
+        message_list: List[str],
+        ascii_header: Optional[str] = None,
+        ascii_font: str = "standard",
+        border_style: str = "cyan",
+        log_level: str = "INFO",
+    ) -> None:
+        """
+        輸出一個帶有 ASCII 標題的日誌區塊，僅輸出到控制台。
+
+        :param title: 區塊的標題
+        :param message_list: 區塊內的訊息列表
+        :param ascii_header: ASCII 標題文字，預設為 None
+        :param ascii_font: ASCII 字體樣式，預設為 "standard"
+        :param border_style: 邊框樣式，預設為 "cyan"
+        :param log_level: 日誌級別，預設為 "INFO"
+        """
+        ...
+    
+    def file_ascii_block(
+        self,
+        title: str,
+        message_list: List[str],
+        ascii_header: Optional[str] = None,
+        ascii_font: str = "standard",
+        border_style: str = "cyan",
+        log_level: str = "INFO",
+    ) -> None:
+        """
+        輸出一個帶有 ASCII 標題的日誌區塊，僅輸出到日誌文件。
 
         :param title: 區塊的標題
         :param message_list: 區塊內的訊息列表
@@ -149,6 +267,137 @@ class EnhancedLoggerProtocol(Protocol):
 
         :param text: 要檢查的文字
         :return: 如果文字僅包含 ASCII 字元，返回 True，否則返回 False
+        """
+        ...
+    
+    # FIGlet 藝術方法 (若 pyfiglet 可用)
+    def figlet_header(
+        self,
+        text: str,
+        font: str = "standard",
+        log_level: str = "INFO",
+        border_style: str = "cyan",
+        to_console_only: bool = False,
+        to_log_file_only: bool = False,
+    ) -> None:
+        """
+        輸出一個 FIGlet 藝術標題。
+
+        :param text: 標題文字
+        :param font: FIGlet 字體，預設為 "standard"
+        :param log_level: 日誌級別，預設為 "INFO"
+        :param border_style: 邊框樣式，預設為 "cyan"
+        :param to_console_only: 是否僅輸出到控制台，預設為 False
+        :param to_log_file_only: 是否僅輸出到日誌文件，預設為 False
+        """
+        ...
+    
+    def console_figlet_header(
+        self,
+        text: str,
+        font: str = "standard",
+        log_level: str = "INFO",
+        border_style: str = "cyan",
+    ) -> None:
+        """
+        輸出一個 FIGlet 藝術標題，僅輸出到控制台。
+
+        :param text: 標題文字
+        :param font: FIGlet 字體，預設為 "standard"
+        :param log_level: 日誌級別，預設為 "INFO"
+        :param border_style: 邊框樣式，預設為 "cyan"
+        """
+        ...
+    
+    def file_figlet_header(
+        self,
+        text: str,
+        font: str = "standard",
+        log_level: str = "INFO",
+        border_style: str = "cyan",
+    ) -> None:
+        """
+        輸出一個 FIGlet 藝術標題，僅輸出到日誌文件。
+
+        :param text: 標題文字
+        :param font: FIGlet 字體，預設為 "standard"
+        :param log_level: 日誌級別，預設為 "INFO"
+        :param border_style: 邊框樣式，預設為 "cyan"
+        """
+        ...
+    
+    def figlet_block(
+        self,
+        title: str,
+        message_list: List[str],
+        figlet_header: Optional[str] = None,
+        figlet_font: str = "standard",
+        border_style: str = "cyan",
+        log_level: str = "INFO",
+        to_console_only: bool = False,
+        to_log_file_only: bool = False,
+    ) -> None:
+        """
+        輸出一個帶有 FIGlet 藝術標題的日誌區塊。
+
+        :param title: 區塊的標題
+        :param message_list: 區塊內的訊息列表
+        :param figlet_header: FIGlet 標題文字，預設為 None
+        :param figlet_font: FIGlet 字體，預設為 "standard"
+        :param border_style: 邊框樣式，預設為 "cyan"
+        :param log_level: 日誌級別，預設為 "INFO"
+        :param to_console_only: 是否僅輸出到控制台，預設為 False
+        :param to_log_file_only: 是否僅輸出到日誌文件，預設為 False
+        """
+        ...
+    
+    def console_figlet_block(
+        self,
+        title: str,
+        message_list: List[str],
+        figlet_header: Optional[str] = None,
+        figlet_font: str = "standard",
+        border_style: str = "cyan",
+        log_level: str = "INFO",
+    ) -> None:
+        """
+        輸出一個帶有 FIGlet 藝術標題的日誌區塊，僅輸出到控制台。
+
+        :param title: 區塊的標題
+        :param message_list: 區塊內的訊息列表
+        :param figlet_header: FIGlet 標題文字，預設為 None
+        :param figlet_font: FIGlet 字體，預設為 "standard"
+        :param border_style: 邊框樣式，預設為 "cyan"
+        :param log_level: 日誌級別，預設為 "INFO"
+        """
+        ...
+    
+    def file_figlet_block(
+        self,
+        title: str,
+        message_list: List[str],
+        figlet_header: Optional[str] = None,
+        figlet_font: str = "standard",
+        border_style: str = "cyan",
+        log_level: str = "INFO",
+    ) -> None:
+        """
+        輸出一個帶有 FIGlet 藝術標題的日誌區塊，僅輸出到日誌文件。
+
+        :param title: 區塊的標題
+        :param message_list: 區塊內的訊息列表
+        :param figlet_header: FIGlet 標題文字，預設為 None
+        :param figlet_font: FIGlet 字體，預設為 "standard"
+        :param border_style: 邊框樣式，預設為 "cyan"
+        :param log_level: 日誌級別，預設為 "INFO"
+        """
+        ...
+    
+    def get_figlet_fonts(self) -> Set[str]:
+        """
+        獲取所有可用的 FIGlet 字體
+
+        :return: 可用字體名稱的集合
         """
         ...
     
