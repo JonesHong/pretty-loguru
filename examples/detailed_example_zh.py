@@ -10,15 +10,22 @@ pretty_loguru 詳細使用範例
 6. 進階配置與自定義
 """
 
-import os
-import time
+import sys
 from pathlib import Path
+
+# 提前處理載入路徑選擇
+使用本地函式庫 = input("是否要載入全域函式庫？ [Y/n]: ").strip().lower()
+if 使用本地函式庫 in {"no", "n"}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    print("將使用本地函式庫。\n")
+else:
+    print("將使用全域函式庫。\n")
+
+import time
+time.sleep(0.8)
 import random
 import threading
 
-# 確保本地路徑優先
-import sys
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 # 導入 pretty_loguru 模塊
 from pretty_loguru import (
