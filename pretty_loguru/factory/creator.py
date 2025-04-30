@@ -209,7 +209,7 @@ def create_logger(
     _logger_registry[name] = cast(EnhancedLogger, new_logger)
     
     # 記錄創建信息
-    new_logger.debug(f"Logger 實例 '{name}' (ID: {logger_id}) 已創建，日誌文件: {log_file_path}")
+    new_logger.debug(f"Logger instance '{name}' (ID: {logger_id}) has been created, log file: {log_file_path}")
     
     return cast(EnhancedLogger, new_logger)
 
