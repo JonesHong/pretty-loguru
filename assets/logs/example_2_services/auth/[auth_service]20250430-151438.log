@@ -1,0 +1,2 @@
+2025-04-30 15:14:38 | INFO    38236 | auth_service:example_2_multiple_loggers:212 - Authentication service started
+2025-04-30 15:14:38 | INFO    38236 | auth_service:example_2_multiple_loggers:249 - All registered loggers: ['default', 'app', 'auth_logger', 'db_logger', 'api_logger']

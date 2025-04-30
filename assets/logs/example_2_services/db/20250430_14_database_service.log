@@ -1,2 +1,0 @@
-2025-04-30 14:11:31 | INFO    39492 | database_service:example_2_multiple_loggers:213 - Database connection pool initialized, connections: 10
-2025-04-30 14:11:31 | SUCCESS 39492 | database_service:example_2_multiple_loggers:221 - Database query successful

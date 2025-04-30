@@ -18,27 +18,37 @@
 以下是使用 **pretty-loguru** 的一些效果展示：
 
 #### 基本日誌輸出
-![Rich Panel Example](assets/images/example_1_en.png)
+![Basic Example Terminal](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_1_en_terminal.png)
+![Basic Example File 1](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_1_en_file_1.png)
+![Basic Example File 2](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_1_en_file_2.png)
 
 #### 多個 Logger 管理
-![ASCII Header Example](assets/images/example_2_en.png)
+![Multiple Logger Example Terminal](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_2_en_terminal.png)
+![Multiple Logger Example File 1](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_2_en_file_1.png)
+![Multiple Logger Example File 2](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_2_en_file_2.png)
+![Multiple Logger Example File 3](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_2_en_file_3.png)
 
 #### 特殊格式輸出
-![ASCII Block Example](assets/images/example_3_en.png)
+![Special Format Example Terminal](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_3_en_terminal.png)
+![Special Format Example File](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_3_en_file_1.png)
 
 #### 不同輸出目標
-![Application Startup Example](assets/images/example_4_en.png)
+![Different Output Example Terminal](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_4_en_terminal.png)
+![Different Output Example File](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_4_en_file_1.png)
 
 #### 整合功能
-![Application Shutdown Example](assets/images/example_5_en.png)
+![Integrated Example Terminal](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_5_en_terminal.png)
+![Integrated Example File](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_5_en_file_1.png)
 
 #### 進階功能與自定義
-![Error Report Example 1](assets/images/example_6.1_en.png)
-![Error Report Example 2](assets/images/example_6.2_en.png)
+![Advanced Features and Customization Example Terminal 1](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_6_en_terminal_1.png)
+![Advanced Features and Customization Example Terminal 2](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_6_en_terminal_2.png)
+![Advanced Features and Customization Example File 1](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_6_en_file_1.png)
+![Advanced Features and Customization Example File 2](https://github.com/JonesHong/pretty-loguru/blob/master/assets/images/example_6_en_file_2.png)
 
 ### 範例程式碼
 
-完整範例程式碼請參考 [examples/detailed_example_en.py](examples/detailed_example_en.py)。
+完整範例程式碼請參考 [examples/detailed_example_zh.py](https://github.com/JonesHong/pretty-loguru/blob/master/examples/detailed_example_zh.py)。
 
 ## 安裝
 

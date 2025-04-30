@@ -1,4 +1,4 @@
-2025-04-30 14:11:31 | INFO    39492 | format_demo:example_3_special_formats:264 - 
+2025-04-30 15:14:38 | INFO    38236 | format_demo:example_3_special_formats:264 - 
 System Status Report
 ==================================================
 CPU Usage: 45%
@@ -7,7 +7,7 @@ Disk Space: 120GB Available
 Network: Normal
 Service Status: All services running
 ==================================================
-2025-04-30 14:11:31 | WARNING 39492 | format_demo:example_3_special_formats:278 - 
+2025-04-30 15:14:38 | WARNING 38236 | format_demo:example_3_special_formats:278 - 
 
  .----------------.  .----------------.  .----------------.  .-----------------. .----------------.  .-----------------. .----------------. 
 | .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. || .--------------. |
@@ -22,7 +22,7 @@ Service Status: All services running
  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------' 
 
 ==================================================
-2025-04-30 14:11:31 | ERROR   39492 | format_demo:example_3_special_formats:286 - 
+2025-04-30 15:14:38 | ERROR   38236 | format_demo:example_3_special_formats:286 - 
 System Alert
 ==================================================
    ###    ##       ######## ########  ######## 
@@ -39,8 +39,8 @@ Source IP: 192.168.1.100
 Target: Authentication Service
 Possible attack type: Brute Force
 ==================================================
-2025-04-30 14:11:31 | INFO    39492 | format_demo:example_3_special_formats:320 - 'Hello, World!' contains only ASCII characters: True
-2025-04-30 14:11:31 | INFO    39492 | format_demo:example_3_special_formats:323 - '你好，世界！' contains only ASCII characters: False
-2025-04-30 14:11:31 | INFO    39492 | format_demo:example_3_special_formats:326 - Using global function: 'Hello, World!' contains only ASCII characters: True
-2025-04-30 14:11:31 | INFO    39492 | format_demo:example_3_special_formats:333 - FIGlet support enabled
-2025-04-30 14:11:31 | INFO    39492 | format_demo:example_3_special_formats:366 - FIGlet header output skipped: ImportError
+2025-04-30 15:14:38 | INFO    38236 | format_demo:example_3_special_formats:320 - 'Hello, World!' contains only ASCII characters: True
+2025-04-30 15:14:38 | INFO    38236 | format_demo:example_3_special_formats:323 - '你好，世界！' contains only ASCII characters: False
+2025-04-30 15:14:38 | INFO    38236 | format_demo:example_3_special_formats:326 - Using global function: 'Hello, World!' contains only ASCII characters: True
+2025-04-30 15:14:38 | INFO    38236 | format_demo:example_3_special_formats:333 - FIGlet support enabled
+2025-04-30 15:14:38 | INFO    38236 | format_demo:example_3_special_formats:366 - FIGlet header output skipped: ImportError

@@ -1,0 +1,2 @@
+2025-04-30 15:14:38 | INFO    38236 | user_logger:example_1_basic_usage:136 - User has logged into the system | user=12345 session=abc-xyz-123
+2025-04-30 15:14:38 | WARNING 38236 | user_logger:example_1_basic_usage:137 - User attempted to access restricted resources | user=12345 session=abc-xyz-123

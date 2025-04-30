@@ -1,3 +1,0 @@
-2025-04-30 14:11:31 | INFO    39492 | default_service:example_1_basic_usage:152 - This message is from the global default_logger
-2025-04-30 14:11:31 | INFO    39492 | default_service:example_1_basic_usage:169 - This message is from the default logger instance
-2025-04-30 14:11:31 | INFO    39492 | default_service:example_1_basic_usage:172 - This message is from the global logger (backward-compatible)
