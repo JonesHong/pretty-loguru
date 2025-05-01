@@ -1,0 +1,593 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, JonesHong
+# This file is distributed under the same license as the Pretty Loguru
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Pretty Loguru 0.2.6\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-02 00:00+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.15.0\n"
+
+#: ../../source/api/pretty_loguru.integrations.rst:2
+#: a7a4521504bd424d88b2c87a1dda76a1
+msgid "pretty\\_loguru.integrations package"
+msgstr ""
+
+#: 1eceb859fbf641ae8d3961965401cd0f of pretty_loguru.integrations:1
+msgid "整合模組入口"
+msgstr ""
+
+#: 8632a02adad14b9aa8de11fc3d0516c3 of pretty_loguru.integrations:3
+msgid "此模組提供與第三方庫和框架的整合功能，使 Pretty Loguru 能夠 與各種流行的 Python 工具和框架無縫協作。"
+msgstr ""
+
+#: 0e9e1c851ea24cdda72c464702cdc721 51ff20f55a1b41c2bc152f8f2ae03d55 of
+#: pretty_loguru.integrations.uvicorn.configure_uvicorn:1
+msgid "配置 Uvicorn 日誌以使用 Loguru 格式化輸出"
+msgstr ""
+
+#: 5b9d5942166b4fa2adaf20e4a055fedc 993584a5818d402e9b1b565b399ca6a6 of
+#: pretty_loguru.integrations.uvicorn.configure_uvicorn:3
+msgid "此函數用於將 Uvicorn 的日誌輸出格式改為 Loguru 的格式， 適合需要統一日誌格式的應用場景。"
+msgstr ""
+
+#: ../../source/api/pretty_loguru.integrations.rst
+#: 20ae622b45724f10b128aeaa2891be1c 28bf1d4eda6249718067743e1eb18b18
+#: 37bd80086a7a4f0582b1bf2e925fee80 5355e6cd4d1649dd9cc2eae21b6811ca
+#: 5cbf81fb586e488c9ff7c4cf03c05620 60a9a47c729047359aa9c62bd3f8fe75
+#: 8152070197f043ddbc3cdedca93f7903 8a0392f0ebc24259b3acc0cf3f6f1e61
+#: abdfdedd9e6d49b5be6fe79b9f0f9bce c8e0eecd365f42dbab74f561dd453f36 of
+#: pretty_loguru.integrations.fastapi.get_logger_dependency
+msgid "參數"
+msgstr ""
+
+#: 3a5d482acc40458aa26ad34efe9136d6 5ed9333adc0a4909a4a7c20b080ac197
+#: b33bb79187a54a8eac5295e94205fd1f cacf22bec142464ca34a2b09b2c79deb
+#: cd3888dfeb18406db8623586dfc21cec e4b8918866844edf98eb1285af623dfe of
+#: pretty_loguru.integrations.fastapi.LoggingMiddleware.__init__:6
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:8
+#: pretty_loguru.integrations.uvicorn.InterceptHandler.__init__:4
+#: pretty_loguru.integrations.uvicorn.configure_uvicorn:7
+msgid "要使用的 logger 實例，如果為 None 則使用默認 logger"
+msgstr ""
+
+#: 99520571cb2e4c73ac2009e1c128ff0e f488be97d00049c1b4c3301b229e4fc4 of
+#: pretty_loguru.integrations.uvicorn.configure_uvicorn:9
+msgid "日誌級別，預設為 \"INFO\""
+msgstr ""
+
+#: 62bad9b5ba9546bf9072cf8806852f98 7917e5179dea4130bfd4173ddc98ec33 of
+#: pretty_loguru.integrations.uvicorn.configure_uvicorn:11
+msgid "要配置的 logger 名稱列表，默認為 Uvicorn 相關的 logger"
+msgstr ""
+
+#: ../../source/api/pretty_loguru.integrations.rst
+#: 91403f45d9064d798113bbbd4355fa0e ee804895c4e94594b1f72d5d4fd7544e
+msgid "引發"
+msgstr ""
+
+#: 3ecb5e733d6a4ee8be523b91245ad916 53898a430a9d48898215d026e93bb424 of
+#: pretty_loguru.integrations.uvicorn.configure_uvicorn:13
+msgid "如果 uvicorn 未安裝"
+msgstr ""
+
+#: ../../source/api/pretty_loguru.integrations.rst
+#: 0840e1c9cc2b469b9717729c29bd2fe6 589323307ff84c5c88e3b6002b030b19
+#: 9e1b0be0c24949998447369fc44bb84d ab4b018877974dbdbef8fc0ab082da23
+#: aff537cd5ff14966b73c4d0a2ca76dc7 ea020b76be1e446fa200c34866c96b2d
+#: f87b480a40bf4312ac42c51235f40b64 fee8bb54abec4937818a4ba7a608040e of
+#: pretty_loguru.integrations.fastapi.get_logger_dependency
+msgid "回傳型別"
+msgstr ""
+
+#: 10279d86bf694c3ea856b6855525fdc0 245caf67ac3249bb91d9172228c3c455
+#: 3362a970507a4ffeac386c4b29009f26 4887a98ad3a34ddcb8d61cc19429459c
+#: 633c5bb409e141f99bfb8ca65134cb93 of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:22
+#: pretty_loguru.integrations.uvicorn.InterceptHandler.emit:6
+#: pretty_loguru.integrations.uvicorn.configure_uvicorn:15
+msgid ":sphinx_autodoc_typehints_type:`\\:py\\:obj\\:\\`None\\``"
+msgstr ""
+
+#: 8bdf9f9d71424de184930dd7369b037e 93d106235757425f8005e8a37ceffbd5 of
+#: pretty_loguru.integrations.uvicorn.InterceptHandler:1
+msgid "基礎類別：:py:class:`~logging.Handler`"
+msgstr ""
+
+#: 6827f5ed55864d1fb7178a71122b9990 e4b8a098b08043e080da70c937fa633a of
+#: pretty_loguru.integrations.uvicorn.InterceptHandler:1
+msgid "攔截標準日誌庫的日誌並轉發給 Loguru"
+msgstr ""
+
+#: 62bfac5958984e7d8586ec018359940c 9e475176614440c8be005fc93282a519 of
+#: pretty_loguru.integrations.uvicorn.InterceptHandler:3
+msgid ""
+"此處理器用於將 Python 標準日誌庫的日誌消息攔截並轉發到 Loguru， 實現統一的日誌管理，特別適用於 Uvicorn "
+"等使用標準日誌庫的第三方庫。"
+msgstr ""
+
+#: f2803aa99a8c4cd6ab1682d95722c92f ff26b3ab20c54f66aa104601f22f7641 of
+#: pretty_loguru.integrations.uvicorn.InterceptHandler.__init__:1
+msgid "初始化攔截處理器"
+msgstr ""
+
+#: c85ca5da65924bc7920ec290fa0307b1 d0aaa50c454544ac8e22b62450a318dd of
+#: pretty_loguru.integrations.uvicorn.InterceptHandler.emit:1
+msgid "處理日誌記錄，將其轉發給 Loguru。"
+msgstr ""
+
+#: 13a55bf4de74441288a91ca7239dacc9 f6c10187c14144adb6c7dcb5b2d5f495 of
+#: pretty_loguru.integrations.uvicorn.InterceptHandler.emit:4
+msgid "標準日誌庫的日誌記錄物件。"
+msgstr ""
+
+#: ../../source/api/pretty_loguru.integrations.rst:10
+#: 72a019f87eba4194a5a7e5d45599ee0b
+msgid "Submodules"
+msgstr ""
+
+#: ../../source/api/pretty_loguru.integrations.rst:13
+#: 6852990f33784b38af2130c5cc00fffd
+msgid "pretty\\_loguru.integrations.fastapi module"
+msgstr ""
+
+#: 9ecfcd1651744062bab3d506991b89b2 of pretty_loguru.integrations.fastapi:1
+msgid "FastAPI 整合模組"
+msgstr ""
+
+#: c2f88a8f2eed49eaa059d2a80eb3211b of pretty_loguru.integrations.fastapi:3
+msgid ""
+"此模組提供與 FastAPI 框架的整合功能，包括請求日誌中間件、 依賴注入和異常處理器，使 FastAPI 應用能夠充分利用 Pretty "
+"Loguru。"
+msgstr ""
+
+#: 3218fe7fa1894585a147c559d722d331 of
+#: pretty_loguru.integrations.fastapi.LoggingMiddleware:1
+msgid "基礎類別：:py:class:`~starlette.middleware.base.BaseHTTPMiddleware`"
+msgstr ""
+
+#: 4ceb1de792124017ad7f0f0f9e7e45ba of
+#: pretty_loguru.integrations.fastapi.LoggingMiddleware:1
+msgid "FastAPI 日誌中間件，記錄請求和響應的詳細信息"
+msgstr ""
+
+#: b8d4fd75434c4a3391bc7f56e37c2b71 of
+#: pretty_loguru.integrations.fastapi.LoggingMiddleware.__init__:1
+msgid "初始化日誌中間件"
+msgstr ""
+
+#: 9f4289611b0e4482bd479d21a1531492 f90da13c2b6c477487d10a6c8564fd01 of
+#: pretty_loguru.integrations.fastapi.LoggingMiddleware.__init__:4
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:6
+msgid "FastAPI 應用實例"
+msgstr ""
+
+#: 22901faf8e1b4970a0aa5aadd56312ec of
+#: pretty_loguru.integrations.fastapi.LoggingMiddleware.__init__:8
+msgid "不記錄日誌的路徑列表，例如 [\"/health\", \"/metrics\"]"
+msgstr ""
+
+#: faaad25d19dc4bc8a5b748133d027736 of
+#: pretty_loguru.integrations.fastapi.LoggingMiddleware.__init__:10
+msgid "不記錄日誌的 HTTP 方法列表，例如 [\"OPTIONS\"]"
+msgstr ""
+
+#: 694a4a2a4b6844e480208dd9fc2da934 e45ceed19b25451e9eea547cbe904553 of
+#: pretty_loguru.integrations.fastapi.LoggingMiddleware.__init__:12
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:18
+msgid "是否記錄請求體，預設為 False"
+msgstr ""
+
+#: 7491bed9916c48b7bcfdc149e04b5d7c 866b75328c6d4128a40540c4710deef9 of
+#: pretty_loguru.integrations.fastapi.LoggingMiddleware.__init__:14
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:20
+msgid "是否記錄響應體，預設為 False"
+msgstr ""
+
+#: c2465d4ec53f4ac39800becf0accb17b of
+#: pretty_loguru.integrations.fastapi.LoggingMiddleware.__init__:16
+msgid "是否記錄請求和響應頭，預設為 True"
+msgstr ""
+
+#: 15b479d9afb749b0aa60b6f930243ab2 of
+#: pretty_loguru.integrations.fastapi.LoggingMiddleware.__init__:18
+msgid "敏感頭部字段集合，這些字段的值將被遮蔽"
+msgstr ""
+
+#: 00f0a7ce52f74b7aa640861f93292bbb of
+#: pretty_loguru.integrations.fastapi.LoggingMiddleware.dispatch:1
+msgid "處理請求和響應，記錄相關日誌"
+msgstr ""
+
+#: ba693d64b37242439dbcf40e5e971f86 of
+#: pretty_loguru.integrations.fastapi.LoggingMiddleware.dispatch:4
+msgid "FastAPI 請求對象"
+msgstr ""
+
+#: 95a6d1db87d2421382fd3e48aceecd6a of
+#: pretty_loguru.integrations.fastapi.LoggingMiddleware.dispatch:6
+msgid "處理請求的下一個函數"
+msgstr ""
+
+#: ../../source/api/pretty_loguru.integrations.rst
+#: 844c582cba034a0aa9d737a6ca6f3db9 c1534cb65a154cc19a95b2d4f374aa55 of
+#: pretty_loguru.integrations.fastapi.get_logger_dependency
+msgid "回傳"
+msgstr ""
+
+#: 47e2defbf5564cc0a571aa5c226ca9d9 of
+#: pretty_loguru.integrations.fastapi.LoggingMiddleware.dispatch:8
+msgid "FastAPI 響應對象"
+msgstr ""
+
+#: 04c38b24bf5744e4993aa30e8be6c9d5 of
+#: pretty_loguru.integrations.fastapi.LoggingRoute:1
+msgid "基礎類別：:py:class:`~fastapi.routing.APIRoute`"
+msgstr ""
+
+#: 94b958e02d364c17b50c062a2aeb2715 of
+#: pretty_loguru.integrations.fastapi.LoggingRoute:1
+msgid "帶有日誌功能的 FastAPI 路由"
+msgstr ""
+
+#: 2e25be9f705145b99baf7d3e309ca892 of
+#: pretty_loguru.integrations.fastapi.LoggingRoute:3
+msgid "此類擴展了標準的 FastAPI 路由，添加了請求和響應的日誌記錄功能。"
+msgstr ""
+
+#: 621ddc3265ca4d5d80d78cce575b2321 of
+#: pretty_loguru.integrations.fastapi.LoggingRoute.get_route_handler:2
+msgid ":sphinx_autodoc_typehints_type:`\\:py\\:data\\:\\`\\~typing.Callable\\``"
+msgstr ""
+
+#: bfbd03a4437f420a8cd4035e43b122c7 of
+#: pretty_loguru.integrations.fastapi.get_logger_dependency:1
+msgid "創建一個返回 logger 實例的依賴函數"
+msgstr ""
+
+#: d649d4cacfcb4b588c9510c6dec7fc20 of
+#: pretty_loguru.integrations.fastapi.get_logger_dependency:3
+msgid "此函數用於在 FastAPI 路由中注入 logger 實例。"
+msgstr ""
+
+#: cec474f657c248d8a587eca09060c402 of
+#: pretty_loguru.integrations.fastapi.get_logger_dependency:6
+msgid "logger 實例的名稱，如果為 None 則使用路由路徑"
+msgstr ""
+
+#: bea209c2a22d4e2eb3d746b24fcf87e1 of
+#: pretty_loguru.integrations.fastapi.get_logger_dependency:8
+msgid "服務名稱"
+msgstr ""
+
+#: cd63f25ade6044728863989639aa0524 of
+#: pretty_loguru.integrations.fastapi.get_logger_dependency:10
+msgid "傳遞給 create_logger 的其他參數"
+msgstr ""
+
+#: c5f6fc1081014830b98af44da9ab8987 of
+#: pretty_loguru.integrations.fastapi.get_logger_dependency:12
+msgid "依賴函數，返回 logger 實例"
+msgstr ""
+
+#: 1c451fd266924084bc95c526a19cd44c of
+#: pretty_loguru.integrations.fastapi.get_logger_dependency:16
+msgid "範例"
+msgstr ""
+
+#: be89e7f2322349af8e1090387c6b16a2 of
+#: pretty_loguru.integrations.fastapi.get_logger_dependency:17
+msgid ""
+"```python from fastapi import FastAPI, Depends from "
+"pretty_loguru.integrations.fastapi import get_logger_dependency"
+msgstr ""
+
+#: d589bcc8f5964d03bb38bc33416bbee6 of
+#: pretty_loguru.integrations.fastapi.get_logger_dependency:21
+msgid "app = FastAPI() route_logger = get_logger_dependency(name=\"my_api\")"
+msgstr ""
+
+#: 0ec33ea429e84e15bcb252b0b762b8c5 of
+#: pretty_loguru.integrations.fastapi.get_logger_dependency:24
+msgid ""
+"@app.get(\"/items/\") async def get_items(logger: EnhancedLogger = "
+"Depends(route_logger)):"
+msgstr ""
+
+#: a5a0f6f4b39140ca8df6a97937680486 of
+#: pretty_loguru.integrations.fastapi.get_logger_dependency:26
+msgid "logger.info(\"Getting items\") return {\"items\": []}"
+msgstr ""
+
+#: 032b3f57ec3047ac95ca22d087161348 of
+#: pretty_loguru.integrations.fastapi.get_logger_dependency:28
+msgid "```"
+msgstr ""
+
+#: dc87ae01ecb94e84bca729c059382c1f of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:1
+msgid "為 FastAPI 應用設置日誌功能"
+msgstr ""
+
+#: 9bcf4fb59e654a67b89c8c58115ec5d8 of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:3
+msgid "此函數提供了一種便捷的方式來配置 FastAPI 應用的日誌功能。"
+msgstr ""
+
+#: d7db1660bd2c46a1b2b25dbde6ac8f9f of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:10
+msgid "是否添加日誌中間件，預設為 True"
+msgstr ""
+
+#: 73c7d4e43714415d8cdfef090cec8348 of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:12
+msgid "是否使用自定義 LoggingRoute，預設為 False"
+msgstr ""
+
+#: 02c848e142204584b6ec60debe957a39 of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:14
+msgid "不記錄日誌的路徑列表"
+msgstr ""
+
+#: 73731d1de0104656abe105ad00375189 of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:16
+msgid "不記錄日誌的 HTTP 方法列表"
+msgstr ""
+
+#: ../../source/api/pretty_loguru.integrations.rst:21
+#: 41ac900cb6444a0499cf02131e08d29f
+msgid "pretty\\_loguru.integrations.uvicorn module"
+msgstr ""
+
+#: b0c2c1655d07438680fa8f9e725c9846 of pretty_loguru.integrations.uvicorn:1
+msgid "Uvicorn 整合模組"
+msgstr ""
+
+#: 76f9c094a4d0404884972895a73eb0bb of pretty_loguru.integrations.uvicorn:3
+msgid "此模組提供與 Uvicorn ASGI 伺服器的整合功能， 使 Uvicorn 的日誌能夠通過 Pretty Loguru 進行格式化和管理。"
+msgstr ""
+
+#~ msgid "logger 實例的名稱，如果為 None 則使用路由路徑"
+#~ msgstr ""
+
+#~ msgid "服務名稱"
+#~ msgstr ""
+
+#~ msgid "傳遞給 create_logger 的其他參數"
+#~ msgstr ""
+
+#~ msgid "依賴函數，返回 logger 實例"
+#~ msgstr ""
+
+#~ msgid "範例"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "@app.get(\"/items/\") async def get_items(logger:"
+#~ " EnhancedLogger = Depends(route_logger)):"
+#~ msgstr ""
+
+#~ msgid "整合模組入口"
+#~ msgstr ""
+
+#~ msgid "此模組提供與第三方庫和框架的整合功能，使 Pretty Loguru 能夠 與各種流行的 Python 工具和框架無縫協作。"
+#~ msgstr ""
+
+#~ msgid "配置 Uvicorn 日誌以使用 Loguru 格式化輸出"
+#~ msgstr ""
+
+#~ msgid "此函數用於將 Uvicorn 的日誌輸出格式改為 Loguru 的格式， 適合需要統一日誌格式的應用場景。"
+#~ msgstr ""
+
+#~ msgid "參數"
+#~ msgstr ""
+
+#~ msgid "要使用的 logger 實例，如果為 None 則使用默認 logger"
+#~ msgstr ""
+
+#~ msgid "日誌級別，預設為 \"INFO\""
+#~ msgstr ""
+
+#~ msgid "要配置的 logger 名稱列表，默認為 Uvicorn 相關的 logger"
+#~ msgstr ""
+
+#~ msgid "引發"
+#~ msgstr ""
+
+#~ msgid "如果 uvicorn 未安裝"
+#~ msgstr ""
+
+#~ msgid "回傳型別"
+#~ msgstr ""
+
+#~ msgid ":sphinx_autodoc_typehints_type:`\\:py\\:obj\\:\\`None\\``"
+#~ msgstr ""
+
+#~ msgid "基礎類別：:py:class:`~logging.Handler`"
+#~ msgstr ""
+
+#~ msgid "攔截標準日誌庫的日誌並轉發給 Loguru"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "此處理器用於將 Python 標準日誌庫的日誌消息攔截並轉發到 Loguru， "
+#~ "實現統一的日誌管理，特別適用於 Uvicorn 等使用標準日誌庫的第三方庫。"
+#~ msgstr ""
+
+#~ msgid "初始化攔截處理器"
+#~ msgstr ""
+
+#~ msgid "處理日誌記錄，將其轉發給 Loguru。"
+#~ msgstr ""
+
+#~ msgid "標準日誌庫的日誌記錄物件。"
+#~ msgstr ""
+
+#~ msgid "FastAPI 整合模組"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "此模組提供與 FastAPI 框架的整合功能，包括請求日誌中間件、 依賴注入和異常處理器，使 "
+#~ "FastAPI 應用能夠充分利用 Pretty Loguru。"
+#~ msgstr ""
+
+#~ msgid "基礎類別：:py:class:`~starlette.middleware.base.BaseHTTPMiddleware`"
+#~ msgstr ""
+
+#~ msgid "FastAPI 日誌中間件，記錄請求和響應的詳細信息"
+#~ msgstr ""
+
+#~ msgid "初始化日誌中間件"
+#~ msgstr ""
+
+#~ msgid "FastAPI 應用實例"
+#~ msgstr ""
+
+#~ msgid "不記錄日誌的路徑列表，例如 [\"/health\", \"/metrics\"]"
+#~ msgstr ""
+
+#~ msgid "不記錄日誌的 HTTP 方法列表，例如 [\"OPTIONS\"]"
+#~ msgstr ""
+
+#~ msgid "是否記錄請求體，預設為 False"
+#~ msgstr ""
+
+#~ msgid "是否記錄響應體，預設為 False"
+#~ msgstr ""
+
+#~ msgid "是否記錄請求和響應頭，預設為 True"
+#~ msgstr ""
+
+#~ msgid "敏感頭部字段集合，這些字段的值將被遮蔽"
+#~ msgstr ""
+
+#~ msgid "處理請求和響應，記錄相關日誌"
+#~ msgstr ""
+
+#~ msgid "FastAPI 請求對象"
+#~ msgstr ""
+
+#~ msgid "處理請求的下一個函數"
+#~ msgstr ""
+
+#~ msgid "回傳"
+#~ msgstr ""
+
+#~ msgid "FastAPI 響應對象"
+#~ msgstr ""
+
+#~ msgid "基礎類別：:py:class:`~fastapi.routing.APIRoute`"
+#~ msgstr ""
+
+#~ msgid "帶有日誌功能的 FastAPI 路由"
+#~ msgstr ""
+
+#~ msgid "此類擴展了標準的 FastAPI 路由，添加了請求和響應的日誌記錄功能。"
+#~ msgstr ""
+
+#~ msgid ":sphinx_autodoc_typehints_type:`\\:py\\:data\\:\\`\\~typing.Callable\\``"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":sphinx_autodoc_typehints_type:`\\:py\\:data\\:\\`\\~typing.Callable\\`\\\\"
+#~ " \\\\\\[\\\\\\[\\]\\, "
+#~ "\\:py\\:class\\:\\`\\~pretty\\_loguru.types.protocols.EnhancedLoggerProtocol\\`\\]`"
+#~ "  創建一個返回 logger 實例的依賴函數  此函數用於在 FastAPI "
+#~ "路由中注入 logger 實例。  Args:     name: logger"
+#~ " 實例的名稱，如果為 None 則使用路由路徑     service_tag: "
+#~ "服務名稱     **kwargs: 傳遞給 create_logger 的其他參數"
+#~ "  Returns:     Callable[[], EnhancedLogger]: "
+#~ "依賴函數，返回 logger 實例  Example:     ```python`"
+#~ "     from fastapi import FastAPI, Depends"
+#~ "     from pretty_loguru.integrations.fastapi import "
+#~ "get_logger_dependency      app = FastAPI()     "
+#~ "route_logger = get_logger_dependency(name=\"my_api\")"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":sphinx_autodoc_typehints_type:`\\:py\\:data\\:\\`\\~typing.Callable\\`\\\\"
+#~ " \\\\\\[\\\\\\[\\]\\, "
+#~ "\\:py\\:class\\:\\`\\~pretty\\_loguru.types.protocols.EnhancedLoggerProtocol\\`\\]`"
+#~ msgstr ""
+
+#~ msgid "創建一個返回 logger 實例的依賴函數"
+#~ msgstr ""
+
+#~ msgid "此函數用於在 FastAPI 路由中注入 logger 實例。"
+#~ msgstr ""
+
+#~ msgid "Args:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "name: logger 實例的名稱，如果為 None 則使用路由路徑 "
+#~ "service_tag: 服務名稱 **kwargs: 傳遞給 create_logger"
+#~ " 的其他參數"
+#~ msgstr ""
+
+#~ msgid "Returns:"
+#~ msgstr ""
+
+#~ msgid "Callable[[], EnhancedLogger]: 依賴函數，返回 logger 實例"
+#~ msgstr ""
+
+#~ msgid "Example:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "```python` from fastapi import FastAPI, "
+#~ "Depends from pretty_loguru.integrations.fastapi "
+#~ "import get_logger_dependency"
+#~ msgstr ""
+
+#~ msgid "app = FastAPI() route_logger = get_logger_dependency(name=\"my_api\")"
+#~ msgstr ""
+
+#~ msgid "@app.get(\"/items/\")"
+#~ msgstr ""
+
+#~ msgid "async def get_items(logger: EnhancedLogger = Depends(route_logger)):"
+#~ msgstr ""
+
+#~ msgid "logger.info(\"Getting items\") return {\"items\": []}"
+#~ msgstr ""
+
+#~ msgid "```"
+#~ msgstr ""
+
+#~ msgid "為 FastAPI 應用設置日誌功能"
+#~ msgstr ""
+
+#~ msgid "此函數提供了一種便捷的方式來配置 FastAPI 應用的日誌功能。"
+#~ msgstr ""
+
+#~ msgid "是否添加日誌中間件，預設為 True"
+#~ msgstr ""
+
+#~ msgid "是否使用自定義 LoggingRoute，預設為 False"
+#~ msgstr ""
+
+#~ msgid "不記錄日誌的路徑列表"
+#~ msgstr ""
+
+#~ msgid "不記錄日誌的 HTTP 方法列表"
+#~ msgstr ""
+
+#~ msgid "Uvicorn 整合模組"
+#~ msgstr ""
+
+#~ msgid "此模組提供與 Uvicorn ASGI 伺服器的整合功能， 使 Uvicorn 的日誌能夠通過 Pretty Loguru 進行格式化和管理。"
+#~ msgstr ""
+

@@ -1,0 +1,1233 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2025, JonesHong
+# This file is distributed under the same license as the Pretty Loguru
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Pretty Loguru 0.2.6\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-02 00:00+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.15.0\n"
+
+#: ../../source/api/pretty_loguru.rst:2 52d0df952ff2410092be1e976fc26c1d
+msgid "pretty\\_loguru package"
+msgstr ""
+
+#: 634122420bed4b3385c30be2ed065d25 of pretty_loguru:1
+msgid "Pretty Loguru 日誌系統包入口"
+msgstr ""
+
+#: 786681714e6c43a99dbec6373ddb8f42 of pretty_loguru:3
+msgid "此模組提供了增強型的 Loguru 日誌系統，包含區塊式日誌、ASCII 藝術標題 以及與各種框架的集成功能，使日誌記錄變得更加直觀和美觀。"
+msgstr ""
+
+#: a999049b4ba7490eadd4a086fe5eb122 of pretty_loguru.core.config.LogLevelEnum:1
+msgid "基礎類別：:py:class:`~enum.Enum`"
+msgstr ""
+
+#: b087523a34874f9c933cacc540d28e2e of pretty_loguru.core.config.LogLevelEnum:1
+msgid "日誌級別枚舉類別"
+msgstr ""
+
+#: af3d23e2c0e943f983be714fcf47270a of pretty_loguru.core.config.LogLevelEnum:3
+msgid "定義了不同的日誌級別，用於設定和過濾日誌輸出。"
+msgstr ""
+
+#: 754b25ef595943cdad9ee78711e170c7 of pretty_loguru.core.config.LoggerConfig:1
+msgid "基礎類別：:py:class:`object`"
+msgstr ""
+
+#: 5b45456081584d589371b9b69d64af89 of pretty_loguru.core.config.LoggerConfig:1
+msgid "日誌配置類"
+msgstr ""
+
+#: 0c43e8073f784b47a0dcf2e3618f1bf8 of pretty_loguru.core.config.LoggerConfig:3
+msgid "此類提供了統一的配置管理，可從環境變數或配置文件中載入配置。"
+msgstr ""
+
+#: 081c437856d34604bf734ecbebc9fb0e of
+#: pretty_loguru.core.config.LoggerConfig.__init__:1
+msgid "初始化日誌配置"
+msgstr ""
+
+#: ../../source/api/pretty_loguru.rst 0218f47a64734ad2a65a2706a9a3bc33
+#: 036580ba49b64b929ee9fe43f062dfba 04250cfcc89c494d8de350d22fbdf262
+#: 0a3168641e0a43b397dc4e3750a51778 10e8a91db0ee42e99110358a882c104b
+#: 16eb51136edd48f3a5e3f8e8f467b520 1c1af3e92f784827a3dc750d97504c6d
+#: 34e92f07fb1d414fa2ef0e376057f518 57819971ddc540acb7005905c1d443b8
+#: 5c2a0f275b094815823133ee78fbec77 5fda57ff0e3a49539a86d3d6a36c9746
+#: 63664c96139c4cb69eb80ec5c078fa14 8a4428295cfc4653b4643fe1018aefee
+#: 99c9bb60d1514dd0a06c6037bf6333d1 a25ca7f7c7bf49be81d535219f66f238
+#: ad1a2b32c060429f92fe60ba576fcdec b30920b54f5f4d688d8fc339e89c0b95
+#: d2bdc265dadb47e0b3aa2c0f842eb4fe d72d73569858434b85fd0f6e55223831
+#: d903310436e24311b5472632f7c430db ec2363ebd39e433db03f4fe8b0fc5039 of
+#: pretty_loguru.core.target_formatter.add_target_methods
+#: pretty_loguru.factory.creator.create_logger
+msgid "參數"
+msgstr ""
+
+#: 84214926193c4cc5833eef2a9ba2678c of
+#: pretty_loguru.core.config.LoggerConfig.__init__:4
+msgid "日誌級別，預設從環境變數或全局默認值獲取"
+msgstr ""
+
+#: 430a748e5b314c6e972515874d98a78f of
+#: pretty_loguru.core.config.LoggerConfig.__init__:6
+msgid "日誌輪換設置，預設從環境變數或全局默認值獲取"
+msgstr ""
+
+#: 6ef1ed38dff44103935b4274d0fad761 of
+#: pretty_loguru.core.config.LoggerConfig.__init__:8
+msgid "日誌路徑，預設從環境變數或全局默認值獲取"
+msgstr ""
+
+#: 6c91b00b7a34483b8bac2a2c7ed727f7 of
+#: pretty_loguru.core.config.LoggerConfig.__init__:10
+msgid "日誌格式，預設從環境變數或全局默認值獲取"
+msgstr ""
+
+#: 8bab2b8dc2c344ac942859cccb44bbba of
+#: pretty_loguru.core.config.LoggerConfig.__init__:12
+msgid "環境變數前綴，用於區分不同應用的配置"
+msgstr ""
+
+#: 48afb547349a40bf8453a59face0a353 of
+#: pretty_loguru.core.config.LoggerConfig.from_dict:1
+msgid "從字典創建配置實例"
+msgstr ""
+
+#: 36a9589eef9a4a27a30d48b4a4d737f8 9d58e1e9640e49bb9a6101f64a4682b0 of
+#: pretty_loguru.core.config.LoggerConfig.from_dict:4
+#: pretty_loguru.core.config.LoggerConfig.to_dict:3
+msgid "包含配置值的字典"
+msgstr ""
+
+#: ../../source/api/pretty_loguru.rst 13279f3176c5439897f8369705ee8530
+#: 29c960491b9b43b6b427eae03fffc1a7 380dccaf20b848508661c610ceaeef47
+#: 3ee7065344a64d8681939fd8c2141dba 463d71e70171420286f1ccfb0ebf2196
+#: 58403bc14fd24eba8032343156543e1f 7fff6abf6c8c44b2b979b81067196a4f
+#: a9108c980b2349be9e248e30880ecd6d d2a19d8723d54c808db84e8a81a611e5
+#: fba05211545a4f6cbd2d97ea783aaf00 fbcc8aee7ef849e993f89b1c9e25ece7
+#: ff505be7408b4aa4aaaba4a85365d98b of
+#: pretty_loguru.factory.creator.create_logger
+msgid "回傳"
+msgstr ""
+
+#: 3c1c711db594455a82052aded81f7b17 55819ba01def4e71baa0b4a9b76130ae of
+#: pretty_loguru.core.config.LoggerConfig.from_dict:6
+#: pretty_loguru.core.config.LoggerConfig.from_file:8
+msgid "配置實例"
+msgstr ""
+
+#: ../../source/api/pretty_loguru.rst 0145dd29658146c3ae7dd5aaa35163f8
+#: 030e9398683e4314a03e9479b8d9973c 16d1468d4b4b497aa03a1ee73d72458c
+#: 300b04e46f9f4ee9bea74226a5a0daaf 33140d5c38d44edca385d26d70336d22
+#: 4c0e8aba1cbc473a80e9eff71f8319e5 5501e70230d54040b583b08b506777ae
+#: 572955fdb0b94de5a57b78be7a85df50 63fb27c8a6ea426ab8e6db1389f68c3f
+#: 7a477dd0a17d42df9463931f8a91e36a 86fee65ca3014c2ab75c6e32f1da3a02
+#: a3301601d59340dc98a2e1421fba13c8 af7d9ec3e08a4d7588dd7fbb3ebc5396
+#: c4fd0c2249a449a7a959d2b15e1a8bd7 c81513a1549f48109c4172b52c692a28
+#: cdb4713e1c6b49f19f9d41752b16a21d ce8bc252f34147b88606d1a8de1dcfc1
+#: d0ee130befa745d9b9a5eeb1bc1b4be2 d497f07e46964193bd792bd0abbe6f4a
+#: df48b1bf765f469da7cb0c939e5c0239 ebc67d2857e047f8be528a60f24f05dd
+#: ed4fc48e46794092876ab9c1f8c4b94b f2508ca9979a4811a6ddc026851f5a49
+#: ff0e75f39e184315835128c2893f57df of
+#: pretty_loguru.core.target_formatter.add_target_methods
+#: pretty_loguru.factory.creator.create_logger
+msgid "回傳型別"
+msgstr ""
+
+#: e89a25c40cf043b6a2ef7203ba0d8d8a of
+#: pretty_loguru.core.config.LoggerConfig.from_file:1
+msgid "從文件載入配置"
+msgstr ""
+
+#: 07e008743ab74c0a8f81e064ad3edbcb 99a4238141614c48ab260893e391e972 of
+#: pretty_loguru.core.config.LoggerConfig.from_file:4
+#: pretty_loguru.core.config.LoggerConfig.save_to_file:4
+msgid "配置文件路徑"
+msgstr ""
+
+#: 6790cc2f9595448fb4a6036261a0ce84 de3fb70101c146adbea5af205103d2d9 of
+#: pretty_loguru.core.config.LoggerConfig.from_file:6
+#: pretty_loguru.core.config.LoggerConfig.save_to_file:6
+msgid "文件格式，支援 \"json\" 或 \"yaml\""
+msgstr ""
+
+#: ../../source/api/pretty_loguru.rst 056c43c01bd54baa838d806fb018dc4c
+#: 090ad3467f5541dab0c23882bcfe74af 24892390c05445a495c6a1393264c8ec
+#: 26d740b65afa49a3908a728f9bb0b0c7 2f0b0d76f45c4d909d9d5fd21b96e4d9
+#: 714a09b5012646ffaf06c21646c34867 a9a49edafbbe457cb782e37a7283bf9e
+#: ff638615486243ed835d5425cfb64423
+msgid "引發"
+msgstr ""
+
+#: ce0f1d45b771476283ccc62844319f68 e9c6262557e14e968f8444fd1be1555e of
+#: pretty_loguru.core.config.LoggerConfig.from_file:11
+#: pretty_loguru.core.config.LoggerConfig.save_to_file:8
+msgid "不支援的文件格式"
+msgstr ""
+
+#: b860c0a660334fe7bab7cc82511b5ee2 of
+#: pretty_loguru.core.config.LoggerConfig.from_file:12
+msgid "文件不存在"
+msgstr ""
+
+#: a84c3cf185d74a70b744e3d71e39745f of
+#: pretty_loguru.core.config.LoggerConfig.save_to_file:1
+msgid "將配置保存到文件"
+msgstr ""
+
+#: 19e488fdef474fc386311d5f21992690 81c3706fa7064b3c9dbf5c1310c93755
+#: cc680791985644d49a59a3dfbd3d684d d2ec5c6fd9ee4a68b7a80a47f683facd
+#: d9e90114fa304420a65d278db6848315 efe5667a6dff4165a4c7a5b0aaeacd87 of
+#: pretty_loguru.core.config.LoggerConfig.save_to_file:10
+#: pretty_loguru.core.target_formatter.add_target_methods:9
+#: pretty_loguru.factory.creator.set_logger:8
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:22
+#: pretty_loguru.integrations.uvicorn.InterceptHandler.emit:6
+#: pretty_loguru.integrations.uvicorn.configure_uvicorn:15
+msgid ":sphinx_autodoc_typehints_type:`\\:py\\:obj\\:\\`None\\``"
+msgstr ""
+
+#: 8924ca039dda4c80b867d0bb0c08a188 of
+#: pretty_loguru.core.config.LoggerConfig.to_dict:1
+msgid "轉換為字典"
+msgstr ""
+
+#: f46f894ea3e5424d869b669a960f6ddc of
+#: pretty_loguru.core.base.configure_logger:1
+msgid "配置日誌系統，確保每個 logger 實例的處理器完全隔離"
+msgstr ""
+
+#: 5f1c1bec94144a66b9a082064f1d99a5 of
+#: pretty_loguru.core.base.configure_logger:4
+msgid "日誌級別，預設為全域變數 LOG_LEVEL。"
+msgstr ""
+
+#: 92a6108506da4f05bdd8173a7927e1e2 of
+#: pretty_loguru.core.base.configure_logger:6
+msgid "日誌儲存路徑，若為 None 則使用預設路徑。"
+msgstr ""
+
+#: 7dd6fdd2f13d4c3ab965ad0218c803e0 of
+#: pretty_loguru.core.base.configure_logger:8
+msgid "處理程序 ID，用於標記日誌檔案。"
+msgstr ""
+
+#: 6d7e795e48c6479483c944ca104316f4 of
+#: pretty_loguru.core.base.configure_logger:10
+msgid "日誌輪換大小，單位為 MB。"
+msgstr ""
+
+#: 799ea269a91d4910b76a21cb4e622dfb of
+#: pretty_loguru.core.base.configure_logger:12
+msgid "子目錄名稱，用於分類不同類型的日誌。"
+msgstr ""
+
+#: 217a1d20bf834e85b59ffd3fa90a0418 of
+#: pretty_loguru.core.base.configure_logger:14
+msgid "日誌檔案名稱格式。"
+msgstr ""
+
+#: ffd590a0865749b9a021d95662868ee2 of
+#: pretty_loguru.core.base.configure_logger:16
+msgid "時間戳格式，用於自定義時間顯示方式。"
+msgstr ""
+
+#: 8bfa03bd48c946c585ee7ec21f6149fb of
+#: pretty_loguru.core.base.configure_logger:18
+msgid "日誌檔案的其他設定。"
+msgstr ""
+
+#: 0976ae18b33d4c98866f05863f9182ac of
+#: pretty_loguru.core.base.configure_logger:20
+msgid "要初始化的日誌實例，如果為None則使用全局的_logger"
+msgstr ""
+
+#: 8436ea9f9d9b4a4e85a20ce2c4a09daf of
+#: pretty_loguru.core.base.configure_logger:22
+msgid "服務名稱，用於在日誌檔案名中使用 {service_tag} 變數"
+msgstr ""
+
+#: 5b02d8bf82a249c89022a5289ec66f29 of
+#: pretty_loguru.core.base.configure_logger:24
+msgid "是否隔離不同 logger 實例的處理器，預設為 True"
+msgstr ""
+
+#: b164080be90e4d408d2a5c9047886659 of
+#: pretty_loguru.core.base.configure_logger:25
+msgid "唯一ID，用於確保每個logger實例完全獨立"
+msgstr ""
+
+#: 2225b4eaa4214fc8af53c6da97e168c5 of
+#: pretty_loguru.core.base.configure_logger:27
+msgid "日誌格式字符串，預設使用 LOGGER_FORMAT"
+msgstr ""
+
+#: 53ad853644fd4341a165a8744a20058c of
+#: pretty_loguru.core.base.configure_logger:29
+msgid "日誌檔案的完整路徑"
+msgstr ""
+
+#: 2816ca66ac6847729fac8b74b680b890 of
+#: pretty_loguru.core.target_formatter.create_target_method:2
+msgid ":sphinx_autodoc_typehints_type:`\\:py\\:data\\:\\`\\~typing.Callable\\``"
+msgstr ""
+
+#: ed63ea12867d4ce9983df2b279f68b6b of
+#: pretty_loguru.core.target_formatter.add_target_methods:1
+msgid "為 logger 實例添加目標導向的格式化方法版本"
+msgstr ""
+
+#: 477c869d8e4f46f5b51ddb7240d89105 of
+#: pretty_loguru.core.target_formatter.add_target_methods:4
+msgid "要添加方法的 logger 實例"
+msgstr ""
+
+#: 9ed6b02761f24940963e60850c57e9b8 of
+#: pretty_loguru.core.target_formatter.add_target_methods:6
+msgid "方法的基本名稱 (如 'block', 'ascii_header')"
+msgstr ""
+
+#: 32c187ddb9ec4d3db20dca16ae250287 of
+#: pretty_loguru.core.target_formatter.add_target_methods:8
+msgid "原始的格式化方法"
+msgstr ""
+
+#: 70dd91ad47a24215a0bf6dbd53a9b594 ff224eb54965484cac3bffbdac15c756 of
+#: pretty_loguru.core.target_formatter.add_target_methods:12
+#: pretty_loguru.factory.creator.create_logger:38
+msgid "範例"
+msgstr ""
+
+#: 8f27ccec1a174915884b6fbf60cfc06f of
+#: pretty_loguru.core.target_formatter.add_target_methods:13
+msgid ""
+"```python # 假設 logger_instance 已有 block 方法 "
+"add_target_methods(logger_instance, 'block', logger_instance.block)"
+msgstr ""
+
+#: bfac795c89b2409da33012f5fe29ac4e of
+#: pretty_loguru.core.target_formatter.add_target_methods:17
+msgid "# 現在 logger_instance 將有 console_block 和 file_block 方法 ```"
+msgstr ""
+
+#: efc74297582748ae8f880e1c5973cf6f of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters:1
+msgid "確保方法接受目標導向參數"
+msgstr ""
+
+#: ec0beffbf0f34e93b1d2f78057156ea8 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters:3
+msgid "這個裝飾器用於確保格式化方法接受 to_console_only 和 to_log_file_only 參數。 這對於創建新的格式化方法很有用。"
+msgstr ""
+
+#: 5f8564e1324046eca3d93399b6cb0290 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters:7
+msgid "要裝飾的方法"
+msgstr ""
+
+#: 7e8e5fc728384a3f8cfb693aad431a8f of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters:9
+msgid "確保接受目標導向參數的方法"
+msgstr ""
+
+#: 5bc0b43f669948369a289f725605e163 of
+#: pretty_loguru.factory.creator.create_logger:1
+msgid "創建有效隔離的 logger 實例"
+msgstr ""
+
+#: a3cc9e9d24d1446db2f1902b0f6dfefc of
+#: pretty_loguru.factory.creator.create_logger:4
+msgid "logger 實例的名稱，如果不提供則自動生成"
+msgstr ""
+
+#: 6975816d6c1b4928b4670d98ad926fc9 of
+#: pretty_loguru.factory.creator.create_logger:6
+msgid "服務或模組名稱，用於標識日誌來源"
+msgstr ""
+
+#: f958c71003584f0ca3af83319967809d of
+#: pretty_loguru.factory.creator.create_logger:8
+msgid "日誌子目錄，用於分類不同模組或功能的日誌"
+msgstr ""
+
+#: 35128005337341c9844f18a0dc5cbaa5 of
+#: pretty_loguru.factory.creator.create_logger:10
+msgid "日誌檔案名稱格式，可包含變數如 {component_name}, {timestamp}, {date}, {time} 等"
+msgstr ""
+
+#: 4dfb2da013244af2b0dd7699b5401c4e of
+#: pretty_loguru.factory.creator.create_logger:12
+msgid "預設的日誌檔案名格式，可選值為 \"default\", \"daily\", \"hourly\" 等"
+msgstr ""
+
+#: 7fb595ec549c4858bb4db3fdfd680f18 of
+#: pretty_loguru.factory.creator.create_logger:14
+msgid "時間戳格式，用於自定義時間顯示方式"
+msgstr ""
+
+#: fffc11b0c87f4509929df8fb0396769d of
+#: pretty_loguru.factory.creator.create_logger:16
+msgid "日誌基礎路徑，覆蓋預設的 log_path"
+msgstr ""
+
+#: 73d36b7d92cc4f549cdc6241df0452a6 of
+#: pretty_loguru.factory.creator.create_logger:18
+msgid "日誌檔案的其他設定，如壓縮、保留時間等"
+msgstr ""
+
+#: f4efd1b5aa7e4a14a75cab9fac4ef471 of
+#: pretty_loguru.factory.creator.create_logger:20
+msgid "自定義日誌配置，可包含任意 configure_logger 支援的參數"
+msgstr ""
+
+#: 725835dfe7ea4b0ca7ee441e5a0c4f09 of
+#: pretty_loguru.factory.creator.create_logger:22
+msgid "是否重用同名的既有實例，預設為 False"
+msgstr ""
+
+#: 8ef033f845804cf598fc58588cbf365a of
+#: pretty_loguru.factory.creator.create_logger:24
+msgid "是否啟動日誌清理器，預設為 False"
+msgstr ""
+
+#: 1d87c0cf56984fadb68bd8ad68a65ca7 of
+#: pretty_loguru.factory.creator.create_logger:26
+msgid "是否強制創建新實例，預設為 True"
+msgstr ""
+
+#: 2ba7f63363274a99b1e497c9ed875431 of
+#: pretty_loguru.factory.creator.create_logger:28
+msgid "要使用的 Rich Console 實例，預設為全局共享的實例"
+msgstr ""
+
+#: 26239a05638d4bab994ea2b10ceb5981 of
+#: pretty_loguru.factory.creator.create_logger:30
+msgid "日誌級別，預設為 INFO"
+msgstr ""
+
+#: b3bf2404c0c04c98b4f8bc9d317b738a of
+#: pretty_loguru.factory.creator.create_logger:32
+msgid "日誌輪換設置，預設為 20 MB"
+msgstr ""
+
+#: dac501041e65408cb1ab04557a7679d9 of
+#: pretty_loguru.factory.creator.create_logger:34
+msgid "已配置的日誌實例"
+msgstr ""
+
+#: 700e64369fbb412eb3b6dc98e2deb7f4 of
+#: pretty_loguru.factory.creator.default_logger:1
+msgid "獲取默認的 logger 實例（延遲初始化）"
+msgstr ""
+
+#: 012cf6f90a084ea0931ea6b547afcdce of
+#: pretty_loguru.factory.creator.default_logger:3
+msgid "只有在首次呼叫這個函數時，才會創建默認的 logger 實例， 避免在導入模組時就立即創建日誌文件。"
+msgstr ""
+
+#: effc249ca9c04015afe27723fb297e94 of
+#: pretty_loguru.factory.creator.default_logger:6
+msgid "默認的 logger 實例"
+msgstr ""
+
+#: 7793b42c119c474ebe22154b08163bc1 of
+#: pretty_loguru.factory.creator.get_logger:1
+msgid "根據名稱獲取已註冊的 logger 實例"
+msgstr ""
+
+#: 136e22af529045c1b8dd3a1a9c745af3 4920188714784fd8831de20082dd497a of
+#: pretty_loguru.factory.creator.get_logger:4
+#: pretty_loguru.factory.creator.set_logger:4
+msgid "logger 實例的名稱"
+msgstr ""
+
+#: 85bcb302a40c4d328812002994964999 of
+#: pretty_loguru.factory.creator.get_logger:6
+msgid "如果找到則返回 logger 實例，否則返回 None"
+msgstr ""
+
+#: a721694c4cdd42ebbc72031f220ef1ad of
+#: pretty_loguru.factory.creator.set_logger:1
+msgid "手動註冊 logger 實例"
+msgstr ""
+
+#: 8499d7f0fe2c4bb693c871eaa53e1c17 of
+#: pretty_loguru.factory.creator.set_logger:6
+msgid "要註冊的 logger 實例"
+msgstr ""
+
+#: 307981e601d34199a06460c052b431f6 of
+#: pretty_loguru.factory.creator.unregister_logger:1
+msgid "取消註冊 logger 實例"
+msgstr ""
+
+#: aef83e9205424dba90a571af2eff2bf4 of
+#: pretty_loguru.factory.creator.unregister_logger:4
+msgid "要取消註冊的 logger 實例名稱"
+msgstr ""
+
+#: 39cb4b847a8f4459adb4fdfdd22e0bde of
+#: pretty_loguru.factory.creator.unregister_logger:6
+msgid "如果成功取消註冊則返回 True，否則返回 False"
+msgstr ""
+
+#: 51b886715c954948b5123158fc979e0b of
+#: pretty_loguru.factory.creator.list_loggers:1
+msgid "列出所有已註冊的 logger 名稱"
+msgstr ""
+
+#: 7913431a0e694df1b045da8c66187c92 of
+#: pretty_loguru.factory.creator.list_loggers:3
+msgid "註冊的 logger 名稱列表"
+msgstr ""
+
+#: 0124bbc3bdd2441bb575eb4acdc7ffe1 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:1
+msgid "打印區塊樣式的日誌，並寫入到日誌文件"
+msgstr ""
+
+#: 46113b2421de44efa4f42615c5a8b3da b8d54e8440b04f2aa89a5ffdec71ef1a
+#: c88aee70d986497295d9972d3e82f7be of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:3
+msgid "區塊的標題"
+msgstr ""
+
+#: c0189d13f23f4ef99e8256c88a29e84c ccefef79de414cc291c1eaba412d5b9d
+#: d507ba7614314e7385a462178e73a4b8 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:4
+msgid "日誌的內容列表"
+msgstr ""
+
+#: 3f41b878624d4c399daf4cd6f1931f6b of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:5
+msgid "區塊邊框顏色，預設為 \"cyan\""
+msgstr ""
+
+#: 344552e858334422a8346712f4964e2b 43f0e585e5034e83a66f713fde4c3d20 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:6
+#: pretty_loguru.integrations.uvicorn.configure_uvicorn:9
+msgid "日誌級別，預設為 \"INFO\""
+msgstr ""
+
+#: 2072c583a8654866b358908c86b251a7 39fd1bdd9c7441539de9663b85db89c7
+#: 76c7f5de244e4d23adf018c61bd9f25c def474a273db46088996d6319568f781
+#: f1ea408499b24e19ad7280e3b4a985ef of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:7
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:9
+msgid "要使用的 logger 實例，如果為 None 則不記錄日誌"
+msgstr ""
+
+#: 1a8400cc89244de3b8a18a785fcb3ab0 6e1e7e89ce614cfbacb06465fdf5ff94
+#: 7c568ce3b056499a992c4ab29998d56f a1b205965f5c4b458071546c45342e6b
+#: e193d36bea824ee68fa091098591c531 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:8
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:10
+msgid "要使用的 rich console 實例，如果為 None 則創建新的"
+msgstr ""
+
+#: 1017ea27989948abbbbcf534a9b9529a 14ad20c1227b4716ab3c62c75db4b1f3
+#: 1ce0620036aa48ec9905ac3646c2c79a 87220fd3f46c4855b2d0700083a5944f
+#: c027704397914e7c90c52623ed9a6361 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:9
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:11
+msgid "是否僅輸出到控制台，預設為 False"
+msgstr ""
+
+#: 065bbbd882f645d3adb20953ecce28ae 123774cce08d45e99e3164446bea66b0
+#: 3f572816210040c1b7c2459f1f75eb97 7938e0811d2f49c18f587ce5c23888af
+#: aebb013f97db4989837d21f684990257 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:10
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:12
+msgid "是否僅輸出到日誌文件，預設為 False"
+msgstr ""
+
+#: 21458bc7641c4c3ebcf09ea2716276c2 2aff63f25cd640568d4e20d746f81916
+#: 75f2e541c38a44e9982f6da6d47d3af8 ddb5856aa9794f50a695226aabd01f98
+#: e2f5616772df42248f267b6c40baac54 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:11
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:13
+msgid "日誌堆棧深度，用於捕獲正確的調用位置"
+msgstr ""
+
+#: 681f887440d24d25b51a6a3423b91074 9416e8d0382b47c6a5893ecf68243b1b
+#: d205852b71894ba1af23abc303ed46d8 d7c028f8e8f547bfb858d63dbb250b06
+#: f2f7776dc96f43c199551a4786976c16 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:13
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:16
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:18
+msgid ":sphinx_autodoc_typehints_type:`\\:py\\:data\\:\\`\\~typing.Any\\``"
+msgstr ""
+
+#: c4909ea822a64df5bf2d4223ddcc58d9 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:1
+msgid "打印 ASCII 藝術標題"
+msgstr ""
+
+#: 6a839afd36b64530ba11958e217a878e of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:3
+msgid "要轉換為 ASCII 藝術的文本"
+msgstr ""
+
+#: 50025283a5574aeabec7728bcc439be7 cfcb89a5dbc74bf4b80ef85cb7221255 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:4
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:6
+msgid "ASCII 藝術字體"
+msgstr ""
+
+#: 12118b094f8c4e499c927ddb31b83cee 1982ef01ec864b698d22a342be24ce2b
+#: 1bf1c4b82e144fdf9a3e7559c647f69d 6e32cbd564144eb5a55830352f0e196b of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:5
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:8
+msgid "日誌級別"
+msgstr ""
+
+#: 5d508364c39d4b34a00a026c17d65d5c ce914afed857454a8b7aaae9f1414c8d of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:6
+msgid "邊框樣式"
+msgstr ""
+
+#: 04cec7e55f68419db73a73ee8f519ddb 20621c6bc81243158b1a93c9074ec31b of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:13
+msgid "如果文本包含非 ASCII 字符"
+msgstr ""
+
+#: 32de23e9b129489c8b59ab810aee5583 d6cdc05fd2ae49afaaa3c6fdb22b737c of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:14
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:16
+msgid "如果未安裝 art 庫"
+msgstr ""
+
+#: 57ceaa48670641af97072e4391a36fae of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:1
+msgid "打印帶有 ASCII 藝術標題的區塊樣式日誌"
+msgstr ""
+
+#: 448d08422f7a4e959874ffefe711fa6c of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:5
+msgid "ASCII 藝術標題文本 (如果不提供，則使用 title)"
+msgstr ""
+
+#: 409f61b47c404fef86912ba6f0d75a08 bafeac3d97f6499e8a6637ba173b9923 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:7
+msgid "區塊邊框顏色"
+msgstr ""
+
+#: 52c44d3b7662404fac45d779646b689e of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:15
+msgid "如果 ASCII 標題包含非 ASCII 字符"
+msgstr ""
+
+#: e3b82ec79f0d46e9aad7bd84be12cf28 of
+#: pretty_loguru.formats.ascii_art.is_ascii_only:1
+msgid "檢查文本是否只包含 ASCII 字符"
+msgstr ""
+
+#: 38600e2d6e6c4925b76f07d97e1d46dc of
+#: pretty_loguru.formats.ascii_art.is_ascii_only:4
+msgid "要檢查的文本"
+msgstr ""
+
+#: f1130106d23b4556b6b2e1754d5ee115 of
+#: pretty_loguru.formats.ascii_art.is_ascii_only:6
+msgid "如果只包含 ASCII 字符則返回 True，否則返回 False"
+msgstr ""
+
+#: fe11b641d78e491695b6c6653bfeb0ea of
+#: pretty_loguru.integrations.uvicorn.configure_uvicorn:1
+msgid "配置 Uvicorn 日誌以使用 Loguru 格式化輸出"
+msgstr ""
+
+#: 914ac671acab4e079bf1ba500f01d128 of
+#: pretty_loguru.integrations.uvicorn.configure_uvicorn:3
+msgid "此函數用於將 Uvicorn 的日誌輸出格式改為 Loguru 的格式， 適合需要統一日誌格式的應用場景。"
+msgstr ""
+
+#: 7282b99d4f1c43a4881c2b31f478cec3 789108d564d24293b129ae582343fc51
+#: ab809f5473ce4901962ba55bc61a8e88 of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:8
+#: pretty_loguru.integrations.uvicorn.InterceptHandler.__init__:4
+#: pretty_loguru.integrations.uvicorn.configure_uvicorn:7
+msgid "要使用的 logger 實例，如果為 None 則使用默認 logger"
+msgstr ""
+
+#: 21217d1e4c8e499b9d337e70d90baba7 of
+#: pretty_loguru.integrations.uvicorn.configure_uvicorn:11
+msgid "要配置的 logger 名稱列表，默認為 Uvicorn 相關的 logger"
+msgstr ""
+
+#: 0faf1b477a3f43bda5368ff9cfbaa909 of
+#: pretty_loguru.integrations.uvicorn.configure_uvicorn:13
+msgid "如果 uvicorn 未安裝"
+msgstr ""
+
+#: cb9cbea63911423bb5094a37a7c86077 of
+#: pretty_loguru.integrations.uvicorn.InterceptHandler:1
+msgid "基礎類別：:py:class:`~logging.Handler`"
+msgstr ""
+
+#: 4b653c4e41ca492e855faeeb988f52d0 of
+#: pretty_loguru.integrations.uvicorn.InterceptHandler:1
+msgid "攔截標準日誌庫的日誌並轉發給 Loguru"
+msgstr ""
+
+#: 2a7a3637455d44efae39b05a72be0034 of
+#: pretty_loguru.integrations.uvicorn.InterceptHandler:3
+msgid ""
+"此處理器用於將 Python 標準日誌庫的日誌消息攔截並轉發到 Loguru， 實現統一的日誌管理，特別適用於 Uvicorn "
+"等使用標準日誌庫的第三方庫。"
+msgstr ""
+
+#: acb54e98e01c4837b304383dbde5ed3a of
+#: pretty_loguru.integrations.uvicorn.InterceptHandler.__init__:1
+msgid "初始化攔截處理器"
+msgstr ""
+
+#: eb3b153441dc4fdf83d107d867f80116 of
+#: pretty_loguru.integrations.uvicorn.InterceptHandler.emit:1
+msgid "處理日誌記錄，將其轉發給 Loguru。"
+msgstr ""
+
+#: b897c285da634a8db60146e5c4f0b8eb of
+#: pretty_loguru.integrations.uvicorn.InterceptHandler.emit:4
+msgid "標準日誌庫的日誌記錄物件。"
+msgstr ""
+
+#: 1ff5eda3fbf44871861b32bee90c4813 of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:1
+msgid "為 FastAPI 應用設置日誌功能"
+msgstr ""
+
+#: 28a549494f9f4c5ea5673cd1238e73ed of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:3
+msgid "此函數提供了一種便捷的方式來配置 FastAPI 應用的日誌功能。"
+msgstr ""
+
+#: ef71affc6a74423494b6d54734b3106a of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:6
+msgid "FastAPI 應用實例"
+msgstr ""
+
+#: 30da559cdc134644b77132592f83fd77 of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:10
+msgid "是否添加日誌中間件，預設為 True"
+msgstr ""
+
+#: 75c37d82fa104fc69f311480e499c073 of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:12
+msgid "是否使用自定義 LoggingRoute，預設為 False"
+msgstr ""
+
+#: 41e9e7f47bad43498b9940304a125e6b of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:14
+msgid "不記錄日誌的路徑列表"
+msgstr ""
+
+#: 30cf2579da264312a90be0251f506301 of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:16
+msgid "不記錄日誌的 HTTP 方法列表"
+msgstr ""
+
+#: a1f0a21aef1b4f06a40e9adede0a7b8a of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:18
+msgid "是否記錄請求體，預設為 False"
+msgstr ""
+
+#: 5826d925b10a4693b68ff83df7325240 of
+#: pretty_loguru.integrations.fastapi.setup_fastapi_logging:20
+msgid "是否記錄響應體，預設為 False"
+msgstr ""
+
+#: 43cb05070b374c27aeafc73675dcbacf of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:1
+msgid "打印 FIGlet 藝術標題"
+msgstr ""
+
+#: c92bfd5ea2b1473dafb1479025058618 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:3
+msgid "要轉換為 FIGlet 藝術的文本"
+msgstr ""
+
+#: 2dc849d4b3eb4569abb2f28954a5ca91 76052905299b4ced9ab11fa9c107f4c4 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:4
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:6
+msgid "FIGlet 藝術字體"
+msgstr ""
+
+#: c1f17f7bcd12425493d21716c981f222 f17819c2819d4fc1a64f2f9c1223d826
+#: fc60667f4de94d07bbbf406ae0a84867 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:14
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:16
+#: pretty_loguru.formats.figlet.get_figlet_fonts:6
+msgid "如果未安裝 pyfiglet 庫"
+msgstr ""
+
+#: c79b118b0b9a4309b3f4933d78fdeaeb of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:1
+msgid "打印帶有 FIGlet 藝術標題的區塊樣式日誌"
+msgstr ""
+
+#: 430f80a8c1dd451b88bb5521e41b5487 of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:5
+msgid "FIGlet 藝術標題文本 (如果不提供，則使用 title)"
+msgstr ""
+
+#: 188cb68131474804a17f361104002f8f of
+#: pretty_loguru.core.target_formatter.ensure_target_parameters.<locals>.wrapper:15
+msgid "如果 FIGlet 標題包含非 ASCII 字符"
+msgstr ""
+
+#: 251a845f9641428394bcc099ea2effce of
+#: pretty_loguru.formats.figlet.get_figlet_fonts:1
+msgid "獲取所有可用的 FIGlet 字體"
+msgstr ""
+
+#: 74917127278746f99d3e068c8e8f5d83 of
+#: pretty_loguru.formats.figlet.get_figlet_fonts:3
+msgid "可用字體名稱的集合"
+msgstr ""
+
+#: ../../source/api/pretty_loguru.rst:10 3cb305fe6280436f915c121e17e5bdb9
+msgid "Subpackages"
+msgstr ""
+
+#~ msgid "Pretty Loguru 日誌系統包入口"
+#~ msgstr ""
+
+#~ msgid "此模組提供了增強型的 Loguru 日誌系統，包含區塊式日誌、ASCII 藝術標題 以及與各種框架的集成功能，使日誌記錄變得更加直觀和美觀。"
+#~ msgstr ""
+
+#~ msgid "基礎類別：:py:class:`~enum.Enum`"
+#~ msgstr ""
+
+#~ msgid "日誌級別枚舉類別"
+#~ msgstr ""
+
+#~ msgid "定義了不同的日誌級別，用於設定和過濾日誌輸出。"
+#~ msgstr ""
+
+#~ msgid "基礎類別：:py:class:`object`"
+#~ msgstr ""
+
+#~ msgid "日誌配置類"
+#~ msgstr ""
+
+#~ msgid "此類提供了統一的配置管理，可從環境變數或配置文件中載入配置。"
+#~ msgstr ""
+
+#~ msgid "初始化日誌配置"
+#~ msgstr ""
+
+#~ msgid "參數"
+#~ msgstr ""
+
+#~ msgid "日誌級別，預設從環境變數或全局默認值獲取"
+#~ msgstr ""
+
+#~ msgid "日誌輪換設置，預設從環境變數或全局默認值獲取"
+#~ msgstr ""
+
+#~ msgid "日誌路徑，預設從環境變數或全局默認值獲取"
+#~ msgstr ""
+
+#~ msgid "日誌格式，預設從環境變數或全局默認值獲取"
+#~ msgstr ""
+
+#~ msgid "環境變數前綴，用於區分不同應用的配置"
+#~ msgstr ""
+
+#~ msgid "從字典創建配置實例"
+#~ msgstr ""
+
+#~ msgid "包含配置值的字典"
+#~ msgstr ""
+
+#~ msgid "回傳"
+#~ msgstr ""
+
+#~ msgid "配置實例"
+#~ msgstr ""
+
+#~ msgid "回傳型別"
+#~ msgstr ""
+
+#~ msgid "從文件載入配置"
+#~ msgstr ""
+
+#~ msgid "配置文件路徑"
+#~ msgstr ""
+
+#~ msgid "文件格式，支援 \"json\" 或 \"yaml\""
+#~ msgstr ""
+
+#~ msgid "引發"
+#~ msgstr ""
+
+#~ msgid "不支援的文件格式"
+#~ msgstr ""
+
+#~ msgid "文件不存在"
+#~ msgstr ""
+
+#~ msgid "將配置保存到文件"
+#~ msgstr ""
+
+#~ msgid ":sphinx_autodoc_typehints_type:`\\:py\\:obj\\:\\`None\\``"
+#~ msgstr ""
+
+#~ msgid "轉換為字典"
+#~ msgstr ""
+
+#~ msgid "配置日誌系統，確保每個 logger 實例的處理器完全隔離"
+#~ msgstr ""
+
+#~ msgid "日誌級別，預設為全域變數 LOG_LEVEL。"
+#~ msgstr ""
+
+#~ msgid "日誌儲存路徑，若為 None 則使用預設路徑。"
+#~ msgstr ""
+
+#~ msgid "處理程序 ID，用於標記日誌檔案。"
+#~ msgstr ""
+
+#~ msgid "日誌輪換大小，單位為 MB。"
+#~ msgstr ""
+
+#~ msgid "子目錄名稱，用於分類不同類型的日誌。"
+#~ msgstr ""
+
+#~ msgid "日誌檔案名稱格式。"
+#~ msgstr ""
+
+#~ msgid "時間戳格式，用於自定義時間顯示方式。"
+#~ msgstr ""
+
+#~ msgid "日誌檔案的其他設定。"
+#~ msgstr ""
+
+#~ msgid "要初始化的日誌實例，如果為None則使用全局的_logger"
+#~ msgstr ""
+
+#~ msgid "服務名稱，用於在日誌檔案名中使用 {service_tag} 變數"
+#~ msgstr ""
+
+#~ msgid "是否隔離不同 logger 實例的處理器，預設為 True"
+#~ msgstr ""
+
+#~ msgid "唯一ID，用於確保每個logger實例完全獨立"
+#~ msgstr ""
+
+#~ msgid "日誌格式字符串，預設使用 LOGGER_FORMAT"
+#~ msgstr ""
+
+#~ msgid "日誌檔案的完整路徑"
+#~ msgstr ""
+
+#~ msgid ":sphinx_autodoc_typehints_type:`\\:py\\:data\\:\\`\\~typing.Callable\\``"
+#~ msgstr ""
+
+#~ msgid "為 logger 實例添加目標導向的格式化方法版本"
+#~ msgstr ""
+
+#~ msgid "要添加方法的 logger 實例"
+#~ msgstr ""
+
+#~ msgid "方法的基本名稱 (如 'block', 'ascii_header')"
+#~ msgstr ""
+
+#~ msgid "原始的格式化方法"
+#~ msgstr ""
+
+#~ msgid "範例"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "```python` # 假設 logger_instance 已有 block"
+#~ " 方法 add_target_methods(logger_instance, 'block', "
+#~ "logger_instance.block)"
+#~ msgstr ""
+
+#~ msgid "# 現在 logger_instance 將有 console_block 和 file_block 方法 ```"
+#~ msgstr ""
+
+#~ msgid "確保方法接受目標導向參數"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "這個裝飾器用於確保格式化方法接受 to_console_only 和 to_log_file_only"
+#~ " 參數。 這對於創建新的格式化方法很有用。"
+#~ msgstr ""
+
+#~ msgid "要裝飾的方法"
+#~ msgstr ""
+
+#~ msgid "確保接受目標導向參數的方法"
+#~ msgstr ""
+
+#~ msgid "創建有效隔離的 logger 實例"
+#~ msgstr ""
+
+#~ msgid "logger 實例的名稱，如果不提供則自動生成"
+#~ msgstr ""
+
+#~ msgid "服務或模組名稱，用於標識日誌來源"
+#~ msgstr ""
+
+#~ msgid "日誌子目錄，用於分類不同模組或功能的日誌"
+#~ msgstr ""
+
+#~ msgid "日誌檔案名稱格式，可包含變數如 {component_name}, {timestamp}, {date}, {time} 等"
+#~ msgstr ""
+
+#~ msgid "預設的日誌檔案名格式，可選值為 \"default\", \"daily\", \"hourly\" 等"
+#~ msgstr ""
+
+#~ msgid "時間戳格式，用於自定義時間顯示方式"
+#~ msgstr ""
+
+#~ msgid "日誌基礎路徑，覆蓋預設的 log_path"
+#~ msgstr ""
+
+#~ msgid "日誌檔案的其他設定，如壓縮、保留時間等"
+#~ msgstr ""
+
+#~ msgid "自定義日誌配置，可包含任意 configure_logger 支援的參數"
+#~ msgstr ""
+
+#~ msgid "是否重用同名的既有實例，預設為 False"
+#~ msgstr ""
+
+#~ msgid "是否啟動日誌清理器，預設為 False"
+#~ msgstr ""
+
+#~ msgid "是否強制創建新實例，預設為 True"
+#~ msgstr ""
+
+#~ msgid "要使用的 Rich Console 實例，預設為全局共享的實例"
+#~ msgstr ""
+
+#~ msgid "日誌級別，預設為 INFO"
+#~ msgstr ""
+
+#~ msgid "日誌輪換設置，預設為 20 MB"
+#~ msgstr ""
+
+#~ msgid "已配置的日誌實例"
+#~ msgstr ""
+
+#~ msgid "獲取默認的 logger 實例（延遲初始化）"
+#~ msgstr ""
+
+#~ msgid "只有在首次呼叫這個函數時，才會創建默認的 logger 實例， 避免在導入模組時就立即創建日誌文件。"
+#~ msgstr ""
+
+#~ msgid "默認的 logger 實例"
+#~ msgstr ""
+
+#~ msgid "根據名稱獲取已註冊的 logger 實例"
+#~ msgstr ""
+
+#~ msgid "logger 實例的名稱"
+#~ msgstr ""
+
+#~ msgid "如果找到則返回 logger 實例，否則返回 None"
+#~ msgstr ""
+
+#~ msgid "手動註冊 logger 實例"
+#~ msgstr ""
+
+#~ msgid "要註冊的 logger 實例"
+#~ msgstr ""
+
+#~ msgid "取消註冊 logger 實例"
+#~ msgstr ""
+
+#~ msgid "要取消註冊的 logger 實例名稱"
+#~ msgstr ""
+
+#~ msgid "如果成功取消註冊則返回 True，否則返回 False"
+#~ msgstr ""
+
+#~ msgid "列出所有已註冊的 logger 名稱"
+#~ msgstr ""
+
+#~ msgid "註冊的 logger 名稱列表"
+#~ msgstr ""
+
+#~ msgid "打印區塊樣式的日誌，並寫入到日誌文件"
+#~ msgstr ""
+
+#~ msgid "區塊的標題"
+#~ msgstr ""
+
+#~ msgid "日誌的內容列表"
+#~ msgstr ""
+
+#~ msgid "區塊邊框顏色，預設為 \"cyan\""
+#~ msgstr ""
+
+#~ msgid "日誌級別，預設為 \"INFO\""
+#~ msgstr ""
+
+#~ msgid "要使用的 logger 實例，如果為 None 則不記錄日誌"
+#~ msgstr ""
+
+#~ msgid "要使用的 rich console 實例，如果為 None 則創建新的"
+#~ msgstr ""
+
+#~ msgid "是否僅輸出到控制台，預設為 False"
+#~ msgstr ""
+
+#~ msgid "是否僅輸出到日誌文件，預設為 False"
+#~ msgstr ""
+
+#~ msgid "日誌堆棧深度，用於捕獲正確的調用位置"
+#~ msgstr ""
+
+#~ msgid ":sphinx_autodoc_typehints_type:`\\:py\\:data\\:\\`\\~typing.Any\\``"
+#~ msgstr ""
+
+#~ msgid "打印 ASCII 藝術標題"
+#~ msgstr ""
+
+#~ msgid "要轉換為 ASCII 藝術的文本"
+#~ msgstr ""
+
+#~ msgid "ASCII 藝術字體"
+#~ msgstr ""
+
+#~ msgid "日誌級別"
+#~ msgstr ""
+
+#~ msgid "邊框樣式"
+#~ msgstr ""
+
+#~ msgid "如果文本包含非 ASCII 字符"
+#~ msgstr ""
+
+#~ msgid "如果未安裝 art 庫"
+#~ msgstr ""
+
+#~ msgid "打印帶有 ASCII 藝術標題的區塊樣式日誌"
+#~ msgstr ""
+
+#~ msgid "ASCII 藝術標題文本 (如果不提供，則使用 title)"
+#~ msgstr ""
+
+#~ msgid "區塊邊框顏色"
+#~ msgstr ""
+
+#~ msgid "如果 ASCII 標題包含非 ASCII 字符"
+#~ msgstr ""
+
+#~ msgid "檢查文本是否只包含 ASCII 字符"
+#~ msgstr ""
+
+#~ msgid "要檢查的文本"
+#~ msgstr ""
+
+#~ msgid "如果只包含 ASCII 字符則返回 True，否則返回 False"
+#~ msgstr ""
+
+#~ msgid "配置 Uvicorn 日誌以使用 Loguru 格式化輸出"
+#~ msgstr ""
+
+#~ msgid "此函數用於將 Uvicorn 的日誌輸出格式改為 Loguru 的格式， 適合需要統一日誌格式的應用場景。"
+#~ msgstr ""
+
+#~ msgid "要使用的 logger 實例，如果為 None 則使用默認 logger"
+#~ msgstr ""
+
+#~ msgid "要配置的 logger 名稱列表，默認為 Uvicorn 相關的 logger"
+#~ msgstr ""
+
+#~ msgid "如果 uvicorn 未安裝"
+#~ msgstr ""
+
+#~ msgid "基礎類別：:py:class:`~logging.Handler`"
+#~ msgstr ""
+
+#~ msgid "攔截標準日誌庫的日誌並轉發給 Loguru"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "此處理器用於將 Python 標準日誌庫的日誌消息攔截並轉發到 Loguru， "
+#~ "實現統一的日誌管理，特別適用於 Uvicorn 等使用標準日誌庫的第三方庫。"
+#~ msgstr ""
+
+#~ msgid "初始化攔截處理器"
+#~ msgstr ""
+
+#~ msgid "處理日誌記錄，將其轉發給 Loguru。"
+#~ msgstr ""
+
+#~ msgid "標準日誌庫的日誌記錄物件。"
+#~ msgstr ""
+
+#~ msgid "為 FastAPI 應用設置日誌功能"
+#~ msgstr ""
+
+#~ msgid "此函數提供了一種便捷的方式來配置 FastAPI 應用的日誌功能。"
+#~ msgstr ""
+
+#~ msgid "FastAPI 應用實例"
+#~ msgstr ""
+
+#~ msgid "是否添加日誌中間件，預設為 True"
+#~ msgstr ""
+
+#~ msgid "是否使用自定義 LoggingRoute，預設為 False"
+#~ msgstr ""
+
+#~ msgid "不記錄日誌的路徑列表"
+#~ msgstr ""
+
+#~ msgid "不記錄日誌的 HTTP 方法列表"
+#~ msgstr ""
+
+#~ msgid "是否記錄請求體，預設為 False"
+#~ msgstr ""
+
+#~ msgid "是否記錄響應體，預設為 False"
+#~ msgstr ""
+
+#~ msgid "打印 FIGlet 藝術標題"
+#~ msgstr ""
+
+#~ msgid "要轉換為 FIGlet 藝術的文本"
+#~ msgstr ""
+
+#~ msgid "FIGlet 藝術字體"
+#~ msgstr ""
+
+#~ msgid "如果未安裝 pyfiglet 庫"
+#~ msgstr ""
+
+#~ msgid "打印帶有 FIGlet 藝術標題的區塊樣式日誌"
+#~ msgstr ""
+
+#~ msgid "FIGlet 藝術標題文本 (如果不提供，則使用 title)"
+#~ msgstr ""
+
+#~ msgid "如果 FIGlet 標題包含非 ASCII 字符"
+#~ msgstr ""
+
+#~ msgid "獲取所有可用的 FIGlet 字體"
+#~ msgstr ""
+
+#~ msgid "可用字體名稱的集合"
+#~ msgstr ""
+
