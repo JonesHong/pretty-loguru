@@ -22,10 +22,11 @@ extensions = [
     "sphinx_autodoc_typehints",  # 從類型註解生成文檔
     "myst_parser",  # 支援Markdown
     "sphinx_copybutton",  # 支援複製按鈕
+    "sphinx_rtd_dark_mode",  # 支援深色模式
 ]
 
 # 主題設置
-html_theme = "sphinx_rtd_theme"
+html_theme = "furo"
 html_static_path = ["_static"]
 html_js_files = ["js/language_switcher.js", "js/code_buttons.js"]
 html_css_files = ["css/custom.css","css/code_buttons.css"]
