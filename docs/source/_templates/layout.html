@@ -1,10 +1,10 @@
 {% block sidebar1 %}
   {{ super() }}
   <div class="language-switcher" style="text-align:right; margin:1em 0;">
-    <a href="{{ root_url }}zh_TW/index.html" {% if language=='zh_TW' %}class="active"{% endif %}>
+    <a href="{{ pathto('zh_TW/index') }}" {% if language=='zh_TW' %}class="active"{% endif %}>
       繁體中文
     </a> |
-    <a href="{{ root_url }}en/index.html" {% if language=='en' %}class="active"{% endif %}>
+    <a href="{{ pathto('en/index') }}" {% if language=='en' %}class="active"{% endif %}>
       English
     </a>
   </div>

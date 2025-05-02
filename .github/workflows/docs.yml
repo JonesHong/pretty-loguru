@@ -30,17 +30,17 @@ jobs:
         pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints myst-parser sphinx-intl sphinx-copybutton
         pip install -e .
     
-    - name: Build Default docs
-      run: |
-        cd docs
-        # 確認 Makefile 位置並查看其內容
-        ls -la
-        if [ -f "Makefile" ]; then
-          make html
-        else
-          # 如果沒有 Makefile，直接使用 sphinx-build
-          sphinx-build -b html source build/html
-        fi
+    # - name: Build Default docs
+    #   run: |
+    #     cd docs
+    #     # 確認 Makefile 位置並查看其內容
+    #     ls -la
+    #     if [ -f "Makefile" ]; then
+    #       make html
+    #     else
+    #       # 如果沒有 Makefile，直接使用 sphinx-build
+    #       sphinx-build -b html source build/html
+    #     fi
 
     - name: Build Chinese docs
       run: |
