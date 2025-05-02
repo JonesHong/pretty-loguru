@@ -5,19 +5,24 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pretty_loguru.integrations.uvicorn &mdash; Pretty Loguru 0.2.6 說明文件</title>
+  <title>pretty_loguru.integrations.uvicorn &mdash; Pretty Loguru 0.2.8 說明文件</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=dce0a6c6" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=72718ab0" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/code_buttons.css?v=d05ec51e" />
 
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=9a3e7318"></script>
+      <script src="../../../_static/documentation_options.js?v=629b1b94"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
       <script src="../../../_static/translations.js?v=cbf116e0"></script>
-      <script src="../../../_static/language_switcher.js?v=c59c85d5"></script>
+      <script src="../../../_static/js/language_switcher.js?v=c59c85d5"></script>
+      <script src="../../../_static/js/code_buttons.js?v=2e48b76e"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../../../genindex.html" />
     <link rel="search" title="搜尋" href="../../../search.html" /> 
@@ -95,7 +100,7 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">_has_uvicorn</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-        <span class="s2">&quot;未安裝 uvicorn 套件，uvicorn 整合將不可用。可使用 &#39;pip install uvicorn&#39; 安裝。&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Uvicorn package is not installed. Uvicorn integration will not be available. You can install it using &#39;pip install uvicorn&#39;.&quot;</span><span class="p">,</span>
         <span class="ne">ImportWarning</span><span class="p">,</span>
         <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
     <span class="p">)</span>
@@ -142,7 +147,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># 避免遞歸處理</span>
         <span class="c1"># 跳過由 Loguru 產生的日誌記錄</span>
-        <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;uvicorn.error&quot;</span> <span class="ow">and</span> <span class="n">record</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Traceback &quot;</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">getMessage</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;uvicorn.error&quot;</span> <span class="ow">and</span> <span class="n">msg</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Traceback &quot;</span><span class="p">):</span>
             <span class="c1"># 避免重複的異常追蹤</span>
             <span class="k">return</span>
 
@@ -225,7 +231,7 @@
 
     <span class="c1"># 記錄配置信息</span>
     <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
-        <span class="n">logger_instance</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;已配置 Uvicorn 日誌，級別: </span><span class="si">{</span><span class="n">level</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="n">logger_instance</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Uvicorn logging configured with level: </span><span class="si">{</span><span class="n">level</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 </pre></div>
 

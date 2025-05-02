@@ -11,11 +11,11 @@ ASCII 藝術標題
 .. code-block:: python
 
    # 需要安裝 art 庫：pip install art
-   logger.ascii_header("系統啟動", font="standard")
+    logger.ascii_header("System Startup", font="standard")
    
    # 帶有 ASCII 標題的區塊
    logger.ascii_block(
-       "定期任務",
+    "Scheduled Task",
        [
            "開始執行每日計劃任務...",
            "數據備份完成",
@@ -24,15 +24,6 @@ ASCII 藝術標題
        ascii_font="standard"
    )
 
-輸出示例：
-
-.. code-block:: text
-
-   +------------------+
-   |                  |
-   | 系統啟動        　|
-   |                  |
-   +------------------+
 
 FIGlet 藝術標題
 ---------------------------------
@@ -42,7 +33,7 @@ FIGlet 藝術標題
 .. code-block:: python
 
    # 需要安裝 pyfiglet 庫：pip install pyfiglet
-   logger.figlet_header("警告信息", font="slant")
+    logger.figlet_header("Warning Message", font="slant")
    
    # 獲取所有可用的 FIGlet 字體
    available_fonts = logger.get_figlet_fonts()
@@ -50,7 +41,7 @@ FIGlet 藝術標題
    
    # 帶有 FIGlet 標題的區塊
    logger.figlet_block(
-       "異常摘要",
+    "Exception Summary",
        [
            "檢測到系統異常",
            "服務中斷時間：14:30-15:45",

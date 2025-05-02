@@ -6,18 +6,23 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Advanced Features &mdash; Pretty Loguru 0.2.6 documentation</title>
+  <title>Advanced Features &mdash; Pretty Loguru 0.2.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=dce0a6c6" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=72718ab0" />
+      <link rel="stylesheet" type="text/css" href="_static/css/code_buttons.css?v=d05ec51e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=9a3e7318"></script>
+      <script src="_static/documentation_options.js?v=629b1b94"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script src="_static/language_switcher.js?v=c59c85d5"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/js/language_switcher.js?v=c59c85d5"></script>
+      <script src="_static/js/code_buttons.js?v=2e48b76e"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -95,11 +100,11 @@
 <h2>ASCII Art Titles<a class="headerlink" href="#ascii" title="Link to this heading"></a></h2>
 <p>Enhance your log’s visual effects with ASCII art titles:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 需要安裝 art 庫：pip install art</span>
-<span class="n">logger</span><span class="o">.</span><span class="n">ascii_header</span><span class="p">(</span><span class="s2">&quot;系統啟動&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="s2">&quot;standard&quot;</span><span class="p">)</span>
+ <span class="n">logger</span><span class="o">.</span><span class="n">ascii_header</span><span class="p">(</span><span class="s2">&quot;System Startup&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="s2">&quot;standard&quot;</span><span class="p">)</span>
 
 <span class="c1"># 帶有 ASCII 標題的區塊</span>
 <span class="n">logger</span><span class="o">.</span><span class="n">ascii_block</span><span class="p">(</span>
-    <span class="s2">&quot;定期任務&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;Scheduled Task&quot;</span><span class="p">,</span>
     <span class="p">[</span>
         <span class="s2">&quot;開始執行每日計劃任務...&quot;</span><span class="p">,</span>
         <span class="s2">&quot;數據備份完成&quot;</span><span class="p">,</span>
@@ -109,20 +114,12 @@
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Output Example:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>+------------------+
-|                  |
-| 系統啟動        　|
-|                  |
-+------------------+
-</pre></div>
-</div>
 </section>
 <section id="figlet">
 <h2>FIGlet Art Titles<a class="headerlink" href="#figlet" title="Link to this heading"></a></h2>
 <p>Use FIGlet art titles to provide more font options:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 需要安裝 pyfiglet 庫：pip install pyfiglet</span>
-<span class="n">logger</span><span class="o">.</span><span class="n">figlet_header</span><span class="p">(</span><span class="s2">&quot;警告信息&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="s2">&quot;slant&quot;</span><span class="p">)</span>
+ <span class="n">logger</span><span class="o">.</span><span class="n">figlet_header</span><span class="p">(</span><span class="s2">&quot;Warning Message&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="s2">&quot;slant&quot;</span><span class="p">)</span>
 
 <span class="c1"># 獲取所有可用的 FIGlet 字體</span>
 <span class="n">available_fonts</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">get_figlet_fonts</span><span class="p">()</span>
@@ -130,7 +127,7 @@
 
 <span class="c1"># 帶有 FIGlet 標題的區塊</span>
 <span class="n">logger</span><span class="o">.</span><span class="n">figlet_block</span><span class="p">(</span>
-    <span class="s2">&quot;異常摘要&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;Exception Summary&quot;</span><span class="p">,</span>
     <span class="p">[</span>
         <span class="s2">&quot;檢測到系統異常&quot;</span><span class="p">,</span>
         <span class="s2">&quot;服務中斷時間：14:30-15:45&quot;</span><span class="p">,</span>

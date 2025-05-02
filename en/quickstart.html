@@ -6,18 +6,23 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quick Start &mdash; Pretty Loguru 0.2.6 documentation</title>
+  <title>Quick Start &mdash; Pretty Loguru 0.2.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=dce0a6c6" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=72718ab0" />
+      <link rel="stylesheet" type="text/css" href="_static/css/code_buttons.css?v=d05ec51e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=9a3e7318"></script>
+      <script src="_static/documentation_options.js?v=629b1b94"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script src="_static/language_switcher.js?v=c59c85d5"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/js/language_switcher.js?v=c59c85d5"></script>
+      <script src="_static/js/code_buttons.js?v=2e48b76e"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -138,7 +143,7 @@ pip<span class="w"> </span>install<span class="w"> </span>pyyaml
 <span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/block_example.png"><img alt="Block Logging Example" src="_images/block_example.png" style="width: 500px;" />
+<a class="reference internal image-reference" href="_static/|locale|/block_example.png"><img alt="Block Logging Example" src="_static/|locale|/block_example.png" style="width: 500px;" />
 </a>
 </section>
 <section id="id5">
@@ -157,13 +162,13 @@ pip<span class="w"> </span>install<span class="w"> </span>pyyaml
 <section id="ascii-figlet">
 <h2>ASCII and FIGlet Art<a class="headerlink" href="#ascii-figlet" title="Link to this heading"></a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ASCII 藝術標題 (需要安裝 art 庫)</span>
-<span class="n">logger</span><span class="o">.</span><span class="n">ascii_header</span><span class="p">(</span><span class="s2">&quot;系統啟動&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">ascii_header</span><span class="p">(</span><span class="s2">&quot;System start&quot;</span><span class="p">)</span>
 
 <span class="c1"># FIGlet 藝術標題 (需要安裝 pyfiglet 庫)</span>
-<span class="n">logger</span><span class="o">.</span><span class="n">figlet_header</span><span class="p">(</span><span class="s2">&quot;警告&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="s2">&quot;slant&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">figlet_header</span><span class="p">(</span><span class="s2">&quot;Warning&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="s2">&quot;slant&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="_images/figlet_example.png"><img alt="FIGlet Art Example" src="_images/figlet_example.png" style="width: 500px;" />
+<a class="reference internal image-reference" href="_static/|locale|/figlet_example.png"><img alt="FIGlet Art Example" src="_static/|locale|/figlet_example.png" style="width: 500px;" />
 </a>
 </section>
 <section id="id6">
@@ -173,29 +178,50 @@ pip<span class="w"> </span>install<span class="w"> </span>pyyaml
 <span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru.integrations.fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_fastapi_logging</span>
 
+
 <span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;fastapi_app&quot;</span><span class="p">)</span>
-
 <span class="n">setup_fastapi_logging</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">logger_instance</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
 
 <span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">read_root</span><span class="p">():</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;處理首頁請求&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;Hello&quot;</span><span class="p">:</span> <span class="s2">&quot;World&quot;</span><span class="p">}</span>
+   <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;處理首頁請求&quot;</span><span class="p">)</span>
+   <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;Hello&quot;</span><span class="p">:</span> <span class="s2">&quot;World&quot;</span><span class="p">}</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+   <span class="kn">import</span><span class="w"> </span><span class="nn">uvicorn</span>
+   <span class="n">uvicorn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+      <span class="n">app</span><span class="p">,</span>
+      <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+      <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
+   <span class="p">)</span>
 </pre></div>
 </div>
+<a class="reference internal image-reference" href="_static/|locale|/fastAPI_example.png"><img alt="FastAPI 集成示例" src="_static/|locale|/fastAPI_example.png" style="width: 500px;" />
+</a>
 <p>Integration with Uvicorn:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">uvicorn</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru.integrations.uvicorn</span><span class="w"> </span><span class="kn">import</span> <span class="n">configure_uvicorn</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;uvicorn_app&quot;</span><span class="p">)</span>
-<span class="n">configure_uvicorn</span><span class="p">(</span><span class="n">logger_instance</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;app&quot;</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">uvicorn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;app:app&quot;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">)</span>
+   <span class="kn">import</span><span class="w"> </span><span class="nn">uvicorn</span>
+   <span class="c1"># 先設定好 Loguru 攔截</span>
+   <span class="n">configure_uvicorn</span><span class="p">(</span><span class="n">logger_instance</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+   <span class="c1"># 關閉 Uvicorn 內建的 log_config</span>
+   <span class="n">uvicorn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+      <span class="n">app</span><span class="p">,</span>
+      <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+      <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span>
+      <span class="n">log_config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>     <span class="c1"># ← 這行關鍵</span>
+   <span class="p">)</span>
 </pre></div>
 </div>
+<a class="reference internal image-reference" href="_static/|locale|/uvicorn_example.png.png"><img alt="FastAPI 集成示例" src="_static/|locale|/uvicorn_example.png.png" style="width: 500px;" />
+</a>
 </section>
 <section id="id7">
 <h2>Custom Configuration<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>

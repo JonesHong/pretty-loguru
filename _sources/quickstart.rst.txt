@@ -57,7 +57,7 @@
        ]
    )
 
-.. image:: _static/block_example.png
+.. image:: _static/|locale|/block_example.png
    :alt: 區塊日誌示例
    :width: 500px
 
@@ -83,14 +83,15 @@ ASCII 和 FIGlet 藝術
 .. code-block:: python
 
    # ASCII 藝術標題 (需要安裝 art 庫)
-   logger.ascii_header("系統啟動")
+   logger.ascii_header("System start")
    
    # FIGlet 藝術標題 (需要安裝 pyfiglet 庫)
-   logger.figlet_header("警告", font="slant")
+   logger.figlet_header("Warning", font="slant")
 
-.. image:: _static/figlet_example.png
+.. image:: _static/|locale|/figlet_example.png
    :alt: FIGlet 藝術示例
    :width: 500px
+
 
 框架集成
 ------------
@@ -103,29 +104,56 @@ ASCII 和 FIGlet 藝術
    from pretty_loguru import create_logger
    from pretty_loguru.integrations.fastapi import setup_fastapi_logging
    
+   
    app = FastAPI()
    logger = create_logger("fastapi_app")
-   
    setup_fastapi_logging(app, logger_instance=logger)
-   
+
    @app.get("/")
    def read_root():
-       logger.info("處理首頁請求")
-       return {"Hello": "World"}
+      logger.info("處理首頁請求")
+      return {"Hello": "World"}
+
+   if __name__ == "__main__":
+      import uvicorn
+      uvicorn.run(
+         app,
+         host="localhost",
+         port=8000,
+      )
+
+
+.. image:: _static/|locale|/fastAPI_example.png
+   :alt: FastAPI 集成示例
+   :width: 500px
+
 
 與 Uvicorn 集成：
 
 .. code-block:: python
 
-   import uvicorn
+   from fastapi import FastAPI
    from pretty_loguru import create_logger
    from pretty_loguru.integrations.uvicorn import configure_uvicorn
-   
-   logger = create_logger("uvicorn_app")
-   configure_uvicorn(logger_instance=logger)
-   
+
+   app = FastAPI()
+   logger = create_logger("app")
+
    if __name__ == "__main__":
-       uvicorn.run("app:app", host="0.0.0.0", port=8000)
+      import uvicorn
+      # 先設定好 Loguru 攔截
+      configure_uvicorn(logger_instance=logger)
+      # 關閉 Uvicorn 內建的 log_config
+      uvicorn.run(
+         app,
+         host="localhost",
+         port=8000,
+         log_config=None,     # ← 這行關鍵
+      )
+
+.. image:: _static/|locale|/uvicorn_example.png.png
+   :alt: FastAPI 集成示例
+   :width: 500px
 
 自定義配置
 ---------------
