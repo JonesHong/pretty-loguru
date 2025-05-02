@@ -82,6 +82,27 @@ def skip_internal(app, what, name, obj, skip, options):
 
     return skip
 
+# conf.py 裡面，放在最下方的 setup() 裡或跟 skip_internal 同一個 setup()
+from docutils import nodes
+from docutils.parsers.rst import Directive
+from sphinx.util.docutils import SphinxDirective
+
+class LocaleImage(SphinxDirective):
+    required_arguments = 1  # 檔名，比如 fastAPI_example.png
+    option_spec = {
+        'alt': lambda x: x,
+        'width': lambda x: x,
+    }
+
+    def run(self):
+        # 取得目前語系
+        lang = self.config.language or ''
+        # 組出對應路徑
+        img_rel = f"_static/{lang}/{self.arguments[0]}"
+        # 建立 image node
+        node = nodes.image(uri=img_rel, **self.options)
+        return [node]
 
 def setup(app):
     app.connect("autodoc-skip-member", skip_internal)
+    app.add_directive("locale-image", LocaleImage)
