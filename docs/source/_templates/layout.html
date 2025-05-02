@@ -1,19 +1,11 @@
 {% block sidebar1 %}
-{{ super() }}
-<div class="sidebar-block">
-    <div class="sidebar-wrapper">
-        <h2>{{ _('Languages') }}</h2>
-        <div class="language-switcher">
-            <ul>
-                {% if language == 'en' %}
-                    <li><a href="#">繁體中文</a></li>
-                    <li class="active">English</li>
-                {% else %}
-                    <li class="active">繁體中文</li>
-                    <li><a href="#">English</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
-</div>
+  {{ super() }}
+  <div class="language-switcher" style="text-align:right; margin:1em 0;">
+    <a href="{{ root_url }}zh_TW/index.html" {% if language=='zh_TW' %}class="active"{% endif %}>
+      繁體中文
+    </a> |
+    <a href="{{ root_url }}en/index.html" {% if language=='en' %}class="active"{% endif %}>
+      English
+    </a>
+  </div>
 {% endblock %}

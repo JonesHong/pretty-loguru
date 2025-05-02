@@ -5,7 +5,7 @@ permissions:
   contents: write   # 允許寫程式碼與 git push
   pages:   write   # 允許操作 GitHub Pages
   id-token: write  # 有些 action 需要用到
-  
+
 on:
   push:
     branches: [ master ]
@@ -58,13 +58,39 @@ jobs:
         sphinx-intl build
         sphinx-build -b html -D language=en source build/html/en
     
-    - name: Create .nojekyll file
+    # - name: Create .nojekyll file
+    #   run: |
+    #     cd docs/build/html
+    #     touch .nojekyll
+    #     # 創建根目錄重定向檔案
+    #     echo '<meta http-equiv="refresh" content="0; url=./zh_TW/index.html">' > index.html
+    
+    - name: Create language selector landing page
       run: |
         cd docs/build/html
         touch .nojekyll
-        # 創建根目錄重定向檔案
-        echo '<meta http-equiv="refresh" content="0; url=./zh_TW/index.html">' > index.html
-    
+        cat << 'EOF' > index.html
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <title>Select Language</title>
+          <style>
+            body { font-family: sans-serif; text-align:center; padding:2rem; }
+            a { margin:0 1rem; font-size:1.2rem; text-decoration:none; }
+          </style>
+        </head>
+        <body>
+          <h1>Choose Your Language / 選擇語言</h1>
+          <p>
+            <a href="zh_TW/index.html">繁體中文</a> |
+            <a href="en/index.html">English</a>
+          </p>
+        </body>
+        </html>
+        EOF
+
+
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@4.1.5
       with:
