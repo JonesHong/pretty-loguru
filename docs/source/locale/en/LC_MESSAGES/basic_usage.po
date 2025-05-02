@@ -22,101 +22,100 @@ msgstr ""
 
 #: ../../source/basic_usage.rst:2 76165c699f234ceaaa835cb3ec760870
 msgid "基本用法"
-msgstr ""
+msgstr "Basic Usage"
 
 #: ../../source/basic_usage.rst:4 8ba478a04d544c2a837b64f810a08b38
 msgid "本節介紹 Pretty Loguru 的基本用法和主要功能。"
-msgstr ""
+msgstr "This section introduces the basic usage and main features of Pretty Loguru."
 
 #: ../../source/basic_usage.rst:7 aa1ae77ce00b4a54b4eaabb0c19a174d
 msgid "創建和配置日誌實例"
-msgstr ""
+msgstr "Create and Configure Log Instances"
 
 #: ../../source/basic_usage.rst:9 26d44ee5be434231857f2c2245c62cb2
 msgid "使用 ``create_logger`` 函數可以快速創建一個日誌實例：`"
-msgstr ""
+msgstr "Use the ``create_logger`` function to quickly create a log instance:"
 
 #: ../../source/basic_usage.rst:29 042b2ffab5754264a59bdd921c4b1d72
 msgid "日誌級別"
-msgstr ""
+msgstr "Log Levels"
 
 #: ../../source/basic_usage.rst:31 ebc9c7555217425aa29e2c00d25c8e9a
 msgid "Pretty Loguru 支持以下日誌級別："
-msgstr ""
+msgstr "Pretty Loguru supports the following log levels:"
 
 #: ../../source/basic_usage.rst:33 43c6adb643104aa1986b35836815a0fb
 msgid "``TRACE`` -` 最詳細的輸出，用於追蹤程序執行過程`"
-msgstr ""
+msgstr "``TRACE`` - The most detailed output, used to trace program execution"
 
 #: ../../source/basic_usage.rst:34 b66295dd85a845db8d47624ec4f66727
 msgid "``DEBUG`` -` 調試信息，幫助開發者進行問題診斷`"
-msgstr ""
+msgstr "``DEBUG`` - Debug information to help developers diagnose issues"
 
 #: ../../source/basic_usage.rst:35 78ffea47bba64094b944ce97f85860c9
 msgid "``INFO`` -` 一般信息，記錄應用程序的正常操作`"
-msgstr ""
+msgstr "``INFO`` - General information to record normal application operations"
 
 #: ../../source/basic_usage.rst:36 d17789a5b850463eaed54dba31266240
 msgid "``SUCCESS`` -` 成功完成的操作`"
-msgstr ""
+msgstr "``SUCCESS`` - Successfully completed operations"
 
 #: ../../source/basic_usage.rst:37 f2efd0a2ad504cafacc7706d51d424c7
 msgid "``WARNING`` -` 警告信息，可能的問題或異常情況`"
-msgstr ""
+msgstr "``WARNING`` - Warning messages for potential issues or anomalies"
 
 #: ../../source/basic_usage.rst:38 4cffb7116f734d588d806b910ce599ba
 msgid "``ERROR`` -` 錯誤信息，應用程序運行中的失敗`"
-msgstr ""
+msgstr "``ERROR`` - Error messages for failures during application execution"
 
 #: ../../source/basic_usage.rst:39 e8aa2338436d4cd4b4729bda522014ca
 msgid "``CRITICAL`` -` 嚴重錯誤，可能導致應用程序無法繼續運行`"
-msgstr ""
+msgstr "``CRITICAL`` - Critical errors that may prevent the application from continuing"
 
 #: ../../source/basic_usage.rst:52 9421f4f186d24579bc41156a48ee5f92
 msgid "目標導向日誌"
-msgstr ""
+msgstr "Target-Oriented Logging"
 
 #: ../../source/basic_usage.rst:54 e963735b8e1441718d0598a7a537ed59
 msgid "Pretty Loguru 允許指定日誌的輸出目標："
-msgstr ""
+msgstr "Pretty Loguru allows specifying the output targets for logs:"
 
 #: ../../source/basic_usage.rst:68 e81158e331e044e293db0a864cf1ea30
 msgid "區塊日誌"
-msgstr ""
+msgstr "Block Logging"
 
 #: ../../source/basic_usage.rst:70 13fba46a12c44524b9984d0f71f29879
 msgid "區塊日誌功能可以以結構化方式呈現相關信息："
-msgstr ""
+msgstr "The block logging feature can present related information in a structured way:"
 
 #: ../../source/basic_usage.rst:93 671eb346c3424bf5b7e8371c9ec8a3ff
 msgid "捕獲異常"
-msgstr ""
+msgstr "Capture Exceptions"
 
 #: ../../source/basic_usage.rst:95 2b665e34986a4f1485f3d87d4a53e2aa
 msgid "使用 ``try-except`` 記錄異常：`"
-msgstr ""
+msgstr "Use ``try-except`` to log exceptions:"
 
 #: ../../source/basic_usage.rst:113 85296197a2594fe6984efee92aef7739
 msgid "日誌文件管理"
-msgstr ""
+msgstr "Log File Management"
 
 #: ../../source/basic_usage.rst:115 8a4c80a0b0b840a8b91d04e897622de5
 msgid "Pretty Loguru 會自動處理日誌文件的創建和輪換："
-msgstr ""
+msgstr "Pretty Loguru automatically handles the creation and rotation of log files:"
 
 #: ../../source/basic_usage.rst:132 65f1f29c25d449caad62c56eb56eb468
 msgid "日誌內容格式化"
-msgstr ""
+msgstr "Log Content Formatting"
 
 #: ../../source/basic_usage.rst:134 60015bcad1b540629de660b8eab497e3
 msgid "格式化日誌消息："
-msgstr ""
+msgstr "Format log messages:"
 
 #: ../../source/basic_usage.rst:149 251ae26a4c4d4e319cd0b5a94534f7dd
 msgid "結構化日誌"
-msgstr ""
+msgstr "Structured Logging"
 
 #: ../../source/basic_usage.rst:151 a601f63cfa4140b6a09a0e75207109da
 msgid "綁定上下文變量："
-msgstr ""
-
+msgstr "Bind Context Variables:"

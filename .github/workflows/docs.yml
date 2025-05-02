@@ -1,45 +1,57 @@
-# .github/workflows/docs.yml
 
-name: 部署文檔到GitHub Pages
+name: Build and Deploy Documentation
 
 on:
   push:
-    branches:
-      - main  # 設置哪些分支的推送會觸發文檔部署
-    paths:
-      - 'docs/**'  # 只有文檔目錄變更時才觸發
-      - 'pretty_loguru/**'  # 或源碼變更時也觸發
-  # 允許手動觸發工作流
-  workflow_dispatch:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: 檢出儲存庫
-        uses: actions/checkout@v3
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints myst-parser sphinx-intl
+        pip install -e .
+    
+    - name: Build Default docs
+      run: |
+        cd docs
+        make html
 
-      - name: 設置Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: 安裝依賴
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e .
-          pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints myst-parser
-
-      - name: 構建文檔
-        run: |
-          cd docs
-          make clean
-          make html
-
-      - name: 部署到GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/build/html
-          force_orphan: true
-          commit_message: "部署文檔: ${{ github.event.head_commit.message }}"
+    - name: Build Chinese docs
+      run: |
+        cd docs
+        sphinx-build -b gettext source build/gettext
+        sphinx-intl update -p build/gettext -l zh_TW
+        sphinx-intl build
+        sphinx-build -b html -D language=zh_TW source build/html/zh_TW
+    
+    - name: Build English docs
+      run: |
+        cd docs
+        sphinx-build -b gettext source build/gettext
+        sphinx-intl update -p build/gettext -l en
+        sphinx-intl build
+        sphinx-build -b html -D language=en source build/html/en
+    
+    - name: Create .nojekyll file
+      run: |
+        cd docs/build/html
+        touch .nojekyll
+    
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@4.1.5
+      with:
+        branch: gh-pages
+        folder: docs/build/html

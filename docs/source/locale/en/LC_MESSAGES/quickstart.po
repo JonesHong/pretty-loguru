@@ -22,100 +22,96 @@ msgstr ""
 
 #: ../../source/quickstart.rst:2 d9a7c171000f449784cedd7137a65eaa
 msgid "快速入門"
-msgstr ""
+msgstr "Quick Start"
 
 #: ../../source/quickstart.rst:4 0427d5d407e649509ef62997af72c3a0
 msgid "本節將幫助你快速上手 Pretty Loguru。"
-msgstr ""
+msgstr "This section will help you quickly get started with Pretty Loguru."
 
 #: ../../source/quickstart.rst:7 70c588562e29482e9d04f66460066b21
 msgid "安裝"
-msgstr ""
+msgstr "Installation"
 
 #: ../../source/quickstart.rst:9 80cd13875f0447ceaaa44994f6ecfcd8
 msgid "使用 pip 安裝 Pretty Loguru："
-msgstr ""
+msgstr "Install Pretty Loguru using pip:"
 
 #: ../../source/quickstart.rst:15 204eef3033c943c3aad8b1eef3f93772
 msgid "可選依賴："
-msgstr ""
+msgstr "Optional Dependencies:"
 
 #: ../../source/quickstart.rst:29 1c112a3b913a4114981fd971fc8d0d1c
 msgid "創建日誌實例"
-msgstr ""
+msgstr "Create a Logger Instance"
 
 #: ../../source/quickstart.rst:45 0cb6d6581d5c47308bdc1a0a07741d0e
 msgid "使用區塊日誌"
-msgstr ""
+msgstr "Using Block Logging"
 
 #: ../../source/quickstart.rst:60 e5eb7970a0ec48e8b3acdb3c6cb7cfc9
 msgid "區塊日誌示例"
-msgstr ""
+msgstr "Block Logging Example"
 
 #: ../../source/quickstart.rst:65 6e65363d79ff44209eb4c1df2efb8629
 msgid "目標導向日誌"
-msgstr ""
+msgstr "Goal-Oriented Logging"
 
 #: ../../source/quickstart.rst:80 7d72d736b5a04deebc17b960d83f0870
 msgid "ASCII 和 FIGlet 藝術"
-msgstr ""
+msgstr "ASCII and FIGlet Art"
 
 #: ../../source/quickstart.rst:91 1f9ce4d075f8494a90607f47fb2fd679
 msgid "FIGlet 藝術示例"
-msgstr ""
+msgstr "FIGlet Art Example"
 
 #: ../../source/quickstart.rst:96 6d213708d7ac4df3af96eb8d76ecde37
 msgid "框架集成"
-msgstr ""
+msgstr "Framework Integration"
 
 #: ../../source/quickstart.rst:98 6e3243076465485082a52f65b9354f02
 msgid "與 FastAPI 集成："
-msgstr ""
+msgstr "Integration with FastAPI:"
 
 #: ../../source/quickstart.rst:116 ecc932259afd40a993e2004dc70618be
 msgid "與 Uvicorn 集成："
-msgstr ""
+msgstr "Integration with Uvicorn:"
 
 #: ../../source/quickstart.rst:131 696a83c749294d2fa0670cd03884f0d6
 msgid "自定義配置"
-msgstr ""
+msgstr "Custom Configuration"
 
 #: ../../source/quickstart.rst:159 0fba61fba24e40d5bdf3fc7681c9a950
 msgid "日誌清理"
-msgstr ""
+msgstr "Log Cleanup"
 
 #: ../../source/quickstart.rst:161 7cf886bed2fc4e6cbab347fcca94cca8
 msgid "自動清理舊日誌文件："
-msgstr ""
+msgstr "Automatically Clean Up Old Log Files:"
 
 #: ../../source/quickstart.rst:179 aaba654266824871b1954531c5850171
 msgid "更多功能"
-msgstr ""
+msgstr "More Features"
 
 #: ../../source/quickstart.rst:181 4e50207461164e13a05cf701d24d3240
 msgid "Pretty Loguru 還提供了更多功能，請繼續閱讀以下章節了解更多詳情："
-msgstr ""
+msgstr "Pretty Loguru also offers more features. Continue reading the following sections for more details:"
 
 #: ../../source/quickstart.rst:183 3560e11784e7407c8174c625c24c2a37
 msgid ":doc:`basic_usage` -` 基本用法和主要功能`"
-msgstr ""
+msgstr ":doc:`basic_usage` - Basic Usage and Main Features"
 
 #: ../../source/quickstart.rst:184 99c59acf6652436487a3e123cfdc8ee7
 msgid ":doc:`advanced_features` -` 進階功能和特性`"
-msgstr ""
+msgstr ":doc:`advanced_features` - Advanced Features and Capabilities"
 
 #: ../../source/quickstart.rst:185 1d98a65358524697817f2b101fbca17b
 msgid ":doc:`integrations` -` 框架集成功能`"
-msgstr ""
+msgstr ":doc:`integrations` - Framework Integration Features"
 
 #: ../../source/quickstart.rst:188 56219484d3c24b2c8541ed6c0bffa960
 msgid "更多示例"
-msgstr ""
+msgstr "More Examples"
 
 #: ../../source/quickstart.rst:190 1a4253d9a07b4c6382816dbb2f07ac14
 msgid "查看 :doc:`advanced_features` 獲取更多使用示例。`"
-msgstr ""
-
-#~ msgid "安裝 --"
-#~ msgstr ""
-
+msgstr "See :doc:`advanced_features` for more usage examples."

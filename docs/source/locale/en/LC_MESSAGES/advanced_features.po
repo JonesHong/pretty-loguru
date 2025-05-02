@@ -22,81 +22,80 @@ msgstr ""
 
 #: ../../source/advanced_features.rst:2 accc33b474014e2b9e6f1fa67f086d89
 msgid "進階功能"
-msgstr ""
+msgstr "Advanced Features"
 
 #: ../../source/advanced_features.rst:4 99fdec984eec4d3d9731d5ecb76d1edb
 msgid "本節介紹 Pretty Loguru 的進階功能和特性。"
-msgstr ""
+msgstr "This section introduces the advanced features and characteristics of Pretty Loguru."
 
 #: ../../source/advanced_features.rst:7 90909f9028e7424793504d5878c3caf4
 msgid "ASCII 藝術標題"
-msgstr ""
+msgstr "ASCII Art Titles"
 
 #: ../../source/advanced_features.rst:9 16b1b67ac25f4a55953b532abc88042f
 msgid "使用 ASCII 藝術標題增強你的日誌視覺效果："
-msgstr ""
+msgstr "Enhance your log's visual effects with ASCII art titles:"
 
 #: ../../source/advanced_features.rst:27 cfbae9e879c540b8ae93899bc2533c57
 msgid "輸出示例："
-msgstr ""
+msgstr "Output Example:"
 
 #: ../../source/advanced_features.rst:38 3af87013f4fe42cba7d8bb0ac0a3394c
 msgid "FIGlet 藝術標題"
-msgstr ""
+msgstr "FIGlet Art Titles"
 
 #: ../../source/advanced_features.rst:40 ed1380a7c70d439283674f1033e40357
 msgid "使用 FIGlet 藝術標題提供更多字體選擇："
-msgstr ""
+msgstr "Use FIGlet art titles to provide more font options:"
 
 #: ../../source/advanced_features.rst:63 5c5fd15c93c7468c81e047c4d649babf
 msgid "日誌清理"
-msgstr ""
+msgstr "Log Cleanup"
 
 #: ../../source/advanced_features.rst:65 5da97ee2245e4fef915b9ed3223e4f7f
 msgid "自動清理過期的日誌文件，避免磁碟空間浪費："
-msgstr ""
+msgstr "Automatically clean up expired log files to avoid disk space waste:"
 
 #: ../../source/advanced_features.rst:87 c04bc688f0c94c1db160480c429aed1e
 msgid "自定義格式化"
-msgstr ""
+msgstr "Custom Formatting"
 
 #: ../../source/advanced_features.rst:89 5a4078c7726c49fdb98ce6cc64a52eed
 msgid "完全自定義日誌格式和排版："
-msgstr ""
+msgstr "Fully customize log formats and layouts:"
 
 #: ../../source/advanced_features.rst:112 7c3b64fe58bc4aa1b3b154ff205b7add
 msgid "管理多個日誌實例"
-msgstr ""
+msgstr "Manage Multiple Log Instances"
 
 #: ../../source/advanced_features.rst:114 e38810bdf6034e1d8ec586dd4c2ebc51
 msgid "Pretty Loguru 讓你可以輕鬆管理多個日誌實例："
-msgstr ""
+msgstr "Pretty Loguru allows you to easily manage multiple log instances:"
 
 #: ../../source/advanced_features.rst:137 b27c3bea197e48018dcb3ae864c65fa5
 msgid "配置從文件或環境變數載入"
-msgstr ""
+msgstr "Configuration Loading from Files or Environment Variables"
 
 #: ../../source/advanced_features.rst:139 481caeeb510046eeba35beae7427f0cb
 msgid "從配置文件或環境變數載入設置："
-msgstr ""
+msgstr "Load settings from configuration files or environment variables:"
 
 #: ../../source/advanced_features.rst:160 2fa486c198014f6185318e7000f9172f
 msgid "使用環境變數："
-msgstr ""
+msgstr "Using Environment Variables:"
 
 #: ../../source/advanced_features.rst:178 194f8d85817a4faf9bf526aec107c2c2
 msgid "自定義處理器"
-msgstr ""
+msgstr "Custom Handlers"
 
 #: ../../source/advanced_features.rst:180 3986ec5a0068457388de0338f3a77de6
 msgid "添加自定義輸出目標："
-msgstr ""
+msgstr "Add custom output targets:"
 
 #: ../../source/advanced_features.rst:223 2dc9691396684e71a186115944b499ca
 msgid "性能優化"
-msgstr ""
+msgstr "Performance Optimization"
 
 #: ../../source/advanced_features.rst:225 4fa30ceee33e46d2bbe0c2d57460b8fd
 msgid "對於高性能需求，可以使用以下技巧："
-msgstr ""
-
+msgstr "For high-performance requirements, you can use the following tips:"
