@@ -1,4 +1,3 @@
-
 name: Build and Deploy Documentation
 
 on:
@@ -49,6 +48,8 @@ jobs:
       run: |
         cd docs/build/html
         touch .nojekyll
+        # 創建根目錄重定向檔案
+        echo '<meta http-equiv="refresh" content="0; url=./zh_TW/index.html">' > index.html
     
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@4.1.5
