@@ -1,7 +1,24 @@
-# 添加 apidoc 目標
+SPHINXBUILD  = sphinx-build
+SOURCEDIR    = source
+BUILDDIR     = build
+
+.PHONY: help clean html apidoc github
+
+help:
+	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)"
+
+clean:
+	rm -rf "$(BUILDDIR)"
+
+html:
+	@$(SPHINXBUILD) -b html "$(SOURCEDIR)" "$(BUILDDIR)/html"
+
 apidoc:
 	sphinx-apidoc -f -M -o "$(SOURCEDIR)/api" ../pretty_loguru
 
-# 添加 github 目標 (用於 GitHub Pages)
 github: clean html
 	touch "$(BUILDDIR)/html/.nojekyll"
+
+# 可選：支援所有 sphinx -M <target>
+%: Makefile
+	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)"
