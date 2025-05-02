@@ -226,3 +226,94 @@ body, html {
 .footer, .wy-header {
   background-color: var(--color-surface) !important;
 }
+
+
+/*-------------------------------------
+  VS Code Default Dark+ 語法高亮覆蓋
+--------------------------------------*/
+/* 整體背景與文字 */
+div[class^="highlight"] {
+    background-color: #1e1e1e !important;
+    color: #d4d4d4 !important;
+  }
+  
+  /* 當前行高亮 */
+  .highlight .hll {
+    background-color: #264f78 !important;
+  }
+  
+  /* 註解 */
+  .highlight .c,
+  .highlight .cm,
+  .highlight .cp,
+  .highlight .c1,
+  .highlight .cs {
+    color: #6a9955 !important;
+    font-style: italic;
+  }
+  
+  /* 關鍵字 */
+  .highlight .k,
+  .highlight .kd,
+  .highlight .kn,
+  .highlight .kp,
+  .highlight .kr {
+    color: #569cd6 !important;
+  }
+  
+  /* 型別 */
+  .highlight .kt,
+  .highlight .nc {
+    color: #4ec9b0 !important;
+  }
+  
+  /* 運算元 */
+  .highlight .o {
+    color: #d4d4d4 !important;
+  }
+  
+  /* 名稱（變數、屬性）*/
+  .highlight .n,
+  .highlight .na,
+  .highlight .nb,
+  .highlight .nd,
+  .highlight .ni,
+  .highlight .nl,
+  .highlight .nx,
+  .highlight .py {
+    color: #d4d4d4 !important;
+  }
+  
+  /* 函式名稱 */
+  .highlight .nf {
+    color: #dcdcaa !important;
+  }
+  
+  /* 數字 */
+  .highlight .m,
+  .highlight .mf,
+  .highlight .mh,
+  .highlight .mi,
+  .highlight .mo {
+    color: #b5cea8 !important;
+  }
+  
+  /* 字串 */
+  .highlight .s,
+  .highlight .sb,
+  .highlight .sc,
+  .highlight .sd,
+  .highlight .s2,
+  .highlight .se,
+  .highlight .sh,
+  .highlight .si,
+  .highlight .sx,
+  .highlight .sr {
+    color: #ce9178 !important;
+  }
+  
+  /* 錯誤 */
+  .highlight .err {
+    color: #f44747 !important;
+  }
+  
