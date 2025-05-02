@@ -2,18 +2,19 @@
   變數定義：主色、次色、字體、間距
 --------------------------------------*/
 :root {
-    --color-primary: #3f51b5;
-    --color-secondary: #ff4081;
-    --color-bg: #fafafa;
-    --color-surface: #ffffff;
-    --color-text: #333333;
-    --color-muted: #666666;
-    --color-border: #e0e0e0;
-    --radius: 0.5rem;
-    --spacing: 1rem;
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --color-primary:    #D4AF37;       /* 金色 (主色) */
+    --color-secondary:  #B8860B;       /* 深金 (次色) */
+    --color-bg:         #000000;       /* 全站背景：純黑 */
+    --color-surface:    #1a1a1a;       /* 卡片/區塊背景：深灰黑 */
+    --color-text:       #E0E0E0;       /* 文字主色：淺灰白 */
+    --color-muted:      #888888;       /* 次要文字：中灰 */
+    --color-border:     #333333;       /* 邊框色：暗灰 */
+    --radius:           0.5rem;
+    --spacing:          1rem;
+    --shadow-sm:        0 1px 3px rgba(0, 0, 0, 0.7);
+    --shadow-md:        0 4px 6px rgba(0, 0, 0, 0.7);
   }
+  
   
   /*-------------------------------------
     全站背景與字體

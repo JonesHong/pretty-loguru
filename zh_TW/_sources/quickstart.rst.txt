@@ -151,7 +151,7 @@ ASCII 和 FIGlet 藝術
          log_config=None,     # ← 這行關鍵
       )
 
-.. locale-image:: uvicorn_example.png.png
+.. locale-image:: uvicorn_example.png
    :alt: FastAPI 集成示例
    :width: 500px
 
