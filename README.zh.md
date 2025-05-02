@@ -1,5 +1,8 @@
 # pretty-loguru
-![pretty-loguru.icon](https://raw.githubusercontent.com/JonesHong/pretty-loguru/refs/heads/master/docs/source/_static/logo.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/JonesHong/pretty-loguru/refs/heads/master/assets/images/logo.png" alt="pretty-loguru icon" width="200"/>
+</p>
+
 [![PyPI version](https://img.shields.io/pypi/v/pretty-loguru.svg)](https://pypi.org/project/pretty-loguru)
 [![Python Version](https://img.shields.io/pypi/pyversions/pretty-loguru.svg)](https://pypi.org/project/pretty-loguru)
 [![License](https://img.shields.io/pypi/l/pretty-loguru.svg)](https://opensource.org/licenses/MIT)
