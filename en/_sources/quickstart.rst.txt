@@ -57,7 +57,7 @@
        ]
    )
 
-.. image:: _static/|locale|/block_example.png
+.. locale-image:: block_example.png
    :alt: 區塊日誌示例
    :width: 500px
 
@@ -88,7 +88,7 @@ ASCII 和 FIGlet 藝術
    # FIGlet 藝術標題 (需要安裝 pyfiglet 庫)
    logger.figlet_header("Warning", font="slant")
 
-.. image:: _static/|locale|/figlet_example.png
+.. locale-image:: figlet_example.png
    :alt: FIGlet 藝術示例
    :width: 500px
 
@@ -123,7 +123,7 @@ ASCII 和 FIGlet 藝術
       )
 
 
-.. image:: _static/|locale|/fastAPI_example.png
+.. locale-image:: fastAPI_example.png
    :alt: FastAPI 集成示例
    :width: 500px
 
@@ -151,7 +151,7 @@ ASCII 和 FIGlet 藝術
          log_config=None,     # ← 這行關鍵
       )
 
-.. image:: _static/|locale|/uvicorn_example.png.png
+.. locale-image:: uvicorn_example.png.png
    :alt: FastAPI 集成示例
    :width: 500px
 
