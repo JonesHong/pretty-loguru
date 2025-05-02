@@ -1,0 +1,240 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-TW" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pretty_loguru.core.target_formatter &mdash; Pretty Loguru 0.2.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=dce0a6c6" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=9a3e7318"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/language_switcher.js?v=c59c85d5"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Pretty Loguru
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_features.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../integrations.html">Framework Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">pretty_loguru</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Pretty Loguru</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pretty_loguru.core.target_formatter</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pretty_loguru.core.target_formatter</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">目標導向格式化工具模組</span>
+
+<span class="sd">此模組提供用於創建目標導向格式化方法的工具函數，</span>
+<span class="sd">使得能夠輕鬆添加 file_xxx 和 console_xxx 方法。</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">cast</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
+
+<span class="n">F</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Callable</span><span class="p">)</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+
+<div class="viewcode-block" id="create_target_method">
+<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.create_target_method">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_target_method</span><span class="p">(</span>
+    <span class="n">original_method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">to_console_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">to_log_file_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">name_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">to_console_only</span> <span class="ow">and</span> <span class="n">to_log_file_only</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;to_console_only 和 to_log_file_only 不能同時為 True&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="c1"># 動態計算堆棧深度</span>
+        <span class="n">stack</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span>
+        <span class="n">depth</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># 默認深度（適用於直接調用）</span>
+        <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">stack</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">frame</span><span class="o">.</span><span class="n">function</span> <span class="o">==</span> <span class="s2">&quot;&lt;module&gt;&quot;</span><span class="p">:</span>
+                <span class="n">depth</span> <span class="o">-=</span> <span class="mi">1</span>  <span class="c1"># 如果檢測到模組級調用，增加深度</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">frame</span><span class="o">.</span><span class="n">function</span> <span class="o">==</span> <span class="s2">&quot;wrapper&quot;</span><span class="p">:</span>
+                <span class="n">depth</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># 如果檢測到模組級調用，增加深度</span>
+                <span class="k">break</span>
+        
+        <span class="c1"># 添加目標導向參數</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;to_console_only&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_console_only</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;to_log_file_only&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_log_file_only</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_target_depth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">depth</span>  <span class="c1"># 使用動態計算的深度</span>
+        
+        <span class="k">return</span> <span class="n">original_method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">method_type</span> <span class="o">=</span> <span class="s2">&quot;console&quot;</span> <span class="k">if</span> <span class="n">to_console_only</span> <span class="k">else</span> <span class="s2">&quot;file&quot;</span> <span class="k">if</span> <span class="n">to_log_file_only</span> <span class="k">else</span> <span class="s2">&quot;both&quot;</span>
+    <span class="n">wrapper</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name_prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">method_type</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">name_prefix</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">method_type</span><span class="si">}</span><span class="s2">_method&quot;</span>
+    
+    <span class="k">if</span> <span class="n">original_method</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">:</span>
+        <span class="n">target_info</span> <span class="o">=</span> <span class="s2">&quot;僅輸出到控制台&quot;</span> <span class="k">if</span> <span class="n">to_console_only</span> <span class="k">else</span> <span class="s2">&quot;僅輸出到文件&quot;</span> <span class="k">if</span> <span class="n">to_log_file_only</span> <span class="k">else</span> <span class="s2">&quot;輸出到控制台和文件&quot;</span>
+        <span class="n">wrapper</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">original_method</span><span class="o">.</span><span class="vm">__doc__</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">此版本</span><span class="si">{</span><span class="n">target_info</span><span class="si">}</span><span class="s2">。&quot;</span>
+    
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+<div class="viewcode-block" id="add_target_methods">
+<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.add_target_methods">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_target_methods</span><span class="p">(</span>
+    <span class="n">logger_instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">method_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">original_method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    為 logger 實例添加目標導向的格式化方法版本</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        logger_instance: 要添加方法的 logger 實例</span>
+<span class="sd">        method_name: 方法的基本名稱 (如 &#39;block&#39;, &#39;ascii_header&#39;)</span>
+<span class="sd">        original_method: 原始的格式化方法</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        ::</span>
+<span class="sd">            # 假設 logger_instance 已有 block 方法</span>
+<span class="sd">            add_target_methods(logger_instance, &#39;block&#39;, logger_instance.block)</span>
+<span class="sd">            </span>
+<span class="sd">            # 現在 logger_instance 將有 console_block 和 file_block 方法</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 創建僅控制台版本</span>
+    <span class="n">console_method</span> <span class="o">=</span> <span class="n">create_target_method</span><span class="p">(</span>
+        <span class="n">original_method</span><span class="p">,</span>
+        <span class="n">to_console_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">to_log_file_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">name_prefix</span><span class="o">=</span><span class="n">method_name</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># 創建僅文件版本</span>
+    <span class="n">file_method</span> <span class="o">=</span> <span class="n">create_target_method</span><span class="p">(</span>
+        <span class="n">original_method</span><span class="p">,</span>
+        <span class="n">to_console_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">to_log_file_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">name_prefix</span><span class="o">=</span><span class="n">method_name</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># 添加到 logger 實例</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;console_</span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">console_method</span><span class="p">)</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;file_</span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file_method</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ensure_target_parameters">
+<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.ensure_target_parameters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ensure_target_parameters</span><span class="p">(</span><span class="n">method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    確保方法接受目標導向參數</span>
+
+<span class="sd">    這個裝飾器用於確保格式化方法接受 to_console_only 和 to_log_file_only 參數。</span>
+<span class="sd">    這對於創建新的格式化方法很有用。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        method: 要裝飾的方法</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Callable: 確保接受目標導向參數的方法</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="c1"># 確保關鍵參數存在，即使調用時未提供</span>
+        <span class="k">if</span> <span class="s1">&#39;to_console_only&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;to_console_only&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="s1">&#39;to_log_file_only&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;to_log_file_only&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="s1">&#39;_target_depth&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;_target_depth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># 默認深度</span>
+        
+        <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    
+    <span class="c1"># 複製原始方法的元數據</span>
+    <span class="n">wrapper</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="n">wrapper</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="vm">__doc__</span>
+    
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, JonesHong.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

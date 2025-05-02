@@ -1,0 +1,452 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-TW" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pretty_loguru.formats.ascii_art &mdash; Pretty Loguru 0.2.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=dce0a6c6" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=9a3e7318"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/language_switcher.js?v=c59c85d5"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Pretty Loguru
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_features.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../integrations.html">Framework Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">pretty_loguru</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Pretty Loguru</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pretty_loguru.formats.ascii_art</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pretty_loguru.formats.ascii_art</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">ASCII 藝術模組</span>
+
+<span class="sd">此模組提供用於生成 ASCII 藝術標題和區塊的功能，</span>
+<span class="sd">增強日誌的視覺效果和結構化呈現。</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.panel</span><span class="w"> </span><span class="kn">import</span> <span class="n">Panel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">art</span><span class="w"> </span><span class="kn">import</span> <span class="n">text2art</span>
+    <span class="n">_has_art</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">_has_art</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1"># 定義一個空的 text2art 函數，避免引用錯誤</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">text2art</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;[Art library not installed: </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">]&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..types</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnhancedLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..core.target_formatter</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_target_methods</span><span class="p">,</span> <span class="n">ensure_target_parameters</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">print_block</span><span class="p">,</span> <span class="n">format_block_message</span>
+
+
+<span class="c1"># ASCII 字符檢查的正則表達式</span>
+<span class="c1"># 僅匹配英文、數字和標準 ASCII 符號</span>
+<span class="n">ASCII_PATTERN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[\x00-\x7F]+$&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="is_ascii_only">
+<a class="viewcode-back" href="../../../api/pretty_loguru.formats.html#pretty_loguru.is_ascii_only">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_ascii_only</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    檢查文本是否只包含 ASCII 字符</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        text: 要檢查的文本</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: 如果只包含 ASCII 字符則返回 True，否則返回 False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 使用正則表達式檢查文本是否符合 ASCII 範圍</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">ASCII_PATTERN</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">text</span><span class="p">))</span></div>
+
+
+
+<span class="nd">@ensure_target_parameters</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_ascii_header</span><span class="p">(</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">font</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+    <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+    <span class="n">logger_instance</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">console</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Console</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">to_console_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">to_log_file_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">_target_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    打印 ASCII 藝術標題</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        text: 要轉換為 ASCII 藝術的文本</span>
+<span class="sd">        font: ASCII 藝術字體</span>
+<span class="sd">        log_level: 日誌級別</span>
+<span class="sd">        border_style: 邊框樣式</span>
+<span class="sd">        logger_instance: 要使用的 logger 實例，如果為 None 則不記錄日誌</span>
+<span class="sd">        console: 要使用的 rich console 實例，如果為 None 則創建新的</span>
+<span class="sd">        to_console_only: 是否僅輸出到控制台，預設為 False</span>
+<span class="sd">        to_log_file_only: 是否僅輸出到日誌文件，預設為 False</span>
+<span class="sd">        _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置</span>
+<span class="sd">        </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: 如果文本包含非 ASCII 字符</span>
+<span class="sd">        ImportError: 如果未安裝 art 庫</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 檢查 art 庫是否已安裝</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_has_art</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="s2">&quot;未安裝 &#39;art&#39; 庫。請使用 &#39;pip install art&#39; 安裝。&quot;</span>
+        <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+    
+    <span class="c1"># 如果沒有提供 console，則創建一個新的</span>
+    <span class="k">if</span> <span class="n">console</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
+    
+    <span class="c1"># 檢查是否包含非 ASCII 字符</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_ascii_only</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+        <span class="n">warning_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ASCII art 只支持 ASCII 字符。文本 &#39;</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">&#39; 包含非 ASCII 字符。&quot;</span>
+        <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">warning_msg</span><span class="p">)</span>
+        
+        <span class="c1"># 移除非 ASCII 字符</span>
+        <span class="n">cleaned_text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[^\x00-\x7F]+&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;已移除非 ASCII 字符。使用: &#39;</span><span class="si">{</span><span class="n">cleaned_text</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cleaned_text</span><span class="p">:</span>  <span class="c1"># 如果移除後為空，則拋出異常</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;文本僅包含非 ASCII 字符，無法創建 ASCII 藝術。&quot;</span><span class="p">)</span>
+        
+        <span class="n">text</span> <span class="o">=</span> <span class="n">cleaned_text</span>
+    
+    <span class="c1"># 使用 art 庫生成 ASCII 藝術</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ascii_art</span> <span class="o">=</span> <span class="n">text2art</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;生成 ASCII 藝術失敗: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">raise</span>
+    
+    <span class="c1"># 創建一個帶有邊框的 Panel</span>
+    <span class="n">panel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span>
+        <span class="n">ascii_art</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="o">=</span><span class="n">border_style</span><span class="p">,</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># 控制台輸出 - 僅當非僅文件模式時</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">to_log_file_only</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+    
+    <span class="c1"># 日誌文件輸出 - 僅當非僅控制台模式時</span>
+    <span class="k">if</span> <span class="n">logger_instance</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">to_console_only</span><span class="p">:</span>
+        <span class="c1"># 使用動態設置的 depth 來捕獲實際調用者的位置</span>
+        <span class="n">logger_instance</span><span class="o">.</span><span class="n">opt</span><span class="p">(</span><span class="n">ansi</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">_target_depth</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">to_log_file_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="n">log_level</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">ascii_art</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">50</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+
+<span class="nd">@ensure_target_parameters</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_ascii_block</span><span class="p">(</span>
+    <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">message_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">ascii_header</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">ascii_font</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+    <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+    <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="n">logger_instance</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">console</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Console</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">to_console_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">to_log_file_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">_target_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    打印帶有 ASCII 藝術標題的區塊樣式日誌</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        title: 區塊的標題</span>
+<span class="sd">        message_list: 日誌的內容列表</span>
+<span class="sd">        ascii_header: ASCII 藝術標題文本 (如果不提供，則使用 title)</span>
+<span class="sd">        ascii_font: ASCII 藝術字體</span>
+<span class="sd">        border_style: 區塊邊框顏色</span>
+<span class="sd">        log_level: 日誌級別</span>
+<span class="sd">        logger_instance: 要使用的 logger 實例，如果為 None 則不記錄日誌</span>
+<span class="sd">        console: 要使用的 rich console 實例，如果為 None 則創建新的</span>
+<span class="sd">        to_console_only: 是否僅輸出到控制台，預設為 False</span>
+<span class="sd">        to_log_file_only: 是否僅輸出到日誌文件，預設為 False</span>
+<span class="sd">        _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置</span>
+<span class="sd">        </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: 如果 ASCII 標題包含非 ASCII 字符</span>
+<span class="sd">        ImportError: 如果未安裝 art 庫</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 檢查 art 庫是否已安裝</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_has_art</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="s2">&quot;未安裝 &#39;art&#39; 庫。請使用 &#39;pip install art&#39; 安裝。&quot;</span>
+        <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+    
+    <span class="c1"># 如果沒有提供 console，則創建一個新的</span>
+    <span class="k">if</span> <span class="n">console</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
+    
+    <span class="c1"># 如果沒有提供 ASCII 標題，則使用普通標題</span>
+    <span class="n">header_text</span> <span class="o">=</span> <span class="n">ascii_header</span> <span class="k">if</span> <span class="n">ascii_header</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">title</span>
+    
+    <span class="c1"># 檢查是否包含非 ASCII 字符</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_ascii_only</span><span class="p">(</span><span class="n">header_text</span><span class="p">):</span>
+        <span class="n">warning_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ASCII art 只支持 ASCII 字符。文本 &#39;</span><span class="si">{</span><span class="n">header_text</span><span class="si">}</span><span class="s2">&#39; 包含非 ASCII 字符。&quot;</span>
+        <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">warning_msg</span><span class="p">)</span>
+        
+        <span class="c1"># 移除非 ASCII 字符</span>
+        <span class="n">cleaned_text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[^\x00-\x7F]+&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">header_text</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;已移除非 ASCII 字符。使用: &#39;</span><span class="si">{</span><span class="n">cleaned_text</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cleaned_text</span><span class="p">:</span>  <span class="c1"># 如果移除後為空，則拋出異常</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ASCII 標題僅包含非 ASCII 字符，無法創建 ASCII 藝術。&quot;</span><span class="p">)</span>
+        
+        <span class="n">header_text</span> <span class="o">=</span> <span class="n">cleaned_text</span>
+    
+    <span class="c1"># 生成 ASCII 藝術</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ascii_art</span> <span class="o">=</span> <span class="n">text2art</span><span class="p">(</span><span class="n">header_text</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">ascii_font</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;生成 ASCII 藝術失敗: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        <span class="k">raise</span>
+    
+    <span class="c1"># 將 ASCII 藝術添加到消息列表的開頭</span>
+    <span class="n">full_message_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">ascii_art</span><span class="p">]</span> <span class="o">+</span> <span class="n">message_list</span>
+    
+    <span class="c1"># 構造區塊內容，將多行訊息合併為單一字串</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">full_message_list</span><span class="p">)</span>
+    <span class="n">panel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span>
+        <span class="n">message</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>  <span class="c1"># 設定區塊標題</span>
+        <span class="n">title_align</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>  <span class="c1"># 標題靠左對齊</span>
+        <span class="n">border_style</span><span class="o">=</span><span class="n">border_style</span><span class="p">,</span>  <span class="c1"># 設定邊框樣式</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># 只有當非僅文件模式時，才輸出到控制台</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">to_log_file_only</span> <span class="ow">and</span> <span class="n">logger_instance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># 將日誌寫入到終端，僅顯示在終端中</span>
+        <span class="c1"># 使用動態設置的 depth 來捕獲實際調用者的位置</span>
+        <span class="n">logger_instance</span><span class="o">.</span><span class="n">opt</span><span class="p">(</span><span class="n">ansi</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">_target_depth</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">to_console_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="n">log_level</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;CustomBlock: </span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># 打印區塊到終端</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+
+    <span class="c1"># 只有當非僅控制台模式時，才輸出到文件</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">to_console_only</span> <span class="ow">and</span> <span class="n">logger_instance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># 格式化訊息，方便寫入日誌文件</span>
+        <span class="n">formatted_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">50</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="s1">&#39;=&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">50</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="c1"># 將格式化後的訊息寫入日誌文件，僅寫入文件中</span>
+        <span class="c1"># 使用動態設置的 depth 來捕獲實際調用者的位置</span>
+        <span class="n">logger_instance</span><span class="o">.</span><span class="n">opt</span><span class="p">(</span><span class="n">ansi</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="n">_target_depth</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">to_log_file_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="n">log_level</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">formatted_message</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+
+<div class="viewcode-block" id="create_ascii_methods">
+<a class="viewcode-back" href="../../../api/pretty_loguru.formats.html#pretty_loguru.create_ascii_methods">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_ascii_methods</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">console</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Console</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    為 logger 實例創建 ASCII 藝術相關方法</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        logger_instance: 要添加方法的 logger 實例</span>
+<span class="sd">        console: 要使用的 rich console 實例，如果為 None 則使用新創建的</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">console</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
+    
+    <span class="c1"># 為 logger 添加 is_ascii_only 方法</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">is_ascii_only</span> <span class="o">=</span> <span class="n">is_ascii_only</span>
+   
+    <span class="c1"># 添加 ascii_header 方法</span>
+    <span class="nd">@ensure_target_parameters</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ascii_header_method</span><span class="p">(</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">font</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+        <span class="n">to_console_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">to_log_file_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">_target_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        logger 實例的 ASCII 藝術標題方法</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            text: 要轉換為 ASCII 藝術的文本</span>
+<span class="sd">            font: ASCII 藝術字體</span>
+<span class="sd">            log_level: 日誌級別</span>
+<span class="sd">            border_style: 邊框樣式</span>
+<span class="sd">            to_console_only: 是否僅輸出到控制台，預設為 False</span>
+<span class="sd">            to_log_file_only: 是否僅輸出到日誌文件，預設為 False</span>
+<span class="sd">            _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 使用 kwargs 傳遞參數，避免參數重複</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;font&quot;</span><span class="p">:</span> <span class="n">font</span><span class="p">,</span>
+            <span class="s2">&quot;log_level&quot;</span><span class="p">:</span> <span class="n">log_level</span><span class="p">,</span>
+            <span class="s2">&quot;border_style&quot;</span><span class="p">:</span> <span class="n">border_style</span><span class="p">,</span>
+            <span class="s2">&quot;logger_instance&quot;</span><span class="p">:</span> <span class="n">logger_instance</span><span class="p">,</span>
+            <span class="s2">&quot;console&quot;</span><span class="p">:</span> <span class="n">console</span><span class="p">,</span>
+            <span class="s2">&quot;_target_depth&quot;</span><span class="p">:</span> <span class="n">_target_depth</span><span class="p">,</span>  <span class="c1"># 傳遞深度</span>
+        <span class="p">}</span>
+        
+        <span class="c1"># 使用當前方法的 to_console_only 和 to_log_file_only</span>
+        <span class="n">print_ascii_header</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">to_console_only</span><span class="o">=</span><span class="n">to_console_only</span><span class="p">,</span> <span class="n">to_log_file_only</span><span class="o">=</span><span class="n">to_log_file_only</span><span class="p">)</span>
+    
+    <span class="c1"># 添加 ascii_block 方法</span>
+    <span class="nd">@ensure_target_parameters</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ascii_block_method</span><span class="p">(</span>
+        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">message_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">ascii_header</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ascii_font</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+        <span class="n">to_console_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">to_log_file_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">_target_depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        logger 實例的 ASCII 藝術區塊方法</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            title: 區塊的標題</span>
+<span class="sd">            message_list: 區塊內的內容列表</span>
+<span class="sd">            ascii_header: ASCII 藝術標題文本 (如果不提供，則使用 title)</span>
+<span class="sd">            ascii_font: ASCII 藝術字體</span>
+<span class="sd">            border_style: 邊框樣式，預設為 &quot;cyan&quot;</span>
+<span class="sd">            log_level: 日誌級別，預設為 &quot;INFO&quot;</span>
+<span class="sd">            to_console_only: 是否僅輸出到控制台，預設為 False</span>
+<span class="sd">            to_log_file_only: 是否僅輸出到日誌文件，預設為 False</span>
+<span class="sd">            _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 使用 kwargs 傳遞參數，避免參數重複</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ascii_header&quot;</span><span class="p">:</span> <span class="n">ascii_header</span><span class="p">,</span>
+            <span class="s2">&quot;ascii_font&quot;</span><span class="p">:</span> <span class="n">ascii_font</span><span class="p">,</span>
+            <span class="s2">&quot;border_style&quot;</span><span class="p">:</span> <span class="n">border_style</span><span class="p">,</span>
+            <span class="s2">&quot;log_level&quot;</span><span class="p">:</span> <span class="n">log_level</span><span class="p">,</span>
+            <span class="s2">&quot;logger_instance&quot;</span><span class="p">:</span> <span class="n">logger_instance</span><span class="p">,</span>
+            <span class="s2">&quot;console&quot;</span><span class="p">:</span> <span class="n">console</span><span class="p">,</span>
+            <span class="s2">&quot;_target_depth&quot;</span><span class="p">:</span> <span class="n">_target_depth</span><span class="p">,</span>  <span class="c1"># 傳遞深度</span>
+        <span class="p">}</span>
+        
+        <span class="c1"># 使用當前方法的 to_console_only 和 to_log_file_only</span>
+        <span class="n">print_ascii_block</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">message_list</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">to_console_only</span><span class="o">=</span><span class="n">to_console_only</span><span class="p">,</span> <span class="n">to_log_file_only</span><span class="o">=</span><span class="n">to_log_file_only</span><span class="p">)</span>
+    
+    <span class="c1"># 將方法添加到 logger 實例</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">ascii_header</span> <span class="o">=</span> <span class="n">ascii_header_method</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">ascii_block</span> <span class="o">=</span> <span class="n">ascii_block_method</span>
+    
+    <span class="c1"># 添加目標特定方法</span>
+    <span class="n">add_target_methods</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;ascii_header&quot;</span><span class="p">,</span> <span class="n">ascii_header_method</span><span class="p">)</span>
+    <span class="n">add_target_methods</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;ascii_block&quot;</span><span class="p">,</span> <span class="n">ascii_block_method</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, JonesHong.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

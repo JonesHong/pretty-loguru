@@ -1,0 +1,223 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-TW" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contribution Guide &mdash; Pretty Loguru 0.2.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=dce0a6c6" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=9a3e7318"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/language_switcher.js?v=c59c85d5"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pretty_loguru" href="api/modules.html" />
+    <link rel="prev" title="Framework Integration" href="integrations.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pretty Loguru
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_features.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integrations.html">Framework Integration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contribution Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">Development Environment Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">Code Style</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">Documentation Contribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">Contribution Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bug">Bug Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">Feature Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">Changelog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id9">License</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">pretty_loguru</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pretty Loguru</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Contribution Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/contributing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>Contribution Guide<a class="headerlink" href="#id1" title="Link to this heading"></a></h1>
+<p>Thank you for considering contributing to the Pretty Loguru project! This page explains how to get involved in project development.</p>
+<section id="id2">
+<h2>Development Environment Setup<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 克隆儲存庫</span>
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/yourusername/pretty-loguru.git
+<span class="nb">cd</span><span class="w"> </span>pretty-loguru
+
+<span class="c1"># 創建虛擬環境（推薦）</span>
+python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate<span class="w">  </span><span class="c1"># Linux/macOS</span>
+venv<span class="se">\\</span>Scripts<span class="se">\\</span>activate<span class="w">  </span><span class="c1"># Windows</span>
+
+<span class="c1"># 安裝開發依賴</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev]&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>Code Style<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<p>This project follows the PEP 8 code style guide and uses Black for code formatting:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 在提交前格式化代碼</span>
+black<span class="w"> </span>pretty_loguru
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2>Testing<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<p>Before submitting changes, ensure all tests pass:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 運行所有測試</span>
+pytest
+
+<span class="c1"># 運行特定測試模組</span>
+pytest<span class="w"> </span>tests/test_core.py
+
+<span class="c1"># 檢查代碼覆蓋率</span>
+pytest<span class="w"> </span>--cov<span class="o">=</span>pretty_loguru
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h2>Documentation Contribution<a class="headerlink" href="#id5" title="Link to this heading"></a></h2>
+<p>The documentation is generated using Sphinx:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 安裝文檔依賴</span>
+pip<span class="w"> </span>install<span class="w"> </span>sphinx<span class="w"> </span>sphinx-rtd-theme<span class="w"> </span>sphinx-autodoc-typehints<span class="w"> </span>myst-parser
+
+<span class="c1"># 構建文檔</span>
+<span class="nb">cd</span><span class="w"> </span>docs
+make<span class="w"> </span>html
+
+<span class="c1"># 在瀏覽器中查看文檔</span>
+<span class="c1"># Linux/macOS</span>
+open<span class="w"> </span>build/html/index.html
+<span class="c1"># Windows</span>
+start<span class="w"> </span>build<span class="se">\\</span>html<span class="se">\\</span>index.html
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2>Contribution Process<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Fork the repository</p></li>
+<li><p>Create your feature branch: <cite>git checkout -b feature/amazing-feature</cite></p></li>
+<li><p>Commit your changes: <cite>git commit -m ‘Added an amazing feature’</cite></p></li>
+<li><p>Push to the branch: <cite>git push origin feature/amazing-feature</cite></p></li>
+<li><p>Open a Pull Request</p></li>
+</ol>
+</section>
+<section id="bug">
+<h2>Bug Reports<a class="headerlink" href="#bug" title="Link to this heading"></a></h2>
+<p>If you find a bug, please report it in GitHub Issues and include the following information:</p>
+<ul class="simple">
+<li><p>A brief description of the issue</p></li>
+<li><p>Steps to reproduce</p></li>
+<li><p>Expected behavior and actual behavior</p></li>
+<li><p>Environment information (OS, Python version, etc.)</p></li>
+<li><p>If possible, provide a minimal code example to reproduce the issue</p></li>
+</ul>
+</section>
+<section id="id7">
+<h2>Feature Requests<a class="headerlink" href="#id7" title="Link to this heading"></a></h2>
+<p>If you have an idea for a new feature, please propose it in GitHub Issues and provide as much of the following information as possible:</p>
+<ul class="simple">
+<li><p>Feature description</p></li>
+<li><p>Why this feature is valuable to the project</p></li>
+<li><p>Suggestions for implementation (if any)</p></li>
+<li><p>Possible usage examples</p></li>
+</ul>
+</section>
+<section id="id8">
+<h2>Changelog<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<p>When adding new features or fixing bugs, add the corresponding entry in <cite>CHANGELOG.md</cite>.</p>
+</section>
+<section id="id9">
+<h2>License<a class="headerlink" href="#id9" title="Link to this heading"></a></h2>
+<p>By submitting code, you agree to license your contribution under the project’s license.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="integrations.html" class="btn btn-neutral float-left" title="Framework Integration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api/modules.html" class="btn btn-neutral float-right" title="pretty_loguru" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, JonesHong.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

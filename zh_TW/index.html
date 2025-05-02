@@ -1,0 +1,174 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-TW" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta content="template.html" name="template" translated="False" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pretty Loguru 文檔 &mdash; Pretty Loguru 0.2.6 說明文件</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=dce0a6c6" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=9a3e7318"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=cbf116e0"></script>
+      <script src="_static/language_switcher.js?v=c59c85d5"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜尋" href="search.html" />
+    <link rel="next" title="快速入門" href="quickstart.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Pretty Loguru
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">入門指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">快速入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_usage.html">基本用法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_features.html">進階功能</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integrations.html">框架集成</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">貢獻指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">pretty_loguru</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Pretty Loguru</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Pretty Loguru 文檔</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pretty-loguru">
+<h1>Pretty Loguru 文檔<a class="headerlink" href="#pretty-loguru" title="連結到這個標頭"></a></h1>
+<p><div class="language-switcher">
+ <a href="../zh_TW/index.html">繁體中文</a> | <a href="../en/index.html">English</a>
+</div></p>
+<a class="reference internal image-reference" href="_images/logo.png"><img alt="Pretty Loguru 標誌" class="align-center" src="_images/logo.png" style="width: 200px;" />
+</a>
+<p><strong>Pretty Loguru</strong> 是一個增強型的 Loguru 日誌系統，提供區塊式日誌、
+ASCII 藝術標題以及與各種框架的集成功能，使日誌記錄變得更加直觀和美觀。</p>
+<section id="id1">
+<h2>特點<a class="headerlink" href="#id1" title="連結到這個標頭"></a></h2>
+<ul class="simple">
+<li><p>區塊式日誌格式，提高可讀性</p></li>
+<li><p>ASCII 藝術標題，增強視覺效果</p></li>
+<li><p>目標導向日誌方法，明確輸出目標 (控制台、文件)</p></li>
+<li><p>與 FastAPI、Uvicorn 的無縫集成</p></li>
+<li><p>優雅的日誌輪換和清理機制</p></li>
+<li><p>高度可定制的格式和配置</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>安裝<a class="headerlink" href="#id2" title="連結到這個標頭"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pretty-loguru
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>快速使用示例<a class="headerlink" href="#id3" title="連結到這個標頭"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span>
+
+<span class="c1"># 創建日誌實例</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;my_app&quot;</span><span class="p">)</span>
+
+<span class="c1"># 輸出不同級別的日誌</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;這是一條資訊日誌&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;這是一條警告日誌&quot;</span><span class="p">)</span>
+
+<span class="c1"># 使用區塊功能</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">block</span><span class="p">(</span>
+    <span class="s2">&quot;系統狀態&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;數據庫連接: 正常&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;緩存服務: 正常&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;存儲空間: 76% 可用&quot;</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">入門指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">快速入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_usage.html">基本用法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_features.html">進階功能</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integrations.html">框架集成</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">貢獻指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">pretty_loguru</a></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="quickstart.html" class="btn btn-neutral float-right" title="快速入門" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, JonesHong.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

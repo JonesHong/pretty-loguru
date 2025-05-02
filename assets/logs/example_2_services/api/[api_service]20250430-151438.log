@@ -1,5 +1,0 @@
-2025-04-30 15:14:38 | INFO    38236 | api_service:example_2_multiple_loggers:214 - API service started, listening on port: 8000
-2025-04-30 15:14:38 | INFO    38236 | api_service:handle_request:232 - Received request from user user123: /api/profile
-2025-04-30 15:14:38 | INFO    38236 | api_service:handle_request:241 - Request processing completed
-2025-04-30 15:14:38 | INFO    38236 | api_service:handle_request:232 - Received request from user admin: /api/users
-2025-04-30 15:14:38 | INFO    38236 | api_service:handle_request:241 - Request processing completed

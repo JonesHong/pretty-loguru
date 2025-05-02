@@ -1,0 +1,775 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-TW" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pretty_loguru.core package &mdash; Pretty Loguru 0.2.6 說明文件</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=dce0a6c6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=9a3e7318"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=cbf116e0"></script>
+      <script src="../_static/language_switcher.js?v=c59c85d5"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜尋" href="../search.html" />
+    <link rel="next" title="pretty_loguru.factory package" href="pretty_loguru.factory.html" />
+    <link rel="prev" title="pretty_loguru package" href="pretty_loguru.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Pretty Loguru
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">入門指南</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">快速入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage.html">基本用法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_features.html">進階功能</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../integrations.html">框架集成</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">貢獻指南</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">pretty_loguru</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="pretty_loguru.html">pretty_loguru package</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.EnhancedLogger"><code class="docutils literal notranslate"><span class="pre">EnhancedLogger</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.LogLevelEnum"><code class="docutils literal notranslate"><span class="pre">LogLevelEnum</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.LoggerConfig"><code class="docutils literal notranslate"><span class="pre">LoggerConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.configure_logger"><code class="docutils literal notranslate"><span class="pre">configure_logger()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.create_target_method"><code class="docutils literal notranslate"><span class="pre">create_target_method()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.add_target_methods"><code class="docutils literal notranslate"><span class="pre">add_target_methods()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.ensure_target_parameters"><code class="docutils literal notranslate"><span class="pre">ensure_target_parameters()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.create_logger"><code class="docutils literal notranslate"><span class="pre">create_logger()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.default_logger"><code class="docutils literal notranslate"><span class="pre">default_logger()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.get_logger"><code class="docutils literal notranslate"><span class="pre">get_logger()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.set_logger"><code class="docutils literal notranslate"><span class="pre">set_logger()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.unregister_logger"><code class="docutils literal notranslate"><span class="pre">unregister_logger()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.list_loggers"><code class="docutils literal notranslate"><span class="pre">list_loggers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.print_block"><code class="docutils literal notranslate"><span class="pre">print_block()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.print_ascii_header"><code class="docutils literal notranslate"><span class="pre">print_ascii_header()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.print_ascii_block"><code class="docutils literal notranslate"><span class="pre">print_ascii_block()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.is_ascii_only"><code class="docutils literal notranslate"><span class="pre">is_ascii_only()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.configure_uvicorn"><code class="docutils literal notranslate"><span class="pre">configure_uvicorn()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.InterceptHandler"><code class="docutils literal notranslate"><span class="pre">InterceptHandler</span></code></a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="pretty_loguru.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">pretty_loguru.core package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pretty_loguru.factory.html">pretty_loguru.factory package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pretty_loguru.formats.html">pretty_loguru.formats package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pretty_loguru.integrations.html">pretty_loguru.integrations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pretty_loguru.types.html">pretty_loguru.types package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Pretty Loguru</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">pretty_loguru</a></li>
+          <li class="breadcrumb-item"><a href="pretty_loguru.html">pretty_loguru package</a></li>
+      <li class="breadcrumb-item active">pretty_loguru.core package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/pretty_loguru.core.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pretty_loguru.core">
+<span id="pretty-loguru-core-package"></span><h1>pretty_loguru.core package<a class="headerlink" href="#module-pretty_loguru.core" title="連結到這個標頭"></a></h1>
+<p>核心模組入口</p>
+<p>此模組提供 Pretty Loguru 的核心功能，包括基本日誌操作、
+配置管理、處理器管理和日誌清理機制。</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pretty_loguru.core.LogLevelEnum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.</span></span><span class="sig-name descname"><span class="pre">LogLevelEnum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/config.html#LogLevelEnum"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.LogLevelEnum" title="連結到這個定義"></a></dt>
+<dd><p>基礎類別：<code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dl class="field-list simple">
+</dl>
+<p>參見 <a class="reference internal" href="#pretty_loguru.core.config.LogLevelEnum" title="pretty_loguru.core.config.LogLevelEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">pretty_loguru.core.config.LogLevelEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.core.LogLevelEnum.TRACE">
+<span class="sig-name descname"><span class="pre">TRACE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'TRACE'</span></em><a class="headerlink" href="#pretty_loguru.core.LogLevelEnum.TRACE" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.core.LogLevelEnum.DEBUG">
+<span class="sig-name descname"><span class="pre">DEBUG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'DEBUG'</span></em><a class="headerlink" href="#pretty_loguru.core.LogLevelEnum.DEBUG" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.core.LogLevelEnum.INFO">
+<span class="sig-name descname"><span class="pre">INFO</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'INFO'</span></em><a class="headerlink" href="#pretty_loguru.core.LogLevelEnum.INFO" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.core.LogLevelEnum.SUCCESS">
+<span class="sig-name descname"><span class="pre">SUCCESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SUCCESS'</span></em><a class="headerlink" href="#pretty_loguru.core.LogLevelEnum.SUCCESS" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.core.LogLevelEnum.WARNING">
+<span class="sig-name descname"><span class="pre">WARNING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'WARNING'</span></em><a class="headerlink" href="#pretty_loguru.core.LogLevelEnum.WARNING" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.core.LogLevelEnum.ERROR">
+<span class="sig-name descname"><span class="pre">ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ERROR'</span></em><a class="headerlink" href="#pretty_loguru.core.LogLevelEnum.ERROR" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.core.LogLevelEnum.CRITICAL">
+<span class="sig-name descname"><span class="pre">CRITICAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'CRITICAL'</span></em><a class="headerlink" href="#pretty_loguru.core.LogLevelEnum.CRITICAL" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.configure_logger">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.</span></span><span class="sig-name descname"><span class="pre">configure_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'INFO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'20</span> <span class="pre">MB'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subdirectory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_name_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_file_settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isolate_handlers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'&lt;green&gt;{time:YYYY-MM-DD</span> <span class="pre">HH:mm:ss}&lt;/green&gt;</span> <span class="pre">|</span> <span class="pre">&lt;level&gt;{level:</span> <span class="pre">&lt;8}{process}&lt;/level&gt;</span> <span class="pre">|</span> <span class="pre">&lt;cyan&gt;{extra[folder]}&lt;/cyan&gt;:&lt;cyan&gt;{function}&lt;/cyan&gt;:&lt;cyan&gt;{line}&lt;/cyan&gt;</span> <span class="pre">-</span> <span class="pre">&lt;level&gt;{message}&lt;/level&gt;'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/base.html#configure_logger"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.configure_logger" title="連結到這個定義"></a></dt>
+<dd><p>配置日誌系統，確保每個 logger 實例的處理器完全隔離</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>level</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'TRACE'</span></code>, <code class="docutils literal notranslate"><span class="pre">'DEBUG'</span></code>, <code class="docutils literal notranslate"><span class="pre">'INFO'</span></code>, <code class="docutils literal notranslate"><span class="pre">'SUCCESS'</span></code>, <code class="docutils literal notranslate"><span class="pre">'WARNING'</span></code>, <code class="docutils literal notranslate"><span class="pre">'ERROR'</span></code>, <code class="docutils literal notranslate"><span class="pre">'CRITICAL'</span></code>]</span>) -- 日誌級別，預設為全域變數 LOG_LEVEL。</p></li>
+<li><p><strong>log_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>) -- 日誌儲存路徑，若為 None 則使用預設路徑。</p></li>
+<li><p><strong>component_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- 處理程序 ID，用於標記日誌檔案。</p></li>
+<li><p><strong>rotation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) -- 日誌輪換大小，單位為 MB。</p></li>
+<li><p><strong>subdirectory</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 子目錄名稱，用於分類不同類型的日誌。</p></li>
+<li><p><strong>log_name_format</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 日誌檔案名稱格式。</p></li>
+<li><p><strong>timestamp_format</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 時間戳格式，用於自定義時間顯示方式。</p></li>
+<li><p><strong>log_file_settings</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>) -- 日誌檔案的其他設定。</p></li>
+<li><p><strong>logger_instance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) -- 要初始化的日誌實例，如果為None則使用全局的_logger</p></li>
+<li><p><strong>service_tag</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 服務名稱，用於在日誌檔案名中使用 {service_tag} 變數</p></li>
+<li><p><strong>isolate_handlers</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) -- 是否隔離不同 logger 實例的處理器，預設為 True</p></li>
+<li><p><strong>unique_id</strong> (<em>#</em>) -- 唯一ID，用於確保每個logger實例完全獨立</p></li>
+<li><p><strong>logger_format</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- 日誌格式字符串，預設使用 LOGGER_FORMAT</p></li>
+</ul>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>日誌檔案的完整路徑</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.get_console">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.</span></span><span class="sig-name descname"><span class="pre">get_console</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/base.html#get_console"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.get_console" title="連結到這個定義"></a></dt>
+<dd><p>獲取 Rich Console 實例</p>
+<dl class="field-list simple">
+<dt class="field-odd">回傳<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Rich Console 實例，用於美化輸出</p>
+</dd>
+<dt class="field-even">回傳型別<span class="colon">:</span></dt>
+<dd class="field-even"><p>Console</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.create_destination_filters">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.</span></span><span class="sig-name descname"><span class="pre">create_destination_filters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/handlers.html#create_destination_filters"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.create_destination_filters" title="連結到這個定義"></a></dt>
+<dd><p>創建基於目標的過濾器函數，用於控制日誌輸出目標</p>
+<dl class="field-list simple">
+<dt class="field-odd">回傳<span class="colon">:</span></dt>
+<dd class="field-odd"><p>包含控制台和文件過濾器的字典</p>
+</dd>
+<dt class="field-even">回傳型別<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, LogFilterType]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.format_filename">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.</span></span><span class="sig-name descname"><span class="pre">format_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_name_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/handlers.html#format_filename"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.format_filename" title="連結到這個定義"></a></dt>
+<dd><p>根據提供的格式生成日誌檔案名，並處理不合法的文件名字符</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>component_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- 進程 ID 或服務名稱</p></li>
+<li><p><strong>log_name_format</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 日誌檔案名格式，可以是自定義的格式或 LOG_NAME_FORMATS 中的鍵</p></li>
+<li><p><strong>timestamp_format</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 時間戳格式，預設為 &quot;%Y%m%d-%H%M%S&quot;</p></li>
+<li><p><strong>service_tag</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 服務名稱，用於在日誌檔案名中使用 {service_tag} 變數</p></li>
+</ul>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>格式化後的日誌檔案名，已移除不合法字符</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">引發<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>KeyError</strong> -- 當日誌檔案名格式使用了未提供的變數時</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pretty_loguru.core.LoggerCleaner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.</span></span><span class="sig-name descname"><span class="pre">LoggerCleaner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_retention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/cleaner.html#LoggerCleaner"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.LoggerCleaner" title="連結到這個定義"></a></dt>
+<dd><p>基礎類別：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>日誌清理器類別</p>
+<p>用於定期清理過舊的日誌檔案，避免磁碟空間被佔滿。</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pretty_loguru.core.LoggerCleaner.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_retention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/cleaner.html#LoggerCleaner.__init__"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.LoggerCleaner.__init__" title="連結到這個定義"></a></dt>
+<dd><p>初始化日誌清理器</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_retention</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 日誌保留天數，預設為 30 天</p></li>
+<li><p><strong>log_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>) -- 日誌儲存路徑，預設為當前目錄下的 logs 資料夾</p></li>
+<li><p><strong>check_interval</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) -- 檢查間隔，單位為秒，預設為 3600（1小時）</p></li>
+<li><p><strong>logger_instance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) -- 記錄清理操作的日誌實例，如果為 None 則使用 print</p></li>
+<li><p><strong>recursive</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) -- 是否遞歸清理子目錄，預設為 True</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pretty_loguru.core.LoggerCleaner.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/cleaner.html#LoggerCleaner.start"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.LoggerCleaner.start" title="連結到這個定義"></a></dt>
+<dd><p>啟動日誌清理線程</p>
+<p>如果清理器已經在運行，則不會重複啟動。</p>
+<dl class="field-list simple">
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.create_target_method">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.</span></span><span class="sig-name descname"><span class="pre">create_target_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_console_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_log_file_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/target_formatter.html#create_target_method"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.create_target_method" title="連結到這個定義"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.add_target_methods">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.</span></span><span class="sig-name descname"><span class="pre">add_target_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/target_formatter.html#add_target_methods"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.add_target_methods" title="連結到這個定義"></a></dt>
+<dd><p>為 logger 實例添加目標導向的格式化方法版本</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logger_instance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>) -- 要添加方法的 logger 實例</p></li>
+<li><p><strong>method_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- 方法的基本名稱 (如 'block', 'ascii_header')</p></li>
+<li><p><strong>original_method</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></span>) -- 原始的格式化方法</p></li>
+</ul>
+</dd>
+<dt class="field-even">回傳型別<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+<p class="rubric">範例</p>
+<dl>
+<dt>::</dt><dd><p># 假設 logger_instance 已有 block 方法
+add_target_methods(logger_instance, 'block', logger_instance.block)</p>
+<p># 現在 logger_instance 將有 console_block 和 file_block 方法</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.ensure_target_parameters">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.</span></span><span class="sig-name descname"><span class="pre">ensure_target_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/target_formatter.html#ensure_target_parameters"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.ensure_target_parameters" title="連結到這個定義"></a></dt>
+<dd><p>確保方法接受目標導向參數</p>
+<p>這個裝飾器用於確保格式化方法接受 to_console_only 和 to_log_file_only 參數。
+這對於創建新的格式化方法很有用。</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>method</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></span>) -- 要裝飾的方法</p>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>確保接受目標導向參數的方法</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="連結到這個標頭"></a></h2>
+</section>
+<section id="module-pretty_loguru.core.base">
+<span id="pretty-loguru-core-base-module"></span><h2>pretty_loguru.core.base module<a class="headerlink" href="#module-pretty_loguru.core.base" title="連結到這個標頭"></a></h2>
+<p>日誌系統基礎模組</p>
+<p>此模組提供 Pretty Loguru 的基本功能，包括核心初始化、
+日誌實例的配置和管理等基礎功能。</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.base.get_console">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.base.</span></span><span class="sig-name descname"><span class="pre">get_console</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/base.html#get_console"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.base.get_console" title="連結到這個定義"></a></dt>
+<dd><p>獲取 Rich Console 實例</p>
+<dl class="field-list simple">
+<dt class="field-odd">回傳<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Rich Console 實例，用於美化輸出</p>
+</dd>
+<dt class="field-even">回傳型別<span class="colon">:</span></dt>
+<dd class="field-even"><p>Console</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.base.configure_logger">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.base.</span></span><span class="sig-name descname"><span class="pre">configure_logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'INFO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'20</span> <span class="pre">MB'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subdirectory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_name_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_file_settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isolate_handlers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'&lt;green&gt;{time:YYYY-MM-DD</span> <span class="pre">HH:mm:ss}&lt;/green&gt;</span> <span class="pre">|</span> <span class="pre">&lt;level&gt;{level:</span> <span class="pre">&lt;8}{process}&lt;/level&gt;</span> <span class="pre">|</span> <span class="pre">&lt;cyan&gt;{extra[folder]}&lt;/cyan&gt;:&lt;cyan&gt;{function}&lt;/cyan&gt;:&lt;cyan&gt;{line}&lt;/cyan&gt;</span> <span class="pre">-</span> <span class="pre">&lt;level&gt;{message}&lt;/level&gt;'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/base.html#configure_logger"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.base.configure_logger" title="連結到這個定義"></a></dt>
+<dd><p>配置日誌系統，確保每個 logger 實例的處理器完全隔離</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>level</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'TRACE'</span></code>, <code class="docutils literal notranslate"><span class="pre">'DEBUG'</span></code>, <code class="docutils literal notranslate"><span class="pre">'INFO'</span></code>, <code class="docutils literal notranslate"><span class="pre">'SUCCESS'</span></code>, <code class="docutils literal notranslate"><span class="pre">'WARNING'</span></code>, <code class="docutils literal notranslate"><span class="pre">'ERROR'</span></code>, <code class="docutils literal notranslate"><span class="pre">'CRITICAL'</span></code>]</span>) -- 日誌級別，預設為全域變數 LOG_LEVEL。</p></li>
+<li><p><strong>log_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>) -- 日誌儲存路徑，若為 None 則使用預設路徑。</p></li>
+<li><p><strong>component_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- 處理程序 ID，用於標記日誌檔案。</p></li>
+<li><p><strong>rotation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) -- 日誌輪換大小，單位為 MB。</p></li>
+<li><p><strong>subdirectory</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 子目錄名稱，用於分類不同類型的日誌。</p></li>
+<li><p><strong>log_name_format</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 日誌檔案名稱格式。</p></li>
+<li><p><strong>timestamp_format</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 時間戳格式，用於自定義時間顯示方式。</p></li>
+<li><p><strong>log_file_settings</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>) -- 日誌檔案的其他設定。</p></li>
+<li><p><strong>logger_instance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) -- 要初始化的日誌實例，如果為None則使用全局的_logger</p></li>
+<li><p><strong>service_tag</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 服務名稱，用於在日誌檔案名中使用 {service_tag} 變數</p></li>
+<li><p><strong>isolate_handlers</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) -- 是否隔離不同 logger 實例的處理器，預設為 True</p></li>
+<li><p><strong>unique_id</strong> (<em>#</em>) -- 唯一ID，用於確保每個logger實例完全獨立</p></li>
+<li><p><strong>logger_format</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- 日誌格式字符串，預設使用 LOGGER_FORMAT</p></li>
+</ul>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>日誌檔案的完整路徑</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.base.add_custom_output_methods">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.base.</span></span><span class="sig-name descname"><span class="pre">add_custom_output_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/base.html#add_custom_output_methods"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.base.add_custom_output_methods" title="連結到這個定義"></a></dt>
+<dd><p>為日誌實例添加自定義輸出方法</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>logger_instance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>) -- 要擴展的日誌實例</p>
+</dd>
+<dt class="field-even">回傳型別<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pretty_loguru.core.cleaner">
+<span id="pretty-loguru-core-cleaner-module"></span><h2>pretty_loguru.core.cleaner module<a class="headerlink" href="#module-pretty_loguru.core.cleaner" title="連結到這個標頭"></a></h2>
+<p>日誌清理模組</p>
+<p>此模組提供 Pretty Loguru 的日誌清理功能，用於定期清理過期的日誌檔案，
+避免磁碟空間被長期占用。</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pretty_loguru.core.cleaner.LoggerCleaner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.cleaner.</span></span><span class="sig-name descname"><span class="pre">LoggerCleaner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_retention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/cleaner.html#LoggerCleaner"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.cleaner.LoggerCleaner" title="連結到這個定義"></a></dt>
+<dd><p>基礎類別：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>日誌清理器類別</p>
+<p>用於定期清理過舊的日誌檔案，避免磁碟空間被佔滿。</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pretty_loguru.core.cleaner.LoggerCleaner.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_retention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/cleaner.html#LoggerCleaner.__init__"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.cleaner.LoggerCleaner.__init__" title="連結到這個定義"></a></dt>
+<dd><p>初始化日誌清理器</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_retention</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 日誌保留天數，預設為 30 天</p></li>
+<li><p><strong>log_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>) -- 日誌儲存路徑，預設為當前目錄下的 logs 資料夾</p></li>
+<li><p><strong>check_interval</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) -- 檢查間隔，單位為秒，預設為 3600（1小時）</p></li>
+<li><p><strong>logger_instance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) -- 記錄清理操作的日誌實例，如果為 None 則使用 print</p></li>
+<li><p><strong>recursive</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) -- 是否遞歸清理子目錄，預設為 True</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pretty_loguru.core.cleaner.LoggerCleaner.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/cleaner.html#LoggerCleaner.start"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.cleaner.LoggerCleaner.start" title="連結到這個定義"></a></dt>
+<dd><p>啟動日誌清理線程</p>
+<p>如果清理器已經在運行，則不會重複啟動。</p>
+<dl class="field-list simple">
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pretty_loguru.core.config">
+<span id="pretty-loguru-core-config-module"></span><h2>pretty_loguru.core.config module<a class="headerlink" href="#module-pretty_loguru.core.config" title="連結到這個標頭"></a></h2>
+<p>日誌系統配置模組</p>
+<p>此模組定義了 Pretty Loguru 的配置常數、默認值和配置結構。
+所有配置相關的常數和功能都集中在此模組中，便於集中管理和修改。</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pretty_loguru.core.config.LogLevelEnum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.config.</span></span><span class="sig-name descname"><span class="pre">LogLevelEnum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/config.html#LogLevelEnum"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.config.LogLevelEnum" title="連結到這個定義"></a></dt>
+<dd><p>基礎類別：<code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<dl class="field-list simple">
+</dl>
+<p>參見 <a class="reference internal" href="#pretty_loguru.core.config.LogLevelEnum" title="pretty_loguru.core.config.LogLevelEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">pretty_loguru.core.config.LogLevelEnum</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.core.config.LogLevelEnum.TRACE">
+<span class="sig-name descname"><span class="pre">TRACE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'TRACE'</span></em><a class="headerlink" href="#pretty_loguru.core.config.LogLevelEnum.TRACE" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.core.config.LogLevelEnum.DEBUG">
+<span class="sig-name descname"><span class="pre">DEBUG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'DEBUG'</span></em><a class="headerlink" href="#pretty_loguru.core.config.LogLevelEnum.DEBUG" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.core.config.LogLevelEnum.INFO">
+<span class="sig-name descname"><span class="pre">INFO</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'INFO'</span></em><a class="headerlink" href="#pretty_loguru.core.config.LogLevelEnum.INFO" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.core.config.LogLevelEnum.SUCCESS">
+<span class="sig-name descname"><span class="pre">SUCCESS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SUCCESS'</span></em><a class="headerlink" href="#pretty_loguru.core.config.LogLevelEnum.SUCCESS" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.core.config.LogLevelEnum.WARNING">
+<span class="sig-name descname"><span class="pre">WARNING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'WARNING'</span></em><a class="headerlink" href="#pretty_loguru.core.config.LogLevelEnum.WARNING" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.core.config.LogLevelEnum.ERROR">
+<span class="sig-name descname"><span class="pre">ERROR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ERROR'</span></em><a class="headerlink" href="#pretty_loguru.core.config.LogLevelEnum.ERROR" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.core.config.LogLevelEnum.CRITICAL">
+<span class="sig-name descname"><span class="pre">CRITICAL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'CRITICAL'</span></em><a class="headerlink" href="#pretty_loguru.core.config.LogLevelEnum.CRITICAL" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pretty_loguru.core.config.LoggerConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.config.</span></span><span class="sig-name descname"><span class="pre">LoggerConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'PRETTY_LOGURU_'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/config.html#LoggerConfig"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.config.LoggerConfig" title="連結到這個定義"></a></dt>
+<dd><p>基礎類別：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>日誌配置類</p>
+<p>此類提供了統一的配置管理，可從環境變數或配置文件中載入配置。</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pretty_loguru.core.config.LoggerConfig.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'PRETTY_LOGURU_'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/config.html#LoggerConfig.__init__"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.config.LoggerConfig.__init__" title="連結到這個定義"></a></dt>
+<dd><p>初始化日誌配置</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>level</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'TRACE'</span></code>, <code class="docutils literal notranslate"><span class="pre">'DEBUG'</span></code>, <code class="docutils literal notranslate"><span class="pre">'INFO'</span></code>, <code class="docutils literal notranslate"><span class="pre">'SUCCESS'</span></code>, <code class="docutils literal notranslate"><span class="pre">'WARNING'</span></code>, <code class="docutils literal notranslate"><span class="pre">'ERROR'</span></code>, <code class="docutils literal notranslate"><span class="pre">'CRITICAL'</span></code>]]</span>) -- 日誌級別，預設從環境變數或全局默認值獲取</p></li>
+<li><p><strong>rotation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>) -- 日誌輪換設置，預設從環境變數或全局默認值獲取</p></li>
+<li><p><strong>log_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>) -- 日誌路徑，預設從環境變數或全局默認值獲取</p></li>
+<li><p><strong>logger_format</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 日誌格式，預設從環境變數或全局默認值獲取</p></li>
+<li><p><strong>env_prefix</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- 環境變數前綴，用於區分不同應用的配置</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pretty_loguru.core.config.LoggerConfig.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/config.html#LoggerConfig.from_dict"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.config.LoggerConfig.from_dict" title="連結到這個定義"></a></dt>
+<dd><p>從字典創建配置實例</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_dict</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) -- 包含配置值的字典</p>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>配置實例</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pretty_loguru.core.config.LoggerConfig" title="pretty_loguru.core.config.LoggerConfig">LoggerConfig</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pretty_loguru.core.config.LoggerConfig.from_file">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/config.html#LoggerConfig.from_file"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.config.LoggerConfig.from_file" title="連結到這個定義"></a></dt>
+<dd><p>從文件載入配置</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) -- 配置文件路徑</p></li>
+<li><p><strong>format</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'json'</span></code>, <code class="docutils literal notranslate"><span class="pre">'yaml'</span></code>]</span>) -- 文件格式，支援 &quot;json&quot; 或 &quot;yaml&quot;</p></li>
+</ul>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>配置實例</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pretty_loguru.core.config.LoggerConfig" title="pretty_loguru.core.config.LoggerConfig">LoggerConfig</a></p>
+</dd>
+<dt class="field-even">引發<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> -- 不支援的文件格式</p></li>
+<li><p><strong>FileNotFoundError</strong> -- 文件不存在</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pretty_loguru.core.config.LoggerConfig.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/config.html#LoggerConfig.to_dict"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.config.LoggerConfig.to_dict" title="連結到這個定義"></a></dt>
+<dd><p>轉換為字典</p>
+<dl class="field-list simple">
+<dt class="field-odd">回傳<span class="colon">:</span></dt>
+<dd class="field-odd"><p>包含配置值的字典</p>
+</dd>
+<dt class="field-even">回傳型別<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pretty_loguru.core.config.LoggerConfig.save_to_file">
+<span class="sig-name descname"><span class="pre">save_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/config.html#LoggerConfig.save_to_file"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.config.LoggerConfig.save_to_file" title="連結到這個定義"></a></dt>
+<dd><p>將配置保存到文件</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) -- 配置文件路徑</p></li>
+<li><p><strong>format</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'json'</span></code>, <code class="docutils literal notranslate"><span class="pre">'yaml'</span></code>]</span>) -- 文件格式，支援 &quot;json&quot; 或 &quot;yaml&quot;</p></li>
+</ul>
+</dd>
+<dt class="field-even">引發<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> -- 不支援的文件格式</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pretty_loguru.core.handlers">
+<span id="pretty-loguru-core-handlers-module"></span><h2>pretty_loguru.core.handlers module<a class="headerlink" href="#module-pretty_loguru.core.handlers" title="連結到這個標頭"></a></h2>
+<p>日誌處理器模組</p>
+<p>此模組提供 Pretty Loguru 的處理器相關功能，包括過濾器創建、
+文件名格式化，以及各種日誌輸出處理方法。</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.handlers.create_destination_filters">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.handlers.</span></span><span class="sig-name descname"><span class="pre">create_destination_filters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/handlers.html#create_destination_filters"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.handlers.create_destination_filters" title="連結到這個定義"></a></dt>
+<dd><p>創建基於目標的過濾器函數，用於控制日誌輸出目標</p>
+<dl class="field-list simple">
+<dt class="field-odd">回傳<span class="colon">:</span></dt>
+<dd class="field-odd"><p>包含控制台和文件過濾器的字典</p>
+</dd>
+<dt class="field-even">回傳型別<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dict[str, LogFilterType]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.handlers.format_filename">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.handlers.</span></span><span class="sig-name descname"><span class="pre">format_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">component_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_name_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/handlers.html#format_filename"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.handlers.format_filename" title="連結到這個定義"></a></dt>
+<dd><p>根據提供的格式生成日誌檔案名，並處理不合法的文件名字符</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>component_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- 進程 ID 或服務名稱</p></li>
+<li><p><strong>log_name_format</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 日誌檔案名格式，可以是自定義的格式或 LOG_NAME_FORMATS 中的鍵</p></li>
+<li><p><strong>timestamp_format</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 時間戳格式，預設為 &quot;%Y%m%d-%H%M%S&quot;</p></li>
+<li><p><strong>service_tag</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 服務名稱，用於在日誌檔案名中使用 {service_tag} 變數</p></li>
+</ul>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>格式化後的日誌檔案名，已移除不合法字符</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">引發<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>KeyError</strong> -- 當日誌檔案名格式使用了未提供的變數時</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.handlers.create_formatter">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.handlers.</span></span><span class="sig-name descname"><span class="pre">create_formatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/handlers.html#create_formatter"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.handlers.create_formatter" title="連結到這個定義"></a></dt>
+<dd><p>創建日誌格式化函數</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fmt</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 格式字符串，如果為 None 則使用默認格式</p>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>格式化函數，接受日誌記錄並返回格式化字符串</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.handlers.adapt_rotation_value">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.handlers.</span></span><span class="sig-name descname"><span class="pre">adapt_rotation_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rotation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/handlers.html#adapt_rotation_value"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.handlers.adapt_rotation_value" title="連結到這個定義"></a></dt>
+<dd><p>調整輪換值的格式，確保正確設置</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rotation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>) -- 輪換設置，可以是數字或字符串</p>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>格式化後的輪換值</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pretty_loguru.core.target_formatter">
+<span id="pretty-loguru-core-target-formatter-module"></span><h2>pretty_loguru.core.target_formatter module<a class="headerlink" href="#module-pretty_loguru.core.target_formatter" title="連結到這個標頭"></a></h2>
+<p>目標導向格式化工具模組</p>
+<p>此模組提供用於創建目標導向格式化方法的工具函數，
+使得能夠輕鬆添加 file_xxx 和 console_xxx 方法。</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.target_formatter.create_target_method">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.target_formatter.</span></span><span class="sig-name descname"><span class="pre">create_target_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_console_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_log_file_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/target_formatter.html#create_target_method"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.target_formatter.create_target_method" title="連結到這個定義"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.target_formatter.add_target_methods">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.target_formatter.</span></span><span class="sig-name descname"><span class="pre">add_target_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original_method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/target_formatter.html#add_target_methods"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.target_formatter.add_target_methods" title="連結到這個定義"></a></dt>
+<dd><p>為 logger 實例添加目標導向的格式化方法版本</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logger_instance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>) -- 要添加方法的 logger 實例</p></li>
+<li><p><strong>method_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- 方法的基本名稱 (如 'block', 'ascii_header')</p></li>
+<li><p><strong>original_method</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></span>) -- 原始的格式化方法</p></li>
+</ul>
+</dd>
+<dt class="field-even">回傳型別<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+<p class="rubric">範例</p>
+<dl>
+<dt>::</dt><dd><p># 假設 logger_instance 已有 block 方法
+add_target_methods(logger_instance, 'block', logger_instance.block)</p>
+<p># 現在 logger_instance 將有 console_block 和 file_block 方法</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.core.target_formatter.ensure_target_parameters">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.core.target_formatter.</span></span><span class="sig-name descname"><span class="pre">ensure_target_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/target_formatter.html#ensure_target_parameters"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.core.target_formatter.ensure_target_parameters" title="連結到這個定義"></a></dt>
+<dd><p>確保方法接受目標導向參數</p>
+<p>這個裝飾器用於確保格式化方法接受 to_console_only 和 to_log_file_only 參數。
+這對於創建新的格式化方法很有用。</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>method</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></span>) -- 要裝飾的方法</p>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>確保接受目標導向參數的方法</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pretty_loguru.html" class="btn btn-neutral float-left" title="pretty_loguru package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pretty_loguru.factory.html" class="btn btn-neutral float-right" title="pretty_loguru.factory package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, JonesHong.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

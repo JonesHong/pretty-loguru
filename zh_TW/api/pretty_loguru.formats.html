@@ -1,0 +1,445 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-TW" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pretty_loguru.formats package &mdash; Pretty Loguru 0.2.6 說明文件</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=dce0a6c6" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=9a3e7318"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=cbf116e0"></script>
+      <script src="../_static/language_switcher.js?v=c59c85d5"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜尋" href="../search.html" />
+    <link rel="next" title="pretty_loguru.integrations package" href="pretty_loguru.integrations.html" />
+    <link rel="prev" title="pretty_loguru.factory package" href="pretty_loguru.factory.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Pretty Loguru
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">入門指南</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">快速入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage.html">基本用法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_features.html">進階功能</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../integrations.html">框架集成</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">貢獻指南</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">pretty_loguru</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="pretty_loguru.html">pretty_loguru package</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.EnhancedLogger"><code class="docutils literal notranslate"><span class="pre">EnhancedLogger</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.LogLevelEnum"><code class="docutils literal notranslate"><span class="pre">LogLevelEnum</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.LoggerConfig"><code class="docutils literal notranslate"><span class="pre">LoggerConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.configure_logger"><code class="docutils literal notranslate"><span class="pre">configure_logger()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.create_target_method"><code class="docutils literal notranslate"><span class="pre">create_target_method()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.add_target_methods"><code class="docutils literal notranslate"><span class="pre">add_target_methods()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.ensure_target_parameters"><code class="docutils literal notranslate"><span class="pre">ensure_target_parameters()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.create_logger"><code class="docutils literal notranslate"><span class="pre">create_logger()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.default_logger"><code class="docutils literal notranslate"><span class="pre">default_logger()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.get_logger"><code class="docutils literal notranslate"><span class="pre">get_logger()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.set_logger"><code class="docutils literal notranslate"><span class="pre">set_logger()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.unregister_logger"><code class="docutils literal notranslate"><span class="pre">unregister_logger()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.list_loggers"><code class="docutils literal notranslate"><span class="pre">list_loggers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.print_block"><code class="docutils literal notranslate"><span class="pre">print_block()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.print_ascii_header"><code class="docutils literal notranslate"><span class="pre">print_ascii_header()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.print_ascii_block"><code class="docutils literal notranslate"><span class="pre">print_ascii_block()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.is_ascii_only"><code class="docutils literal notranslate"><span class="pre">is_ascii_only()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.configure_uvicorn"><code class="docutils literal notranslate"><span class="pre">configure_uvicorn()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.InterceptHandler"><code class="docutils literal notranslate"><span class="pre">InterceptHandler</span></code></a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="pretty_loguru.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="pretty_loguru.core.html">pretty_loguru.core package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pretty_loguru.factory.html">pretty_loguru.factory package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">pretty_loguru.formats package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pretty_loguru.integrations.html">pretty_loguru.integrations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pretty_loguru.types.html">pretty_loguru.types package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Pretty Loguru</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">pretty_loguru</a></li>
+          <li class="breadcrumb-item"><a href="pretty_loguru.html">pretty_loguru package</a></li>
+      <li class="breadcrumb-item active">pretty_loguru.formats package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/pretty_loguru.formats.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pretty_loguru.formats">
+<span id="pretty-loguru-formats-package"></span><h1>pretty_loguru.formats package<a class="headerlink" href="#module-pretty_loguru.formats" title="連結到這個標頭"></a></h1>
+<p>格式化模組入口</p>
+<p>此模組提供 Pretty Loguru 的所有格式化功能，包括區塊格式化、
+ASCII 藝術和 FIGlet 文本等。這些功能豐富了日誌的視覺呈現效果。</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.formats.print_block">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.formats.</span></span><span class="sig-name descname"><span class="pre">print_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pretty_loguru.formats.print_block" title="連結到這個定義"></a></dt>
+<dd><p>打印區塊樣式的日誌，並寫入到日誌文件</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> -- 區塊的標題</p></li>
+<li><p><strong>message_list</strong> -- 日誌的內容列表</p></li>
+<li><p><strong>border_style</strong> -- 區塊邊框顏色，預設為 &quot;cyan&quot;</p></li>
+<li><p><strong>log_level</strong> -- 日誌級別，預設為 &quot;INFO&quot;</p></li>
+<li><p><strong>logger_instance</strong> -- 要使用的 logger 實例，如果為 None 則不記錄日誌</p></li>
+<li><p><strong>console</strong> -- 要使用的 rich console 實例，如果為 None 則創建新的</p></li>
+<li><p><strong>to_console_only</strong> -- 是否僅輸出到控制台，預設為 False</p></li>
+<li><p><strong>to_log_file_only</strong> -- 是否僅輸出到日誌文件，預設為 False</p></li>
+<li><p><strong>_target_depth</strong> -- 日誌堆棧深度，用於捕獲正確的調用位置</p></li>
+</ul>
+</dd>
+<dt class="field-even">回傳型別<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.formats.format_block_message">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.formats.</span></span><span class="sig-name descname"><span class="pre">format_block_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'='</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/formats/block.html#format_block_message"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.formats.format_block_message" title="連結到這個定義"></a></dt>
+<dd><p>格式化區塊消息為單一字符串</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- 區塊的標題</p></li>
+<li><p><strong>message_list</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 消息列表</p></li>
+<li><p><strong>separator</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- 分隔線字符，預設為 &quot;=&quot;</p></li>
+<li><p><strong>separator_length</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) -- 分隔線長度，預設為 50</p></li>
+</ul>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>格式化後的消息字符串</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.formats.create_block_method">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.formats.</span></span><span class="sig-name descname"><span class="pre">create_block_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">console</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/formats/block.html#create_block_method"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.formats.create_block_method" title="連結到這個定義"></a></dt>
+<dd><p>為 logger 實例創建 block 方法</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logger_instance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>) -- 要添加方法的 logger 實例</p></li>
+<li><p><strong>console</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Console</span></code>]</span>) -- 要使用的 rich console 實例，如果為 None 則使用新創建的</p></li>
+</ul>
+</dd>
+<dt class="field-even">回傳型別<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.formats.print_ascii_header">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.formats.</span></span><span class="sig-name descname"><span class="pre">print_ascii_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pretty_loguru.formats.print_ascii_header" title="連結到這個定義"></a></dt>
+<dd><p>打印 ASCII 藝術標題</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> -- 要轉換為 ASCII 藝術的文本</p></li>
+<li><p><strong>font</strong> -- ASCII 藝術字體</p></li>
+<li><p><strong>log_level</strong> -- 日誌級別</p></li>
+<li><p><strong>border_style</strong> -- 邊框樣式</p></li>
+<li><p><strong>logger_instance</strong> -- 要使用的 logger 實例，如果為 None 則不記錄日誌</p></li>
+<li><p><strong>console</strong> -- 要使用的 rich console 實例，如果為 None 則創建新的</p></li>
+<li><p><strong>to_console_only</strong> -- 是否僅輸出到控制台，預設為 False</p></li>
+<li><p><strong>to_log_file_only</strong> -- 是否僅輸出到日誌文件，預設為 False</p></li>
+<li><p><strong>_target_depth</strong> -- 日誌堆棧深度，用於捕獲正確的調用位置</p></li>
+</ul>
+</dd>
+<dt class="field-even">引發<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> -- 如果文本包含非 ASCII 字符</p></li>
+<li><p><strong>ImportError</strong> -- 如果未安裝 art 庫</p></li>
+</ul>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.formats.print_ascii_block">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.formats.</span></span><span class="sig-name descname"><span class="pre">print_ascii_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pretty_loguru.formats.print_ascii_block" title="連結到這個定義"></a></dt>
+<dd><p>打印帶有 ASCII 藝術標題的區塊樣式日誌</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> -- 區塊的標題</p></li>
+<li><p><strong>message_list</strong> -- 日誌的內容列表</p></li>
+<li><p><strong>ascii_header</strong> -- ASCII 藝術標題文本 (如果不提供，則使用 title)</p></li>
+<li><p><strong>ascii_font</strong> -- ASCII 藝術字體</p></li>
+<li><p><strong>border_style</strong> -- 區塊邊框顏色</p></li>
+<li><p><strong>log_level</strong> -- 日誌級別</p></li>
+<li><p><strong>logger_instance</strong> -- 要使用的 logger 實例，如果為 None 則不記錄日誌</p></li>
+<li><p><strong>console</strong> -- 要使用的 rich console 實例，如果為 None 則創建新的</p></li>
+<li><p><strong>to_console_only</strong> -- 是否僅輸出到控制台，預設為 False</p></li>
+<li><p><strong>to_log_file_only</strong> -- 是否僅輸出到日誌文件，預設為 False</p></li>
+<li><p><strong>_target_depth</strong> -- 日誌堆棧深度，用於捕獲正確的調用位置</p></li>
+</ul>
+</dd>
+<dt class="field-even">引發<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> -- 如果 ASCII 標題包含非 ASCII 字符</p></li>
+<li><p><strong>ImportError</strong> -- 如果未安裝 art 庫</p></li>
+</ul>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.formats.is_ascii_only">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.formats.</span></span><span class="sig-name descname"><span class="pre">is_ascii_only</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/formats/ascii_art.html#is_ascii_only"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.formats.is_ascii_only" title="連結到這個定義"></a></dt>
+<dd><p>檢查文本是否只包含 ASCII 字符</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- 要檢查的文本</p>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>如果只包含 ASCII 字符則返回 True，否則返回 False</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.formats.create_ascii_methods">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.formats.</span></span><span class="sig-name descname"><span class="pre">create_ascii_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">console</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/formats/ascii_art.html#create_ascii_methods"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.formats.create_ascii_methods" title="連結到這個定義"></a></dt>
+<dd><p>為 logger 實例創建 ASCII 藝術相關方法</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logger_instance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>) -- 要添加方法的 logger 實例</p></li>
+<li><p><strong>console</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Console</span></code>]</span>) -- 要使用的 rich console 實例，如果為 None 則使用新創建的</p></li>
+</ul>
+</dd>
+<dt class="field-even">回傳型別<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="連結到這個標頭"></a></h2>
+</section>
+<section id="module-pretty_loguru.formats.ascii_art">
+<span id="pretty-loguru-formats-ascii-art-module"></span><h2>pretty_loguru.formats.ascii_art module<a class="headerlink" href="#module-pretty_loguru.formats.ascii_art" title="連結到這個標頭"></a></h2>
+<p>ASCII 藝術模組</p>
+<p>此模組提供用於生成 ASCII 藝術標題和區塊的功能，
+增強日誌的視覺效果和結構化呈現。</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.formats.ascii_art.is_ascii_only">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.formats.ascii_art.</span></span><span class="sig-name descname"><span class="pre">is_ascii_only</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/formats/ascii_art.html#is_ascii_only"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.formats.ascii_art.is_ascii_only" title="連結到這個定義"></a></dt>
+<dd><p>檢查文本是否只包含 ASCII 字符</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- 要檢查的文本</p>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>如果只包含 ASCII 字符則返回 True，否則返回 False</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.formats.ascii_art.create_ascii_methods">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.formats.ascii_art.</span></span><span class="sig-name descname"><span class="pre">create_ascii_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">console</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/formats/ascii_art.html#create_ascii_methods"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.formats.ascii_art.create_ascii_methods" title="連結到這個定義"></a></dt>
+<dd><p>為 logger 實例創建 ASCII 藝術相關方法</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logger_instance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>) -- 要添加方法的 logger 實例</p></li>
+<li><p><strong>console</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Console</span></code>]</span>) -- 要使用的 rich console 實例，如果為 None 則使用新創建的</p></li>
+</ul>
+</dd>
+<dt class="field-even">回傳型別<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pretty_loguru.formats.block">
+<span id="pretty-loguru-formats-block-module"></span><h2>pretty_loguru.formats.block module<a class="headerlink" href="#module-pretty_loguru.formats.block" title="連結到這個標頭"></a></h2>
+<p>區塊格式化模組</p>
+<p>此模組提供用於創建格式化日誌區塊的功能，可以為日誌消息添加邊框、
+標題和特定樣式，增強日誌的可讀性和視覺效果。</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.formats.block.format_block_message">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.formats.block.</span></span><span class="sig-name descname"><span class="pre">format_block_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'='</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separator_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/formats/block.html#format_block_message"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.formats.block.format_block_message" title="連結到這個定義"></a></dt>
+<dd><p>格式化區塊消息為單一字符串</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- 區塊的標題</p></li>
+<li><p><strong>message_list</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 消息列表</p></li>
+<li><p><strong>separator</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) -- 分隔線字符，預設為 &quot;=&quot;</p></li>
+<li><p><strong>separator_length</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) -- 分隔線長度，預設為 50</p></li>
+</ul>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>格式化後的消息字符串</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.formats.block.create_block_method">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.formats.block.</span></span><span class="sig-name descname"><span class="pre">create_block_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">console</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/formats/block.html#create_block_method"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.formats.block.create_block_method" title="連結到這個定義"></a></dt>
+<dd><p>為 logger 實例創建 block 方法</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logger_instance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>) -- 要添加方法的 logger 實例</p></li>
+<li><p><strong>console</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Console</span></code>]</span>) -- 要使用的 rich console 實例，如果為 None 則使用新創建的</p></li>
+</ul>
+</dd>
+<dt class="field-even">回傳型別<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-pretty_loguru.formats.figlet">
+<span id="pretty-loguru-formats-figlet-module"></span><h2>pretty_loguru.formats.figlet module<a class="headerlink" href="#module-pretty_loguru.formats.figlet" title="連結到這個標頭"></a></h2>
+<p>FIGlet 藝術模組</p>
+<p>此模組提供用於生成 FIGlet 文本藝術的功能，
+是 ASCII 藝術的替代選項，支援更多的字體和樣式。
+需要安裝 pyfiglet 庫：pip install pyfiglet</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.formats.figlet.get_figlet_fonts">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.formats.figlet.</span></span><span class="sig-name descname"><span class="pre">get_figlet_fonts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/formats/figlet.html#get_figlet_fonts"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.formats.figlet.get_figlet_fonts" title="連結到這個定義"></a></dt>
+<dd><p>獲取所有可用的 FIGlet 字體</p>
+<dl class="field-list simple">
+<dt class="field-odd">回傳<span class="colon">:</span></dt>
+<dd class="field-odd"><p>可用字體名稱的集合</p>
+</dd>
+<dt class="field-even">回傳型別<span class="colon">:</span></dt>
+<dd class="field-even"><p>Set[str]</p>
+</dd>
+<dt class="field-odd">引發<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ImportError</strong> -- 如果未安裝 pyfiglet 庫</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pretty_loguru.formats.figlet.create_figlet_methods">
+<span class="sig-prename descclassname"><span class="pre">pretty_loguru.formats.figlet.</span></span><span class="sig-name descname"><span class="pre">create_figlet_methods</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">console</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/formats/figlet.html#create_figlet_methods"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.formats.figlet.create_figlet_methods" title="連結到這個定義"></a></dt>
+<dd><p>為 logger 實例創建 FIGlet 藝術相關方法</p>
+<dl class="field-list simple">
+<dt class="field-odd">參數<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logger_instance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>) -- 要添加方法的 logger 實例</p></li>
+<li><p><strong>console</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Console</span></code>]</span>) -- 要使用的 rich console 實例，如果為 None 則使用新創建的</p></li>
+</ul>
+</dd>
+<dt class="field-even">回傳<span class="colon">:</span></dt>
+<dd class="field-even"><p>如果成功添加方法則返回 True，否則返回 False</p>
+</dd>
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pretty_loguru.factory.html" class="btn btn-neutral float-left" title="pretty_loguru.factory package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pretty_loguru.integrations.html" class="btn btn-neutral float-right" title="pretty_loguru.integrations package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, JonesHong.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

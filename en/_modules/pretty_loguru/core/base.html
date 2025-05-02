@@ -1,0 +1,398 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-TW" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pretty_loguru.core.base &mdash; Pretty Loguru 0.2.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=dce0a6c6" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=9a3e7318"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/language_switcher.js?v=c59c85d5"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Pretty Loguru
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_features.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../integrations.html">Framework Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">pretty_loguru</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Pretty Loguru</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pretty_loguru.core.base</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pretty_loguru.core.base</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">日誌系統基礎模組</span>
+
+<span class="sd">此模組提供 Pretty Loguru 的基本功能，包括核心初始化、</span>
+<span class="sd">日誌實例的配置和管理等基礎功能。</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">cast</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span> <span class="k">as</span> <span class="n">_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..types</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">EnhancedLogger</span><span class="p">,</span> <span class="n">LogLevelType</span><span class="p">,</span> <span class="n">LogPathType</span><span class="p">,</span> <span class="n">LogNameFormatType</span><span class="p">,</span> 
+    <span class="n">LogRotationType</span><span class="p">,</span> <span class="n">LogHandlerIdType</span><span class="p">,</span> <span class="n">LogFilterType</span><span class="p">,</span> <span class="n">LogConfigType</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LOG_LEVEL</span><span class="p">,</span> <span class="n">LOGGER_FORMAT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.handlers</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_destination_filters</span><span class="p">,</span> <span class="n">format_filename</span>
+
+<span class="n">log_path_global</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># 全域變數，用於儲存日誌路徑</span>
+<span class="c1"># Rich Console 實例，用於美化輸出</span>
+<span class="n">_console</span> <span class="o">=</span> <span class="n">Console</span><span class="p">()</span>
+
+<div class="viewcode-block" id="get_console">
+<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.get_console">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_console</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Console</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;獲取 Rich Console 實例</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Console: Rich Console 實例，用於美化輸出</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_console</span></div>
+
+
+
+<div class="viewcode-block" id="configure_logger">
+<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.configure_logger">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">configure_logger</span><span class="p">(</span>
+    <span class="n">level</span><span class="p">:</span> <span class="n">LogLevelType</span> <span class="o">=</span> <span class="n">LOG_LEVEL</span><span class="p">,</span>
+    <span class="n">log_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LogPathType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">component_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">rotation</span><span class="p">:</span> <span class="n">LogRotationType</span> <span class="o">=</span> <span class="s2">&quot;20 MB&quot;</span><span class="p">,</span>
+    <span class="n">subdirectory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">log_name_format</span><span class="p">:</span> <span class="n">LogNameFormatType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">timestamp_format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">log_file_settings</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LogConfigType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">logger_instance</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">service_tag</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">isolate_handlers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="c1"># unique_id: Optional[str] = None,</span>
+    <span class="n">logger_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">LOGGER_FORMAT</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    配置日誌系統，確保每個 logger 實例的處理器完全隔離</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        level: 日誌級別，預設為全域變數 LOG_LEVEL。</span>
+<span class="sd">        log_path: 日誌儲存路徑，若為 None 則使用預設路徑。</span>
+<span class="sd">        component_name: 處理程序 ID，用於標記日誌檔案。</span>
+<span class="sd">        rotation: 日誌輪換大小，單位為 MB。</span>
+<span class="sd">        subdirectory: 子目錄名稱，用於分類不同類型的日誌。</span>
+<span class="sd">        log_name_format: 日誌檔案名稱格式。</span>
+<span class="sd">        timestamp_format: 時間戳格式，用於自定義時間顯示方式。</span>
+<span class="sd">        log_file_settings: 日誌檔案的其他設定。</span>
+<span class="sd">        logger_instance: 要初始化的日誌實例，如果為None則使用全局的_logger</span>
+<span class="sd">        service_tag: 服務名稱，用於在日誌檔案名中使用 {service_tag} 變數</span>
+<span class="sd">        isolate_handlers: 是否隔離不同 logger 實例的處理器，預設為 True</span>
+<span class="sd">        # unique_id: 唯一ID，用於確保每個logger實例完全獨立</span>
+<span class="sd">        logger_format: 日誌格式字符串，預設使用 LOGGER_FORMAT</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: 日誌檔案的完整路徑</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 決定要使用的logger實例</span>
+    <span class="n">target_logger</span> <span class="o">=</span> <span class="n">_logger</span> <span class="k">if</span> <span class="n">logger_instance</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">logger_instance</span>
+    
+
+    <span class="c1"># Upsert：若已有先前配置，合併未提供的參數</span>
+    <span class="k">if</span> <span class="n">logger_instance</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">target_logger</span><span class="p">,</span> <span class="s2">&quot;_config&quot;</span><span class="p">):</span>
+        <span class="n">prev</span> <span class="o">=</span> <span class="n">target_logger</span><span class="o">.</span><span class="n">_config</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="n">level</span> <span class="ow">or</span> <span class="n">prev</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;level&quot;</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+        <span class="n">log_path</span> <span class="o">=</span> <span class="n">log_path</span> <span class="ow">or</span> <span class="n">prev</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;log_path&quot;</span><span class="p">,</span> <span class="n">log_path</span><span class="p">)</span>
+        <span class="n">component_name</span> <span class="o">=</span> <span class="n">component_name</span> <span class="ow">or</span> <span class="n">prev</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;component_name&quot;</span><span class="p">,</span> <span class="n">component_name</span><span class="p">)</span>
+        <span class="n">rotation</span> <span class="o">=</span> <span class="n">rotation</span> <span class="ow">or</span> <span class="n">prev</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rotation&quot;</span><span class="p">,</span> <span class="n">rotation</span><span class="p">)</span>
+        <span class="n">subdirectory</span> <span class="o">=</span> <span class="n">subdirectory</span> <span class="ow">or</span> <span class="n">prev</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subdirectory&quot;</span><span class="p">,</span> <span class="n">subdirectory</span><span class="p">)</span>
+        <span class="n">log_name_format</span> <span class="o">=</span> <span class="n">log_name_format</span> <span class="ow">or</span> <span class="n">prev</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;log_name_format&quot;</span><span class="p">,</span> <span class="n">log_name_format</span><span class="p">)</span>
+        <span class="n">timestamp_format</span> <span class="o">=</span> <span class="n">timestamp_format</span> <span class="ow">or</span> <span class="n">prev</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;timestamp_format&quot;</span><span class="p">,</span> <span class="n">timestamp_format</span><span class="p">)</span>
+        <span class="n">log_file_settings</span> <span class="o">=</span> <span class="n">log_file_settings</span> <span class="ow">or</span> <span class="n">prev</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;log_file_settings&quot;</span><span class="p">,</span> <span class="n">log_file_settings</span><span class="p">)</span>
+        <span class="n">service_tag</span> <span class="o">=</span> <span class="n">service_tag</span> <span class="ow">or</span> <span class="n">prev</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;service_tag&quot;</span><span class="p">,</span> <span class="n">service_tag</span><span class="p">)</span>
+        <span class="n">logger_format</span> <span class="o">=</span> <span class="n">logger_format</span> <span class="ow">or</span> <span class="n">prev</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;logger_format&quot;</span><span class="p">,</span> <span class="n">logger_format</span><span class="p">)</span>
+        
+    <span class="c1"># 1. 決定最終要用的資料夾</span>
+    <span class="k">if</span> <span class="n">log_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;logs&quot;</span>  <span class="c1"># 預設日誌資料夾</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
+    
+    <span class="c1"># 如果指定了子目錄，將其添加到基礎路徑中</span>
+    <span class="k">if</span> <span class="n">subdirectory</span><span class="p">:</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">base</span> <span class="o">/</span> <span class="n">subdirectory</span>
+    
+    <span class="k">global</span> <span class="n">log_path_global</span>
+    <span class="n">log_path_global</span> <span class="o">=</span> <span class="n">base</span>  <span class="c1"># 更新全域變數</span>
+    
+    <span class="c1"># 確保資料夾存在</span>
+    <span class="n">base</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># 2. 移除所有現有的處理器 - 這是一種激進但有效的方法</span>
+    <span class="k">if</span> <span class="n">isolate_handlers</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">target_logger</span><span class="p">,</span> <span class="s2">&quot;_core&quot;</span><span class="p">):</span>
+        <span class="n">handler_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">target_logger</span><span class="o">.</span><span class="n">_core</span><span class="o">.</span><span class="n">handlers</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">handler_id</span> <span class="ow">in</span> <span class="n">handler_ids</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">target_logger</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">handler_id</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: Failed to remove handler </span><span class="si">{</span><span class="n">handler_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># 3. 設定附加資訊</span>
+    <span class="c1"># 生成唯一的 logger_id，結合 component_name, service_tag 和 unique_id</span>
+    <span class="c1"># logger_id = f&quot;{component_name}_{service_tag}_{unique_id}&quot; if unique_id else f&quot;{component_name}_{service_tag}&quot;</span>
+    <span class="n">logger_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">service_tag</span><span class="si">}</span><span class="s2">&quot;</span> 
+    
+    <span class="n">extra_config</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;folder&quot;</span><span class="p">:</span> <span class="n">component_name</span><span class="p">,</span>      <span class="c1"># 額外資訊：處理程序 ID</span>
+        <span class="s2">&quot;logger_id&quot;</span><span class="p">:</span> <span class="n">logger_id</span><span class="p">,</span>    <span class="c1"># 唯一的 logger 識別碼</span>
+        <span class="s2">&quot;to_console_only&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># 是否僅輸出到控制台</span>
+        <span class="s2">&quot;to_log_file_only&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># 是否僅輸出到日誌檔案</span>
+    <span class="p">}</span>
+    
+    <span class="c1"># 如果提供了 service_name，將其添加到額外資訊中</span>
+    <span class="k">if</span> <span class="n">service_tag</span><span class="p">:</span>
+        <span class="n">extra_config</span><span class="p">[</span><span class="s2">&quot;service_tag&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">service_tag</span>
+    
+    <span class="c1"># 更新 logger 的額外資訊</span>
+    <span class="n">target_logger</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="n">extra_config</span><span class="p">)</span>
+
+    <span class="c1"># 4. 生成日誌檔案名</span>
+    <span class="n">log_filename</span> <span class="o">=</span> <span class="n">format_filename</span><span class="p">(</span><span class="n">component_name</span><span class="p">,</span> <span class="n">log_name_format</span><span class="p">,</span> <span class="n">timestamp_format</span><span class="p">,</span> <span class="n">service_tag</span><span class="p">)</span>
+    
+    <span class="c1"># 如果提供了唯一ID，將其添加到檔案名中以確保唯一性</span>
+    <span class="c1"># if unique_id:</span>
+    <span class="c1">#     base_name, ext = log_filename.rsplit(&quot;.&quot;, 1) if &quot;.&quot; in log_filename else (log_filename, &quot;log&quot;)</span>
+    <span class="c1">#     log_filename = f&quot;{base_name}_{unique_id}.{ext}&quot;</span>
+    
+    <span class="n">logfile</span> <span class="o">=</span> <span class="n">base</span> <span class="o">/</span> <span class="n">log_filename</span>
+    
+    <span class="c1"># 輸出調試信息</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Logger &#39;</span><span class="si">{</span><span class="n">service_tag</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">component_name</span><span class="si">}</span><span class="s2">&#39; (ID: </span><span class="si">{</span><span class="n">logger_id</span><span class="si">}</span><span class="s2">): Log file path set to </span><span class="si">{</span><span class="n">logfile</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># 5. 創建目標過濾器</span>
+    <span class="n">filters</span> <span class="o">=</span> <span class="n">create_destination_filters</span><span class="p">()</span>
+    
+    <span class="c1"># 處理輪換大小格式</span>
+    <span class="n">rotation_value</span> <span class="o">=</span> <span class="n">rotation</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rotation</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">rotation</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">rotation</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()):</span>
+        <span class="c1"># 如果是數字或純數字字符串，添加空格和單位</span>
+        <span class="n">rotation_value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rotation</span><span class="si">}</span><span class="s2"> MB&quot;</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rotation</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># 如果是字符串但不是純數字，檢查是否已經包含單位</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">unit</span> <span class="ow">in</span> <span class="n">rotation</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;kb&quot;</span><span class="p">,</span> <span class="s2">&quot;mb&quot;</span><span class="p">,</span> <span class="s2">&quot;gb&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;day&quot;</span><span class="p">,</span> <span class="s2">&quot;month&quot;</span><span class="p">,</span> <span class="s2">&quot;week&quot;</span><span class="p">,</span> <span class="s2">&quot;hour&quot;</span><span class="p">,</span> <span class="s2">&quot;minute&quot;</span><span class="p">,</span> <span class="s2">&quot;second&quot;</span><span class="p">]):</span>
+            <span class="n">rotation_value</span> <span class="o">=</span> <span class="n">rotation</span>  <span class="c1"># 已經有單位，保持不變</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 嘗試轉換為數字，如果成功則添加 MB 單位</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">float</span><span class="p">(</span><span class="n">rotation</span><span class="p">)</span>
+                <span class="n">rotation_value</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rotation</span><span class="si">}</span><span class="s2"> MB&quot;</span>  <span class="c1"># 添加空格和單位</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">rotation_value</span> <span class="o">=</span> <span class="n">rotation</span>  <span class="c1"># 不是數字，保持不變</span>
+    
+    <span class="c1"># 6. 準備日誌檔案設置</span>
+    <span class="n">file_settings</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;rotation&quot;</span><span class="p">:</span> <span class="n">rotation_value</span><span class="p">,</span>  <span class="c1"># 設定日誌輪換大小，修正後的格式</span>
+        <span class="s2">&quot;encoding&quot;</span><span class="p">:</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>         <span class="c1"># 檔案編碼</span>
+        <span class="s2">&quot;enqueue&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>             <span class="c1"># 使用多線程安全的方式寫入</span>
+        <span class="s2">&quot;filter&quot;</span><span class="p">:</span> <span class="n">filters</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">],</span>   <span class="c1"># 文件過濾器</span>
+    <span class="p">}</span>
+    
+    <span class="c1"># 合併自定義設置</span>
+    <span class="k">if</span> <span class="n">log_file_settings</span><span class="p">:</span>
+        <span class="n">file_settings</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">log_file_settings</span><span class="p">)</span>
+    
+    <span class="c1"># 7. 新增檔案 handler - 確保檔案處理器綁定到正確的文件</span>
+    <span class="n">file_handler_id</span> <span class="o">=</span> <span class="n">target_logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">logfile</span><span class="p">),</span>
+        <span class="nb">format</span><span class="o">=</span><span class="n">logger_format</span><span class="p">,</span>  <span class="c1"># 使用定義的日誌格式</span>
+        <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>           <span class="c1"># 設定日誌級別</span>
+        <span class="o">**</span><span class="n">file_settings</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># 8. 新增 console handler - 確保控制台處理器不會干擾其他實例</span>
+    <span class="n">console_handler_id</span> <span class="o">=</span> <span class="n">target_logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+        <span class="nb">format</span><span class="o">=</span><span class="n">logger_format</span><span class="p">,</span>     <span class="c1"># 使用相同的日誌格式</span>
+        <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>              <span class="c1"># 設定日誌級別</span>
+        <span class="nb">filter</span><span class="o">=</span><span class="n">filters</span><span class="p">[</span><span class="s2">&quot;console&quot;</span><span class="p">],</span> <span class="c1"># 控制台過濾器</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># 保存處理器 ID，以便將來需要更新或移除</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">target_logger</span><span class="p">,</span> <span class="s2">&quot;_handler_ids&quot;</span><span class="p">):</span>
+        <span class="n">target_logger</span><span class="o">.</span><span class="n">_handler_ids</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">target_logger</span><span class="o">.</span><span class="n">_handler_ids</span><span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file_handler_id</span>
+    <span class="n">target_logger</span><span class="o">.</span><span class="n">_handler_ids</span><span class="p">[</span><span class="s2">&quot;console&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">console_handler_id</span>
+    
+    <span class="c1"># 存儲最新配置</span>
+    <span class="n">target_logger</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="n">level</span><span class="p">,</span>
+        <span class="s2">&quot;log_path&quot;</span><span class="p">:</span> <span class="n">log_path</span><span class="p">,</span>
+        <span class="s2">&quot;component_name&quot;</span><span class="p">:</span> <span class="n">component_name</span><span class="p">,</span>
+        <span class="s2">&quot;rotation&quot;</span><span class="p">:</span> <span class="n">rotation</span><span class="p">,</span>
+        <span class="s2">&quot;subdirectory&quot;</span><span class="p">:</span> <span class="n">subdirectory</span><span class="p">,</span>
+        <span class="s2">&quot;log_name_format&quot;</span><span class="p">:</span> <span class="n">log_name_format</span><span class="p">,</span>
+        <span class="s2">&quot;timestamp_format&quot;</span><span class="p">:</span> <span class="n">timestamp_format</span><span class="p">,</span>
+        <span class="s2">&quot;log_file_settings&quot;</span><span class="p">:</span> <span class="n">log_file_settings</span><span class="p">,</span>
+        <span class="s2">&quot;service_tag&quot;</span><span class="p">:</span> <span class="n">service_tag</span><span class="p">,</span>
+        <span class="s2">&quot;logger_format&quot;</span><span class="p">:</span> <span class="n">logger_format</span><span class="p">,</span>
+    <span class="p">}</span>
+    
+    <span class="c1"># 返回完整的日誌文件路徑，方便外部使用</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">logfile</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># 新增目標導向日誌方法 - 只輸出到控制台</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_console_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    僅在控制台顯示的日誌記錄方法</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        logger_instance: 日誌實例</span>
+<span class="sd">        level: 日誌級別</span>
+<span class="sd">        message: 日誌訊息</span>
+<span class="sd">        *args: 其他位置參數</span>
+<span class="sd">        **kwargs: 其他關鍵字參數</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">logger_instance</span><span class="o">.</span><span class="n">opt</span><span class="p">(</span><span class="n">ansi</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">to_console_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="c1"># 新增目標導向日誌方法 - 只輸出到文件</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_file_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    僅寫入文件的日誌記錄方法</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        logger_instance: 日誌實例</span>
+<span class="sd">        level: 日誌級別</span>
+<span class="sd">        message: 日誌訊息</span>
+<span class="sd">        *args: 其他位置參數</span>
+<span class="sd">        **kwargs: 其他關鍵字參數</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">logger_instance</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">to_log_file_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="add_custom_output_methods">
+<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.add_custom_output_methods">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_custom_output_methods</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    為日誌實例添加自定義輸出方法</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        logger_instance: 要擴展的日誌實例</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 控制台專用方法</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">console</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_console_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_debug</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_console_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_info</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_console_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_success</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_console_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;SUCCESS&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_warning</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_console_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_error</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_console_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_critical</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_console_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;CRITICAL&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># 文件專用方法</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_file_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">file_debug</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_file_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">file_info</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_file_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">file_success</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_file_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;SUCCESS&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">file_warning</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_file_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">file_error</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_file_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">file_critical</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_file_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;CRITICAL&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># 開發模式方法 (別名為控制台方法)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">dev</span> <span class="o">=</span> <span class="n">logger_instance</span><span class="o">.</span><span class="n">console</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">dev_debug</span> <span class="o">=</span> <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_debug</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">dev_info</span> <span class="o">=</span> <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_info</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">dev_success</span> <span class="o">=</span> <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_success</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">dev_warning</span> <span class="o">=</span> <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_warning</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">dev_error</span> <span class="o">=</span> <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_error</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">dev_critical</span> <span class="o">=</span> <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_critical</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, JonesHong.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

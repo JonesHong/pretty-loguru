@@ -1,0 +1,349 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-TW" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>進階功能 &mdash; Pretty Loguru 0.2.6 說明文件</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=dce0a6c6" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=9a3e7318"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=cbf116e0"></script>
+      <script src="_static/language_switcher.js?v=c59c85d5"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜尋" href="search.html" />
+    <link rel="next" title="框架集成" href="integrations.html" />
+    <link rel="prev" title="基本用法" href="basic_usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pretty Loguru
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">入門指南</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">快速入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_usage.html">基本用法</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">進階功能</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#ascii">ASCII 藝術標題</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#figlet">FIGlet 藝術標題</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">日誌清理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">自定義格式化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">管理多個日誌實例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">配置從文件或環境變數載入</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">自定義處理器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">性能優化</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="integrations.html">框架集成</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">貢獻指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">pretty_loguru</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pretty Loguru</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">進階功能</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/advanced_features.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>進階功能<a class="headerlink" href="#id1" title="連結到這個標頭"></a></h1>
+<p>本節介紹 Pretty Loguru 的進階功能和特性。</p>
+<section id="ascii">
+<h2>ASCII 藝術標題<a class="headerlink" href="#ascii" title="連結到這個標頭"></a></h2>
+<p>使用 ASCII 藝術標題增強你的日誌視覺效果：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 需要安裝 art 庫：pip install art</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">ascii_header</span><span class="p">(</span><span class="s2">&quot;系統啟動&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="s2">&quot;standard&quot;</span><span class="p">)</span>
+
+<span class="c1"># 帶有 ASCII 標題的區塊</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">ascii_block</span><span class="p">(</span>
+    <span class="s2">&quot;定期任務&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;開始執行每日計劃任務...&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;數據備份完成&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;用戶統計報告已生成&quot;</span>
+    <span class="p">],</span>
+    <span class="n">ascii_font</span><span class="o">=</span><span class="s2">&quot;standard&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>輸出示例：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>+------------------+
+|                  |
+| 系統啟動        　|
+|                  |
++------------------+
+</pre></div>
+</div>
+</section>
+<section id="figlet">
+<h2>FIGlet 藝術標題<a class="headerlink" href="#figlet" title="連結到這個標頭"></a></h2>
+<p>使用 FIGlet 藝術標題提供更多字體選擇：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 需要安裝 pyfiglet 庫：pip install pyfiglet</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">figlet_header</span><span class="p">(</span><span class="s2">&quot;警告信息&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="s2">&quot;slant&quot;</span><span class="p">)</span>
+
+<span class="c1"># 獲取所有可用的 FIGlet 字體</span>
+<span class="n">available_fonts</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">get_figlet_fonts</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;可用字體數量: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">available_fonts</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># 帶有 FIGlet 標題的區塊</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">figlet_block</span><span class="p">(</span>
+    <span class="s2">&quot;異常摘要&quot;</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;檢測到系統異常&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;服務中斷時間：14:30-15:45&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;影響用戶數：1,234&quot;</span>
+    <span class="p">],</span>
+    <span class="n">figlet_font</span><span class="o">=</span><span class="s2">&quot;banner&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>日誌清理<a class="headerlink" href="#id2" title="連結到這個標頭"></a></h2>
+<p>自動清理過期的日誌文件，避免磁碟空間浪費：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru.core.cleaner</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoggerCleaner</span>
+
+<span class="c1"># 創建日誌實例</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;my_app&quot;</span><span class="p">)</span>
+
+<span class="c1"># 創建並啟動日誌清理器（保留30天的日誌）</span>
+<span class="n">cleaner</span> <span class="o">=</span> <span class="n">LoggerCleaner</span><span class="p">(</span>
+    <span class="n">log_retention</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>  <span class="c1"># 保留30天</span>
+    <span class="n">log_path</span><span class="o">=</span><span class="s2">&quot;/var/log/myapp&quot;</span><span class="p">,</span>
+    <span class="n">check_interval</span><span class="o">=</span><span class="mi">3600</span><span class="p">,</span>  <span class="c1"># 每小時檢查一次</span>
+    <span class="n">logger_instance</span><span class="o">=</span><span class="n">logger</span>
+<span class="p">)</span>
+
+<span class="c1"># 啟動清理器</span>
+<span class="n">cleaner</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>自定義格式化<a class="headerlink" href="#id3" title="連結到這個標頭"></a></h2>
+<p>完全自定義日誌格式和排版：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span>
+
+<span class="c1"># 自定義日誌格式</span>
+<span class="n">custom_format</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;&lt;blue&gt;{time:YYYY-MM-DD HH:mm:ss.SSS}&lt;/blue&gt; | &quot;</span>
+    <span class="s2">&quot;&lt;level&gt;</span><span class="si">{level: &lt;8}</span><span class="s2">&lt;/level&gt; | &quot;</span>
+    <span class="s2">&quot;&lt;cyan&gt;</span><span class="si">{name}</span><span class="s2">&lt;/cyan&gt;:&lt;green&gt;</span><span class="si">{function}</span><span class="s2">&lt;/green&gt;:&lt;yellow&gt;</span><span class="si">{line}</span><span class="s2">&lt;/yellow&gt; - &quot;</span>
+    <span class="s2">&quot;&lt;level&gt;</span><span class="si">{message}</span><span class="s2">&lt;/level&gt;&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># 創建使用自定義格式的日誌實例</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;custom_format_app&quot;</span><span class="p">,</span>
+    <span class="n">logger_format</span><span class="o">=</span><span class="n">custom_format</span>
+<span class="p">)</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;使用自定義格式的日誌&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h2>管理多個日誌實例<a class="headerlink" href="#id4" title="連結到這個標頭"></a></h2>
+<p>Pretty Loguru 讓你可以輕鬆管理多個日誌實例：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span><span class="p">,</span> <span class="n">get_logger</span><span class="p">,</span> <span class="n">list_loggers</span><span class="p">,</span> <span class="n">unregister_logger</span>
+
+<span class="c1"># 創建多個日誌實例</span>
+<span class="n">api_logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;api&quot;</span><span class="p">)</span>
+<span class="n">db_logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;db&quot;</span><span class="p">)</span>
+<span class="n">worker_logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;worker&quot;</span><span class="p">)</span>
+
+<span class="c1"># 獲取已註冊的日誌實例</span>
+<span class="n">loggers</span> <span class="o">=</span> <span class="n">list_loggers</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;已註冊的日誌實例: </span><span class="si">{</span><span class="n">loggers</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># [&#39;api&#39;, &#39;db&#39;, &#39;worker&#39;]</span>
+
+<span class="c1"># 按名稱獲取日誌實例</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="s2">&quot;api&quot;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;從註冊表獲取的日誌實例&quot;</span><span class="p">)</span>
+
+<span class="c1"># 取消註冊日誌實例</span>
+<span class="n">unregister_logger</span><span class="p">(</span><span class="s2">&quot;worker&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h2>配置從文件或環境變數載入<a class="headerlink" href="#id5" title="連結到這個標頭"></a></h2>
+<p>從配置文件或環境變數載入設置：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">LoggerConfig</span><span class="p">,</span> <span class="n">create_logger</span>
+
+<span class="c1"># 從 JSON 文件載入配置</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">LoggerConfig</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">&quot;config.json&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">)</span>
+
+<span class="c1"># 從 YAML 文件載入配置 (需要 PyYAML)</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">LoggerConfig</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;yaml&quot;</span><span class="p">)</span>
+
+<span class="c1"># 使用配置創建日誌實例</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;configured_app&quot;</span><span class="p">,</span>
+    <span class="n">level</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">level</span><span class="p">,</span>
+    <span class="n">rotation</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">rotation</span><span class="p">,</span>
+    <span class="n">log_path</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">log_path</span><span class="p">,</span>
+    <span class="n">logger_format</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">format</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>使用環境變數：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 設置環境變數</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">PRETTY_LOGURU_LEVEL</span><span class="o">=</span>DEBUG
+<span class="nb">export</span><span class="w"> </span><span class="nv">PRETTY_LOGURU_PATH</span><span class="o">=</span>/var/log/myapp
+<span class="nb">export</span><span class="w"> </span><span class="nv">PRETTY_LOGURU_ROTATION</span><span class="o">=</span>50MB
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 環境變數會自動生效</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;env_configured_app&quot;</span><span class="p">)</span>
+<span class="c1"># 會使用環境變數中的設置</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2>自定義處理器<a class="headerlink" href="#id6" title="連結到這個標頭"></a></h2>
+<p>添加自定義輸出目標：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="c1"># 創建日誌實例</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;custom_handlers&quot;</span><span class="p">)</span>
+
+<span class="c1"># 添加標準輸出處理器</span>
+<span class="n">stdout_handler_id</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{time}</span><span class="s2"> | </span><span class="si">{level}</span><span class="s2"> | </span><span class="si">{message}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="n">colorize</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># 添加自定義檔案處理器</span>
+<span class="n">file_handler_id</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+    <span class="s2">&quot;special.log&quot;</span><span class="p">,</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;{time:YYYY-MM-DD} | </span><span class="si">{level}</span><span class="s2"> | </span><span class="si">{message}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;WARNING&quot;</span><span class="p">,</span>
+    <span class="n">rotation</span><span class="o">=</span><span class="s2">&quot;1 week&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># 添加自定義處理器函數</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_sink</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+    <span class="c1"># 自定義處理日誌消息</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;自定義處理: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">custom_handler_id</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">my_sink</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;ERROR&quot;</span><span class="p">)</span>
+
+<span class="c1"># 使用日誌</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;普通信息&quot;</span><span class="p">)</span>  <span class="c1"># 輸出到標準輸出</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;警告信息&quot;</span><span class="p">)</span>  <span class="c1"># 輸出到標準輸出和文件</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;錯誤信息&quot;</span><span class="p">)</span>  <span class="c1"># 輸出到所有處理器</span>
+
+<span class="c1"># 移除處理器</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">custom_handler_id</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h2>性能優化<a class="headerlink" href="#id7" title="連結到這個標頭"></a></h2>
+<p>對於高性能需求，可以使用以下技巧：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. 使用懶惰格式化</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000000</span><span class="p">):</span>
+    <span class="c1"># 不建議: 即使日誌級別不符合也會進行格式化</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;循環迭代: </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">, 複雜計算: </span><span class="si">{</span><span class="n">expensive_function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 建議: 使用 % 格式化或參數傳遞</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;循環迭代: </span><span class="si">%d</span><span class="s2">, 複雜計算: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">expensive_function</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+<span class="c1"># 2. 使用條件檢查 (極端情況下)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000000</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">no</span> <span class="o">&lt;=</span> <span class="n">logger</span><span class="o">.</span><span class="n">level</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">_core</span><span class="o">.</span><span class="n">min_level</span><span class="p">)</span><span class="o">.</span><span class="n">no</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;循環迭代: </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># 3. 使用異步日誌</span>
+<span class="n">async_logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;async_logger&quot;</span><span class="p">,</span>
+    <span class="n">log_file_settings</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;enqueue&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>  <span class="c1"># 啟用異步日誌</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="basic_usage.html" class="btn btn-neutral float-left" title="基本用法" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="integrations.html" class="btn btn-neutral float-right" title="框架集成" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, JonesHong.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

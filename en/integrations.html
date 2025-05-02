@@ -1,0 +1,349 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-TW" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Framework Integration &mdash; Pretty Loguru 0.2.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=dce0a6c6" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=9a3e7318"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/language_switcher.js?v=c59c85d5"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contribution Guide" href="contributing.html" />
+    <link rel="prev" title="Advanced Features" href="advanced_features.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Pretty Loguru
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_features.html">Advanced Features</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Framework Integration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fastapi">FastAPI Integration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Basic Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Dependency Injection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Logging Middleware</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Custom Routes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#uvicorn">Uvicorn Integration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Basic Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">Intercept Handler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#asgi">Integration with Other ASGI Servers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">Integration with Other Libraries</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sqlalchemy">SQLAlchemy Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#django">Django Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#flask">Flask Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/modules.html">pretty_loguru</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pretty Loguru</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Framework Integration</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/integrations.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>Framework Integration<a class="headerlink" href="#id1" title="Link to this heading"></a></h1>
+<p>Pretty Loguru is designed to seamlessly integrate with popular Python frameworks. This section introduces how to integrate Pretty Loguru into different frameworks.</p>
+<section id="fastapi">
+<h2>FastAPI Integration<a class="headerlink" href="#fastapi" title="Link to this heading"></a></h2>
+<p>Pretty Loguru provides full integration with FastAPI, including request logging, dependency injection, and error handling.</p>
+<section id="id2">
+<h3>Basic Setup<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">Depends</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru.integrations.fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_fastapi_logging</span><span class="p">,</span> <span class="n">get_logger_dependency</span>
+
+<span class="c1"># 創建 FastAPI 應用</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+
+<span class="c1"># 創建日誌實例</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;fastapi_app&quot;</span><span class="p">)</span>
+
+<span class="c1"># 設置 FastAPI 日誌</span>
+<span class="n">setup_fastapi_logging</span><span class="p">(</span>
+    <span class="n">app</span><span class="p">,</span>
+    <span class="n">logger_instance</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+    <span class="n">middleware</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">custom_routes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">log_request_body</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">log_response_body</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="c1"># 基本路由</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">root</span><span class="p">():</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;處理首頁請求&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello World&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3>Dependency Injection<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">get_logger_dependency</span></code> function to provide a dedicated logger instance for each route:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 創建路由特定的日誌依賴</span>
+<span class="n">users_logger</span> <span class="o">=</span> <span class="n">get_logger_dependency</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;users_api&quot;</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/users/&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_users</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="n">Depends</span><span class="p">(</span><span class="n">users_logger</span><span class="p">)):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;獲取用戶列表&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;users&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;user1&quot;</span><span class="p">,</span> <span class="s2">&quot;user2&quot;</span><span class="p">]}</span>
+
+<span class="c1"># 另一個範例</span>
+<span class="n">items_logger</span> <span class="o">=</span> <span class="n">get_logger_dependency</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;items_api&quot;</span><span class="p">,</span> <span class="n">service_tag</span><span class="o">=</span><span class="s2">&quot;inventory&quot;</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/items/&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_items</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="n">Depends</span><span class="p">(</span><span class="n">items_logger</span><span class="p">)):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;獲取商品列表&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;item1&quot;</span><span class="p">,</span> <span class="s2">&quot;item2&quot;</span><span class="p">]}</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3>Logging Middleware<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>When using <code class="docutils literal notranslate"><span class="pre">setup_fastapi_logging</span></code> to set up middleware, it will automatically log detailed information about all requests and responses:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 自定義中間件設置</span>
+<span class="n">setup_fastapi_logging</span><span class="p">(</span>
+    <span class="n">app</span><span class="p">,</span>
+    <span class="n">logger_instance</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+    <span class="n">exclude_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;/health&quot;</span><span class="p">,</span> <span class="s2">&quot;/metrics&quot;</span><span class="p">],</span>  <span class="c1"># 排除某些路徑不記錄日誌</span>
+    <span class="n">exclude_methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;OPTIONS&quot;</span><span class="p">],</span>            <span class="c1"># 排除某些 HTTP 方法</span>
+    <span class="n">log_request_body</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>                  <span class="c1"># 記錄請求體</span>
+    <span class="n">log_response_body</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>                 <span class="c1"># 記錄響應體</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Output Example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>2023-05-01 12:34:56 | INFO | Request [1682938496.123]: GET /users/ from 127.0.0.1:56789
+2023-05-01 12:34:56 | INFO | Response [1682938496.123]: 200 in 0.015s
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3>Custom Routes<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">custom_routes=True</span></code> parameter to enable more detailed route-level logging:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 啟用自定義路由</span>
+<span class="n">setup_fastapi_logging</span><span class="p">(</span>
+    <span class="n">app</span><span class="p">,</span>
+    <span class="n">logger_instance</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+    <span class="n">custom_routes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">log_request_body</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="uvicorn">
+<h2>Uvicorn Integration<a class="headerlink" href="#uvicorn" title="Link to this heading"></a></h2>
+<p>Pretty Loguru can take over Uvicorn’s logging system, ensuring all logs use the same format and handling.</p>
+<section id="id6">
+<h3>Basic Setup<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">uvicorn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru.integrations.uvicorn</span><span class="w"> </span><span class="kn">import</span> <span class="n">configure_uvicorn</span>
+
+<span class="c1"># 創建日誌實例</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;uvicorn_app&quot;</span><span class="p">)</span>
+
+<span class="c1"># 配置 Uvicorn 使用 Pretty Loguru</span>
+<span class="n">configure_uvicorn</span><span class="p">(</span><span class="n">logger_instance</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">)</span>
+
+<span class="c1"># 啟動 Uvicorn</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">uvicorn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;app:app&quot;</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8000</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3>Intercept Handler<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">InterceptHandler</span></code> class is used to intercept standard library logs and forward them to Loguru:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru.integrations.uvicorn</span><span class="w"> </span><span class="kn">import</span> <span class="n">InterceptHandler</span>
+
+<span class="c1"># 創建日誌實例</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;my_app&quot;</span><span class="p">)</span>
+
+<span class="c1"># 設置攔截處理器</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">handlers</span><span class="o">=</span><span class="p">[</span><span class="n">InterceptHandler</span><span class="p">(</span><span class="n">logger_instance</span><span class="o">=</span><span class="n">logger</span><span class="p">)],</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># 從此以後，所有透過標準庫的日誌都會被轉發給 Loguru</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;這條日誌會被 Loguru 處理&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="asgi">
+<h3>Integration with Other ASGI Servers<a class="headerlink" href="#asgi" title="Link to this heading"></a></h3>
+<p>The integration method with other ASGI servers is similar:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru.integrations.uvicorn</span><span class="w"> </span><span class="kn">import</span> <span class="n">configure_uvicorn</span>
+
+<span class="c1"># 創建日誌實例</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;asgi_app&quot;</span><span class="p">)</span>
+
+<span class="c1"># 配置日誌</span>
+<span class="n">configure_uvicorn</span><span class="p">(</span>
+    <span class="n">logger_instance</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="n">logger_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;uvicorn.asgi&quot;</span><span class="p">,</span> <span class="s2">&quot;uvicorn.access&quot;</span><span class="p">,</span> <span class="s2">&quot;hypercorn&quot;</span><span class="p">,</span> <span class="s2">&quot;daphne&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id8">
+<h2>Integration with Other Libraries<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<p>Pretty Loguru can integrate with any tool that uses the standard logging library:</p>
+<section id="sqlalchemy">
+<h3>SQLAlchemy Example<a class="headerlink" href="#sqlalchemy" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru.integrations.uvicorn</span><span class="w"> </span><span class="kn">import</span> <span class="n">InterceptHandler</span>
+
+<span class="c1"># 創建日誌實例</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;sqlalchemy_app&quot;</span><span class="p">)</span>
+
+<span class="c1"># 設置 SQLAlchemy 日誌</span>
+<span class="n">sql_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;sqlalchemy.engine&quot;</span><span class="p">)</span>
+<span class="n">sql_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+<span class="n">sql_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">InterceptHandler</span><span class="p">(</span><span class="n">logger_instance</span><span class="o">=</span><span class="n">logger</span><span class="p">))</span>
+
+<span class="c1"># 現在 SQLAlchemy 的日誌將使用 Pretty Loguru 格式</span>
+</pre></div>
+</div>
+</section>
+<section id="django">
+<h3>Django Example<a class="headerlink" href="#django" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># settings.py</span>
+<span class="n">LOGGING</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;version&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s1">&#39;disable_existing_loggers&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">&#39;handlers&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;loguru&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="s1">&#39;pretty_loguru.integrations.uvicorn.InterceptHandler&#39;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;root&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;handlers&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;loguru&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;level&#39;</span><span class="p">:</span> <span class="s1">&#39;INFO&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="flask">
+<h3>Flask Example<a class="headerlink" href="#flask" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">flask</span><span class="w"> </span><span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru.integrations.uvicorn</span><span class="w"> </span><span class="kn">import</span> <span class="n">InterceptHandler</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># 創建日誌實例</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span><span class="s2">&quot;flask_app&quot;</span><span class="p">)</span>
+
+<span class="c1"># 配置 Flask 日誌</span>
+<span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">handlers</span> <span class="o">=</span> <span class="p">[</span><span class="n">InterceptHandler</span><span class="p">(</span><span class="n">logger_instance</span><span class="o">=</span><span class="n">logger</span><span class="p">)]</span>
+<span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+<span class="c1"># 路由範例</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">hello</span><span class="p">():</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;處理首頁請求&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;Hello World!&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="advanced_features.html" class="btn btn-neutral float-left" title="Advanced Features" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contribution Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, JonesHong.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

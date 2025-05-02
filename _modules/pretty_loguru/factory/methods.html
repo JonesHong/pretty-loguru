@@ -1,0 +1,290 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-TW" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pretty_loguru.factory.methods &mdash; Pretty Loguru 0.2.6 說明文件</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=dce0a6c6" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=9a3e7318"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/translations.js?v=cbf116e0"></script>
+      <script src="../../../_static/language_switcher.js?v=c59c85d5"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜尋" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Pretty Loguru
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">入門指南</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">快速入門</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic_usage.html">基本用法</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_features.html">進階功能</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../integrations.html">框架集成</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">貢獻指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">pretty_loguru</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Pretty Loguru</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">模組原始碼</a></li>
+      <li class="breadcrumb-item active">pretty_loguru.factory.methods</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>pretty_loguru.factory.methods 的原始碼</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Logger 方法擴展模組</span>
+
+<span class="sd">此模組提供各種方法，用於擴展 Logger 實例的功能，</span>
+<span class="sd">包括自定義輸出方法和格式化方法。</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..types</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnhancedLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">_console_only</span><span class="p">,</span> <span class="n">_file_only</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..core.target_formatter</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_target_methods</span>
+
+<span class="c1"># 直接導入格式化方法模組</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..formats.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_block_method</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..formats.ascii_art</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_ascii_methods</span>
+
+<span class="c1"># 這裡的導入方式需要修改</span>
+<span class="c1"># 我們直接在 add_format_methods 函數中處理 FIGlet 相關功能</span>
+<span class="c1"># 避免導入錯誤</span>
+
+
+<div class="viewcode-block" id="add_output_methods">
+<a class="viewcode-back" href="../../../api/pretty_loguru.factory.html#pretty_loguru.factory.add_output_methods">[文件]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_output_methods</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">console</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Console</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    為 logger 實例添加輸出目標相關方法</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        logger_instance: 要擴展的 logger 實例</span>
+<span class="sd">        console: 要使用的 console 實例，如果為 None 則使用新創建的</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 為 logger_instance 新增只輸出到控制台的方法</span>
+    
+    <span class="c1"># 控制台專用方法</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">console</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_console_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_debug</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_console_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_info</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_console_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_success</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_console_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;SUCCESS&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_warning</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_console_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_error</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_console_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_critical</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_console_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;CRITICAL&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># 文件專用方法</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_file_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">file_debug</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_file_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">file_info</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_file_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">file_success</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_file_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;SUCCESS&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">file_warning</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_file_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">file_error</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_file_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">file_critical</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">_file_only</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;CRITICAL&quot;</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># 開發模式方法 (別名為控制台方法)</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">dev</span> <span class="o">=</span> <span class="n">logger_instance</span><span class="o">.</span><span class="n">console</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">dev_debug</span> <span class="o">=</span> <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_debug</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">dev_info</span> <span class="o">=</span> <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_info</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">dev_success</span> <span class="o">=</span> <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_success</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">dev_warning</span> <span class="o">=</span> <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_warning</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">dev_error</span> <span class="o">=</span> <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_error</span>
+    <span class="n">logger_instance</span><span class="o">.</span><span class="n">dev_critical</span> <span class="o">=</span> <span class="n">logger_instance</span><span class="o">.</span><span class="n">console_critical</span></div>
+
+
+
+<div class="viewcode-block" id="add_format_methods">
+<a class="viewcode-back" href="../../../api/pretty_loguru.factory.html#pretty_loguru.factory.add_format_methods">[文件]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_format_methods</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">console</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Console</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    為 logger 實例添加格式化相關方法</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        logger_instance: 要擴展的 logger 實例</span>
+<span class="sd">        console: 要使用的 console 實例，如果為 None 則使用新創建的</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 添加區塊格式化方法</span>
+    <span class="n">create_block_method</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="n">console</span><span class="p">)</span>
+    
+    <span class="c1"># 添加 ASCII 藝術方法</span>
+    <span class="n">create_ascii_methods</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="n">console</span><span class="p">)</span>
+    
+    <span class="c1"># 嘗試添加 FIGlet 方法</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># 直接在函數中導入 FIGlet 相關功能</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">..formats.figlet</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_figlet_methods</span>
+        
+        <span class="c1"># 嘗試調用 create_figlet_methods 函數</span>
+        <span class="n">create_result</span> <span class="o">=</span> <span class="n">create_figlet_methods</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="n">console</span><span class="p">)</span>
+        
+        <span class="c1"># 如果添加成功，記錄日誌（如果可能）</span>
+        <span class="k">if</span> <span class="n">create_result</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;debug&quot;</span><span class="p">):</span>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;成功添加 FIGlet 相關方法&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="c1"># 如果導入失敗，記錄日誌（如果可能）</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;debug&quot;</span><span class="p">):</span>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;未安裝 pyfiglet 庫，跳過添加 FIGlet 方法&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># 如果發生其他錯誤，記錄日誌（如果可能）</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;warning&quot;</span><span class="p">):</span>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;添加 FIGlet 方法時發生錯誤：</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="add_custom_methods">
+<a class="viewcode-back" href="../../../api/pretty_loguru.factory.html#pretty_loguru.factory.add_custom_methods">[文件]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_custom_methods</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">console</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Console</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    為 logger 實例添加所有自定義方法</span>
+<span class="sd">    </span>
+<span class="sd">    這是一個綜合函數，它會添加所有的輸出和格式化方法。</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        logger_instance: 要擴展的 logger 實例</span>
+<span class="sd">        console: 要使用的 console 實例，如果為 None 則使用新創建的</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 添加輸出目標相關方法</span>
+    <span class="n">add_output_methods</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="n">console</span><span class="p">)</span>
+    
+    <span class="c1"># 添加格式化相關方法</span>
+    <span class="n">add_format_methods</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="n">console</span><span class="p">)</span>
+    
+    <span class="c1"># 檢查 figlet_block 方法是否被正確添加</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;figlet_block&quot;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># 再次嘗試直接添加 FIGlet 方法</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">..formats.figlet</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_figlet_methods</span>
+            <span class="n">create_figlet_methods</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="n">console</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="c1"># 如果無法導入 pyfiglet，則不添加相關方法</span>
+            <span class="k">pass</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># 記錄其他錯誤（如果可能）</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;warning&quot;</span><span class="p">):</span>
+                <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;再次嘗試添加 FIGlet 方法時發生錯誤：</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="register_extension_method">
+<a class="viewcode-back" href="../../../api/pretty_loguru.factory.html#pretty_loguru.factory.register_extension_method">[文件]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_extension_method</span><span class="p">(</span>
+    <span class="n">logger_instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">method_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">method_function</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    註冊自定義擴展方法到 logger 實例</span>
+<span class="sd">    </span>
+<span class="sd">    此函數允許用戶動態地擴展 logger 的功能。</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        logger_instance: 要添加方法的 logger 實例</span>
+<span class="sd">        method_name: 方法名稱</span>
+<span class="sd">        method_function: 方法函數</span>
+<span class="sd">        overwrite: 如果方法已存在，是否覆蓋，預設為 False</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: 如果成功註冊則返回 True，否則返回 False</span>
+<span class="sd">        </span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; def my_custom_log(self, message, *args, **kwargs):</span>
+<span class="sd">        ...     self.info(f&quot;CUSTOM: {message}&quot;, *args, **kwargs)</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; register_extension_method(logger, &quot;custom&quot;, my_custom_log)</span>
+<span class="sd">        &gt;&gt;&gt; logger.custom(&quot;Hello, world!&quot;)  # 輸出: &quot;CUSTOM: Hello, world!&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 檢查方法是否已存在</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;warning&quot;</span><span class="p">):</span>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;方法 &#39;</span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2">&#39; 已存在，未註冊。若要覆蓋，請使用 overwrite=True。&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    
+    <span class="c1"># 設置方法到 logger 實例</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="n">method_name</span><span class="p">,</span> <span class="n">method_function</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">)))</span>
+    
+    <span class="c1"># 記錄註冊信息</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;debug&quot;</span><span class="p">):</span>
+        <span class="n">logger_instance</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;已註冊自定義方法: </span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, JonesHong.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

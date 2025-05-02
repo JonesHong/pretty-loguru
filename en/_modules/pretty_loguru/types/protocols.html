@@ -1,0 +1,995 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-TW" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pretty_loguru.types.protocols &mdash; Pretty Loguru 0.2.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=dce0a6c6" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=9a3e7318"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/language_switcher.js?v=c59c85d5"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Pretty Loguru
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_features.html">Advanced Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../integrations.html">Framework Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">pretty_loguru</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Pretty Loguru</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pretty_loguru.types.protocols</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pretty_loguru.types.protocols</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">定義 Pretty Loguru 的類型協議</span>
+
+<span class="sd">此模組提供所有與 Pretty Loguru 相關的類型定義和協議，</span>
+<span class="sd">用於提供 IDE 自動完成和類型檢查功能，同時也作為開發人員</span>
+<span class="sd">了解系統結構的參考。</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> 
+    <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">runtime_checkable</span><span class="p">,</span> <span class="n">overload</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="c1"># 定義類型別名，使類型標註更簡潔</span>
+<span class="n">LogLevelType</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;TRACE&quot;</span><span class="p">,</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="s2">&quot;SUCCESS&quot;</span><span class="p">,</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">,</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="s2">&quot;CRITICAL&quot;</span><span class="p">]</span>
+<span class="n">LogHandlerIdType</span> <span class="o">=</span> <span class="nb">int</span>
+<span class="n">LogFilterType</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="nb">bool</span><span class="p">]</span>
+<span class="n">LogConfigType</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="n">LogPathType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span>
+<span class="n">LogNameFormatType</span> <span class="o">=</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="n">LogRotationType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+
+<span class="c1"># 預設日誌格式名稱</span>
+<span class="n">LogNamePresetType</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;daily&quot;</span><span class="p">,</span> <span class="s2">&quot;hourly&quot;</span><span class="p">,</span> <span class="s2">&quot;minute&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">,</span> <span class="s2">&quot;detailed&quot;</span><span class="p">]</span>
+
+<span class="c1"># 輸出目標類型</span>
+<span class="n">OutputDestinationType</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;to_console_only&quot;</span><span class="p">,</span> <span class="s2">&quot;to_log_file_only&quot;</span><span class="p">]</span>
+
+<span class="c1"># Logger 泛型型變量，用於方法鏈式調用</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;EnhancedLoggerProtocol&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="EnhancedLoggerProtocol">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol">[docs]</a>
+<span class="nd">@runtime_checkable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EnhancedLoggerProtocol</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    增強型 Logger 協議，定義 Pretty Loguru 擴展的 Logger 接口。</span>
+<span class="sd">    </span>
+<span class="sd">    這個協議包含 Loguru 原有的接口以及 Pretty Loguru 額外添加的方法。</span>
+<span class="sd">    實現此協議的類可以被靜態類型檢查器識別為兼容的 Logger 類型。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#</span>
+    <span class="c1"># 基本日誌記錄方法</span>
+    <span class="c1">#</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__message</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__message</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__message</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__message</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__message</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    
+    <span class="nd">@overload</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__message</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    
+    <span class="c1">#</span>
+    <span class="c1"># Pretty Loguru 自定義格式化方法</span>
+    <span class="c1">#</span>
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.block">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.block">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">block</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">message_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+        <span class="n">to_console_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">to_log_file_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        輸出一個帶有邊框的日誌區塊。</span>
+
+<span class="sd">        :param title: 區塊的標題</span>
+<span class="sd">        :param message_list: 區塊內的訊息列表</span>
+<span class="sd">        :param border_style: 邊框樣式，預設為 &quot;cyan&quot;</span>
+<span class="sd">        :param log_level: 日誌級別，預設為 &quot;INFO&quot;</span>
+<span class="sd">        :param to_console_only: 是否僅輸出到控制台，預設為 False</span>
+<span class="sd">        :param to_log_file_only: 是否僅輸出到日誌文件，預設為 False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.console_block">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.console_block">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">console_block</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">message_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        輸出一個帶有邊框的日誌區塊，僅輸出到控制台。</span>
+
+<span class="sd">        :param title: 區塊的標題</span>
+<span class="sd">        :param message_list: 區塊內的訊息列表</span>
+<span class="sd">        :param border_style: 邊框樣式，預設為 &quot;cyan&quot;</span>
+<span class="sd">        :param log_level: 日誌級別，預設為 &quot;INFO&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.file_block">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.file_block">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_block</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">message_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        輸出一個帶有邊框的日誌區塊，僅輸出到日誌文件。</span>
+
+<span class="sd">        :param title: 區塊的標題</span>
+<span class="sd">        :param message_list: 區塊內的訊息列表</span>
+<span class="sd">        :param border_style: 邊框樣式，預設為 &quot;cyan&quot;</span>
+<span class="sd">        :param log_level: 日誌級別，預設為 &quot;INFO&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="EnhancedLoggerProtocol.ascii_header">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.ascii_header">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ascii_header</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">font</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+        <span class="n">to_console_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">to_log_file_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        輸出一個 ASCII 標題。</span>
+
+<span class="sd">        :param text: 標題文字</span>
+<span class="sd">        :param font: 字體樣式，預設為 &quot;standard&quot;</span>
+<span class="sd">        :param log_level: 日誌級別，預設為 &quot;INFO&quot;</span>
+<span class="sd">        :param border_style: 邊框樣式，預設為 &quot;cyan&quot;</span>
+<span class="sd">        :param to_console_only: 是否僅輸出到控制台，預設為 False</span>
+<span class="sd">        :param to_log_file_only: 是否僅輸出到日誌文件，預設為 False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.console_ascii_header">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.console_ascii_header">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">console_ascii_header</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">font</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        輸出一個 ASCII 標題，僅輸出到控制台。</span>
+
+<span class="sd">        :param text: 標題文字</span>
+<span class="sd">        :param font: 字體樣式，預設為 &quot;standard&quot;</span>
+<span class="sd">        :param log_level: 日誌級別，預設為 &quot;INFO&quot;</span>
+<span class="sd">        :param border_style: 邊框樣式，預設為 &quot;cyan&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.file_ascii_header">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.file_ascii_header">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_ascii_header</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">font</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        輸出一個 ASCII 標題，僅輸出到日誌文件。</span>
+
+<span class="sd">        :param text: 標題文字</span>
+<span class="sd">        :param font: 字體樣式，預設為 &quot;standard&quot;</span>
+<span class="sd">        :param log_level: 日誌級別，預設為 &quot;INFO&quot;</span>
+<span class="sd">        :param border_style: 邊框樣式，預設為 &quot;cyan&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="EnhancedLoggerProtocol.ascii_block">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.ascii_block">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ascii_block</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">message_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">ascii_header</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ascii_font</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+        <span class="n">to_console_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">to_log_file_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        輸出一個帶有 ASCII 標題的日誌區塊。</span>
+
+<span class="sd">        :param title: 區塊的標題</span>
+<span class="sd">        :param message_list: 區塊內的訊息列表</span>
+<span class="sd">        :param ascii_header: ASCII 標題文字，預設為 None</span>
+<span class="sd">        :param ascii_font: ASCII 字體樣式，預設為 &quot;standard&quot;</span>
+<span class="sd">        :param border_style: 邊框樣式，預設為 &quot;cyan&quot;</span>
+<span class="sd">        :param log_level: 日誌級別，預設為 &quot;INFO&quot;</span>
+<span class="sd">        :param to_console_only: 是否僅輸出到控制台，預設為 False</span>
+<span class="sd">        :param to_log_file_only: 是否僅輸出到日誌文件，預設為 False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.console_ascii_block">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.console_ascii_block">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">console_ascii_block</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">message_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">ascii_header</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ascii_font</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        輸出一個帶有 ASCII 標題的日誌區塊，僅輸出到控制台。</span>
+
+<span class="sd">        :param title: 區塊的標題</span>
+<span class="sd">        :param message_list: 區塊內的訊息列表</span>
+<span class="sd">        :param ascii_header: ASCII 標題文字，預設為 None</span>
+<span class="sd">        :param ascii_font: ASCII 字體樣式，預設為 &quot;standard&quot;</span>
+<span class="sd">        :param border_style: 邊框樣式，預設為 &quot;cyan&quot;</span>
+<span class="sd">        :param log_level: 日誌級別，預設為 &quot;INFO&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.file_ascii_block">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.file_ascii_block">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_ascii_block</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">message_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">ascii_header</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ascii_font</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        輸出一個帶有 ASCII 標題的日誌區塊，僅輸出到日誌文件。</span>
+
+<span class="sd">        :param title: 區塊的標題</span>
+<span class="sd">        :param message_list: 區塊內的訊息列表</span>
+<span class="sd">        :param ascii_header: ASCII 標題文字，預設為 None</span>
+<span class="sd">        :param ascii_font: ASCII 字體樣式，預設為 &quot;standard&quot;</span>
+<span class="sd">        :param border_style: 邊框樣式，預設為 &quot;cyan&quot;</span>
+<span class="sd">        :param log_level: 日誌級別，預設為 &quot;INFO&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="EnhancedLoggerProtocol.is_ascii_only">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.is_ascii_only">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_ascii_only</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        檢查文字是否僅包含 ASCII 字元。</span>
+
+<span class="sd">        :param text: 要檢查的文字</span>
+<span class="sd">        :return: 如果文字僅包含 ASCII 字元，返回 True，否則返回 False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+    <span class="c1"># FIGlet 藝術方法 (若 pyfiglet 可用)</span>
+<div class="viewcode-block" id="EnhancedLoggerProtocol.figlet_header">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.figlet_header">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">figlet_header</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">font</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+        <span class="n">to_console_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">to_log_file_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        輸出一個 FIGlet 藝術標題。</span>
+
+<span class="sd">        :param text: 標題文字</span>
+<span class="sd">        :param font: FIGlet 字體，預設為 &quot;standard&quot;</span>
+<span class="sd">        :param log_level: 日誌級別，預設為 &quot;INFO&quot;</span>
+<span class="sd">        :param border_style: 邊框樣式，預設為 &quot;cyan&quot;</span>
+<span class="sd">        :param to_console_only: 是否僅輸出到控制台，預設為 False</span>
+<span class="sd">        :param to_log_file_only: 是否僅輸出到日誌文件，預設為 False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.console_figlet_header">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.console_figlet_header">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">console_figlet_header</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">font</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        輸出一個 FIGlet 藝術標題，僅輸出到控制台。</span>
+
+<span class="sd">        :param text: 標題文字</span>
+<span class="sd">        :param font: FIGlet 字體，預設為 &quot;standard&quot;</span>
+<span class="sd">        :param log_level: 日誌級別，預設為 &quot;INFO&quot;</span>
+<span class="sd">        :param border_style: 邊框樣式，預設為 &quot;cyan&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.file_figlet_header">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.file_figlet_header">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_figlet_header</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">font</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        輸出一個 FIGlet 藝術標題，僅輸出到日誌文件。</span>
+
+<span class="sd">        :param text: 標題文字</span>
+<span class="sd">        :param font: FIGlet 字體，預設為 &quot;standard&quot;</span>
+<span class="sd">        :param log_level: 日誌級別，預設為 &quot;INFO&quot;</span>
+<span class="sd">        :param border_style: 邊框樣式，預設為 &quot;cyan&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.figlet_block">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.figlet_block">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">figlet_block</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">message_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">figlet_header</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">figlet_font</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+        <span class="n">to_console_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">to_log_file_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        輸出一個帶有 FIGlet 藝術標題的日誌區塊。</span>
+
+<span class="sd">        :param title: 區塊的標題</span>
+<span class="sd">        :param message_list: 區塊內的訊息列表</span>
+<span class="sd">        :param figlet_header: FIGlet 標題文字，預設為 None</span>
+<span class="sd">        :param figlet_font: FIGlet 字體，預設為 &quot;standard&quot;</span>
+<span class="sd">        :param border_style: 邊框樣式，預設為 &quot;cyan&quot;</span>
+<span class="sd">        :param log_level: 日誌級別，預設為 &quot;INFO&quot;</span>
+<span class="sd">        :param to_console_only: 是否僅輸出到控制台，預設為 False</span>
+<span class="sd">        :param to_log_file_only: 是否僅輸出到日誌文件，預設為 False</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.console_figlet_block">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.console_figlet_block">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">console_figlet_block</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">message_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">figlet_header</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">figlet_font</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        輸出一個帶有 FIGlet 藝術標題的日誌區塊，僅輸出到控制台。</span>
+
+<span class="sd">        :param title: 區塊的標題</span>
+<span class="sd">        :param message_list: 區塊內的訊息列表</span>
+<span class="sd">        :param figlet_header: FIGlet 標題文字，預設為 None</span>
+<span class="sd">        :param figlet_font: FIGlet 字體，預設為 &quot;standard&quot;</span>
+<span class="sd">        :param border_style: 邊框樣式，預設為 &quot;cyan&quot;</span>
+<span class="sd">        :param log_level: 日誌級別，預設為 &quot;INFO&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.file_figlet_block">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.file_figlet_block">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_figlet_block</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">message_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">figlet_header</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">figlet_font</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;standard&quot;</span><span class="p">,</span>
+        <span class="n">border_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span>
+        <span class="n">log_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        輸出一個帶有 FIGlet 藝術標題的日誌區塊，僅輸出到日誌文件。</span>
+
+<span class="sd">        :param title: 區塊的標題</span>
+<span class="sd">        :param message_list: 區塊內的訊息列表</span>
+<span class="sd">        :param figlet_header: FIGlet 標題文字，預設為 None</span>
+<span class="sd">        :param figlet_font: FIGlet 字體，預設為 &quot;standard&quot;</span>
+<span class="sd">        :param border_style: 邊框樣式，預設為 &quot;cyan&quot;</span>
+<span class="sd">        :param log_level: 日誌級別，預設為 &quot;INFO&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.get_figlet_fonts">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.get_figlet_fonts">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_figlet_fonts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        獲取所有可用的 FIGlet 字體</span>
+
+<span class="sd">        :return: 可用字體名稱的集合</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+    <span class="c1">#</span>
+    <span class="c1"># 目標導向日誌方法 (控制台專用)</span>
+    <span class="c1">#</span>
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.console">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.console">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">console</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        僅在控制台顯示的日誌記錄方法。</span>
+<span class="sd">        </span>
+<span class="sd">        :param level: 日誌級別</span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.console_debug">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.console_debug">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">console_debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        僅在控制台顯示的調試級別日誌。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.console_info">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.console_info">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">console_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        僅在控制台顯示的資訊級別日誌。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.console_success">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.console_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">console_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        僅在控制台顯示的成功級別日誌。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.console_warning">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.console_warning">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">console_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        僅在控制台顯示的警告級別日誌。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.console_error">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.console_error">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">console_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        僅在控制台顯示的錯誤級別日誌。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.console_critical">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.console_critical">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">console_critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        僅在控制台顯示的嚴重錯誤級別日誌。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+    <span class="c1">#</span>
+    <span class="c1"># 目標導向日誌方法 (文件專用)</span>
+    <span class="c1">#</span>
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.file">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        僅寫入文件的日誌記錄方法。</span>
+<span class="sd">        </span>
+<span class="sd">        :param level: 日誌級別</span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.file_debug">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.file_debug">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        僅寫入文件的調試級別日誌。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.file_info">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.file_info">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        僅寫入文件的資訊級別日誌。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.file_success">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.file_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        僅寫入文件的成功級別日誌。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.file_warning">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.file_warning">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        僅寫入文件的警告級別日誌。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.file_error">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.file_error">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        僅寫入文件的錯誤級別日誌。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.file_critical">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.file_critical">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">file_critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        僅寫入文件的嚴重錯誤級別日誌。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+    <span class="c1">#</span>
+    <span class="c1"># 開發模式方法 (僅控制台別名)</span>
+    <span class="c1">#</span>
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.dev">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.dev">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        開發模式日誌記錄方法，僅在控制台顯示 (console 的別名)。</span>
+<span class="sd">        </span>
+<span class="sd">        :param level: 日誌級別</span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.dev_debug">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.dev_debug">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dev_debug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        開發模式調試級別日誌，僅在控制台顯示 (console_debug 的別名)。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.dev_info">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.dev_info">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dev_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        開發模式資訊級別日誌，僅在控制台顯示 (console_info 的別名)。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.dev_success">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.dev_success">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dev_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        開發模式成功級別日誌，僅在控制台顯示 (console_success 的別名)。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.dev_warning">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.dev_warning">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dev_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        開發模式警告級別日誌，僅在控制台顯示 (console_warning 的別名)。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.dev_error">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.dev_error">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dev_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        開發模式錯誤級別日誌，僅在控制台顯示 (console_error 的別名)。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.dev_critical">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.dev_critical">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dev_critical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        開發模式嚴重錯誤級別日誌，僅在控制台顯示 (console_critical 的別名)。</span>
+<span class="sd">        </span>
+<span class="sd">        :param message: 日誌訊息</span>
+<span class="sd">        :param args: 其他位置參數</span>
+<span class="sd">        :param kwargs: 其他關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+    <span class="c1">#</span>
+    <span class="c1"># Loguru 原生核心方法 (支持方法鏈)</span>
+    <span class="c1">#</span>
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.bind">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.bind">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        創建一個帶有綁定上下文變數的 logger 副本。</span>
+<span class="sd">        </span>
+<span class="sd">        :param kwargs: 要綁定的上下文變數</span>
+<span class="sd">        :return: 綁定了上下文變數的 logger 實例</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.opt">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.opt">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">opt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">exception</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="ne">BaseException</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+            <span class="n">lazy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">colors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">raw</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+            <span class="n">capture</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">record</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ansi</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        創建一個帶有特定配置選項的 logger 副本。</span>
+<span class="sd">        </span>
+<span class="sd">        :param depth: 調用棧的深度偏移，影響日誌中顯示的文件/行號</span>
+<span class="sd">        :param exception: 要記錄的異常對象</span>
+<span class="sd">        :param lazy: 是否延遲格式化日誌消息，直到需要時才執行</span>
+<span class="sd">        :param colors: 是否啟用 ANSI 顏色</span>
+<span class="sd">        :param raw: 是否原樣輸出消息，不進行格式化</span>
+<span class="sd">        :param capture: 是否捕獲調用者信息 (文件名、行號等)</span>
+<span class="sd">        :param record: 是否創建記錄對象並返回，而不是輸出日誌</span>
+<span class="sd">        :param ansi: 是否解釋日誌字符串中的 ANSI 轉義序列</span>
+<span class="sd">        :return: 帶有特定配置選項的 logger 實例</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.patch">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.patch">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">patch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">patcher</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        創建一個使用自定義函數修改記錄屬性的 logger 副本。</span>
+<span class="sd">        </span>
+<span class="sd">        :param patcher: 一個接收和返回記錄字典的函數</span>
+<span class="sd">        :return: 使用修補器的 logger 實例</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.level">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.level">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        獲取指定名稱的日誌級別。</span>
+<span class="sd">        </span>
+<span class="sd">        :param name: 日誌級別名稱</span>
+<span class="sd">        :return: 日誌級別對象</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.configure">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.configure">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        配置 logger 設定，如處理程序和日誌級別。</span>
+<span class="sd">        </span>
+<span class="sd">        :param kwargs: 配置參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.add">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.add">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sink</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        添加一個日誌處理程序。</span>
+<span class="sd">        </span>
+<span class="sd">        :param sink: 處理程序對象，可以是文件路徑、文件對象或回調函數</span>
+<span class="sd">        :param kwargs: 處理程序選項</span>
+<span class="sd">        :return: 處理程序 ID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.remove">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.remove">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        移除日誌處理程序。</span>
+<span class="sd">        </span>
+<span class="sd">        :param handler_id: 要移除的處理程序 ID，如果為 None 則移除所有處理程序</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.complete">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.complete">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">complete</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        等待所有添加的非同步處理程序完成。</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.catch">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.catch">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">catch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exception</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+              <span class="n">level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="n">reraise</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+              <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;An error has been caught in function &#39;</span><span class="si">{record[function]}</span><span class="s2">&#39;, &quot;</span>
+                             <span class="s2">&quot;process &#39;</span><span class="si">{record[process].name}</span><span class="s2">&#39; (</span><span class="si">{record[process].id}</span><span class="s2">), &quot;</span>
+                             <span class="s2">&quot;thread &#39;</span><span class="si">{record[thread].name}</span><span class="s2">&#39; (</span><span class="si">{record[thread].id}</span><span class="s2">):&quot;</span>
+             <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        創建一個 catch 裝飾器，用於捕獲函數中的異常並記錄。</span>
+<span class="sd">        </span>
+<span class="sd">        :param exception: 要捕獲的異常類型</span>
+<span class="sd">        :param level: 捕獲異常時使用的日誌級別</span>
+<span class="sd">        :param reraise: 是否在捕獲後重新拋出異常</span>
+<span class="sd">        :param message: 捕獲異常時記錄的消息</span>
+<span class="sd">        :return: 異常捕獲裝飾器</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+
+    
+<div class="viewcode-block" id="EnhancedLoggerProtocol.log">
+<a class="viewcode-back" href="../../../api/pretty_loguru.types.html#pretty_loguru.types.EnhancedLoggerProtocol.log">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        使用指定級別記錄日誌消息。</span>
+<span class="sd">        </span>
+<span class="sd">        :param level: 日誌級別</span>
+<span class="sd">        :param message: 日誌消息</span>
+<span class="sd">        :param args: 格式化參數</span>
+<span class="sd">        :param kwargs: 關鍵字參數</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+</div>
+
+
+
+<span class="c1"># 用於靜態類型檢查的類型別名</span>
+<span class="n">EnhancedLogger</span> <span class="o">=</span> <span class="n">EnhancedLoggerProtocol</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, JonesHong.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
