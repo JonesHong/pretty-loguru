@@ -1,30 +1,30 @@
-
-// 語言切換器腳本
 document.addEventListener('DOMContentLoaded', function() {
-    // 創建語言切換器元素
-    var switcher = document.createElement('div');
-    switcher.className = 'language-switcher';
-    switcher.style.cssText = 'text-align: right; padding: 10px 0; margin-bottom: 20px; border-bottom: 1px solid #e1e4e5;';
-    
-    // 獲取當前路徑
-    var path = window.location.pathname;
-    var inEnglishVersion = path.includes('/en/');
-    
-    // 創建語言切換器內容
-    if (inEnglishVersion) {
-        var chinesePath = path.replace('/en/', '/');
-        switcher.innerHTML = '<a href="' + chinesePath + '">繁體中文</a> | English';
-    } else {
-        var englishPath = path.replace('/html/', '/html/en/');
-        if (path.endsWith('/html/')) {
-            englishPath = path + 'en/';
+    // 語言切換器 JavaScript
+    function setupLanguageSwitcher() {
+        // 獲取當前URL路徑
+        const path = window.location.pathname;
+        
+        // 檢查當前是哪種語言
+        const isEnglish = path.includes('/en/');
+        
+        // 獲取語言切換器中的連結
+        const links = document.querySelectorAll('.language-switcher a');
+        
+        if (links.length > 0) {
+            links.forEach(function(link) {
+                if (link.textContent.trim() === 'English' && !isEnglish) {
+                    // 修改英文連結
+                    const basePath = path.replace('/zh_TW/', '/');
+                    link.href = basePath.replace('/html/', '/html/en/');
+                } else if (link.textContent.trim() === '繁體中文' && isEnglish) {
+                    // 修改中文連結
+                    const basePath = path.replace('/en/', '/');
+                    link.href = basePath.replace('/html/', '/html/zh_TW/');
+                }
+            });
         }
-        switcher.innerHTML = '繁體中文 | <a href="' + englishPath + '">English</a>';
     }
     
-    // 將切換器添加到頁面
-    var headerElem = document.querySelector('.wy-nav-content-wrap');
-    if (headerElem) {
-        headerElem.insertBefore(switcher, headerElem.firstChild);
-    }
+    // 執行語言切換器設置
+    setupLanguageSwitcher();
 });

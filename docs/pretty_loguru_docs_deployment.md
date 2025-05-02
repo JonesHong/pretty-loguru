@@ -223,7 +223,7 @@ git subtree push --prefix docs/build/html origin gh-pages
 修改 `_templates/layout.html` 中的語言切換代碼，確保使用 `zh_TW` 而非 `zh-TW`：
 
 ```html
-{% block sidebar1 %}
+<!-- {% block sidebar1 %}
 {{ super() }}
 <div class="sidebar-block">
     <div class="sidebar-wrapper">
@@ -241,7 +241,7 @@ git subtree push --prefix docs/build/html origin gh-pages
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock %} -->
 ```
 
 同時確保 JavaScript 部分也使用 `zh_TW`：
