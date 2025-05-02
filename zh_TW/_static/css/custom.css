@@ -203,3 +203,26 @@
     border-color: var(--color-primary);
   }
   
+
+  /* 覆蓋 RTD 主題的白底 */
+body, html {
+  background-color: var(--color-bg) !important;
+}
+
+/* 內容與導航都改成深色 */
+.wy-nav-content,
+.rst-content,
+.wy-side-nav {
+  background-color: var(--color-surface) !important;
+}
+
+/* 搜尋欄、標頭也一起改 */
+.wy-side-nav-search, 
+.wy-side-nav-title {
+  background-color: var(--color-surface) !important;
+}
+
+/* 如果你還有 footer/header，視情況再加 */
+.footer, .wy-header {
+  background-color: var(--color-surface) !important;
+}
