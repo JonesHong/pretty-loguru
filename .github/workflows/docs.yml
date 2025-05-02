@@ -30,31 +30,51 @@ jobs:
         pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints myst-parser sphinx-intl sphinx-copybutton sphinx_rtd_dark_mode
         pip install -e .
     
-    - name: Build Default docs
-      run: |
-        cd docs
-        # 確認 Makefile 位置並查看其內容
-        ls -la
-        if [ -f "Makefile" ]; then
-          make html
-        else
-          # 如果沒有 Makefile，直接使用 sphinx-build
-          sphinx-build -b html source build/html
-        fi
+    # - name: Build Default docs
+    #   run: |
+    #     cd docs
+    #     # 確認 Makefile 位置並查看其內容
+    #     ls -la
+    #     if [ -f "Makefile" ]; then
+    #       make html
+    #     else
+    #       # 如果沒有 Makefile，直接使用 sphinx-build
+    #       sphinx-build -b html source build/html
+    #     fi
 
-    - name: Build Chinese docs
+    # - name: Build Chinese docs
+    #   run: |
+    #     cd docs
+    #     sphinx-build -b gettext source build/gettext
+    #     sphinx-intl update -p build/gettext -l zh_TW
+    #     sphinx-intl build
+    #     sphinx-build -b html -D language=zh_TW source build/html/zh_TW
+    
+    # - name: Build English docs
+    #   run: |
+    #     cd docs
+    #     sphinx-build -b gettext source build/gettext
+    #     sphinx-intl update -p build/gettext -l en
+    #     sphinx-intl build
+    #     sphinx-build -b html -D language=en source build/html/en
+    
+    - name: Generate gettext (once)
+      if: github.ref == 'refs/heads/master' && github.event_name == 'workflow_dispatch'
       run: |
         cd docs
         sphinx-build -b gettext source build/gettext
         sphinx-intl update -p build/gettext -l zh_TW
+        sphinx-intl update -p build/gettext -l en
+
+    - name: Build Chinese docs
+      run: |
+        cd docs
         sphinx-intl build
         sphinx-build -b html -D language=zh_TW source build/html/zh_TW
-    
+
     - name: Build English docs
       run: |
         cd docs
-        sphinx-build -b gettext source build/gettext
-        sphinx-intl update -p build/gettext -l en
         sphinx-intl build
         sphinx-build -b html -D language=en source build/html/en
     

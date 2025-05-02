@@ -3,9 +3,20 @@
   <img src="https://raw.githubusercontent.com/JonesHong/pretty-loguru/refs/heads/master/assets/images/logo.png" alt="pretty-loguru icon" width="200"/>
 </p>
 
-[![PyPI version](https://img.shields.io/pypi/v/pretty-loguru.svg)](https://pypi.org/project/pretty-loguru)
-[![Python Version](https://img.shields.io/pypi/pyversions/pretty-loguru.svg)](https://pypi.org/project/pretty-loguru)
-[![License](https://img.shields.io/pypi/l/pretty-loguru.svg)](https://opensource.org/licenses/MIT)
+<p align="center">
+  <a href="https://pypi.org/project/pretty-loguru/">
+    <img alt="PyPI version" src="https://img.shields.io/pypi/v/pretty-loguru.svg">
+  </a>
+  <a href="https://pypi.org/project/pretty-loguru/">
+    <img alt="Python versions" src="https://img.shields.io/pypi/pyversions/pretty-loguru.svg">
+  </a>
+  <a href="https://joneshong.github.io/pretty-loguru/en/index.html">
+    <img alt="Documentation" src="https://img.shields.io/badge/docs-ghpages-blue.svg">
+  </a>
+  <a href="https://github.com/JonesHong/pretty-loguru/blob/master/LICENSE">
+    <img alt="License" src="https://img.shields.io/github/license/JonesHong/pretty-loguru.svg">
+  </a>
+</p>
 
 ## 說明
 
