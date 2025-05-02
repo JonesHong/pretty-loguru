@@ -16,7 +16,7 @@ try:
 except ImportError:
     _has_uvicorn = False
     warnings.warn(
-        "未安裝 uvicorn 套件，uvicorn 整合將不可用。可使用 'pip install uvicorn' 安裝。",
+        "Uvicorn package is not installed. Uvicorn integration will not be available. You can install it using 'pip install uvicorn'.",
         ImportWarning,
         stacklevel=2
     )
@@ -56,7 +56,8 @@ class InterceptHandler(logging.Handler):
         """
         # 避免遞歸處理
         # 跳過由 Loguru 產生的日誌記錄
-        if record.name == "uvicorn.error" and record.message.startswith("Traceback "):
+        msg = record.getMessage()
+        if record.name == "uvicorn.error" and msg.startswith("Traceback "):
             # 避免重複的異常追蹤
             return
 
@@ -135,4 +136,4 @@ def configure_uvicorn(
 
     # 記錄配置信息
     if logger_instance:
-        logger_instance.debug(f"已配置 Uvicorn 日誌，級別: {level}")
+        logger_instance.debug(f"Uvicorn logging configured with level: {level}")

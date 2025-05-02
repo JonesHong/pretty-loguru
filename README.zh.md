@@ -1,11 +1,12 @@
 # pretty-loguru
+![pretty-loguru.icon](https://raw.githubusercontent.com/JonesHong/pretty-loguru/refs/heads/master/docs/source/_static/logo.png)
 [![PyPI version](https://img.shields.io/pypi/v/pretty-loguru.svg)](https://pypi.org/project/pretty-loguru)
 [![Python Version](https://img.shields.io/pypi/pyversions/pretty-loguru.svg)](https://pypi.org/project/pretty-loguru)
 [![License](https://img.shields.io/pypi/l/pretty-loguru.svg)](https://opensource.org/licenses/MIT)
 
 ## 說明
 
-**pretty-loguru** 是一個 Python 日誌庫，擴展了 [Loguru](https://github.com/Delgan/loguru) 的功能，並使用 [Rich](https://github.com/Textualize/rich) 面板、ASCII 藝術標題和可自定義區塊來呈現優雅的輸出。它提供：
+**pretty-loguru** 是一個 Python 日誌庫，擴展了 [Loguru](https://github.com/Delgan/loguru) 的功能，並使用 [Rich](https://github.com/Textualize/rich) 面板、ASCII [art](https://github.com/sepandhaghighi/art) 標題和可自定義區塊來呈現優雅的輸出。它提供：
 
 - **Rich Panels**：顯示帶有邊框和樣式的結構化日誌區塊。
 - **ASCII Art Headers**：使用 `art` 庫生成引人注目的標題。

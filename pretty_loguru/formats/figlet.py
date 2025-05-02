@@ -16,7 +16,7 @@ try:
     import pyfiglet
     from pyfiglet import FigletFont
     _has_pyfiglet = True
-    print("Debug: pyfiglet successfully imported")
+    # print("Debug: pyfiglet successfully imported")
 except ImportError:
     _has_pyfiglet = False
     pyfiglet = None

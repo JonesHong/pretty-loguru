@@ -1,11 +1,12 @@
 # pretty-loguru
+![pretty-loguru.icon](https://raw.githubusercontent.com/JonesHong/pretty-loguru/refs/heads/master/docs/source/_static/logo.png)
 
 [![PyPI version](https://img.shields.io/pypi/v/pretty-loguru.svg)](https://pypi.org/project/pretty-loguru)
 [![Python Version](https://img.shields.io/pypi/pyversions/pretty-loguru.svg)](https://pypi.org/project/pretty-loguru)
 [![License](https://img.shields.io/pypi/l/pretty-loguru.svg)](https://opensource.org/licenses/MIT)
 ## Description
 
-**pretty-loguru** is a Python logging library that extends the power of [Loguru](https://github.com/Delgan/loguru) with elegant outputs using [Rich](https://github.com/Textualize/rich) panels, ASCII art headers, and customizable blocks. It provides:
+**pretty-loguru** is a Python logging library that extends the power of [Loguru](https://github.com/Delgan/loguru) with elegant outputs using [Rich](https://github.com/Textualize/rich) panels, ASCII [art](https://github.com/sepandhaghighi/art) headers, and customizable blocks. It provides:
 
 - **Rich Panels**: Display structured log blocks with borders and styles.
 - **ASCII Art Headers**: Generate eye-catching headers using the `art` library.

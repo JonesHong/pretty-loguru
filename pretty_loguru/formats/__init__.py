@@ -35,7 +35,7 @@ try:
         create_figlet_methods,
     )
     _has_figlet = True
-    print("Debug: pyfiglet successfully imported", file=sys.stderr)
+    # print("Debug: pyfiglet successfully imported", file=sys.stderr)
 except ImportError:
     # 如果無法導入 pyfiglet，輸出調試信息
     _has_figlet = False

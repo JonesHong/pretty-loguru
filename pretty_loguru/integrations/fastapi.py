@@ -19,7 +19,7 @@ try:
 except ImportError:
     _has_fastapi = False
     warnings.warn(
-        "未安裝 fastapi 套件，FastAPI 整合將不可用。可使用 'pip install fastapi' 安裝。",
+        "The 'fastapi' package is not installed. FastAPI integration will not be available. You can install it using 'pip install fastapi'.",
         ImportWarning,
         stacklevel=2,
     )
@@ -382,7 +382,7 @@ if _has_fastapi:
                 log_request_body=log_request_body,
                 log_response_body=log_response_body,
             )
-            logger_instance.info("已添加 FastAPI 日誌中間件")
+            logger_instance.info("FastAPI logging middleware added")
 
         # 設置自定義路由類
         if custom_routes:
@@ -393,4 +393,4 @@ if _has_fastapi:
                 log_request_body=log_request_body,
                 log_response_body=log_response_body,
             )
-            logger_instance.info("已設置 FastAPI 自定義路由類")
+            logger_instance.info("FastAPI custom route class has been set")
