@@ -13,8 +13,14 @@ from .config import (
     LOG_NAME_FORMATS,
     OUTPUT_DESTINATIONS,
     LOGGER_FORMAT,
-    LogLevelEnum,
+    LogLevelEnum
 )
+# 對 Sphinx 說明：這是轉出來的，不需要索引
+LogLevelEnum.__doc__ = """
+:meta noindex:
+
+參見 :class:`pretty_loguru.core.config.LogLevelEnum`
+"""
 
 # 導入基本日誌功能
 from .base import (
@@ -26,7 +32,7 @@ from .base import (
 # 導入處理器功能
 from .handlers import (
     create_destination_filters,
-    format_filename,
+    format_filename
 )
 
 # 導入清理功能
@@ -36,7 +42,7 @@ from .cleaner import LoggerCleaner
 from .target_formatter import (
     create_target_method,
     add_target_methods,
-    ensure_target_parameters,
+    ensure_target_parameters
 )
 
 # 定義對外可見的功能
@@ -65,5 +71,5 @@ __all__ = [
     # 目標導向格式化工具
     "create_target_method",
     "add_target_methods",
-    "ensure_target_parameters",
+    "ensure_target_parameters"  
 ]

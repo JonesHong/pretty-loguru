@@ -32,7 +32,9 @@ LOG_NAME_FORMATS: Dict[str, str]
 OUTPUT_DESTINATIONS: Dict[str, str]
 
 class LogLevelEnum:
-    """日誌級別枚舉類別"""
+    """
+    日誌級別枚舉類別 
+    """
     TRACE: str
     DEBUG: str
     INFO: str
@@ -128,6 +130,10 @@ def logger_start(
 
 # Uvicorn 集成 (可選)
 class InterceptHandler(logging.Handler):
+    """
+    將 Uvicorn 日誌攔截並轉給 pretty-loguru 處理
+    :no-index:
+    """
     def __init__(self, logger_instance: Optional[Any] = None) -> None: ...
     def emit(self, record: logging.LogRecord) -> None: ...
 

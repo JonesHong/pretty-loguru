@@ -10,6 +10,12 @@ try:
         configure_uvicorn,
         InterceptHandler,
     )
+    # 對 Sphinx 說明：這是轉出來的，不需要索引
+    InterceptHandler.__doc__ = """
+    :meta noindex:
+
+    參見 :class:`pretty_loguru.integrations.uvicorn.InterceptHandler`
+    """
     _has_uvicorn = True
 except ImportError:
     _has_uvicorn = False

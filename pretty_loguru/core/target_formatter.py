@@ -65,12 +65,11 @@ def add_target_methods(
         original_method: 原始的格式化方法
 
     Example:
-        ```python
-        # 假設 logger_instance 已有 block 方法
-        add_target_methods(logger_instance, 'block', logger_instance.block)
-        
-        # 現在 logger_instance 將有 console_block 和 file_block 方法
-        ```
+        ::
+            # 假設 logger_instance 已有 block 方法
+            add_target_methods(logger_instance, 'block', logger_instance.block)
+            
+            # 現在 logger_instance 將有 console_block 和 file_block 方法
     """
     # 創建僅控制台版本
     console_method = create_target_method(
