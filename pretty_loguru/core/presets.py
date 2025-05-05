@@ -13,6 +13,8 @@ from pathlib import Path
 import re
 from typing import Optional, Dict, Any, Callable
 
+from matplotlib.dates import relativedelta
+
 from .config import LOG_NAME_FORMATS  # 導入 LOG_NAME_FORMATS
 
 
@@ -182,7 +184,6 @@ class MonthlyPreset(LogPreset):
                 new_name = f"[{component_name}]{month_str}.{counter}.log"
                 new_path = directory / new_name
                 counter += 1
-
             os.rename(filepath, new_path)
             return str(new_path)
 
@@ -226,7 +227,6 @@ class WeeklyPreset(LogPreset):
                 new_name = f"[{component_name}]week{week_str}.{counter}.log"
                 new_path = directory / new_name
                 counter += 1
-
             os.rename(filepath, new_path)
             return str(new_path)
 
@@ -246,6 +246,7 @@ class DailyPreset(LogPreset):
     @property
     def retention(self) -> str:
         return "30 days"
+    
     
     @property
     def compression(self) -> Optional[Callable]:
