@@ -61,7 +61,7 @@ def print_figlet_header(
     """
     # 檢查 pyfiglet 庫是否已安裝
     if not _has_pyfiglet:
-        error_msg = "未安裝 'pyfiglet' 庫。請使用 'pip install pyfiglet' 安裝。"
+        error_msg = "The 'pyfiglet' library is not installed. Please install it using 'pip install pyfiglet'."
         if logger_instance:
             logger_instance.error(error_msg)
         raise ImportError(error_msg)
@@ -72,7 +72,7 @@ def print_figlet_header(
     
     # 檢查是否包含非 ASCII 字符
     if not is_ascii_only(text):
-        warning_msg = f"FIGlet 只支持 ASCII 字符。文本 '{text}' 包含非 ASCII 字符。"
+        warning_msg = f"FIGlet only supports ASCII characters. The text '{text}' contains non-ASCII characters."
         if logger_instance:
             logger_instance.warning(warning_msg)
         
@@ -80,10 +80,10 @@ def print_figlet_header(
         cleaned_text = re.sub(r'[^\x00-\x7F]+', '', text)
         
         if logger_instance:
-            logger_instance.warning(f"已移除非 ASCII 字符。使用: '{cleaned_text}'")
+            logger_instance.warning(f"Non-ASCII characters have been removed. Using: '{cleaned_text}'")
         
         if not cleaned_text:  # 如果移除後為空，則拋出異常
-            raise ValueError("文本僅包含非 ASCII 字符，無法創建 FIGlet 藝術。")
+            raise ValueError("The text contains only non-ASCII characters and cannot create FIGlet art.")
         
         text = cleaned_text
     
@@ -91,7 +91,7 @@ def print_figlet_header(
     try:
         figlet_art = pyfiglet.figlet_format(text, font=font)
     except Exception as e:
-        error_msg = f"生成 FIGlet 藝術失敗: {str(e)}"
+        error_msg = f"Failed to generate FIGlet art: {str(e)}"
         if logger_instance:
             logger_instance.error(error_msg)
         raise
@@ -150,7 +150,7 @@ def print_figlet_block(
     """
     # 檢查 pyfiglet 庫是否已安裝
     if not _has_pyfiglet:
-        error_msg = "未安裝 'pyfiglet' 庫。請使用 'pip install pyfiglet' 安裝。"
+        error_msg = "The 'pyfiglet' library is not installed. Please install it using 'pip install pyfiglet'."
         if logger_instance:
             logger_instance.error(error_msg)
         raise ImportError(error_msg)
@@ -164,7 +164,7 @@ def print_figlet_block(
     
     # 檢查是否包含非 ASCII 字符
     if not is_ascii_only(header_text):
-        warning_msg = f"FIGlet 只支持 ASCII 字符。文本 '{header_text}' 包含非 ASCII 字符。"
+        warning_msg = f"FIGlet only supports ASCII characters. The text '{header_text}' contains non-ASCII characters."
         if logger_instance:
             logger_instance.warning(warning_msg)
         
@@ -172,10 +172,10 @@ def print_figlet_block(
         cleaned_text = re.sub(r'[^\x00-\x7F]+', '', header_text)
         
         if logger_instance:
-            logger_instance.warning(f"已移除非 ASCII 字符。使用: '{cleaned_text}'")
+            logger_instance.warning(f"Non-ASCII characters have been removed. Using: '{cleaned_text}'")
         
         if not cleaned_text:  # 如果移除後為空，則拋出異常
-            raise ValueError("FIGlet 標題僅包含非 ASCII 字符，無法創建 FIGlet 藝術。")
+            raise ValueError("The FIGlet header contains only non-ASCII characters and cannot create FIGlet art.")
         
         header_text = cleaned_text
     
@@ -183,7 +183,7 @@ def print_figlet_block(
     try:
         figlet_art = pyfiglet.figlet_format(header_text, font=figlet_font)
     except Exception as e:
-        error_msg = f"生成 FIGlet 藝術失敗: {str(e)}"
+        error_msg = f"Failed to generate FIGlet art: {str(e)}"
         if logger_instance:
             logger_instance.error(error_msg)
         raise
@@ -234,7 +234,7 @@ def get_figlet_fonts() -> Set[str]:
         ImportError: 如果未安裝 pyfiglet 庫
     """
     if not _has_pyfiglet:
-        raise ImportError("未安裝 'pyfiglet' 庫。請使用 'pip install pyfiglet' 安裝。")
+        raise ImportError("The 'pyfiglet' library is not installed. Please install it using 'pip install pyfiglet'.")
     
     return set(FigletFont.getFonts())
 
@@ -253,7 +253,7 @@ def create_figlet_methods(logger_instance: Any, console: Optional[Console] = Non
     # 檢查 pyfiglet 庫是否已安裝
     if not _has_pyfiglet:
         if hasattr(logger_instance, "warning"):
-            logger_instance.warning("未安裝 'pyfiglet' 庫，跳過添加 FIGlet 方法。")
+            logger_instance.warning("'pyfiglet' library is not installed. Skipping adding FIGlet methods.")
         return False
     
     if console is None:
