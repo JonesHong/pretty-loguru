@@ -147,12 +147,25 @@ def create_logger(
     # 合併預設設定 - 僅在未明確指定時使用預設值
     log_name_format = log_name_format or preset_settings["name_format"]
 
+    # 處理 log_file_settings 的合併邏輯
     log_file_settings = log_file_settings or {}
-    if rotation == "20 MB":  # 只在使用預設值時替換
-        log_file_settings.setdefault("rotation", preset_settings["rotation"])
+
+    # 1. rotation 的處理：
+    #    - 如果 log_file_settings 中有 rotation，使用它
+    #    - 否則，如果參數 rotation 不是預設值，使用參數 rotation
+    #    - 否則，使用 preset 中的 rotation
+    if "rotation" not in log_file_settings:
+        if rotation != "20 MB":  # 使用者有提供 rotation 參數
+            log_file_settings["rotation"] = rotation
+        else:  # 使用 preset 中的 rotation
+            log_file_settings["rotation"] = preset_settings["rotation"]
+
+    # 2. retention 的處理：只在未指定時使用 preset 值
     log_file_settings.setdefault("retention", preset_settings["retention"])
-    if preset_settings["compression"]:
-        log_file_settings.setdefault("compression", preset_settings["compression"])
+
+    # 3. compression 的處理：只在未指定且 preset 有值時使用 preset 值
+    if "compression" not in log_file_settings and preset_settings["compression"]:
+        log_file_settings["compression"] = preset_settings["compression"]
 
     # 創建新的 logger 實例
     new_logger = _Logger(
