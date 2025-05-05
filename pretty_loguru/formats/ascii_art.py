@@ -76,7 +76,7 @@ def print_ascii_header(
     """
     # 檢查 art 庫是否已安裝
     if not _has_art:
-        error_msg = "未安裝 'art' 庫。請使用 'pip install art' 安裝。"
+        error_msg = "The 'art' library is not installed. Please install it using 'pip install art'."
         if logger_instance:
             logger_instance.error(error_msg)
         raise ImportError(error_msg)
@@ -87,7 +87,7 @@ def print_ascii_header(
     
     # 檢查是否包含非 ASCII 字符
     if not is_ascii_only(text):
-        warning_msg = f"ASCII art 只支持 ASCII 字符。文本 '{text}' 包含非 ASCII 字符。"
+        warning_msg = f"ASCII art only supports ASCII characters. The text '{text}' contains non-ASCII characters."
         if logger_instance:
             logger_instance.warning(warning_msg)
         
@@ -95,10 +95,10 @@ def print_ascii_header(
         cleaned_text = re.sub(r'[^\x00-\x7F]+', '', text)
         
         if logger_instance:
-            logger_instance.warning(f"已移除非 ASCII 字符。使用: '{cleaned_text}'")
+            logger_instance.warning(f"Removed non-ASCII characters. Using: '{cleaned_text}'")
         
         if not cleaned_text:  # 如果移除後為空，則拋出異常
-            raise ValueError("文本僅包含非 ASCII 字符，無法創建 ASCII 藝術。")
+            raise ValueError("The text contains only non-ASCII characters and cannot create ASCII art.")
         
         text = cleaned_text
     
@@ -106,7 +106,7 @@ def print_ascii_header(
     try:
         ascii_art = text2art(text, font=font)
     except Exception as e:
-        error_msg = f"生成 ASCII 藝術失敗: {str(e)}"
+        error_msg = f"Failed to generate ASCII art: {str(e)}"
         if logger_instance:
             logger_instance.error(error_msg)
         raise
@@ -165,7 +165,7 @@ def print_ascii_block(
     """
     # 檢查 art 庫是否已安裝
     if not _has_art:
-        error_msg = "未安裝 'art' 庫。請使用 'pip install art' 安裝。"
+        error_msg = "The 'art' library is not installed. Please install it using 'pip install art'."
         if logger_instance:
             logger_instance.error(error_msg)
         raise ImportError(error_msg)
@@ -179,7 +179,7 @@ def print_ascii_block(
     
     # 檢查是否包含非 ASCII 字符
     if not is_ascii_only(header_text):
-        warning_msg = f"ASCII art 只支持 ASCII 字符。文本 '{header_text}' 包含非 ASCII 字符。"
+        warning_msg = f"ASCII art only supports ASCII characters. The text '{header_text}' contains non-ASCII characters."
         if logger_instance:
             logger_instance.warning(warning_msg)
         
@@ -187,10 +187,10 @@ def print_ascii_block(
         cleaned_text = re.sub(r'[^\x00-\x7F]+', '', header_text)
         
         if logger_instance:
-            logger_instance.warning(f"已移除非 ASCII 字符。使用: '{cleaned_text}'")
+            logger_instance.warning(f"Removed non-ASCII characters. Using: '{cleaned_text}'")
         
         if not cleaned_text:  # 如果移除後為空，則拋出異常
-            raise ValueError("ASCII 標題僅包含非 ASCII 字符，無法創建 ASCII 藝術。")
+            raise ValueError("The ASCII header contains only non-ASCII characters and cannot create ASCII art.")
         
         header_text = cleaned_text
     
@@ -198,7 +198,7 @@ def print_ascii_block(
     try:
         ascii_art = text2art(header_text, font=ascii_font)
     except Exception as e:
-        error_msg = f"生成 ASCII 藝術失敗: {str(e)}"
+        error_msg = f"Failed to generate ASCII art: {str(e)}"
         if logger_instance:
             logger_instance.error(error_msg)
         raise

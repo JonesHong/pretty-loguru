@@ -84,15 +84,15 @@ def add_format_methods(logger_instance: Any, console: Optional[Console] = None) 
         
         # 如果添加成功，記錄日誌（如果可能）
         if create_result and hasattr(logger_instance, "debug"):
-            logger_instance.debug("成功添加 FIGlet 相關方法")
+            logger_instance.debug("Successfully added FIGlet-related methods")
     except ImportError:
         # 如果導入失敗，記錄日誌（如果可能）
         if hasattr(logger_instance, "debug"):
-            logger_instance.debug("未安裝 pyfiglet 庫，跳過添加 FIGlet 方法")
+            logger_instance.debug("The pyfiglet library is not installed, skipping the addition of FIGlet methods")
     except Exception as e:
         # 如果發生其他錯誤，記錄日誌（如果可能）
         if hasattr(logger_instance, "warning"):
-            logger_instance.warning(f"添加 FIGlet 方法時發生錯誤：{str(e)}")
+            logger_instance.warning(f"An error occurred while adding FIGlet methods: {str(e)}")
 
 
 def add_custom_methods(logger_instance: Any, console: Optional[Console] = None) -> None:
@@ -123,7 +123,7 @@ def add_custom_methods(logger_instance: Any, console: Optional[Console] = None) 
         except Exception as e:
             # 記錄其他錯誤（如果可能）
             if hasattr(logger_instance, "warning"):
-                logger_instance.warning(f"再次嘗試添加 FIGlet 方法時發生錯誤：{str(e)}")
+                logger_instance.warning(f"An error occurred while attempting to add FIGlet methods again: {str(e)}")
 
 
 def register_extension_method(
@@ -164,6 +164,6 @@ def register_extension_method(
     
     # 記錄註冊信息
     if hasattr(logger_instance, "debug"):
-        logger_instance.debug(f"已註冊自定義方法: {method_name}")
+        logger_instance.debug(f"Registered custom method: {method_name}")
     
     return True
