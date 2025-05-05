@@ -63,6 +63,31 @@
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">貢獻指南</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">pretty_loguru</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">pretty_loguru package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pretty_loguru.PresetType"><code class="docutils literal notranslate"><span class="pre">PresetType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.DEFAULT"><code class="docutils literal notranslate"><span class="pre">PresetType.DEFAULT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.DAILY"><code class="docutils literal notranslate"><span class="pre">PresetType.DAILY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.HOURLY"><code class="docutils literal notranslate"><span class="pre">PresetType.HOURLY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.MINUTE"><code class="docutils literal notranslate"><span class="pre">PresetType.MINUTE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.SIMPLE"><code class="docutils literal notranslate"><span class="pre">PresetType.SIMPLE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.DETAILED"><code class="docutils literal notranslate"><span class="pre">PresetType.DETAILED</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.SIZE_BASED"><code class="docutils literal notranslate"><span class="pre">PresetType.SIZE_BASED</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.WEEKLY"><code class="docutils literal notranslate"><span class="pre">PresetType.WEEKLY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.MONTHLY"><code class="docutils literal notranslate"><span class="pre">PresetType.MONTHLY</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pretty_loguru.LogPreset"><code class="docutils literal notranslate"><span class="pre">LogPreset</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.LogPreset.rotation"><code class="docutils literal notranslate"><span class="pre">LogPreset.rotation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.LogPreset.retention"><code class="docutils literal notranslate"><span class="pre">LogPreset.retention</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.LogPreset.compression"><code class="docutils literal notranslate"><span class="pre">LogPreset.compression</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.LogPreset.name_format"><code class="docutils literal notranslate"><span class="pre">LogPreset.name_format</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.LogPreset.get_settings"><code class="docutils literal notranslate"><span class="pre">LogPreset.get_settings()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pretty_loguru.PresetFactory"><code class="docutils literal notranslate"><span class="pre">PresetFactory</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetFactory.get_preset"><code class="docutils literal notranslate"><span class="pre">PresetFactory.get_preset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetFactory.register_preset"><code class="docutils literal notranslate"><span class="pre">PresetFactory.register_preset()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#pretty_loguru.EnhancedLogger"><code class="docutils literal notranslate"><span class="pre">EnhancedLogger</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pretty_loguru.LogLevelEnum"><code class="docutils literal notranslate"><span class="pre">LogLevelEnum</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.LogLevelEnum.TRACE"><code class="docutils literal notranslate"><span class="pre">LogLevelEnum.TRACE</span></code></a></li>
@@ -146,6 +171,124 @@
 <p>Pretty Loguru 日誌系統包入口</p>
 <p>此模組提供了增強型的 Loguru 日誌系統，包含區塊式日誌、ASCII 藝術標題
 以及與各種框架的集成功能，使日誌記錄變得更加直觀和美觀。</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pretty_loguru.PresetType">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pretty_loguru.</span></span><span class="sig-name descname"><span class="pre">PresetType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/presets.html#PresetType"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.PresetType" title="連結到這個定義"></a></dt>
+<dd><p>基礎類別：<code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>日誌預設類型枚舉</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.PresetType.DEFAULT">
+<span class="sig-name descname"><span class="pre">DEFAULT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#pretty_loguru.PresetType.DEFAULT" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.PresetType.DAILY">
+<span class="sig-name descname"><span class="pre">DAILY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#pretty_loguru.PresetType.DAILY" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.PresetType.HOURLY">
+<span class="sig-name descname"><span class="pre">HOURLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#pretty_loguru.PresetType.HOURLY" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.PresetType.MINUTE">
+<span class="sig-name descname"><span class="pre">MINUTE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#pretty_loguru.PresetType.MINUTE" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.PresetType.SIMPLE">
+<span class="sig-name descname"><span class="pre">SIMPLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#pretty_loguru.PresetType.SIMPLE" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.PresetType.DETAILED">
+<span class="sig-name descname"><span class="pre">DETAILED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#pretty_loguru.PresetType.DETAILED" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.PresetType.SIZE_BASED">
+<span class="sig-name descname"><span class="pre">SIZE_BASED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#pretty_loguru.PresetType.SIZE_BASED" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.PresetType.WEEKLY">
+<span class="sig-name descname"><span class="pre">WEEKLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#pretty_loguru.PresetType.WEEKLY" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.PresetType.MONTHLY">
+<span class="sig-name descname"><span class="pre">MONTHLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9</span></em><a class="headerlink" href="#pretty_loguru.PresetType.MONTHLY" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pretty_loguru.LogPreset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pretty_loguru.</span></span><span class="sig-name descname"><span class="pre">LogPreset</span></span><a class="reference internal" href="../_modules/pretty_loguru/core/presets.html#LogPreset"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.LogPreset" title="連結到這個定義"></a></dt>
+<dd><p>基礎類別：<code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>日誌預設基類</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="pretty_loguru.LogPreset.rotation">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rotation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pretty_loguru.LogPreset.rotation" title="連結到這個定義"></a></dt>
+<dd><p>輪換設定</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pretty_loguru.LogPreset.retention">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">retention</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pretty_loguru.LogPreset.retention" title="連結到這個定義"></a></dt>
+<dd><p>保留設定</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pretty_loguru.LogPreset.compression">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compression</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Callable</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#pretty_loguru.LogPreset.compression" title="連結到這個定義"></a></dt>
+<dd><p>壓縮/重命名函數</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pretty_loguru.LogPreset.name_format">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name_format</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pretty_loguru.LogPreset.name_format" title="連結到這個定義"></a></dt>
+<dd><p>日誌檔名格式</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pretty_loguru.LogPreset.get_settings">
+<span class="sig-name descname"><span class="pre">get_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/presets.html#LogPreset.get_settings"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.LogPreset.get_settings" title="連結到這個定義"></a></dt>
+<dd><p>取得完整的預設設定</p>
+<dl class="field-list simple">
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pretty_loguru.PresetFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pretty_loguru.</span></span><span class="sig-name descname"><span class="pre">PresetFactory</span></span><a class="reference internal" href="../_modules/pretty_loguru/core/presets.html#PresetFactory"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.PresetFactory" title="連結到這個定義"></a></dt>
+<dd><p>基礎類別：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>預設配置工廠</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pretty_loguru.PresetFactory.get_preset">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/presets.html#PresetFactory.get_preset"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.PresetFactory.get_preset" title="連結到這個定義"></a></dt>
+<dd><p>取得指定類型的預設配置</p>
+<dl class="field-list simple">
+<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#pretty_loguru.LogPreset" title="pretty_loguru.core.presets.LogPreset"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogPreset</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pretty_loguru.PresetFactory.register_preset">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register_preset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preset_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preset_class</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/core/presets.html#PresetFactory.register_preset"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.PresetFactory.register_preset" title="連結到這個定義"></a></dt>
+<dd><p>註冊自定義預設配置</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pretty_loguru.EnhancedLogger">
 <span class="sig-prename descclassname"><span class="pre">pretty_loguru.</span></span><span class="sig-name descname"><span class="pre">EnhancedLogger</span></span><a class="headerlink" href="#pretty_loguru.EnhancedLogger" title="連結到這個定義"></a></dt>
