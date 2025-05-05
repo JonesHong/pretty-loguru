@@ -76,7 +76,37 @@ class DetailedPreset(LogPreset):
     
     @property
     def compression(self) -> Optional[Callable]:
-        return None
+        def detailed_rename_log(filepath: str) -> str:
+            path = Path(filepath)
+            directory = path.parent
+            original_name = path.stem.split('.')[0]  # 取得原始檔名（不含時間戳）
+            
+            # 產生新的時間戳
+            new_timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+            
+            # 根據 LOG_NAME_FORMATS["detailed"] = "[{component_name}]{date}_{time}.log"
+            # 提取 component_name 部分
+            if original_name.startswith('[') and ']' in original_name:
+                component_name = original_name[1:original_name.index(']')]
+            else:
+                component_name = original_name
+            
+            # 構建新的檔名，使用詳細格式
+            new_name = f"[{component_name}]{new_timestamp}.log"
+            new_path = directory / new_name
+            
+            # 如果新檔名已存在，在時間戳後加上數字
+            counter = 1
+            while new_path.exists():
+                new_name = f"[{component_name}]{new_timestamp}.{counter}.log"
+                new_path = directory / new_name
+                counter += 1
+            
+            os.rename(filepath, new_path)
+            return str(new_path)
+        
+        return detailed_rename_log
+    
     
     @property
     def name_format(self) -> str:
@@ -94,9 +124,27 @@ class SimplePreset(LogPreset):
     def retention(self) -> str:
         return "30 days"
     
+     
     @property
     def compression(self) -> Optional[Callable]:
-        return None
+        def simple_rename_log(filepath: str) -> str:
+            path = Path(filepath)
+            directory = path.parent
+            original_name = path.stem.split('.')[0]  # 取得原始檔名（不含時間戳）
+            
+            # 找到下一個可用的數字後綴
+            counter = 1
+            while True:
+                new_name = f"{original_name}.{counter}"
+                new_path = directory / new_name
+                if not new_path.exists():
+                    break
+                counter += 1
+            
+            os.rename(filepath, new_path)
+            return str(new_path)
+        
+        return simple_rename_log
     
     @property
     def name_format(self) -> str:
@@ -113,18 +161,35 @@ class MonthlyPreset(LogPreset):
     def retention(self) -> str:
         return "1 year"
     
+    
     @property
     def compression(self) -> Optional[Callable]:
         def monthly_rename_log(filepath: str) -> str:
             path = Path(filepath)
             directory = path.parent
-            base_name = path.stem
+            original_name = path.stem.split('.')[0]  # 取得原始檔名（不含時間戳）
             
+            # 產生新的月份標記
             now = datetime.now()
             month_str = now.strftime("%Y%m")
             
-            new_name = f"{month_str}_{base_name}.log"
+            # 根據 LOG_NAME_FORMATS["monthly"] = "[{component_name}]{year}{month}.log"
+            # 提取 component_name 部分
+            if original_name.startswith('[') and ']' in original_name:
+                component_name = original_name[1:original_name.index(']')]
+            else:
+                component_name = original_name
+            
+            # 構建新的檔名，使用月份格式
+            new_name = f"[{component_name}]{month_str}.log"
             new_path = directory / new_name
+            
+            # 如果新檔名已存在，在月份後加上數字
+            counter = 1
+            while new_path.exists():
+                new_name = f"[{component_name}]{month_str}.{counter}.log"
+                new_path = directory / new_name
+                counter += 1
             
             os.rename(filepath, new_path)
             return str(new_path)
@@ -152,15 +217,31 @@ class WeeklyPreset(LogPreset):
         def weekly_rename_log(filepath: str) -> str:
             path = Path(filepath)
             directory = path.parent
-            base_name = path.stem
+            original_name = path.stem.split('.')[0]  # 取得原始檔名（不含時間戳）
             
+            # 產生新的週數標記
             now = datetime.now()
             year = now.year
             week_num = now.isocalendar()[1]
             week_str = f"{year}W{week_num:02d}"
             
-            new_name = f"{week_str}_{base_name}.log"
+            # 根據 LOG_NAME_FORMATS["weekly"] = "[{component_name}]week{week}.log"
+            # 提取 component_name 部分
+            if original_name.startswith('[') and ']' in original_name:
+                component_name = original_name[1:original_name.index(']')]
+            else:
+                component_name = original_name
+            
+            # 構建新的檔名，使用週數格式
+            new_name = f"[{component_name}]week{week_str}.log"
             new_path = directory / new_name
+            
+            # 如果新檔名已存在，在週數後加上數字
+            counter = 1
+            while new_path.exists():
+                new_name = f"[{component_name}]week{week_str}.{counter}.log"
+                new_path = directory / new_name
+                counter += 1
             
             os.rename(filepath, new_path)
             return str(new_path)
@@ -182,34 +263,34 @@ class DailyPreset(LogPreset):
     def retention(self) -> str:
         return "30 days"
     
+    
     @property
     def compression(self) -> Optional[Callable]:
         def daily_rename_log(filepath: str) -> str:
             path = Path(filepath)
             directory = path.parent
-            base_name = path.stem
+            original_name = path.stem.split('.')[0]  # 取得原始檔名（不含時間戳）
             
-            today = datetime.now()
-            date_str = today.strftime("%Y%m%d")
+            # 產生新的日期標記
+            date_str = datetime.now().strftime("%Y%m%d")
             
-            # 智能處理檔名（如果已包含日期則保持原樣）
-            has_date_pattern = any(
-                part.isdigit() and len(part) == 8 and part.startswith('20')
-                for part in base_name.split('_')
-            )
-            
-            if has_date_pattern:
-                new_name = f"{base_name}.log"
+            # 根據 LOG_NAME_FORMATS["daily"] = "[{component_name}]{date}.log"
+            # 提取 component_name 部分
+            if original_name.startswith('[') and ']' in original_name:
+                component_name = original_name[1:original_name.index(']')]
             else:
-                new_name = f"{date_str}_{base_name}.log"
+                component_name = original_name
             
+            # 構建新的檔名，使用日期格式
+            new_name = f"[{component_name}]{date_str}.log"
             new_path = directory / new_name
             
-            # 處理檔名衝突
-            if new_path.exists():
-                timestamp = today.strftime("%H%M%S")
-                new_name = f"{date_str}_{base_name}_{timestamp}.log"
+            # 如果新檔名已存在，在日期後加上數字
+            counter = 1
+            while new_path.exists():
+                new_name = f"[{component_name}]{date_str}.{counter}.log"
                 new_path = directory / new_name
+                counter += 1
             
             os.rename(filepath, new_path)
             return str(new_path)
@@ -237,20 +318,29 @@ class HourlyPreset(LogPreset):
         def hourly_rename_log(filepath: str) -> str:
             path = Path(filepath)
             directory = path.parent
-            base_name = path.stem
+            original_name = path.stem.split('.')[0]  # 取得原始檔名（不含時間戳）
             
+            # 產生新的日期和小時標記
             now = datetime.now()
-            datetime_str = now.strftime("%Y%m%d_%H00")
+            datetime_str = now.strftime("%Y%m%d_%H")
             
-            # 構建新的檔名
-            new_name = f"{datetime_str}_{base_name}.log"
+            # 根據 LOG_NAME_FORMATS["hourly"] = "[{component_name}]{date}_{hour}.log"
+            # 提取 component_name 部分
+            if original_name.startswith('[') and ']' in original_name:
+                component_name = original_name[1:original_name.index(']')]
+            else:
+                component_name = original_name
+            
+            # 構建新的檔名，使用小時格式
+            new_name = f"[{component_name}]{datetime_str}.log"
             new_path = directory / new_name
             
-            # 處理檔名衝突
-            if new_path.exists():
-                minute_str = now.strftime("%M")
-                new_name = f"{datetime_str}{minute_str}_{base_name}.log"
+            # 如果新檔名已存在，在時間後加上數字
+            counter = 1
+            while new_path.exists():
+                new_name = f"[{component_name}]{datetime_str}.{counter}.log"
                 new_path = directory / new_name
+                counter += 1
             
             os.rename(filepath, new_path)
             return str(new_path)
@@ -278,13 +368,29 @@ class MinutePreset(LogPreset):
         def minute_rename_log(filepath: str) -> str:
             path = Path(filepath)
             directory = path.parent
-            base_name = path.stem
+            original_name = path.stem.split('.')[0]  # 取得原始檔名（不含時間戳）
             
+            # 產生新的日期、小時和分鐘標記
             now = datetime.now()
-            timestamp = now.strftime("%Y%m%d_%H%M")
+            datetime_str = now.strftime("%Y%m%d_%H%M")
             
-            new_name = f"{timestamp}_{base_name}.log"
+            # 根據 LOG_NAME_FORMATS["minute"] = "[{component_name}]{date}_{hour}{minute}.log"
+            # 提取 component_name 部分
+            if original_name.startswith('[') and ']' in original_name:
+                component_name = original_name[1:original_name.index(']')]
+            else:
+                component_name = original_name
+            
+            # 構建新的檔名，使用分鐘格式
+            new_name = f"[{component_name}]{datetime_str}.log"
             new_path = directory / new_name
+            
+            # 如果新檔名已存在，在時間後加上數字
+            counter = 1
+            while new_path.exists():
+                new_name = f"[{component_name}]{datetime_str}.{counter}.log"
+                new_path = directory / new_name
+                counter += 1
             
             os.rename(filepath, new_path)
             return str(new_path)
