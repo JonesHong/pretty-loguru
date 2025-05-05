@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pretty_loguru.factory.creator &mdash; Pretty Loguru 0.2.10 documentation</title>
+  <title>pretty_loguru.factory.creator &mdash; Pretty Loguru 0.2.11 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -17,7 +17,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=0392c105"></script>
+      <script src="../../../_static/documentation_options.js?v=1154fd1f"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -236,12 +236,25 @@
     <span class="c1"># 合併預設設定 - 僅在未明確指定時使用預設值</span>
     <span class="n">log_name_format</span> <span class="o">=</span> <span class="n">log_name_format</span> <span class="ow">or</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;name_format&quot;</span><span class="p">]</span>
 
+    <span class="c1"># 處理 log_file_settings 的合併邏輯</span>
     <span class="n">log_file_settings</span> <span class="o">=</span> <span class="n">log_file_settings</span> <span class="ow">or</span> <span class="p">{}</span>
-    <span class="k">if</span> <span class="n">rotation</span> <span class="o">==</span> <span class="s2">&quot;20 MB&quot;</span><span class="p">:</span>  <span class="c1"># 只在使用預設值時替換</span>
-        <span class="n">log_file_settings</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;rotation&quot;</span><span class="p">,</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;rotation&quot;</span><span class="p">])</span>
+
+    <span class="c1"># 1. rotation 的處理：</span>
+    <span class="c1">#    - 如果 log_file_settings 中有 rotation，使用它</span>
+    <span class="c1">#    - 否則，如果參數 rotation 不是預設值，使用參數 rotation</span>
+    <span class="c1">#    - 否則，使用 preset 中的 rotation</span>
+    <span class="k">if</span> <span class="s2">&quot;rotation&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">log_file_settings</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">rotation</span> <span class="o">!=</span> <span class="s2">&quot;20 MB&quot;</span><span class="p">:</span>  <span class="c1"># 使用者有提供 rotation 參數</span>
+            <span class="n">log_file_settings</span><span class="p">[</span><span class="s2">&quot;rotation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rotation</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># 使用 preset 中的 rotation</span>
+            <span class="n">log_file_settings</span><span class="p">[</span><span class="s2">&quot;rotation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;rotation&quot;</span><span class="p">]</span>
+
+    <span class="c1"># 2. retention 的處理：只在未指定時使用 preset 值</span>
     <span class="n">log_file_settings</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;retention&quot;</span><span class="p">,</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;retention&quot;</span><span class="p">])</span>
-    <span class="k">if</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;compression&quot;</span><span class="p">]:</span>
-        <span class="n">log_file_settings</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;compression&quot;</span><span class="p">,</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;compression&quot;</span><span class="p">])</span>
+
+    <span class="c1"># 3. compression 的處理：只在未指定且 preset 有值時使用 preset 值</span>
+    <span class="k">if</span> <span class="s2">&quot;compression&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">log_file_settings</span> <span class="ow">and</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;compression&quot;</span><span class="p">]:</span>
+        <span class="n">log_file_settings</span><span class="p">[</span><span class="s2">&quot;compression&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;compression&quot;</span><span class="p">]</span>
 
     <span class="c1"># 創建新的 logger 實例</span>
     <span class="n">new_logger</span> <span class="o">=</span> <span class="n">_Logger</span><span class="p">(</span>
