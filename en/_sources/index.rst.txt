@@ -18,6 +18,23 @@ Pretty Loguru 文檔
    :align: center
    :alt: Pretty Loguru 標誌
 
+.. raw:: html
+
+   <p align="center">
+     <a href="https://pypi.org/project/pretty-loguru/">
+       <img alt="PyPI version" src="https://img.shields.io/pypi/v/pretty-loguru.svg" />
+     </a>
+     <a href="https://pypi.org/project/pretty-loguru/">
+       <img alt="Python versions" src="https://img.shields.io/pypi/pyversions/pretty-loguru.svg" />
+     </a>
+     <a href="https://joneshong.github.io/pretty-loguru/en/index.html">
+       <img alt="Documentation" src="https://img.shields.io/badge/docs-ghpages-blue.svg" />
+     </a>
+     <a href="https://github.com/JonesHong/pretty-loguru/blob/master/LICENSE">
+       <img alt="License" src="https://img.shields.io/github/license/JonesHong/pretty-loguru.svg" />
+     </a>
+   </p>
+
 **Pretty Loguru** 是一個增強型的 Loguru 日誌系統，提供區塊式日誌、
 ASCII 藝術標題以及與各種框架的集成功能，使日誌記錄變得更加直觀和美觀。
 
