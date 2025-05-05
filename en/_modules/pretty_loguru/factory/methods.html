@@ -176,15 +176,15 @@
         
         <span class="c1"># 如果添加成功，記錄日誌（如果可能）</span>
         <span class="k">if</span> <span class="n">create_result</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;debug&quot;</span><span class="p">):</span>
-            <span class="n">logger_instance</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;成功添加 FIGlet 相關方法&quot;</span><span class="p">)</span>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Successfully added FIGlet-related methods&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
         <span class="c1"># 如果導入失敗，記錄日誌（如果可能）</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;debug&quot;</span><span class="p">):</span>
-            <span class="n">logger_instance</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;未安裝 pyfiglet 庫，跳過添加 FIGlet 方法&quot;</span><span class="p">)</span>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;The pyfiglet library is not installed, skipping the addition of FIGlet methods&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="c1"># 如果發生其他錯誤，記錄日誌（如果可能）</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;warning&quot;</span><span class="p">):</span>
-            <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;添加 FIGlet 方法時發生錯誤：</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An error occurred while adding FIGlet methods: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 
@@ -218,7 +218,7 @@
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="c1"># 記錄其他錯誤（如果可能）</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;warning&quot;</span><span class="p">):</span>
-                <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;再次嘗試添加 FIGlet 方法時發生錯誤：</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+                <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An error occurred while attempting to add FIGlet methods again: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 
@@ -262,7 +262,7 @@
     
     <span class="c1"># 記錄註冊信息</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">logger_instance</span><span class="p">,</span> <span class="s2">&quot;debug&quot;</span><span class="p">):</span>
-        <span class="n">logger_instance</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;已註冊自定義方法: </span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logger_instance</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Registered custom method: </span><span class="si">{</span><span class="n">method_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     
     <span class="k">return</span> <span class="kc">True</span></div>
 

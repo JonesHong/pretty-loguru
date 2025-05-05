@@ -166,7 +166,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># 檢查 art 庫是否已安裝</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">_has_art</span><span class="p">:</span>
-        <span class="n">error_msg</span> <span class="o">=</span> <span class="s2">&quot;未安裝 &#39;art&#39; 庫。請使用 &#39;pip install art&#39; 安裝。&quot;</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="s2">&quot;The &#39;art&#39; library is not installed. Please install it using &#39;pip install art&#39;.&quot;</span>
         <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
             <span class="n">logger_instance</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
@@ -177,7 +177,7 @@
     
     <span class="c1"># 檢查是否包含非 ASCII 字符</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">is_ascii_only</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-        <span class="n">warning_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ASCII art 只支持 ASCII 字符。文本 &#39;</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">&#39; 包含非 ASCII 字符。&quot;</span>
+        <span class="n">warning_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ASCII art only supports ASCII characters. The text &#39;</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">&#39; contains non-ASCII characters.&quot;</span>
         <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
             <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">warning_msg</span><span class="p">)</span>
         
@@ -185,10 +185,10 @@
         <span class="n">cleaned_text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[^\x00-\x7F]+&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
-            <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;已移除非 ASCII 字符。使用: &#39;</span><span class="si">{</span><span class="n">cleaned_text</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Removed non-ASCII characters. Using: &#39;</span><span class="si">{</span><span class="n">cleaned_text</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="n">cleaned_text</span><span class="p">:</span>  <span class="c1"># 如果移除後為空，則拋出異常</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;文本僅包含非 ASCII 字符，無法創建 ASCII 藝術。&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The text contains only non-ASCII characters and cannot create ASCII art.&quot;</span><span class="p">)</span>
         
         <span class="n">text</span> <span class="o">=</span> <span class="n">cleaned_text</span>
     
@@ -196,7 +196,7 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">ascii_art</span> <span class="o">=</span> <span class="n">text2art</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;生成 ASCII 藝術失敗: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Failed to generate ASCII art: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
             <span class="n">logger_instance</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
         <span class="k">raise</span>
@@ -255,7 +255,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># 檢查 art 庫是否已安裝</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">_has_art</span><span class="p">:</span>
-        <span class="n">error_msg</span> <span class="o">=</span> <span class="s2">&quot;未安裝 &#39;art&#39; 庫。請使用 &#39;pip install art&#39; 安裝。&quot;</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="s2">&quot;The &#39;art&#39; library is not installed. Please install it using &#39;pip install art&#39;.&quot;</span>
         <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
             <span class="n">logger_instance</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
@@ -269,7 +269,7 @@
     
     <span class="c1"># 檢查是否包含非 ASCII 字符</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">is_ascii_only</span><span class="p">(</span><span class="n">header_text</span><span class="p">):</span>
-        <span class="n">warning_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ASCII art 只支持 ASCII 字符。文本 &#39;</span><span class="si">{</span><span class="n">header_text</span><span class="si">}</span><span class="s2">&#39; 包含非 ASCII 字符。&quot;</span>
+        <span class="n">warning_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ASCII art only supports ASCII characters. The text &#39;</span><span class="si">{</span><span class="n">header_text</span><span class="si">}</span><span class="s2">&#39; contains non-ASCII characters.&quot;</span>
         <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
             <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">warning_msg</span><span class="p">)</span>
         
@@ -277,10 +277,10 @@
         <span class="n">cleaned_text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[^\x00-\x7F]+&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">header_text</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
-            <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;已移除非 ASCII 字符。使用: &#39;</span><span class="si">{</span><span class="n">cleaned_text</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="n">logger_instance</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Removed non-ASCII characters. Using: &#39;</span><span class="si">{</span><span class="n">cleaned_text</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="n">cleaned_text</span><span class="p">:</span>  <span class="c1"># 如果移除後為空，則拋出異常</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ASCII 標題僅包含非 ASCII 字符，無法創建 ASCII 藝術。&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The ASCII header contains only non-ASCII characters and cannot create ASCII art.&quot;</span><span class="p">)</span>
         
         <span class="n">header_text</span> <span class="o">=</span> <span class="n">cleaned_text</span>
     
@@ -288,7 +288,7 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">ascii_art</span> <span class="o">=</span> <span class="n">text2art</span><span class="p">(</span><span class="n">header_text</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">ascii_font</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;生成 ASCII 藝術失敗: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">error_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Failed to generate ASCII art: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">logger_instance</span><span class="p">:</span>
             <span class="n">logger_instance</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
         <span class="k">raise</span>
