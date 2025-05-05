@@ -29,6 +29,14 @@ from .core.config import (
     LoggerConfig
 )
 
+# 日誌預設參數
+from .core.presets import (
+    PresetType,
+    LogPreset,
+    PresetFactory
+)
+
+
 # 導入目標導向格式化工具
 from .core.target_formatter import (
     create_target_method,
@@ -88,6 +96,10 @@ except ImportError as e:
 
 # 定義對外可見的功能
 __all__ = [
+    # 日誌預設參數
+    "PresetType",
+    "LogPreset",
+    "PresetFactory",
     # 類型和配置
     "EnhancedLogger",
     "LOG_LEVEL",

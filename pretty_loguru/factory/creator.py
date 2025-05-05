@@ -17,6 +17,8 @@ from loguru._logger import Core as _Core
 from loguru._logger import Logger as _Logger
 from rich.console import Console
 
+from pretty_loguru.core.presets import PresetFactory, PresetType
+
 from ..types import (
     EnhancedLogger, LogLevelType, LogPathType, LogNameFormatType, 
     LogRotationType, LogConfigType
@@ -131,18 +133,57 @@ def create_logger(
             if existing_id.startswith(base_id):
                 return logger_instance
     
-    # 處理預設日誌名稱格式
-    if log_name_preset and not log_name_format:
-        if log_name_preset in LOG_NAME_FORMATS:
-            log_name_format = LOG_NAME_FORMATS[log_name_preset]
-        else:
+    # 處理預設配置 - 簡化邏輯，始終使用預設系統
+    preset_type = None
+    
+    if log_name_preset is None:
+        # 如果未指定預設，使用 DEFAULT
+        preset_type = PresetType.DEFAULT
+    elif isinstance(log_name_preset, PresetType):
+        # 直接是 PresetType
+        preset_type = log_name_preset
+    elif isinstance(log_name_preset, str):
+        # 嘗試轉換字串為 PresetType
+        try:
+            preset_type = PresetType[log_name_preset.upper()]
+        except KeyError:
+            # 無法轉換，使用 DEFAULT 並發出警告
             warnings.warn(
                 f"Unknown log_name_preset '{log_name_preset}'. Using 'default' instead.",
                 UserWarning,
                 stacklevel=2
             )
-            log_name_format = LOG_NAME_FORMATS["default"]
+            preset_type = PresetType.DEFAULT
     
+    # 獲取預設配置
+    if preset_type == PresetType.SIZE_BASED:
+        size = custom_config.get("size", "10 MB") if custom_config else "10 MB"
+        preset = PresetFactory.get_preset(preset_type, size=size)
+    else:
+        preset = PresetFactory.get_preset(preset_type)
+    
+    preset_settings = preset.get_settings()
+    
+    # 應用預設配置
+    # 設定日誌檔名格式（只在未指定時才使用預設）
+    if log_name_format is None:
+        log_name_format = preset_settings["name_format"]
+    
+    # 自動配置 log_file_settings
+    if log_file_settings is None:
+        log_file_settings = {}
+    
+    # 合併預設設定（只在未指定時才使用預設）
+    if "rotation" not in log_file_settings and rotation == "20 MB":  # 只在使用預設值時替換
+        log_file_settings["rotation"] = preset_settings["rotation"]
+    
+    if "retention" not in log_file_settings:
+        log_file_settings["retention"] = preset_settings["retention"]
+    
+    if "compression" not in log_file_settings and preset_settings["compression"]:
+        log_file_settings["compression"] = preset_settings["compression"]
+        
+        
     # 創建新的 logger 實例
     new_logger = _Logger(
         core=_Core(),
