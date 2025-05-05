@@ -9,8 +9,8 @@ sys.path.insert(0, os.path.abspath("../.."))  # 將專案根目錄添加到路�
 project = "Pretty Loguru"
 copyright = "2025, JonesHong"
 author = "JonesHong"
-version = "0.2.12"
-release = "0.2.12"
+version = "0.2.13"
+release = "0.2.13"
 
 # 常規設置
 extensions = [
