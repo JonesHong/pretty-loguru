@@ -17,15 +17,13 @@ from .config import LOG_NAME_FORMATS  # 導入 LOG_NAME_FORMATS
 
 class PresetType(Enum):
     """日誌預設類型枚舉"""
-    DEFAULT = auto()
+    DETAILED = auto()  # 預設類型
+    SIMPLE = auto()
+    MONTHLY = auto()
+    WEEKLY = auto()
     DAILY = auto()
     HOURLY = auto()
     MINUTE = auto()
-    SIMPLE = auto()
-    DETAILED = auto()
-    SIZE_BASED = auto()
-    WEEKLY = auto()
-    MONTHLY = auto()
 
 
 class LogPreset(ABC):
@@ -65,8 +63,8 @@ class LogPreset(ABC):
         }
 
 
-class DefaultPreset(LogPreset):
-    """預設日誌模式"""
+class DetailedPreset(LogPreset):
+    """詳細模式"""
     
     @property
     def rotation(self) -> str:
@@ -82,8 +80,96 @@ class DefaultPreset(LogPreset):
     
     @property
     def name_format(self) -> str:
-        return LOG_NAME_FORMATS["default"]
+        return LOG_NAME_FORMATS["detailed"]
 
+
+class SimplePreset(LogPreset):
+    """簡單模式"""
+    
+    @property
+    def rotation(self) -> str:
+        return "20 MB"
+    
+    @property
+    def retention(self) -> str:
+        return "30 days"
+    
+    @property
+    def compression(self) -> Optional[Callable]:
+        return None
+    
+    @property
+    def name_format(self) -> str:
+        return LOG_NAME_FORMATS["simple"]
+
+class MonthlyPreset(LogPreset):
+    """每月日誌模式"""
+    
+    @property
+    def rotation(self) -> str:
+        return "1 month"
+    
+    @property
+    def retention(self) -> str:
+        return "1 year"
+    
+    @property
+    def compression(self) -> Optional[Callable]:
+        def monthly_rename_log(filepath: str) -> str:
+            path = Path(filepath)
+            directory = path.parent
+            base_name = path.stem
+            
+            now = datetime.now()
+            month_str = now.strftime("%Y%m")
+            
+            new_name = f"{month_str}_{base_name}.log"
+            new_path = directory / new_name
+            
+            os.rename(filepath, new_path)
+            return str(new_path)
+        
+        return monthly_rename_log
+    
+    @property
+    def name_format(self) -> str:
+        return LOG_NAME_FORMATS["monthly"]
+
+
+class WeeklyPreset(LogPreset):
+    """每週日誌模式"""
+    
+    @property
+    def rotation(self) -> str:
+        return "monday"  # 每週一輪換
+    
+    @property
+    def retention(self) -> str:
+        return "12 weeks"
+    
+    @property
+    def compression(self) -> Optional[Callable]:
+        def weekly_rename_log(filepath: str) -> str:
+            path = Path(filepath)
+            directory = path.parent
+            base_name = path.stem
+            
+            now = datetime.now()
+            year = now.year
+            week_num = now.isocalendar()[1]
+            week_str = f"{year}W{week_num:02d}"
+            
+            new_name = f"{week_str}_{base_name}.log"
+            new_path = directory / new_name
+            
+            os.rename(filepath, new_path)
+            return str(new_path)
+        
+        return weekly_rename_log
+    
+    @property
+    def name_format(self) -> str:
+        return LOG_NAME_FORMATS["weekly"]
 
 class DailyPreset(LogPreset):
     """每日日誌模式"""
@@ -210,165 +296,29 @@ class MinutePreset(LogPreset):
         return LOG_NAME_FORMATS["minute"]
 
 
-class SimplePreset(LogPreset):
-    """簡單模式"""
-    
-    @property
-    def rotation(self) -> str:
-        return "20 MB"
-    
-    @property
-    def retention(self) -> str:
-        return "30 days"
-    
-    @property
-    def compression(self) -> Optional[Callable]:
-        return None
-    
-    @property
-    def name_format(self) -> str:
-        return LOG_NAME_FORMATS["simple"]
-
-
-class DetailedPreset(LogPreset):
-    """詳細模式"""
-    
-    @property
-    def rotation(self) -> str:
-        return "20 MB"
-    
-    @property
-    def retention(self) -> str:
-        return "30 days"
-    
-    @property
-    def compression(self) -> Optional[Callable]:
-        return None
-    
-    @property
-    def name_format(self) -> str:
-        return LOG_NAME_FORMATS["detailed"]
-
-
-class WeeklyPreset(LogPreset):
-    """每週日誌模式"""
-    
-    @property
-    def rotation(self) -> str:
-        return "monday"  # 每週一輪換
-    
-    @property
-    def retention(self) -> str:
-        return "12 weeks"
-    
-    @property
-    def compression(self) -> Optional[Callable]:
-        def weekly_rename_log(filepath: str) -> str:
-            path = Path(filepath)
-            directory = path.parent
-            base_name = path.stem
-            
-            now = datetime.now()
-            year = now.year
-            week_num = now.isocalendar()[1]
-            week_str = f"{year}W{week_num:02d}"
-            
-            new_name = f"{week_str}_{base_name}.log"
-            new_path = directory / new_name
-            
-            os.rename(filepath, new_path)
-            return str(new_path)
-        
-        return weekly_rename_log
-    
-    @property
-    def name_format(self) -> str:
-        return LOG_NAME_FORMATS["weekly"]
-
-
-class MonthlyPreset(LogPreset):
-    """每月日誌模式"""
-    
-    @property
-    def rotation(self) -> str:
-        return "1 month"
-    
-    @property
-    def retention(self) -> str:
-        return "1 year"
-    
-    @property
-    def compression(self) -> Optional[Callable]:
-        def monthly_rename_log(filepath: str) -> str:
-            path = Path(filepath)
-            directory = path.parent
-            base_name = path.stem
-            
-            now = datetime.now()
-            month_str = now.strftime("%Y%m")
-            
-            new_name = f"{month_str}_{base_name}.log"
-            new_path = directory / new_name
-            
-            os.rename(filepath, new_path)
-            return str(new_path)
-        
-        return monthly_rename_log
-    
-    @property
-    def name_format(self) -> str:
-        return LOG_NAME_FORMATS["monthly"]
-
-
-class SizeBasedPreset(LogPreset):
-    """基於檔案大小的日誌模式"""
-    
-    def __init__(self, size: str = "10 MB"):
-        self.size = size
-    
-    @property
-    def rotation(self) -> str:
-        return self.size
-    
-    @property
-    def retention(self) -> str:
-        return "30 days"
-    
-    @property
-    def compression(self) -> Optional[Callable]:
-        return None
-    
-    @property
-    def name_format(self) -> str:
-        # 使用預設格式，但加上時間戳確保檔名唯一
-        return LOG_NAME_FORMATS["default"]
 
 
 class PresetFactory:
     """預設配置工廠"""
     
     _presets = {
-        PresetType.DEFAULT: DefaultPreset,
+        PresetType.DETAILED: DetailedPreset,
+        PresetType.SIMPLE: SimplePreset,
+        PresetType.MONTHLY: MonthlyPreset,
+        PresetType.WEEKLY: WeeklyPreset,
         PresetType.DAILY: DailyPreset,
         PresetType.HOURLY: HourlyPreset,
         PresetType.MINUTE: MinutePreset,
-        PresetType.SIMPLE: SimplePreset,
-        PresetType.DETAILED: DetailedPreset,
-        PresetType.WEEKLY: WeeklyPreset,
-        PresetType.MONTHLY: MonthlyPreset,
     }
     
     @classmethod
     def get_preset(cls, preset_type: PresetType, **kwargs) -> LogPreset:
         """取得指定類型的預設配置"""
-        if preset_type not in cls._presets and preset_type != PresetType.SIZE_BASED:
+        if preset_type not in cls._presets :
             raise ValueError(f"Unknown preset type: {preset_type}")
         
-        if preset_type == PresetType.SIZE_BASED:
-            return SizeBasedPreset(**kwargs)
-        else:
-            preset_class = cls._presets[preset_type]
-            return preset_class()
+        preset_class = cls._presets[preset_type]
+        return preset_class()
     
     @classmethod
     def register_preset(cls, preset_type: PresetType, preset_class: type[LogPreset]):

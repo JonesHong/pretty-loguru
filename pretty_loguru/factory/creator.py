@@ -17,11 +17,15 @@ from loguru._logger import Core as _Core
 from loguru._logger import Logger as _Logger
 from rich.console import Console
 
-from pretty_loguru.core.presets import PresetFactory, PresetType
+from pretty_loguru.core.presets import LogPreset, PresetFactory, PresetType
 
 from ..types import (
-    EnhancedLogger, LogLevelType, LogPathType, LogNameFormatType, 
-    LogRotationType, LogConfigType
+    EnhancedLogger,
+    LogLevelType,
+    LogPathType,
+    LogNameFormatType,
+    LogRotationType,
+    LogConfigType,
 )
 from ..core.config import LOG_NAME_FORMATS
 from ..core.base import configure_logger, get_console
@@ -48,9 +52,12 @@ _default_logger_instance = None
 def create_logger(
     name: Optional[str] = None,
     service_tag: Optional[str] = None,
-    subdirectory: Optional[str] = None, 
+    subdirectory: Optional[str] = None,
     log_name_format: LogNameFormatType = None,
-    log_name_preset: Optional[Literal["default", "daily", "hourly", "minute", "simple", "detailed"]] = None,
+    log_name_preset: Optional[
+        Literal["detailed", "simple", "monthly", "weekly", "daily", "hourly", "minute"]
+        | PresetType
+    ] = None,
     timestamp_format: Optional[str] = None,
     log_path: Optional[LogPathType] = None,
     log_file_settings: Optional[LogConfigType] = None,
@@ -64,13 +71,13 @@ def create_logger(
 ) -> EnhancedLogger:
     """
     創建有效隔離的 logger 實例
-    
+
     Args:
         name: logger 實例的名稱，如果不提供則自動生成
         service_tag: 服務或模組名稱，用於標識日誌來源
         subdirectory: 日誌子目錄，用於分類不同模組或功能的日誌
         log_name_format: 日誌檔案名稱格式，可包含變數如 {component_name}, {timestamp}, {date}, {time} 等
-        log_name_preset: 預設的日誌檔案名格式，可選值為 "default", "daily", "hourly" 等
+        log_name_preset: 預設的日誌檔案名格式，可選值為 "detailed", "daily", "hourly" 等
         timestamp_format: 時間戳格式，用於自定義時間顯示方式
         log_path: 日誌基礎路徑，覆蓋預設的 log_path
         log_file_settings: 日誌檔案的其他設定，如壓縮、保留時間等
@@ -84,30 +91,30 @@ def create_logger(
 
     Returns:
         EnhancedLogger: 已配置的日誌實例
-        
+
     Examples:
         >>> # 創建基本 logger
         >>> logger = create_logger("my_app")
-        >>> 
+        >>>
         >>> # 創建帶有子目錄的 logger
         >>> logger = create_logger("api", subdirectory="api_logs")
-        >>> 
+        >>>
         >>> # 使用預設文件名格式
         >>> logger = create_logger("db", log_name_preset="daily")
-        >>> 
+        >>>
         >>> # 自定義日誌文件配置
         >>> logger = create_logger(
-        ...     "worker", 
+        ...     "worker",
         ...     service_tag="background_tasks",
         ...     log_file_settings={"compression": "zip", "retention": "1 week"}
         ... )
     """
     global _cleaner_started
-    
+
     # 取得調用者資訊，用於自動生成名稱
     caller_frame = inspect.currentframe().f_back
     caller_file = caller_frame.f_code.co_filename if caller_frame else "unknown"
-    
+
     # 確定 component_name 的值 (用於日誌文件名)
     if service_tag is not None:
         component_name = service_tag
@@ -118,72 +125,35 @@ def create_logger(
     # 若未提供 name 參數，使用 component_name 作為 name
     if name is None:
         name = component_name
-    
+
     # 創建唯一的 logger 標識
     logger_id = f"{name}_{service_tag}"
-    
+
     # 如果想重用實例且不是強制創建新的
     if reuse_existing and not force_new_instance:
         if name in _logger_registry:
             return _logger_registry[name]
-        
+
         # 查找已存在的實例 (基於名稱和服務名稱但不包括唯一ID部分)
         base_id = f"{name}_{service_tag}"
         for existing_id, logger_instance in _logger_registry.items():
             if existing_id.startswith(base_id):
                 return logger_instance
-    
+
     # 處理預設配置 - 簡化邏輯，始終使用預設系統
-    preset_type = None
-    
-    if log_name_preset is None:
-        # 如果未指定預設，使用 DEFAULT
-        preset_type = PresetType.DEFAULT
-    elif isinstance(log_name_preset, PresetType):
-        # 直接是 PresetType
-        preset_type = log_name_preset
-    elif isinstance(log_name_preset, str):
-        # 嘗試轉換字串為 PresetType
-        try:
-            preset_type = PresetType[log_name_preset.upper()]
-        except KeyError:
-            # 無法轉換，使用 DEFAULT 並發出警告
-            warnings.warn(
-                f"Unknown log_name_preset '{log_name_preset}'. Using 'default' instead.",
-                UserWarning,
-                stacklevel=2
-            )
-            preset_type = PresetType.DEFAULT
-    
-    # 獲取預設配置
-    if preset_type == PresetType.SIZE_BASED:
-        size = custom_config.get("size", "10 MB") if custom_config else "10 MB"
-        preset = PresetFactory.get_preset(preset_type, size=size)
-    else:
-        preset = PresetFactory.get_preset(preset_type)
-    
+    preset = _get_preset(log_name_preset)
     preset_settings = preset.get_settings()
-    
-    # 應用預設配置
-    # 設定日誌檔名格式（只在未指定時才使用預設）
-    if log_name_format is None:
-        log_name_format = preset_settings["name_format"]
-    
-    # 自動配置 log_file_settings
-    if log_file_settings is None:
-        log_file_settings = {}
-    
-    # 合併預設設定（只在未指定時才使用預設）
-    if "rotation" not in log_file_settings and rotation == "20 MB":  # 只在使用預設值時替換
-        log_file_settings["rotation"] = preset_settings["rotation"]
-    
-    if "retention" not in log_file_settings:
-        log_file_settings["retention"] = preset_settings["retention"]
-    
-    if "compression" not in log_file_settings and preset_settings["compression"]:
-        log_file_settings["compression"] = preset_settings["compression"]
-        
-        
+
+    # 合併預設設定 - 僅在未明確指定時使用預設值
+    log_name_format = log_name_format or preset_settings["name_format"]
+
+    log_file_settings = log_file_settings or {}
+    if rotation == "20 MB":  # 只在使用預設值時替換
+        log_file_settings.setdefault("rotation", preset_settings["rotation"])
+    log_file_settings.setdefault("retention", preset_settings["retention"])
+    if preset_settings["compression"]:
+        log_file_settings.setdefault("compression", preset_settings["compression"])
+
     # 創建新的 logger 實例
     new_logger = _Logger(
         core=_Core(),
@@ -196,17 +166,19 @@ def create_logger(
         capture=True,
         patchers=[],
         extra={},
-    ).patch(lambda record: record.update(
-        logger_name=name,
-        logger_id=logger_id,
-        folder=component_name,
-        service_tag=service_tag
-    ))
-    
+    ).patch(
+        lambda record: record.update(
+            logger_name=name,
+            logger_id=logger_id,
+            folder=component_name,
+            service_tag=service_tag,
+        )
+    )
+
     # 使用相同的 console 實例
     if console is None:
         console = _console
-    
+
     # 準備日誌初始化參數
     logger_config = {
         "level": level,
@@ -220,48 +192,69 @@ def create_logger(
         "service_tag": service_tag,
         "isolate_handlers": True,
     }
-    
+
     # 合併自定義配置
     if custom_config:
         logger_config.update(custom_config)
-    
+
     # 配置 logger 實例
-    log_file_path = configure_logger(
-        logger_instance=new_logger, 
-        **logger_config
-    )
-    
+    log_file_path = configure_logger(logger_instance=new_logger, **logger_config)
+
     # 保存文件路徑
     _logger_file_paths[logger_id] = log_file_path
-    
+
     # 加入自定義方法到新的 logger 實例
     add_custom_methods(new_logger, console)
-    
+
     # 只有在被明確要求時才啟動日誌清理器，而且只啟動一次
     if start_cleaner and not _cleaner_started:
-        logger_cleaner = LoggerCleaner(
-            logger_instance=new_logger,
-            log_path=log_path
-        )
+        logger_cleaner = LoggerCleaner(logger_instance=new_logger, log_path=log_path)
         logger_cleaner.start()
         _cleaner_started = True
-    
+
     # 將新實例註冊到全局註冊表
     _logger_registry[name] = cast(EnhancedLogger, new_logger)
-    
+
     # 記錄創建信息
-    new_logger.debug(f"Logger instance '{name}' (ID: {logger_id}) has been created, log file: {log_file_path}")
-    
+    new_logger.debug(
+        f"Logger instance '{name}' (ID: {logger_id}) has been created, log file: {log_file_path}"
+    )
+
     return cast(EnhancedLogger, new_logger)
+
+
+def _get_preset(
+    log_name_preset: Optional[
+        Literal["detailed", "simple", "monthly", "weekly", "daily", "hourly", "minute"]
+        | PresetType
+    ],
+) -> LogPreset:
+    """取得預設配置，優化版本"""
+    if log_name_preset is None:
+        return PresetFactory.get_preset(PresetType.DETAILED)
+
+    if isinstance(log_name_preset, PresetType):
+        return PresetFactory.get_preset(log_name_preset)
+
+    try:
+        preset_type = PresetType[log_name_preset.upper()]
+        return PresetFactory.get_preset(preset_type)
+    except KeyError:
+        warnings.warn(
+            f"Unknown log_name_preset '{log_name_preset}'. Using 'detailed' instead.",
+            UserWarning,
+            stacklevel=3,
+        )
+        return PresetFactory.get_preset(PresetType.DETAILED)
 
 
 def get_logger(name: str) -> Optional[EnhancedLogger]:
     """
     根據名稱獲取已註冊的 logger 實例
-    
+
     Args:
         name: logger 實例的名稱
-        
+
     Returns:
         Optional[EnhancedLogger]: 如果找到則返回 logger 實例，否則返回 None
     """
@@ -271,7 +264,7 @@ def get_logger(name: str) -> Optional[EnhancedLogger]:
 def set_logger(name: str, logger_instance: EnhancedLogger) -> None:
     """
     手動註冊 logger 實例
-    
+
     Args:
         name: logger 實例的名稱
         logger_instance: 要註冊的 logger 實例
@@ -282,10 +275,10 @@ def set_logger(name: str, logger_instance: EnhancedLogger) -> None:
 def unregister_logger(name: str) -> bool:
     """
     取消註冊 logger 實例
-    
+
     Args:
         name: 要取消註冊的 logger 實例名稱
-        
+
     Returns:
         bool: 如果成功取消註冊則返回 True，否則返回 False
     """
@@ -298,7 +291,7 @@ def unregister_logger(name: str) -> bool:
 def list_loggers() -> List[str]:
     """
     列出所有已註冊的 logger 名稱
-    
+
     Returns:
         List[str]: 註冊的 logger 名稱列表
     """
@@ -308,19 +301,19 @@ def list_loggers() -> List[str]:
 def default_logger() -> EnhancedLogger:
     """
     獲取默認的 logger 實例（延遲初始化）
-    
+
     只有在首次呼叫這個函數時，才會創建默認的 logger 實例，
     避免在導入模組時就立即創建日誌文件。
-    
+
     Returns:
         EnhancedLogger: 默認的 logger 實例
     """
     global _default_logger_instance
     if _default_logger_instance is None:
         _default_logger_instance = create_logger(
-            name="default", 
+            name="default",
             service_tag="default_service",
-            start_cleaner=False, 
-            force_new_instance=False
+            start_cleaner=False,
+            force_new_instance=False,
         )
     return _default_logger_instance
