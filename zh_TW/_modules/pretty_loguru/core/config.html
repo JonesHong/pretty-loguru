@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pretty_loguru.core.config &mdash; Pretty Loguru 0.2.11 說明文件</title>
+  <title>pretty_loguru.core.config &mdash; Pretty Loguru 0.2.12 說明文件</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -17,7 +17,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=1154fd1f"></script>
+      <script src="../../../_static/documentation_options.js?v=261eb931"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -109,7 +109,7 @@
 
 <span class="c1"># 預定義的日誌檔案名格式</span>
 <span class="n">LOG_NAME_FORMATS</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="s2">&quot;[</span><span class="si">{component_name}</span><span class="s2">]</span><span class="si">{timestamp}</span><span class="s2">.log&quot;</span><span class="p">,</span>  <span class="c1"># 預設格式</span>
+    <span class="s2">&quot;detailed&quot;</span><span class="p">:</span> <span class="s2">&quot;[</span><span class="si">{component_name}</span><span class="s2">]</span><span class="si">{timestamp}</span><span class="s2">.log&quot;</span><span class="p">,</span>  <span class="c1"># 預設格式</span>
     <span class="s2">&quot;simple&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{component_name}</span><span class="s2">.log&quot;</span><span class="p">,</span>  <span class="c1"># 簡單格式，只包含進程 ID</span>
     <span class="s2">&quot;detailed&quot;</span><span class="p">:</span> <span class="s2">&quot;[</span><span class="si">{component_name}</span><span class="s2">]</span><span class="si">{date}</span><span class="s2">_</span><span class="si">{time}</span><span class="s2">.log&quot;</span><span class="p">,</span>  <span class="c1"># 詳細格式，包含日期和時間</span>
     <span class="s2">&quot;minute&quot;</span><span class="p">:</span> <span class="s2">&quot;[</span><span class="si">{component_name}</span><span class="s2">]</span><span class="si">{date}</span><span class="s2">_</span><span class="si">{hour}{minute}</span><span class="s2">.log&quot;</span><span class="p">,</span>  <span class="c1"># 每分鐘一檔</span>

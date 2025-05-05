@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pretty_loguru.core.presets &mdash; Pretty Loguru 0.2.11 documentation</title>
+  <title>pretty_loguru.core.presets &mdash; Pretty Loguru 0.2.12 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -17,7 +17,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=1154fd1f"></script>
+      <script src="../../../_static/documentation_options.js?v=261eb931"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -172,7 +172,37 @@
     
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">compression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">detailed_rename_log</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="n">directory</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">parent</span>
+            <span class="n">original_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 取得原始檔名（不含時間戳）</span>
+            
+            <span class="c1"># 產生新的時間戳</span>
+            <span class="n">new_timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">-%H%M%S&quot;</span><span class="p">)</span>
+            
+            <span class="c1"># 根據 LOG_NAME_FORMATS[&quot;detailed&quot;] = &quot;[{component_name}]{date}_{time}.log&quot;</span>
+            <span class="c1"># 提取 component_name 部分</span>
+            <span class="k">if</span> <span class="n">original_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;]&#39;</span> <span class="ow">in</span> <span class="n">original_name</span><span class="p">:</span>
+                <span class="n">component_name</span> <span class="o">=</span> <span class="n">original_name</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">original_name</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">)]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">component_name</span> <span class="o">=</span> <span class="n">original_name</span>
+            
+            <span class="c1"># 構建新的檔名，使用詳細格式</span>
+            <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">new_timestamp</span><span class="si">}</span><span class="s2">.log&quot;</span>
+            <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
+            
+            <span class="c1"># 如果新檔名已存在，在時間戳後加上數字</span>
+            <span class="n">counter</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="n">new_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">new_timestamp</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">counter</span><span class="si">}</span><span class="s2">.log&quot;</span>
+                <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
+                <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+            
+            <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">detailed_rename_log</span>
+    
     
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">name_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -190,9 +220,27 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">retention</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;30 days&quot;</span>
     
+     
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">compression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">simple_rename_log</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="n">directory</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">parent</span>
+            <span class="n">original_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 取得原始檔名（不含時間戳）</span>
+            
+            <span class="c1"># 找到下一個可用的數字後綴</span>
+            <span class="n">counter</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">original_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">counter</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">new_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                    <span class="k">break</span>
+                <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+            
+            <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">simple_rename_log</span>
     
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">name_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -209,18 +257,35 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">retention</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;1 year&quot;</span>
     
+    
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">compression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">monthly_rename_log</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
             <span class="n">directory</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">parent</span>
-            <span class="n">base_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span>
+            <span class="n">original_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 取得原始檔名（不含時間戳）</span>
             
+            <span class="c1"># 產生新的月份標記</span>
             <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
             <span class="n">month_str</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m&quot;</span><span class="p">)</span>
             
-            <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">month_str</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">.log&quot;</span>
+            <span class="c1"># 根據 LOG_NAME_FORMATS[&quot;monthly&quot;] = &quot;[{component_name}]{year}{month}.log&quot;</span>
+            <span class="c1"># 提取 component_name 部分</span>
+            <span class="k">if</span> <span class="n">original_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;]&#39;</span> <span class="ow">in</span> <span class="n">original_name</span><span class="p">:</span>
+                <span class="n">component_name</span> <span class="o">=</span> <span class="n">original_name</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">original_name</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">)]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">component_name</span> <span class="o">=</span> <span class="n">original_name</span>
+            
+            <span class="c1"># 構建新的檔名，使用月份格式</span>
+            <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">month_str</span><span class="si">}</span><span class="s2">.log&quot;</span>
             <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
+            
+            <span class="c1"># 如果新檔名已存在，在月份後加上數字</span>
+            <span class="n">counter</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="n">new_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">month_str</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">counter</span><span class="si">}</span><span class="s2">.log&quot;</span>
+                <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
+                <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
             
             <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
             <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
@@ -248,15 +313,31 @@
         <span class="k">def</span><span class="w"> </span><span class="nf">weekly_rename_log</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
             <span class="n">directory</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">parent</span>
-            <span class="n">base_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span>
+            <span class="n">original_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 取得原始檔名（不含時間戳）</span>
             
+            <span class="c1"># 產生新的週數標記</span>
             <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
             <span class="n">year</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">year</span>
             <span class="n">week_num</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">isocalendar</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">week_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2">W</span><span class="si">{</span><span class="n">week_num</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span>
             
-            <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">week_str</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">.log&quot;</span>
+            <span class="c1"># 根據 LOG_NAME_FORMATS[&quot;weekly&quot;] = &quot;[{component_name}]week{week}.log&quot;</span>
+            <span class="c1"># 提取 component_name 部分</span>
+            <span class="k">if</span> <span class="n">original_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;]&#39;</span> <span class="ow">in</span> <span class="n">original_name</span><span class="p">:</span>
+                <span class="n">component_name</span> <span class="o">=</span> <span class="n">original_name</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">original_name</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">)]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">component_name</span> <span class="o">=</span> <span class="n">original_name</span>
+            
+            <span class="c1"># 構建新的檔名，使用週數格式</span>
+            <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2">]week</span><span class="si">{</span><span class="n">week_str</span><span class="si">}</span><span class="s2">.log&quot;</span>
             <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
+            
+            <span class="c1"># 如果新檔名已存在，在週數後加上數字</span>
+            <span class="n">counter</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="n">new_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2">]week</span><span class="si">{</span><span class="n">week_str</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">counter</span><span class="si">}</span><span class="s2">.log&quot;</span>
+                <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
+                <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
             
             <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
             <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
@@ -278,34 +359,34 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">retention</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;30 days&quot;</span>
     
+    
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">compression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">daily_rename_log</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
             <span class="n">directory</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">parent</span>
-            <span class="n">base_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span>
+            <span class="n">original_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 取得原始檔名（不含時間戳）</span>
             
-            <span class="n">today</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-            <span class="n">date_str</span> <span class="o">=</span> <span class="n">today</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># 產生新的日期標記</span>
+            <span class="n">date_str</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
             
-            <span class="c1"># 智能處理檔名（如果已包含日期則保持原樣）</span>
-            <span class="n">has_date_pattern</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
-                <span class="n">part</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="o">==</span> <span class="mi">8</span> <span class="ow">and</span> <span class="n">part</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;20&#39;</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">base_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
-            <span class="p">)</span>
-            
-            <span class="k">if</span> <span class="n">has_date_pattern</span><span class="p">:</span>
-                <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">.log&quot;</span>
+            <span class="c1"># 根據 LOG_NAME_FORMATS[&quot;daily&quot;] = &quot;[{component_name}]{date}.log&quot;</span>
+            <span class="c1"># 提取 component_name 部分</span>
+            <span class="k">if</span> <span class="n">original_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;]&#39;</span> <span class="ow">in</span> <span class="n">original_name</span><span class="p">:</span>
+                <span class="n">component_name</span> <span class="o">=</span> <span class="n">original_name</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">original_name</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">)]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">date_str</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">.log&quot;</span>
+                <span class="n">component_name</span> <span class="o">=</span> <span class="n">original_name</span>
             
+            <span class="c1"># 構建新的檔名，使用日期格式</span>
+            <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">date_str</span><span class="si">}</span><span class="s2">.log&quot;</span>
             <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
             
-            <span class="c1"># 處理檔名衝突</span>
-            <span class="k">if</span> <span class="n">new_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                <span class="n">timestamp</span> <span class="o">=</span> <span class="n">today</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H%M%S&quot;</span><span class="p">)</span>
-                <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">date_str</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.log&quot;</span>
+            <span class="c1"># 如果新檔名已存在，在日期後加上數字</span>
+            <span class="n">counter</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="n">new_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">date_str</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">counter</span><span class="si">}</span><span class="s2">.log&quot;</span>
                 <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
+                <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
             
             <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
             <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
@@ -333,20 +414,29 @@
         <span class="k">def</span><span class="w"> </span><span class="nf">hourly_rename_log</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
             <span class="n">directory</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">parent</span>
-            <span class="n">base_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span>
+            <span class="n">original_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 取得原始檔名（不含時間戳）</span>
             
+            <span class="c1"># 產生新的日期和小時標記</span>
             <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-            <span class="n">datetime_str</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H00&quot;</span><span class="p">)</span>
+            <span class="n">datetime_str</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H&quot;</span><span class="p">)</span>
             
-            <span class="c1"># 構建新的檔名</span>
-            <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">datetime_str</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">.log&quot;</span>
+            <span class="c1"># 根據 LOG_NAME_FORMATS[&quot;hourly&quot;] = &quot;[{component_name}]{date}_{hour}.log&quot;</span>
+            <span class="c1"># 提取 component_name 部分</span>
+            <span class="k">if</span> <span class="n">original_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;]&#39;</span> <span class="ow">in</span> <span class="n">original_name</span><span class="p">:</span>
+                <span class="n">component_name</span> <span class="o">=</span> <span class="n">original_name</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">original_name</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">)]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">component_name</span> <span class="o">=</span> <span class="n">original_name</span>
+            
+            <span class="c1"># 構建新的檔名，使用小時格式</span>
+            <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">datetime_str</span><span class="si">}</span><span class="s2">.log&quot;</span>
             <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
             
-            <span class="c1"># 處理檔名衝突</span>
-            <span class="k">if</span> <span class="n">new_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-                <span class="n">minute_str</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%M&quot;</span><span class="p">)</span>
-                <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">datetime_str</span><span class="si">}{</span><span class="n">minute_str</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">.log&quot;</span>
+            <span class="c1"># 如果新檔名已存在，在時間後加上數字</span>
+            <span class="n">counter</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="n">new_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">datetime_str</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">counter</span><span class="si">}</span><span class="s2">.log&quot;</span>
                 <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
+                <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
             
             <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
             <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
@@ -374,13 +464,29 @@
         <span class="k">def</span><span class="w"> </span><span class="nf">minute_rename_log</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
             <span class="n">directory</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">parent</span>
-            <span class="n">base_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span>
+            <span class="n">original_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 取得原始檔名（不含時間戳）</span>
             
+            <span class="c1"># 產生新的日期、小時和分鐘標記</span>
             <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-            <span class="n">timestamp</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M&quot;</span><span class="p">)</span>
+            <span class="n">datetime_str</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M&quot;</span><span class="p">)</span>
             
-            <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">.log&quot;</span>
+            <span class="c1"># 根據 LOG_NAME_FORMATS[&quot;minute&quot;] = &quot;[{component_name}]{date}_{hour}{minute}.log&quot;</span>
+            <span class="c1"># 提取 component_name 部分</span>
+            <span class="k">if</span> <span class="n">original_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;]&#39;</span> <span class="ow">in</span> <span class="n">original_name</span><span class="p">:</span>
+                <span class="n">component_name</span> <span class="o">=</span> <span class="n">original_name</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">original_name</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">)]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">component_name</span> <span class="o">=</span> <span class="n">original_name</span>
+            
+            <span class="c1"># 構建新的檔名，使用分鐘格式</span>
+            <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">datetime_str</span><span class="si">}</span><span class="s2">.log&quot;</span>
             <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
+            
+            <span class="c1"># 如果新檔名已存在，在時間後加上數字</span>
+            <span class="n">counter</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">while</span> <span class="n">new_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">component_name</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">datetime_str</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">counter</span><span class="si">}</span><span class="s2">.log&quot;</span>
+                <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
+                <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
             
             <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
             <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
