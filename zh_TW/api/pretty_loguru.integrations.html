@@ -63,28 +63,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">貢獻指南</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">pretty_loguru</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="pretty_loguru.html">pretty_loguru package</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.PresetType"><code class="docutils literal notranslate"><span class="pre">PresetType</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.LogPreset"><code class="docutils literal notranslate"><span class="pre">LogPreset</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.PresetFactory"><code class="docutils literal notranslate"><span class="pre">PresetFactory</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.EnhancedLogger"><code class="docutils literal notranslate"><span class="pre">EnhancedLogger</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.LogLevelEnum"><code class="docutils literal notranslate"><span class="pre">LogLevelEnum</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.LoggerConfig"><code class="docutils literal notranslate"><span class="pre">LoggerConfig</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.configure_logger"><code class="docutils literal notranslate"><span class="pre">configure_logger()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.create_target_method"><code class="docutils literal notranslate"><span class="pre">create_target_method()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.add_target_methods"><code class="docutils literal notranslate"><span class="pre">add_target_methods()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.ensure_target_parameters"><code class="docutils literal notranslate"><span class="pre">ensure_target_parameters()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.create_logger"><code class="docutils literal notranslate"><span class="pre">create_logger()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.default_logger"><code class="docutils literal notranslate"><span class="pre">default_logger()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.get_logger"><code class="docutils literal notranslate"><span class="pre">get_logger()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.set_logger"><code class="docutils literal notranslate"><span class="pre">set_logger()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.unregister_logger"><code class="docutils literal notranslate"><span class="pre">unregister_logger()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.list_loggers"><code class="docutils literal notranslate"><span class="pre">list_loggers()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.print_block"><code class="docutils literal notranslate"><span class="pre">print_block()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.print_ascii_header"><code class="docutils literal notranslate"><span class="pre">print_ascii_header()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.print_ascii_block"><code class="docutils literal notranslate"><span class="pre">print_ascii_block()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.is_ascii_only"><code class="docutils literal notranslate"><span class="pre">is_ascii_only()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.configure_uvicorn"><code class="docutils literal notranslate"><span class="pre">configure_uvicorn()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pretty_loguru.html#pretty_loguru.InterceptHandler"><code class="docutils literal notranslate"><span class="pre">InterceptHandler</span></code></a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="pretty_loguru.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="pretty_loguru.core.html">pretty_loguru.core package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pretty_loguru.factory.html">pretty_loguru.factory package</a></li>
@@ -125,139 +103,16 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-pretty_loguru.integrations">
-<span id="pretty-loguru-integrations-package"></span><h1>pretty_loguru.integrations package<a class="headerlink" href="#module-pretty_loguru.integrations" title="連結到這個標頭"></a></h1>
-<p>整合模組入口</p>
-<p>此模組提供與第三方庫和框架的整合功能，使 Pretty Loguru 能夠
-與各種流行的 Python 工具和框架無縫協作。</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="pretty_loguru.integrations.configure_uvicorn">
-<span class="sig-prename descclassname"><span class="pre">pretty_loguru.integrations.</span></span><span class="sig-name descname"><span class="pre">configure_uvicorn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'INFO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/integrations/uvicorn.html#configure_uvicorn"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.integrations.configure_uvicorn" title="連結到這個定義"></a></dt>
-<dd><p>配置 Uvicorn 日誌以使用 Loguru 格式化輸出</p>
-<p>此函數用於將 Uvicorn 的日誌輸出格式改為 Loguru 的格式，
-適合需要統一日誌格式的應用場景。</p>
-<dl class="field-list simple">
-<dt class="field-odd">參數<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>logger_instance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) -- 要使用的 logger 實例，如果為 None 則使用默認 logger</p></li>
-<li><p><strong>level</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'TRACE'</span></code>, <code class="docutils literal notranslate"><span class="pre">'DEBUG'</span></code>, <code class="docutils literal notranslate"><span class="pre">'INFO'</span></code>, <code class="docutils literal notranslate"><span class="pre">'SUCCESS'</span></code>, <code class="docutils literal notranslate"><span class="pre">'WARNING'</span></code>, <code class="docutils literal notranslate"><span class="pre">'ERROR'</span></code>, <code class="docutils literal notranslate"><span class="pre">'CRITICAL'</span></code>]</span>) -- 日誌級別，預設為 &quot;INFO&quot;</p></li>
-<li><p><strong>logger_names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) -- 要配置的 logger 名稱列表，默認為 Uvicorn 相關的 logger</p></li>
-</ul>
-</dd>
-<dt class="field-even">引發<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ImportError</strong> -- 如果 uvicorn 未安裝</p>
-</dd>
-<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="pretty_loguru.integrations.InterceptHandler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pretty_loguru.integrations.</span></span><span class="sig-name descname"><span class="pre">InterceptHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/integrations/uvicorn.html#InterceptHandler"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.integrations.InterceptHandler" title="連結到這個定義"></a></dt>
-<dd><p>基礎類別：<code class="xref py py-class docutils literal notranslate"><span class="pre">Handler</span></code></p>
-<dl class="field-list simple">
-</dl>
-<p>參見 <a class="reference internal" href="#pretty_loguru.integrations.uvicorn.InterceptHandler" title="pretty_loguru.integrations.uvicorn.InterceptHandler"><code class="xref py py-class docutils literal notranslate"><span class="pre">pretty_loguru.integrations.uvicorn.InterceptHandler</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="pretty_loguru.integrations.InterceptHandler.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/integrations/uvicorn.html#InterceptHandler.__init__"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.integrations.InterceptHandler.__init__" title="連結到這個定義"></a></dt>
-<dd><p>初始化攔截處理器</p>
-<dl class="field-list simple">
-<dt class="field-odd">參數<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>logger_instance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) -- 要使用的 logger 實例，如果為 None 則使用默認 logger</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pretty_loguru.integrations.InterceptHandler.emit">
-<span class="sig-name descname"><span class="pre">emit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/integrations/uvicorn.html#InterceptHandler.emit"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.integrations.InterceptHandler.emit" title="連結到這個定義"></a></dt>
-<dd><p>處理日誌記錄，將其轉發給 Loguru。</p>
-<dl class="field-list simple">
-<dt class="field-odd">參數<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>record</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogRecord</span></code></span>) -- 標準日誌庫的日誌記錄物件。</p>
-</dd>
-<dt class="field-even">回傳型別<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+  <section id="pretty-loguru-integrations-package">
+<h1>pretty_loguru.integrations package<a class="headerlink" href="#pretty-loguru-integrations-package" title="連結到這個標頭"></a></h1>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="連結到這個標頭"></a></h2>
 </section>
-<section id="module-pretty_loguru.integrations.fastapi">
-<span id="pretty-loguru-integrations-fastapi-module"></span><h2>pretty_loguru.integrations.fastapi module<a class="headerlink" href="#module-pretty_loguru.integrations.fastapi" title="連結到這個標頭"></a></h2>
-<p>FastAPI 整合模組</p>
-<p>此模組提供與 FastAPI 框架的整合功能，包括請求日誌中間件、
-依賴注入和異常處理器，使 FastAPI 應用能夠充分利用 Pretty Loguru。</p>
+<section id="pretty-loguru-integrations-fastapi-module">
+<h2>pretty_loguru.integrations.fastapi module<a class="headerlink" href="#pretty-loguru-integrations-fastapi-module" title="連結到這個標頭"></a></h2>
 </section>
-<section id="module-pretty_loguru.integrations.uvicorn">
-<span id="pretty-loguru-integrations-uvicorn-module"></span><h2>pretty_loguru.integrations.uvicorn module<a class="headerlink" href="#module-pretty_loguru.integrations.uvicorn" title="連結到這個標頭"></a></h2>
-<p>Uvicorn 整合模組</p>
-<p>此模組提供與 Uvicorn ASGI 伺服器的整合功能，
-使 Uvicorn 的日誌能夠通過 Pretty Loguru 進行格式化和管理。</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="pretty_loguru.integrations.uvicorn.InterceptHandler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pretty_loguru.integrations.uvicorn.</span></span><span class="sig-name descname"><span class="pre">InterceptHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/integrations/uvicorn.html#InterceptHandler"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.integrations.uvicorn.InterceptHandler" title="連結到這個定義"></a></dt>
-<dd><p>基礎類別：<code class="xref py py-class docutils literal notranslate"><span class="pre">Handler</span></code></p>
-<dl class="field-list simple">
-</dl>
-<p>參見 <a class="reference internal" href="#pretty_loguru.integrations.uvicorn.InterceptHandler" title="pretty_loguru.integrations.uvicorn.InterceptHandler"><code class="xref py py-class docutils literal notranslate"><span class="pre">pretty_loguru.integrations.uvicorn.InterceptHandler</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="pretty_loguru.integrations.uvicorn.InterceptHandler.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/integrations/uvicorn.html#InterceptHandler.__init__"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.integrations.uvicorn.InterceptHandler.__init__" title="連結到這個定義"></a></dt>
-<dd><p>初始化攔截處理器</p>
-<dl class="field-list simple">
-<dt class="field-odd">參數<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>logger_instance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) -- 要使用的 logger 實例，如果為 None 則使用默認 logger</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pretty_loguru.integrations.uvicorn.InterceptHandler.emit">
-<span class="sig-name descname"><span class="pre">emit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/integrations/uvicorn.html#InterceptHandler.emit"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.integrations.uvicorn.InterceptHandler.emit" title="連結到這個定義"></a></dt>
-<dd><p>處理日誌記錄，將其轉發給 Loguru。</p>
-<dl class="field-list simple">
-<dt class="field-odd">參數<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>record</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogRecord</span></code></span>) -- 標準日誌庫的日誌記錄物件。</p>
-</dd>
-<dt class="field-even">回傳型別<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pretty_loguru.integrations.uvicorn.configure_uvicorn">
-<span class="sig-prename descclassname"><span class="pre">pretty_loguru.integrations.uvicorn.</span></span><span class="sig-name descname"><span class="pre">configure_uvicorn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logger_instance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'INFO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pretty_loguru/integrations/uvicorn.html#configure_uvicorn"><span class="viewcode-link"><span class="pre">[原始碼]</span></span></a><a class="headerlink" href="#pretty_loguru.integrations.uvicorn.configure_uvicorn" title="連結到這個定義"></a></dt>
-<dd><p>配置 Uvicorn 日誌以使用 Loguru 格式化輸出</p>
-<p>此函數用於將 Uvicorn 的日誌輸出格式改為 Loguru 的格式，
-適合需要統一日誌格式的應用場景。</p>
-<dl class="field-list simple">
-<dt class="field-odd">參數<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>logger_instance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) -- 要使用的 logger 實例，如果為 None 則使用默認 logger</p></li>
-<li><p><strong>level</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'TRACE'</span></code>, <code class="docutils literal notranslate"><span class="pre">'DEBUG'</span></code>, <code class="docutils literal notranslate"><span class="pre">'INFO'</span></code>, <code class="docutils literal notranslate"><span class="pre">'SUCCESS'</span></code>, <code class="docutils literal notranslate"><span class="pre">'WARNING'</span></code>, <code class="docutils literal notranslate"><span class="pre">'ERROR'</span></code>, <code class="docutils literal notranslate"><span class="pre">'CRITICAL'</span></code>]</span>) -- 日誌級別，預設為 &quot;INFO&quot;</p></li>
-<li><p><strong>logger_names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) -- 要配置的 logger 名稱列表，默認為 Uvicorn 相關的 logger</p></li>
-</ul>
-</dd>
-<dt class="field-even">引發<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ImportError</strong> -- 如果 uvicorn 未安裝</p>
-</dd>
-<dt class="field-odd">回傳型別<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
+<section id="pretty-loguru-integrations-uvicorn-module">
+<h2>pretty_loguru.integrations.uvicorn module<a class="headerlink" href="#pretty-loguru-integrations-uvicorn-module" title="連結到這個標頭"></a></h2>
 </section>
 </section>
 

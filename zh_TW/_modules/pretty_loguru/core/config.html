@@ -109,14 +109,21 @@
 
 <span class="c1"># 預定義的日誌檔案名格式</span>
 <span class="n">LOG_NAME_FORMATS</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># detailed/simple 是一次性或手動管理，啟動即寫入，暫不處理</span>
     <span class="s2">&quot;detailed&quot;</span><span class="p">:</span> <span class="s2">&quot;[</span><span class="si">{component_name}</span><span class="s2">]</span><span class="si">{timestamp}</span><span class="s2">.log&quot;</span><span class="p">,</span>  <span class="c1"># 預設格式</span>
-    <span class="s2">&quot;simple&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{component_name}</span><span class="s2">.log&quot;</span><span class="p">,</span>  <span class="c1"># 簡單格式，只包含進程 ID</span>
-    <span class="s2">&quot;detailed&quot;</span><span class="p">:</span> <span class="s2">&quot;[</span><span class="si">{component_name}</span><span class="s2">]</span><span class="si">{date}</span><span class="s2">_</span><span class="si">{time}</span><span class="s2">.log&quot;</span><span class="p">,</span>  <span class="c1"># 詳細格式，包含日期和時間</span>
-    <span class="s2">&quot;minute&quot;</span><span class="p">:</span> <span class="s2">&quot;[</span><span class="si">{component_name}</span><span class="s2">]</span><span class="si">{date}</span><span class="s2">_</span><span class="si">{hour}{minute}</span><span class="s2">.log&quot;</span><span class="p">,</span>  <span class="c1"># 每分鐘一檔</span>
-    <span class="s2">&quot;hourly&quot;</span><span class="p">:</span> <span class="s2">&quot;[</span><span class="si">{component_name}</span><span class="s2">]</span><span class="si">{date}</span><span class="s2">_</span><span class="si">{hour}</span><span class="s2">.log&quot;</span><span class="p">,</span>  <span class="c1"># 每小時一檔</span>
-    <span class="s2">&quot;daily&quot;</span><span class="p">:</span> <span class="s2">&quot;[</span><span class="si">{component_name}</span><span class="s2">]</span><span class="si">{date}</span><span class="s2">.log&quot;</span><span class="p">,</span>  <span class="c1"># 每日一檔</span>
-    <span class="s2">&quot;weekly&quot;</span><span class="p">:</span> <span class="s2">&quot;[</span><span class="si">{component_name}</span><span class="s2">]week</span><span class="si">{week}</span><span class="s2">.log&quot;</span><span class="p">,</span>  <span class="c1"># 每周一檔</span>
-    <span class="s2">&quot;monthly&quot;</span><span class="p">:</span> <span class="s2">&quot;[</span><span class="si">{component_name}</span><span class="s2">]</span><span class="si">{year}{month}</span><span class="s2">.log&quot;</span><span class="p">,</span>  <span class="c1"># 每月一檔</span>
+    <span class="s2">&quot;simple&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{component_name}</span><span class="s2">.log&quot;</span><span class="p">,</span>  <span class="c1"># 簡單格式，只包含元件名稱</span>
+    
+    <span class="c1"># 週期性日誌統一加上 _latest.temp.log 作為臨時標記，之後再用 compression 重新命名</span>
+    <span class="s2">&quot;minute&quot;</span><span class="p">:</span> <span class="s2">&quot;[</span><span class="si">{component_name}</span><span class="s2">]minute_latest.temp.log&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;hourly&quot;</span><span class="p">:</span> <span class="s2">&quot;[</span><span class="si">{component_name}</span><span class="s2">]hourly_latest.temp.log&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;daily&quot;</span><span class="p">:</span> <span class="s2">&quot;[</span><span class="si">{component_name}</span><span class="s2">]daily_latest.temp.log&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;weekly&quot;</span><span class="p">:</span> <span class="s2">&quot;[</span><span class="si">{component_name}</span><span class="s2">]weekly_latest.temp.log&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;monthly&quot;</span><span class="p">:</span> <span class="s2">&quot;[</span><span class="si">{component_name}</span><span class="s2">]monthly_latest.temp.log&quot;</span><span class="p">,</span>
+    <span class="c1"># &quot;minute&quot;: &quot;[{component_name}]{date}_{hour}{minute}.temp.log&quot;,  # 每分鐘一檔</span>
+    <span class="c1"># &quot;hourly&quot;: &quot;[{component_name}]{date}_{hour}.temp.log&quot;,  # 每小時一檔</span>
+    <span class="c1"># &quot;daily&quot;: &quot;[{component_name}]{date}.temp.log&quot;,  # 每日一檔</span>
+    <span class="c1"># &quot;weekly&quot;: &quot;[{component_name}]week{week}.temp.log&quot;,  # 每周一檔</span>
+    <span class="c1"># &quot;monthly&quot;: &quot;[{component_name}]{year}{month}.temp.log&quot;,  # 每月一檔</span>
 <span class="p">}</span>
 
 <span class="c1"># 輸出目標類型</span>
@@ -127,7 +134,7 @@
 
 
 <div class="viewcode-block" id="LogLevelEnum">
-<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.LogLevelEnum">[文件]</a>
+<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.core.LogLevelEnum">[文件]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LogLevelEnum</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;日誌級別枚舉類別</span>
 
@@ -153,7 +160,7 @@
 
 
 <div class="viewcode-block" id="LoggerConfig">
-<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.LoggerConfig">[文件]</a>
+<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.core.LoggerConfig">[文件]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LoggerConfig</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;日誌配置類</span>
 <span class="sd">    </span>
@@ -161,7 +168,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     
 <div class="viewcode-block" id="LoggerConfig.__init__">
-<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.LoggerConfig.__init__">[文件]</a>
+<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.core.LoggerConfig.__init__">[文件]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">level</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LogLevelType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -207,7 +214,7 @@
 
     
 <div class="viewcode-block" id="LoggerConfig.from_dict">
-<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.LoggerConfig.from_dict">[文件]</a>
+<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.core.LoggerConfig.from_dict">[文件]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">&#39;LoggerConfig&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;從字典創建配置實例</span>
@@ -228,7 +235,7 @@
 
     
 <div class="viewcode-block" id="LoggerConfig.from_file">
-<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.LoggerConfig.from_file">[文件]</a>
+<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.core.LoggerConfig.from_file">[文件]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="nb">format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="s2">&quot;yaml&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;LoggerConfig&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;從文件載入配置</span>
@@ -269,7 +276,7 @@
 
     
 <div class="viewcode-block" id="LoggerConfig.to_dict">
-<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.LoggerConfig.to_dict">[文件]</a>
+<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.core.LoggerConfig.to_dict">[文件]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;轉換為字典</span>
 <span class="sd">        </span>
@@ -285,7 +292,7 @@
 
     
 <div class="viewcode-block" id="LoggerConfig.save_to_file">
-<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.LoggerConfig.save_to_file">[文件]</a>
+<a class="viewcode-back" href="../../../api/pretty_loguru.core.html#pretty_loguru.core.LoggerConfig.save_to_file">[文件]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">save_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="nb">format</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="s2">&quot;yaml&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;將配置保存到文件</span>
 <span class="sd">        </span>
