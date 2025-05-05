@@ -21,14 +21,21 @@ LOG_PATH: Path = Path.cwd() / "logs"  # 預設日誌儲存路徑
 
 # 預定義的日誌檔案名格式
 LOG_NAME_FORMATS: Dict[str, str] = {
-    "default": "[{component_name}]{timestamp}.log",  # 預設格式
-    "simple": "{component_name}.log",  # 簡單格式，只包含進程 ID
-    "detailed": "[{component_name}]{date}_{time}.log",  # 詳細格式，包含日期和時間
-    "minute": "[{component_name}]{date}_{hour}{minute}.log",  # 每分鐘一檔
-    "hourly": "[{component_name}]{date}_{hour}.log",  # 每小時一檔
-    "daily": "[{component_name}]{date}.log",  # 每日一檔
-    "weekly": "[{component_name}]week{week}.log",  # 每周一檔
-    "monthly": "[{component_name}]{year}{month}.log",  # 每月一檔
+    # detailed/simple 是一次性或手動管理，啟動即寫入，暫不處理
+    "detailed": "[{component_name}]{timestamp}.log",  # 預設格式
+    "simple": "{component_name}.log",  # 簡單格式，只包含元件名稱
+    
+    # 週期性日誌統一加上 _latest.temp.log 作為臨時標記，之後再用 compression 重新命名
+    "minute": "[{component_name}]minute_latest.temp.log",
+    "hourly": "[{component_name}]hourly_latest.temp.log",
+    "daily": "[{component_name}]daily_latest.temp.log",
+    "weekly": "[{component_name}]weekly_latest.temp.log",
+    "monthly": "[{component_name}]monthly_latest.temp.log",
+    # "minute": "[{component_name}]{date}_{hour}{minute}.temp.log",  # 每分鐘一檔
+    # "hourly": "[{component_name}]{date}_{hour}.temp.log",  # 每小時一檔
+    # "daily": "[{component_name}]{date}.temp.log",  # 每日一檔
+    # "weekly": "[{component_name}]week{week}.temp.log",  # 每周一檔
+    # "monthly": "[{component_name}]{year}{month}.temp.log",  # 每月一檔
 }
 
 # 輸出目標類型
