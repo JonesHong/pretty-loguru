@@ -64,15 +64,13 @@
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">pretty_loguru</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">pretty_loguru package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#pretty_loguru.PresetType"><code class="docutils literal notranslate"><span class="pre">PresetType</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.DEFAULT"><code class="docutils literal notranslate"><span class="pre">PresetType.DEFAULT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.DETAILED"><code class="docutils literal notranslate"><span class="pre">PresetType.DETAILED</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.SIMPLE"><code class="docutils literal notranslate"><span class="pre">PresetType.SIMPLE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.MONTHLY"><code class="docutils literal notranslate"><span class="pre">PresetType.MONTHLY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.WEEKLY"><code class="docutils literal notranslate"><span class="pre">PresetType.WEEKLY</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.DAILY"><code class="docutils literal notranslate"><span class="pre">PresetType.DAILY</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.HOURLY"><code class="docutils literal notranslate"><span class="pre">PresetType.HOURLY</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.MINUTE"><code class="docutils literal notranslate"><span class="pre">PresetType.MINUTE</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.SIMPLE"><code class="docutils literal notranslate"><span class="pre">PresetType.SIMPLE</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.DETAILED"><code class="docutils literal notranslate"><span class="pre">PresetType.DETAILED</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.SIZE_BASED"><code class="docutils literal notranslate"><span class="pre">PresetType.SIZE_BASED</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.WEEKLY"><code class="docutils literal notranslate"><span class="pre">PresetType.WEEKLY</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#pretty_loguru.PresetType.MONTHLY"><code class="docutils literal notranslate"><span class="pre">PresetType.MONTHLY</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#pretty_loguru.LogPreset"><code class="docutils literal notranslate"><span class="pre">LogPreset</span></code></a><ul>
@@ -177,48 +175,38 @@
 <dd><p>基礎類別：<code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
 <p>日誌預設類型枚舉</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="pretty_loguru.PresetType.DEFAULT">
-<span class="sig-name descname"><span class="pre">DEFAULT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#pretty_loguru.PresetType.DEFAULT" title="連結到這個定義"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pretty_loguru.PresetType.DAILY">
-<span class="sig-name descname"><span class="pre">DAILY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#pretty_loguru.PresetType.DAILY" title="連結到這個定義"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pretty_loguru.PresetType.HOURLY">
-<span class="sig-name descname"><span class="pre">HOURLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#pretty_loguru.PresetType.HOURLY" title="連結到這個定義"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pretty_loguru.PresetType.MINUTE">
-<span class="sig-name descname"><span class="pre">MINUTE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#pretty_loguru.PresetType.MINUTE" title="連結到這個定義"></a></dt>
+<dt class="sig sig-object py" id="pretty_loguru.PresetType.DETAILED">
+<span class="sig-name descname"><span class="pre">DETAILED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#pretty_loguru.PresetType.DETAILED" title="連結到這個定義"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pretty_loguru.PresetType.SIMPLE">
-<span class="sig-name descname"><span class="pre">SIMPLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#pretty_loguru.PresetType.SIMPLE" title="連結到這個定義"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pretty_loguru.PresetType.DETAILED">
-<span class="sig-name descname"><span class="pre">DETAILED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#pretty_loguru.PresetType.DETAILED" title="連結到這個定義"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pretty_loguru.PresetType.SIZE_BASED">
-<span class="sig-name descname"><span class="pre">SIZE_BASED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#pretty_loguru.PresetType.SIZE_BASED" title="連結到這個定義"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="pretty_loguru.PresetType.WEEKLY">
-<span class="sig-name descname"><span class="pre">WEEKLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#pretty_loguru.PresetType.WEEKLY" title="連結到這個定義"></a></dt>
+<span class="sig-name descname"><span class="pre">SIMPLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#pretty_loguru.PresetType.SIMPLE" title="連結到這個定義"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pretty_loguru.PresetType.MONTHLY">
-<span class="sig-name descname"><span class="pre">MONTHLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9</span></em><a class="headerlink" href="#pretty_loguru.PresetType.MONTHLY" title="連結到這個定義"></a></dt>
+<span class="sig-name descname"><span class="pre">MONTHLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#pretty_loguru.PresetType.MONTHLY" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.PresetType.WEEKLY">
+<span class="sig-name descname"><span class="pre">WEEKLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#pretty_loguru.PresetType.WEEKLY" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.PresetType.DAILY">
+<span class="sig-name descname"><span class="pre">DAILY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#pretty_loguru.PresetType.DAILY" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.PresetType.HOURLY">
+<span class="sig-name descname"><span class="pre">HOURLY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#pretty_loguru.PresetType.HOURLY" title="連結到這個定義"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pretty_loguru.PresetType.MINUTE">
+<span class="sig-name descname"><span class="pre">MINUTE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#pretty_loguru.PresetType.MINUTE" title="連結到這個定義"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -537,7 +525,7 @@ add_target_methods(logger_instance, 'block', logger_instance.block)</p>
 <li><p><strong>service_tag</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 服務或模組名稱，用於標識日誌來源</p></li>
 <li><p><strong>subdirectory</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 日誌子目錄，用於分類不同模組或功能的日誌</p></li>
 <li><p><strong>log_name_format</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 日誌檔案名稱格式，可包含變數如 {component_name}, {timestamp}, {date}, {time} 等</p></li>
-<li><p><strong>log_name_preset</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'default'</span></code>, <code class="docutils literal notranslate"><span class="pre">'daily'</span></code>, <code class="docutils literal notranslate"><span class="pre">'hourly'</span></code>, <code class="docutils literal notranslate"><span class="pre">'minute'</span></code>, <code class="docutils literal notranslate"><span class="pre">'simple'</span></code>, <code class="docutils literal notranslate"><span class="pre">'detailed'</span></code>]]</span>) -- 預設的日誌檔案名格式，可選值為 &quot;default&quot;, &quot;daily&quot;, &quot;hourly&quot; 等</p></li>
+<li><p><strong>log_name_preset</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'detailed'</span></code>, <code class="docutils literal notranslate"><span class="pre">'simple'</span></code>, <code class="docutils literal notranslate"><span class="pre">'monthly'</span></code>, <code class="docutils literal notranslate"><span class="pre">'weekly'</span></code>, <code class="docutils literal notranslate"><span class="pre">'daily'</span></code>, <code class="docutils literal notranslate"><span class="pre">'hourly'</span></code>, <code class="docutils literal notranslate"><span class="pre">'minute'</span></code>], <a class="reference internal" href="#pretty_loguru.PresetType" title="pretty_loguru.core.presets.PresetType"><code class="xref py py-class docutils literal notranslate"><span class="pre">PresetType</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>) -- 預設的日誌檔案名格式，可選值為 &quot;detailed&quot;, &quot;daily&quot;, &quot;hourly&quot; 等</p></li>
 <li><p><strong>timestamp_format</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) -- 時間戳格式，用於自定義時間顯示方式</p></li>
 <li><p><strong>log_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>) -- 日誌基礎路徑，覆蓋預設的 log_path</p></li>
 <li><p><strong>log_file_settings</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>) -- 日誌檔案的其他設定，如壓縮、保留時間等</p></li>

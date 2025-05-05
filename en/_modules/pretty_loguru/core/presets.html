@@ -106,15 +106,13 @@
 <a class="viewcode-back" href="../../../api/pretty_loguru.html#pretty_loguru.PresetType">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PresetType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;日誌預設類型枚舉&quot;&quot;&quot;</span>
-    <span class="n">DEFAULT</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">DETAILED</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>  <span class="c1"># 預設類型</span>
+    <span class="n">SIMPLE</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">MONTHLY</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
+    <span class="n">WEEKLY</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">DAILY</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">HOURLY</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
-    <span class="n">MINUTE</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
-    <span class="n">SIMPLE</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
-    <span class="n">DETAILED</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
-    <span class="n">SIZE_BASED</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
-    <span class="n">WEEKLY</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
-    <span class="n">MONTHLY</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
+    <span class="n">MINUTE</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
 
 
 
@@ -161,8 +159,8 @@
 
 
 
-<span class="k">class</span><span class="w"> </span><span class="nc">DefaultPreset</span><span class="p">(</span><span class="n">LogPreset</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;預設日誌模式&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DetailedPreset</span><span class="p">(</span><span class="n">LogPreset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;詳細模式&quot;&quot;&quot;</span>
     
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -178,8 +176,96 @@
     
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">name_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">LOG_NAME_FORMATS</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">LOG_NAME_FORMATS</span><span class="p">[</span><span class="s2">&quot;detailed&quot;</span><span class="p">]</span>
 
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SimplePreset</span><span class="p">(</span><span class="n">LogPreset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;簡單模式&quot;&quot;&quot;</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;20 MB&quot;</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">retention</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;30 days&quot;</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">LOG_NAME_FORMATS</span><span class="p">[</span><span class="s2">&quot;simple&quot;</span><span class="p">]</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MonthlyPreset</span><span class="p">(</span><span class="n">LogPreset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;每月日誌模式&quot;&quot;&quot;</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;1 month&quot;</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">retention</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;1 year&quot;</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">monthly_rename_log</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="n">directory</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">parent</span>
+            <span class="n">base_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span>
+            
+            <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="n">month_str</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m&quot;</span><span class="p">)</span>
+            
+            <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">month_str</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">.log&quot;</span>
+            <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
+            
+            <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">monthly_rename_log</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">LOG_NAME_FORMATS</span><span class="p">[</span><span class="s2">&quot;monthly&quot;</span><span class="p">]</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">WeeklyPreset</span><span class="p">(</span><span class="n">LogPreset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;每週日誌模式&quot;&quot;&quot;</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;monday&quot;</span>  <span class="c1"># 每週一輪換</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">retention</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;12 weeks&quot;</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">weekly_rename_log</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="n">directory</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">parent</span>
+            <span class="n">base_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span>
+            
+            <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="n">year</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">year</span>
+            <span class="n">week_num</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">isocalendar</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">week_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2">W</span><span class="si">{</span><span class="n">week_num</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span>
+            
+            <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">week_str</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">.log&quot;</span>
+            <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
+            
+            <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">weekly_rename_log</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">LOG_NAME_FORMATS</span><span class="p">[</span><span class="s2">&quot;weekly&quot;</span><span class="p">]</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">DailyPreset</span><span class="p">(</span><span class="n">LogPreset</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;每日日誌模式&quot;&quot;&quot;</span>
@@ -306,138 +392,6 @@
         <span class="k">return</span> <span class="n">LOG_NAME_FORMATS</span><span class="p">[</span><span class="s2">&quot;minute&quot;</span><span class="p">]</span>
 
 
-<span class="k">class</span><span class="w"> </span><span class="nc">SimplePreset</span><span class="p">(</span><span class="n">LogPreset</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;簡單模式&quot;&quot;&quot;</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;20 MB&quot;</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">retention</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;30 days&quot;</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">compression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">name_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">LOG_NAME_FORMATS</span><span class="p">[</span><span class="s2">&quot;simple&quot;</span><span class="p">]</span>
-
-
-<span class="k">class</span><span class="w"> </span><span class="nc">DetailedPreset</span><span class="p">(</span><span class="n">LogPreset</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;詳細模式&quot;&quot;&quot;</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;20 MB&quot;</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">retention</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;30 days&quot;</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">compression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">name_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">LOG_NAME_FORMATS</span><span class="p">[</span><span class="s2">&quot;detailed&quot;</span><span class="p">]</span>
-
-
-<span class="k">class</span><span class="w"> </span><span class="nc">WeeklyPreset</span><span class="p">(</span><span class="n">LogPreset</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;每週日誌模式&quot;&quot;&quot;</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;monday&quot;</span>  <span class="c1"># 每週一輪換</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">retention</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;12 weeks&quot;</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">compression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
-        <span class="k">def</span><span class="w"> </span><span class="nf">weekly_rename_log</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
-            <span class="n">directory</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">parent</span>
-            <span class="n">base_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span>
-            
-            <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-            <span class="n">year</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">year</span>
-            <span class="n">week_num</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">isocalendar</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">week_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s2">W</span><span class="si">{</span><span class="n">week_num</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span>
-            
-            <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">week_str</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">.log&quot;</span>
-            <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
-            
-            <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
-            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
-        
-        <span class="k">return</span> <span class="n">weekly_rename_log</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">name_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">LOG_NAME_FORMATS</span><span class="p">[</span><span class="s2">&quot;weekly&quot;</span><span class="p">]</span>
-
-
-<span class="k">class</span><span class="w"> </span><span class="nc">MonthlyPreset</span><span class="p">(</span><span class="n">LogPreset</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;每月日誌模式&quot;&quot;&quot;</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;1 month&quot;</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">retention</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;1 year&quot;</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">compression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
-        <span class="k">def</span><span class="w"> </span><span class="nf">monthly_rename_log</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-            <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
-            <span class="n">directory</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">parent</span>
-            <span class="n">base_name</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">stem</span>
-            
-            <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-            <span class="n">month_str</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m&quot;</span><span class="p">)</span>
-            
-            <span class="n">new_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">month_str</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">.log&quot;</span>
-            <span class="n">new_path</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="n">new_name</span>
-            
-            <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">new_path</span><span class="p">)</span>
-            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
-        
-        <span class="k">return</span> <span class="n">monthly_rename_log</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">name_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">LOG_NAME_FORMATS</span><span class="p">[</span><span class="s2">&quot;monthly&quot;</span><span class="p">]</span>
-
-
-<span class="k">class</span><span class="w"> </span><span class="nc">SizeBasedPreset</span><span class="p">(</span><span class="n">LogPreset</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;基於檔案大小的日誌模式&quot;&quot;&quot;</span>
-    
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;10 MB&quot;</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">retention</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;30 days&quot;</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">compression</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">name_format</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="c1"># 使用預設格式，但加上時間戳確保檔名唯一</span>
-        <span class="k">return</span> <span class="n">LOG_NAME_FORMATS</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="PresetFactory">
@@ -446,14 +400,13 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;預設配置工廠&quot;&quot;&quot;</span>
     
     <span class="n">_presets</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">PresetType</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">:</span> <span class="n">DefaultPreset</span><span class="p">,</span>
+        <span class="n">PresetType</span><span class="o">.</span><span class="n">DETAILED</span><span class="p">:</span> <span class="n">DetailedPreset</span><span class="p">,</span>
+        <span class="n">PresetType</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">:</span> <span class="n">SimplePreset</span><span class="p">,</span>
+        <span class="n">PresetType</span><span class="o">.</span><span class="n">MONTHLY</span><span class="p">:</span> <span class="n">MonthlyPreset</span><span class="p">,</span>
+        <span class="n">PresetType</span><span class="o">.</span><span class="n">WEEKLY</span><span class="p">:</span> <span class="n">WeeklyPreset</span><span class="p">,</span>
         <span class="n">PresetType</span><span class="o">.</span><span class="n">DAILY</span><span class="p">:</span> <span class="n">DailyPreset</span><span class="p">,</span>
         <span class="n">PresetType</span><span class="o">.</span><span class="n">HOURLY</span><span class="p">:</span> <span class="n">HourlyPreset</span><span class="p">,</span>
         <span class="n">PresetType</span><span class="o">.</span><span class="n">MINUTE</span><span class="p">:</span> <span class="n">MinutePreset</span><span class="p">,</span>
-        <span class="n">PresetType</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">:</span> <span class="n">SimplePreset</span><span class="p">,</span>
-        <span class="n">PresetType</span><span class="o">.</span><span class="n">DETAILED</span><span class="p">:</span> <span class="n">DetailedPreset</span><span class="p">,</span>
-        <span class="n">PresetType</span><span class="o">.</span><span class="n">WEEKLY</span><span class="p">:</span> <span class="n">WeeklyPreset</span><span class="p">,</span>
-        <span class="n">PresetType</span><span class="o">.</span><span class="n">MONTHLY</span><span class="p">:</span> <span class="n">MonthlyPreset</span><span class="p">,</span>
     <span class="p">}</span>
     
 <div class="viewcode-block" id="PresetFactory.get_preset">
@@ -461,14 +414,11 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_preset</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">preset_type</span><span class="p">:</span> <span class="n">PresetType</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LogPreset</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;取得指定類型的預設配置&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">preset_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_presets</span> <span class="ow">and</span> <span class="n">preset_type</span> <span class="o">!=</span> <span class="n">PresetType</span><span class="o">.</span><span class="n">SIZE_BASED</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">preset_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_presets</span> <span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown preset type: </span><span class="si">{</span><span class="n">preset_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         
-        <span class="k">if</span> <span class="n">preset_type</span> <span class="o">==</span> <span class="n">PresetType</span><span class="o">.</span><span class="n">SIZE_BASED</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">SizeBasedPreset</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">preset_class</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_presets</span><span class="p">[</span><span class="n">preset_type</span><span class="p">]</span>
-            <span class="k">return</span> <span class="n">preset_class</span><span class="p">()</span></div>
+        <span class="n">preset_class</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_presets</span><span class="p">[</span><span class="n">preset_type</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">preset_class</span><span class="p">()</span></div>
 
     
 <div class="viewcode-block" id="PresetFactory.register_preset">

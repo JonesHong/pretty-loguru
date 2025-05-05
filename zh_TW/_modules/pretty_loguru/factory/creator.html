@@ -105,11 +105,15 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">loguru._logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span> <span class="k">as</span> <span class="n">_Logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">rich.console</span><span class="w"> </span><span class="kn">import</span> <span class="n">Console</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru.core.presets</span><span class="w"> </span><span class="kn">import</span> <span class="n">PresetFactory</span><span class="p">,</span> <span class="n">PresetType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pretty_loguru.core.presets</span><span class="w"> </span><span class="kn">import</span> <span class="n">LogPreset</span><span class="p">,</span> <span class="n">PresetFactory</span><span class="p">,</span> <span class="n">PresetType</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..types</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">EnhancedLogger</span><span class="p">,</span> <span class="n">LogLevelType</span><span class="p">,</span> <span class="n">LogPathType</span><span class="p">,</span> <span class="n">LogNameFormatType</span><span class="p">,</span> 
-    <span class="n">LogRotationType</span><span class="p">,</span> <span class="n">LogConfigType</span>
+    <span class="n">EnhancedLogger</span><span class="p">,</span>
+    <span class="n">LogLevelType</span><span class="p">,</span>
+    <span class="n">LogPathType</span><span class="p">,</span>
+    <span class="n">LogNameFormatType</span><span class="p">,</span>
+    <span class="n">LogRotationType</span><span class="p">,</span>
+    <span class="n">LogConfigType</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..core.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">LOG_NAME_FORMATS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">configure_logger</span><span class="p">,</span> <span class="n">get_console</span>
@@ -138,9 +142,12 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">create_logger</span><span class="p">(</span>
     <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">service_tag</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">subdirectory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+    <span class="n">subdirectory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">log_name_format</span><span class="p">:</span> <span class="n">LogNameFormatType</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">log_name_preset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;daily&quot;</span><span class="p">,</span> <span class="s2">&quot;hourly&quot;</span><span class="p">,</span> <span class="s2">&quot;minute&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">,</span> <span class="s2">&quot;detailed&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">log_name_preset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+        <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;detailed&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">,</span> <span class="s2">&quot;monthly&quot;</span><span class="p">,</span> <span class="s2">&quot;weekly&quot;</span><span class="p">,</span> <span class="s2">&quot;daily&quot;</span><span class="p">,</span> <span class="s2">&quot;hourly&quot;</span><span class="p">,</span> <span class="s2">&quot;minute&quot;</span><span class="p">]</span>
+        <span class="o">|</span> <span class="n">PresetType</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">timestamp_format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">log_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LogPathType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">log_file_settings</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LogConfigType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -154,13 +161,13 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnhancedLogger</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    創建有效隔離的 logger 實例</span>
-<span class="sd">    </span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        name: logger 實例的名稱，如果不提供則自動生成</span>
 <span class="sd">        service_tag: 服務或模組名稱，用於標識日誌來源</span>
 <span class="sd">        subdirectory: 日誌子目錄，用於分類不同模組或功能的日誌</span>
 <span class="sd">        log_name_format: 日誌檔案名稱格式，可包含變數如 {component_name}, {timestamp}, {date}, {time} 等</span>
-<span class="sd">        log_name_preset: 預設的日誌檔案名格式，可選值為 &quot;default&quot;, &quot;daily&quot;, &quot;hourly&quot; 等</span>
+<span class="sd">        log_name_preset: 預設的日誌檔案名格式，可選值為 &quot;detailed&quot;, &quot;daily&quot;, &quot;hourly&quot; 等</span>
 <span class="sd">        timestamp_format: 時間戳格式，用於自定義時間顯示方式</span>
 <span class="sd">        log_path: 日誌基礎路徑，覆蓋預設的 log_path</span>
 <span class="sd">        log_file_settings: 日誌檔案的其他設定，如壓縮、保留時間等</span>
@@ -174,30 +181,30 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        EnhancedLogger: 已配置的日誌實例</span>
-<span class="sd">        </span>
+
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; # 創建基本 logger</span>
 <span class="sd">        &gt;&gt;&gt; logger = create_logger(&quot;my_app&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; # 創建帶有子目錄的 logger</span>
 <span class="sd">        &gt;&gt;&gt; logger = create_logger(&quot;api&quot;, subdirectory=&quot;api_logs&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; # 使用預設文件名格式</span>
 <span class="sd">        &gt;&gt;&gt; logger = create_logger(&quot;db&quot;, log_name_preset=&quot;daily&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; # 自定義日誌文件配置</span>
 <span class="sd">        &gt;&gt;&gt; logger = create_logger(</span>
-<span class="sd">        ...     &quot;worker&quot;, </span>
+<span class="sd">        ...     &quot;worker&quot;,</span>
 <span class="sd">        ...     service_tag=&quot;background_tasks&quot;,</span>
 <span class="sd">        ...     log_file_settings={&quot;compression&quot;: &quot;zip&quot;, &quot;retention&quot;: &quot;1 week&quot;}</span>
 <span class="sd">        ... )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">_cleaner_started</span>
-    
+
     <span class="c1"># 取得調用者資訊，用於自動生成名稱</span>
     <span class="n">caller_frame</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_back</span>
     <span class="n">caller_file</span> <span class="o">=</span> <span class="n">caller_frame</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_filename</span> <span class="k">if</span> <span class="n">caller_frame</span> <span class="k">else</span> <span class="s2">&quot;unknown&quot;</span>
-    
+
     <span class="c1"># 確定 component_name 的值 (用於日誌文件名)</span>
     <span class="k">if</span> <span class="n">service_tag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">component_name</span> <span class="o">=</span> <span class="n">service_tag</span>
@@ -208,72 +215,35 @@
     <span class="c1"># 若未提供 name 參數，使用 component_name 作為 name</span>
     <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">component_name</span>
-    
+
     <span class="c1"># 創建唯一的 logger 標識</span>
     <span class="n">logger_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">service_tag</span><span class="si">}</span><span class="s2">&quot;</span>
-    
+
     <span class="c1"># 如果想重用實例且不是強制創建新的</span>
     <span class="k">if</span> <span class="n">reuse_existing</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force_new_instance</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_logger_registry</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_logger_registry</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-        
+
         <span class="c1"># 查找已存在的實例 (基於名稱和服務名稱但不包括唯一ID部分)</span>
         <span class="n">base_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">service_tag</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">for</span> <span class="n">existing_id</span><span class="p">,</span> <span class="n">logger_instance</span> <span class="ow">in</span> <span class="n">_logger_registry</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">existing_id</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">base_id</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">logger_instance</span>
-    
+
     <span class="c1"># 處理預設配置 - 簡化邏輯，始終使用預設系統</span>
-    <span class="n">preset_type</span> <span class="o">=</span> <span class="kc">None</span>
-    
-    <span class="k">if</span> <span class="n">log_name_preset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># 如果未指定預設，使用 DEFAULT</span>
-        <span class="n">preset_type</span> <span class="o">=</span> <span class="n">PresetType</span><span class="o">.</span><span class="n">DEFAULT</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log_name_preset</span><span class="p">,</span> <span class="n">PresetType</span><span class="p">):</span>
-        <span class="c1"># 直接是 PresetType</span>
-        <span class="n">preset_type</span> <span class="o">=</span> <span class="n">log_name_preset</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log_name_preset</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="c1"># 嘗試轉換字串為 PresetType</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">preset_type</span> <span class="o">=</span> <span class="n">PresetType</span><span class="p">[</span><span class="n">log_name_preset</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="c1"># 無法轉換，使用 DEFAULT 並發出警告</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unknown log_name_preset &#39;</span><span class="si">{</span><span class="n">log_name_preset</span><span class="si">}</span><span class="s2">&#39;. Using &#39;default&#39; instead.&quot;</span><span class="p">,</span>
-                <span class="ne">UserWarning</span><span class="p">,</span>
-                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span>
-            <span class="p">)</span>
-            <span class="n">preset_type</span> <span class="o">=</span> <span class="n">PresetType</span><span class="o">.</span><span class="n">DEFAULT</span>
-    
-    <span class="c1"># 獲取預設配置</span>
-    <span class="k">if</span> <span class="n">preset_type</span> <span class="o">==</span> <span class="n">PresetType</span><span class="o">.</span><span class="n">SIZE_BASED</span><span class="p">:</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="n">custom_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="s2">&quot;10 MB&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">custom_config</span> <span class="k">else</span> <span class="s2">&quot;10 MB&quot;</span>
-        <span class="n">preset</span> <span class="o">=</span> <span class="n">PresetFactory</span><span class="o">.</span><span class="n">get_preset</span><span class="p">(</span><span class="n">preset_type</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">preset</span> <span class="o">=</span> <span class="n">PresetFactory</span><span class="o">.</span><span class="n">get_preset</span><span class="p">(</span><span class="n">preset_type</span><span class="p">)</span>
-    
+    <span class="n">preset</span> <span class="o">=</span> <span class="n">_get_preset</span><span class="p">(</span><span class="n">log_name_preset</span><span class="p">)</span>
     <span class="n">preset_settings</span> <span class="o">=</span> <span class="n">preset</span><span class="o">.</span><span class="n">get_settings</span><span class="p">()</span>
-    
-    <span class="c1"># 應用預設配置</span>
-    <span class="c1"># 設定日誌檔名格式（只在未指定時才使用預設）</span>
-    <span class="k">if</span> <span class="n">log_name_format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">log_name_format</span> <span class="o">=</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;name_format&quot;</span><span class="p">]</span>
-    
-    <span class="c1"># 自動配置 log_file_settings</span>
-    <span class="k">if</span> <span class="n">log_file_settings</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">log_file_settings</span> <span class="o">=</span> <span class="p">{}</span>
-    
-    <span class="c1"># 合併預設設定（只在未指定時才使用預設）</span>
-    <span class="k">if</span> <span class="s2">&quot;rotation&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">log_file_settings</span> <span class="ow">and</span> <span class="n">rotation</span> <span class="o">==</span> <span class="s2">&quot;20 MB&quot;</span><span class="p">:</span>  <span class="c1"># 只在使用預設值時替換</span>
-        <span class="n">log_file_settings</span><span class="p">[</span><span class="s2">&quot;rotation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;rotation&quot;</span><span class="p">]</span>
-    
-    <span class="k">if</span> <span class="s2">&quot;retention&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">log_file_settings</span><span class="p">:</span>
-        <span class="n">log_file_settings</span><span class="p">[</span><span class="s2">&quot;retention&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;retention&quot;</span><span class="p">]</span>
-    
-    <span class="k">if</span> <span class="s2">&quot;compression&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">log_file_settings</span> <span class="ow">and</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;compression&quot;</span><span class="p">]:</span>
-        <span class="n">log_file_settings</span><span class="p">[</span><span class="s2">&quot;compression&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;compression&quot;</span><span class="p">]</span>
-        
-        
+
+    <span class="c1"># 合併預設設定 - 僅在未明確指定時使用預設值</span>
+    <span class="n">log_name_format</span> <span class="o">=</span> <span class="n">log_name_format</span> <span class="ow">or</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;name_format&quot;</span><span class="p">]</span>
+
+    <span class="n">log_file_settings</span> <span class="o">=</span> <span class="n">log_file_settings</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">rotation</span> <span class="o">==</span> <span class="s2">&quot;20 MB&quot;</span><span class="p">:</span>  <span class="c1"># 只在使用預設值時替換</span>
+        <span class="n">log_file_settings</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;rotation&quot;</span><span class="p">,</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;rotation&quot;</span><span class="p">])</span>
+    <span class="n">log_file_settings</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;retention&quot;</span><span class="p">,</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;retention&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;compression&quot;</span><span class="p">]:</span>
+        <span class="n">log_file_settings</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;compression&quot;</span><span class="p">,</span> <span class="n">preset_settings</span><span class="p">[</span><span class="s2">&quot;compression&quot;</span><span class="p">])</span>
+
     <span class="c1"># 創建新的 logger 實例</span>
     <span class="n">new_logger</span> <span class="o">=</span> <span class="n">_Logger</span><span class="p">(</span>
         <span class="n">core</span><span class="o">=</span><span class="n">_Core</span><span class="p">(),</span>
@@ -286,17 +256,19 @@
         <span class="n">capture</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">patchers</span><span class="o">=</span><span class="p">[],</span>
         <span class="n">extra</span><span class="o">=</span><span class="p">{},</span>
-    <span class="p">)</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-        <span class="n">logger_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-        <span class="n">logger_id</span><span class="o">=</span><span class="n">logger_id</span><span class="p">,</span>
-        <span class="n">folder</span><span class="o">=</span><span class="n">component_name</span><span class="p">,</span>
-        <span class="n">service_tag</span><span class="o">=</span><span class="n">service_tag</span>
-    <span class="p">))</span>
-    
+    <span class="p">)</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">record</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="n">logger_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">logger_id</span><span class="o">=</span><span class="n">logger_id</span><span class="p">,</span>
+            <span class="n">folder</span><span class="o">=</span><span class="n">component_name</span><span class="p">,</span>
+            <span class="n">service_tag</span><span class="o">=</span><span class="n">service_tag</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
     <span class="c1"># 使用相同的 console 實例</span>
     <span class="k">if</span> <span class="n">console</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">console</span> <span class="o">=</span> <span class="n">_console</span>
-    
+
     <span class="c1"># 準備日誌初始化參數</span>
     <span class="n">logger_config</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="n">level</span><span class="p">,</span>
@@ -310,40 +282,61 @@
         <span class="s2">&quot;service_tag&quot;</span><span class="p">:</span> <span class="n">service_tag</span><span class="p">,</span>
         <span class="s2">&quot;isolate_handlers&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">}</span>
-    
+
     <span class="c1"># 合併自定義配置</span>
     <span class="k">if</span> <span class="n">custom_config</span><span class="p">:</span>
         <span class="n">logger_config</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">custom_config</span><span class="p">)</span>
-    
+
     <span class="c1"># 配置 logger 實例</span>
-    <span class="n">log_file_path</span> <span class="o">=</span> <span class="n">configure_logger</span><span class="p">(</span>
-        <span class="n">logger_instance</span><span class="o">=</span><span class="n">new_logger</span><span class="p">,</span> 
-        <span class="o">**</span><span class="n">logger_config</span>
-    <span class="p">)</span>
-    
+    <span class="n">log_file_path</span> <span class="o">=</span> <span class="n">configure_logger</span><span class="p">(</span><span class="n">logger_instance</span><span class="o">=</span><span class="n">new_logger</span><span class="p">,</span> <span class="o">**</span><span class="n">logger_config</span><span class="p">)</span>
+
     <span class="c1"># 保存文件路徑</span>
     <span class="n">_logger_file_paths</span><span class="p">[</span><span class="n">logger_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">log_file_path</span>
-    
+
     <span class="c1"># 加入自定義方法到新的 logger 實例</span>
     <span class="n">add_custom_methods</span><span class="p">(</span><span class="n">new_logger</span><span class="p">,</span> <span class="n">console</span><span class="p">)</span>
-    
+
     <span class="c1"># 只有在被明確要求時才啟動日誌清理器，而且只啟動一次</span>
     <span class="k">if</span> <span class="n">start_cleaner</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_cleaner_started</span><span class="p">:</span>
-        <span class="n">logger_cleaner</span> <span class="o">=</span> <span class="n">LoggerCleaner</span><span class="p">(</span>
-            <span class="n">logger_instance</span><span class="o">=</span><span class="n">new_logger</span><span class="p">,</span>
-            <span class="n">log_path</span><span class="o">=</span><span class="n">log_path</span>
-        <span class="p">)</span>
+        <span class="n">logger_cleaner</span> <span class="o">=</span> <span class="n">LoggerCleaner</span><span class="p">(</span><span class="n">logger_instance</span><span class="o">=</span><span class="n">new_logger</span><span class="p">,</span> <span class="n">log_path</span><span class="o">=</span><span class="n">log_path</span><span class="p">)</span>
         <span class="n">logger_cleaner</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="n">_cleaner_started</span> <span class="o">=</span> <span class="kc">True</span>
-    
+
     <span class="c1"># 將新實例註冊到全局註冊表</span>
     <span class="n">_logger_registry</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">EnhancedLogger</span><span class="p">,</span> <span class="n">new_logger</span><span class="p">)</span>
-    
+
     <span class="c1"># 記錄創建信息</span>
-    <span class="n">new_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Logger instance &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; (ID: </span><span class="si">{</span><span class="n">logger_id</span><span class="si">}</span><span class="s2">) has been created, log file: </span><span class="si">{</span><span class="n">log_file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    
+    <span class="n">new_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Logger instance &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; (ID: </span><span class="si">{</span><span class="n">logger_id</span><span class="si">}</span><span class="s2">) has been created, log file: </span><span class="si">{</span><span class="n">log_file_path</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
     <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">EnhancedLogger</span><span class="p">,</span> <span class="n">new_logger</span><span class="p">)</span></div>
 
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_preset</span><span class="p">(</span>
+    <span class="n">log_name_preset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+        <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;detailed&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">,</span> <span class="s2">&quot;monthly&quot;</span><span class="p">,</span> <span class="s2">&quot;weekly&quot;</span><span class="p">,</span> <span class="s2">&quot;daily&quot;</span><span class="p">,</span> <span class="s2">&quot;hourly&quot;</span><span class="p">,</span> <span class="s2">&quot;minute&quot;</span><span class="p">]</span>
+        <span class="o">|</span> <span class="n">PresetType</span>
+    <span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LogPreset</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;取得預設配置，優化版本&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">log_name_preset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">PresetFactory</span><span class="o">.</span><span class="n">get_preset</span><span class="p">(</span><span class="n">PresetType</span><span class="o">.</span><span class="n">DETAILED</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">log_name_preset</span><span class="p">,</span> <span class="n">PresetType</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">PresetFactory</span><span class="o">.</span><span class="n">get_preset</span><span class="p">(</span><span class="n">log_name_preset</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">preset_type</span> <span class="o">=</span> <span class="n">PresetType</span><span class="p">[</span><span class="n">log_name_preset</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="n">PresetFactory</span><span class="o">.</span><span class="n">get_preset</span><span class="p">(</span><span class="n">preset_type</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown log_name_preset &#39;</span><span class="si">{</span><span class="n">log_name_preset</span><span class="si">}</span><span class="s2">&#39;. Using &#39;detailed&#39; instead.&quot;</span><span class="p">,</span>
+            <span class="ne">UserWarning</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">PresetFactory</span><span class="o">.</span><span class="n">get_preset</span><span class="p">(</span><span class="n">PresetType</span><span class="o">.</span><span class="n">DETAILED</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="get_logger">
@@ -351,10 +344,10 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">get_logger</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EnhancedLogger</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    根據名稱獲取已註冊的 logger 實例</span>
-<span class="sd">    </span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        name: logger 實例的名稱</span>
-<span class="sd">        </span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        Optional[EnhancedLogger]: 如果找到則返回 logger 實例，否則返回 None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -367,7 +360,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">set_logger</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">logger_instance</span><span class="p">:</span> <span class="n">EnhancedLogger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    手動註冊 logger 實例</span>
-<span class="sd">    </span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        name: logger 實例的名稱</span>
 <span class="sd">        logger_instance: 要註冊的 logger 實例</span>
@@ -381,10 +374,10 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">unregister_logger</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    取消註冊 logger 實例</span>
-<span class="sd">    </span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        name: 要取消註冊的 logger 實例名稱</span>
-<span class="sd">        </span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        bool: 如果成功取消註冊則返回 True，否則返回 False</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -400,7 +393,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">list_loggers</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    列出所有已註冊的 logger 名稱</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        List[str]: 註冊的 logger 名稱列表</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -413,20 +406,20 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">default_logger</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">EnhancedLogger</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    獲取默認的 logger 實例（延遲初始化）</span>
-<span class="sd">    </span>
+
 <span class="sd">    只有在首次呼叫這個函數時，才會創建默認的 logger 實例，</span>
 <span class="sd">    避免在導入模組時就立即創建日誌文件。</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        EnhancedLogger: 默認的 logger 實例</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">_default_logger_instance</span>
     <span class="k">if</span> <span class="n">_default_logger_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">_default_logger_instance</span> <span class="o">=</span> <span class="n">create_logger</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> 
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
             <span class="n">service_tag</span><span class="o">=</span><span class="s2">&quot;default_service&quot;</span><span class="p">,</span>
-            <span class="n">start_cleaner</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
-            <span class="n">force_new_instance</span><span class="o">=</span><span class="kc">False</span>
+            <span class="n">start_cleaner</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">force_new_instance</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">_default_logger_instance</span></div>
 
