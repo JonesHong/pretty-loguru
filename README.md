@@ -189,12 +189,13 @@ custom_logger = create_logger(
 ```
 
 Available presets:
-- `"default"`: "[{component_name}]{timestamp}.log"
-- `"daily"`: "{date}_{component_name}.log"
-- `"hourly"`: "{date}_{hour}_{component_name}.log"
-- `"minute"`: "{date}_{hour}{minute}_{component_name}.log"
+- `"detailed"`: "[{component_name}]{timestamp}.log"
 - `"simple"`: "{component_name}.log"
-- `"detailed"`: "[{component_name}]_{date}_{time}.log"
+- `"minute"`: "[{component_name}]minute_latest.temp.log",
+- `"hourly"`: "[{component_name}]hourly_latest.temp.log",
+- `"daily":` "[{component_name}]daily_latest.temp.log",
+- `"weekly"`: "[{component_name}]weekly_latest.temp.log",
+- `"monthly"`: "[{component_name}]monthly_latest.temp.log",
 
 ### Output Targeting
 

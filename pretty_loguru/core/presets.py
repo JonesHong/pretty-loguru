@@ -77,24 +77,49 @@ class DetailedPreset(LogPreset):
     def retention(self) -> str:
         return "30 days"
     
+   
+    
     @property
     def compression(self) -> Optional[Callable]:
         def detailed_rename_log(filepath: str) -> str:
             path = Path(filepath)
             directory = path.parent
-            original_stem = path.stem  # [default_service]20250430-171706
-            
-            # 取得當下時間
-            now_str = datetime.now().strftime("%Y%m%d-%H%M%S")
 
-            # 組合新檔名
-            new_name = f"{original_stem}_to_{now_str}.log"
+            # 1) 取出 Loguru 加上的 collision suffix
+            #    Path.suffixes 例: ['.2025-05-05_23-29-33_084163', '.log']
+            suffixes = path.suffixes
+            if len(suffixes) >= 2:
+                rotation_suffix = suffixes[-2]                # ".2025-05-05_23-29-33_084163"
+                raw_ts = rotation_suffix.lstrip('.')          # "2025-05-05_23-29-33_084163"
+            else:
+                raw_ts = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+            # 2) 轉成 YYYYMMDD-HHmmss
+            date_part, time_part = raw_ts.split("_", 1)
+            date_compact = date_part.replace("-", "")        # "20250505"
+            time_compact = time_part.replace("-", "")        # "232933"
+            rot_time = f"{date_compact}-{time_compact}"      # "20250505-232933"
+
+            # 3) clean_stem：只留原始建立檔案時的那段 "[component]YYYYMMDD-HHMMSS"
+            name = path.name  # e.g. "[fastapi_app]20250505-232933.2025-05-05_23-29-33_084163.log"
+            if len(suffixes) >= 2:
+                # 移掉 rotation_suffix + 最後的 ".log"
+                remove = rotation_suffix + suffixes[-1]        # ".2025-05-05_23-29-33_084163.log"
+                clean_name = name[:-len(remove)]
+            else:
+                clean_name = name[: -len(path.suffix)]
+            clean_stem = clean_name
+
+            # 4) 用 _rotated_ 串起 stem 與 rotation 時間
+            # new_name = f"{clean_stem}_rotated_{rot_time}.log"
+            new_name = f"{clean_stem}.{rot_time}.log"
             new_path = directory / new_name
 
-            # 若新檔案已存在，則加數字避免衝突
+            # 5) 避免同名，加上序號
             counter = 1
             while new_path.exists():
-                new_name = f"{original_stem}_to_{now_str}.{counter}.log"
+                # new_name = f"{clean_stem}_rotated_{rot_time}.{counter}.log"
+                new_name = f"{clean_stem}.{rot_time}.{counter}.log"
                 new_path = directory / new_name
                 counter += 1
 
@@ -102,7 +127,7 @@ class DetailedPreset(LogPreset):
             return str(new_path)
 
         return detailed_rename_log
-    
+
     
     @property
     def name_format(self) -> str:
@@ -126,21 +151,45 @@ class SimplePreset(LogPreset):
         def simple_rename_log(filepath: str) -> str:
             path = Path(filepath)
             directory = path.parent
-            stem = path.stem  # 如：component
 
-            # 找出所有已存在的序號檔案，找到最大序號
-            existing_numbers = []
-            pattern = re.compile(rf"^{re.escape(stem)}\.(\d+)\.log$")
-            for file in directory.glob(f"{stem}.*.log"):
-                match = pattern.match(file.name)
-                if match:
-                    existing_numbers.append(int(match.group(1)))
+            # 1) 取出 Loguru 加上的 collision suffix
+            #    Path.suffixes 例: ['.2025-05-05_23-29-33_084163', '.log']
+            suffixes = path.suffixes
+            if len(suffixes) >= 2:
+                rotation_suffix = suffixes[-2].lstrip('.')   # "2025-05-05_23-29-33_084163"
+            else:
+                rotation_suffix = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-            next_number = max(existing_numbers, default=0) + 1
+            # 2) 只保留到秒：YYYY-MM-DD_HH-MM-SS → 拆成兩部分
+            parts = rotation_suffix.split('_')
+            date_part = parts[0]      # "2025-05-05"
+            time_hms = parts[1]       # "23-29-33"
+            
+            # 3) 去掉連字號，變成 YYYYMMDD-HHmmss
+            date_compact = date_part.replace('-', '')    # "20250505"
+            time_compact = time_hms.replace('-', '')     # "232933"
+            rot_time = f"{date_compact}-{time_compact}"  # "20250505-232933"
 
-            # 建立新檔案名稱
-            new_name = f"{stem}.{next_number}.log"
+            # 4) clean_stem：去掉 collision_suffix + 最後的 ".log"
+            name = path.name
+            if len(suffixes) >= 2:
+                # remove ".2025-05-05_23-29-33_084163.log"
+                remove = suffixes[-2] + suffixes[-1]
+                clean_name = name[:-len(remove)]
+            else:
+                clean_name = name[: -len(path.suffix)]
+            clean_stem = clean_name
+
+            # 5) 用 _rot_ 串起 stem 與 rotation 時間
+            new_name = f"{clean_stem}_rot_{rot_time}.log"
             new_path = directory / new_name
+
+            # 6) 防衝突：若新檔名已存在，就加 .1/.2...
+            counter = 1
+            while new_path.exists():
+                new_name = f"{clean_stem}_rot_{rot_time}.{counter}.log"
+                new_path = directory / new_name
+                counter += 1
 
             os.rename(filepath, new_path)
             return str(new_path)
@@ -170,11 +219,14 @@ class MonthlyPreset(LogPreset):
             directory = path.parent
             original_name = path.stem
 
+            # 前先清掉所有「.YYYY-MM-DD_HH-MM-SS_xxx」後綴
+            match = re.match(r"(\[.*?\]\d{6,8}(?:_\d{2,4})?)", original_name)
+            clean_stem = match.group(1) if match else original_name
             # 固定使用「上個月」的年月
             last_month = datetime.now() - relativedelta(months=1)
             month_str = last_month.strftime("%Y%m")
 
-            component_name = original_name.split(']')[0].lstrip('[')
+            component_name = clean_stem.split(']')[0].lstrip('[')
 
             new_name = f"[{component_name}]{month_str}.log"
             new_path = directory / new_name
@@ -211,20 +263,23 @@ class WeeklyPreset(LogPreset):
             path = Path(filepath)
             directory = path.parent
             original_name = path.stem
+            # 前先清掉所有「.YYYY-MM-DD_HH-MM-SS_xxx」後綴
+            match = re.match(r"(\[.*?\]\d{6,8}(?:_\d{2,4})?)", original_name)
+            clean_stem = match.group(1) if match else original_name
 
             # 固定使用「上週」的週數
             last_week = datetime.now() - timedelta(weeks=1)
             year, week_num, _ = last_week.isocalendar()
             week_str = f"{year}W{week_num:02d}"
 
-            component_name = original_name.split(']')[0].lstrip('[')
+            component_name = clean_stem.split(']')[0].lstrip('[')
 
-            new_name = f"[{component_name}]week{week_str}.log"
+            new_name = f"[{component_name}]week_{week_str}.log"
             new_path = directory / new_name
 
             counter = 1
             while new_path.exists():
-                new_name = f"[{component_name}]week{week_str}.{counter}.log"
+                new_name = f"[{component_name}]week_{week_str}.{counter}.log"
                 new_path = directory / new_name
                 counter += 1
             os.rename(filepath, new_path)
@@ -306,12 +361,15 @@ class HourlyPreset(LogPreset):
             path = Path(filepath)
             directory = path.parent
             original_name = path.stem
+            # 前先清掉所有「.YYYY-MM-DD_HH-MM-SS_xxx」後綴
+            match = re.match(r"(\[.*?\]\d{6,8}(?:_\d{2,4})?)", original_name)
+            clean_stem = match.group(1) if match else original_name
 
             # 固定使用「上一小時」
             last_hour = datetime.now() - timedelta(hours=1)
             hour_str = last_hour.strftime("%Y%m%d_%H")
 
-            component_name = original_name.split(']')[0].lstrip('[')
+            component_name = clean_stem.split(']')[0].lstrip('[')
 
             new_name = f"[{component_name}]{hour_str}.log"
             new_path = directory / new_name
@@ -349,12 +407,15 @@ class MinutePreset(LogPreset):
             path = Path(filepath)
             directory = path.parent
             original_name = path.stem
+            # 前先清掉所有「.YYYY-MM-DD_HH-MM-SS_xxx」後綴
+            match = re.match(r"(\[.*?\]\d{6,8}(?:_\d{2,4})?)", original_name)
+            clean_stem = match.group(1) if match else original_name
 
             # 固定使用「上一分鐘」
             last_minute = datetime.now() - timedelta(minutes=1)
             minute_str = last_minute.strftime("%Y%m%d_%H%M")
 
-            component_name = original_name.split(']')[0].lstrip('[')
+            component_name = clean_stem.split(']')[0].lstrip('[')
 
             new_name = f"[{component_name}]{minute_str}.log"
             new_path = directory / new_name
