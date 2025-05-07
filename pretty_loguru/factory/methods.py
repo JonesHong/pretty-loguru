@@ -9,6 +9,8 @@ from typing import Any, Callable, Optional
 
 from rich.console import Console
 
+from pretty_loguru.formats import has_figlet
+
 from ..types import EnhancedLogger
 from ..core.base import _console_only, _file_only
 from ..core.target_formatter import add_target_methods
@@ -75,24 +77,20 @@ def add_format_methods(logger_instance: Any, console: Optional[Console] = None) 
     create_ascii_methods(logger_instance, console)
     
     # 嘗試添加 FIGlet 方法
-    try:
-        # 直接在函數中導入 FIGlet 相關功能
-        from ..formats.figlet import create_figlet_methods
-        
-        # 嘗試調用 create_figlet_methods 函數
-        create_result = create_figlet_methods(logger_instance, console)
-        
-        # 如果添加成功，記錄日誌（如果可能）
-        if create_result and hasattr(logger_instance, "debug"):
-            logger_instance.debug("Successfully added FIGlet-related methods")
-    except ImportError:
-        # 如果導入失敗，記錄日誌（如果可能）
+    if has_figlet():
+        try:
+            from ..formats import create_figlet_methods
+            create_result = create_figlet_methods(logger_instance, console)
+            if create_result and hasattr(logger_instance, "debug"):
+                # logger_instance.debug("Successfully added FIGlet-related methods")
+                pass
+        except Exception as e:
+            if hasattr(logger_instance, "warning"):
+                logger_instance.warning(f"An error occurred while adding FIGlet methods: {str(e)}")
+    else:
         if hasattr(logger_instance, "debug"):
-            logger_instance.debug("The pyfiglet library is not installed, skipping the addition of FIGlet methods")
-    except Exception as e:
-        # 如果發生其他錯誤，記錄日誌（如果可能）
-        if hasattr(logger_instance, "warning"):
-            logger_instance.warning(f"An error occurred while adding FIGlet methods: {str(e)}")
+            # logger_instance.debug("The pyfiglet library is not installed, skipping the addition of FIGlet methods")
+            pass
 
 
 def add_custom_methods(logger_instance: Any, console: Optional[Console] = None) -> None:

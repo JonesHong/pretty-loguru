@@ -72,26 +72,16 @@ try:
 except ImportError:
     _has_fastapi = False
 
-# 檢查 pyfiglet 可用性 - 但不要讓導入失敗影響整個模組的加載
-_has_figlet = False
-try:
-    # 嘗試導入 figlet 模組本身，而不是其中的函數
-    from . import formats
+    
+from .formats import has_figlet
 
-    # 檢查 figlet 功能是否可用
-    _has_figlet = formats.has_figlet()
-
-    # 如果 figlet 可用，則導入相關功能
-    if _has_figlet:
-        from .formats.figlet import (
-            print_figlet_header,
-            print_figlet_block,
-            get_figlet_fonts
-        )
-except ImportError as e:
-    # 忽略導入錯誤，但將 _has_figlet 設為 False
-    _has_figlet = False
-    print(f"Warning: Failed to import figlet features: {str(e)}", file=sys.stderr)
+# 如果 FIGlet 可用，則導入相關功能
+if has_figlet():
+    from .formats import (
+        print_figlet_header,
+        print_figlet_block,
+        get_figlet_fonts
+    )
 
 
 # 定義對外可見的功能
@@ -145,7 +135,7 @@ if _has_fastapi:
     __all__.append("setup_fastapi_logging")
 
 # 如果 FIGlet 可用，添加相關功能
-if _has_figlet:
+if has_figlet():
     __all__.extend(
         [
             "print_figlet_header",
@@ -155,4 +145,4 @@ if _has_figlet:
     )
 
 # 版本信息
-__version__ = "0.2.13"
+__version__ = "0.2.14"

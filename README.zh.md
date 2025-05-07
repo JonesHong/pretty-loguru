@@ -20,7 +20,7 @@
 
 ## 說明
 
-**pretty-loguru** 是一個 Python 日誌庫，擴展了 [Loguru](https://github.com/Delgan/loguru) 的功能，並使用 [Rich](https://github.com/Textualize/rich) 面板、ASCII [art](https://github.com/sepandhaghighi/art) 標題和可自定義區塊來呈現優雅的輸出。它提供：
+**pretty-loguru** 是一個 Python 日誌庫，擴展了 [Loguru](https://github.com/Delgan/loguru) 的功能，並使用 [Rich](https://github.com/Textualize/rich) 面板、ASCII [art](https://github.com/sepandhaghighi/art) 與 [pyfiglet](https://github.com/pwaller/pyfiglet) 標題和可自定義區塊來呈現優雅的輸出。它提供：
 
 - **Rich Panels**：顯示帶有邊框和樣式的結構化日誌區塊。
 - **ASCII Art Headers**：使用 `art` 庫生成引人注目的標題。

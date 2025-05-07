@@ -22,7 +22,7 @@
 
 ## Description
 
-**pretty-loguru** is a Python logging library that extends the power of [Loguru](https://github.com/Delgan/loguru) with elegant outputs using [Rich](https://github.com/Textualize/rich) panels, ASCII [art](https://github.com/sepandhaghighi/art) headers, and customizable blocks. It provides:
+**pretty-loguru** is a Python logging library that extends the power of [Loguru](https://github.com/Delgan/loguru) with elegant outputs using [Rich](https://github.com/Textualize/rich) panels, ASCII [art](https://github.com/sepandhaghighi/art) and [pyfiglet](https://github.com/pwaller/pyfiglet) headers, and customizable blocks. It provides:
 
 - **Rich Panels**: Display structured log blocks with borders and styles.
 - **ASCII Art Headers**: Generate eye-catching headers using the `art` library.

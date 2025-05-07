@@ -1,3 +1,5 @@
+# 在 pretty_loguru/formats/__init__.py 中集中處理 FIGlet 檢查:
+
 """
 格式化模組入口
 
@@ -26,20 +28,24 @@ _has_figlet = False
 try:
     # 嘗試導入 pyfiglet
     import pyfiglet
-    
-    # 如果成功導入，再導入實際的功能
-    from .figlet import (
-        print_figlet_header,
-        print_figlet_block,
-        get_figlet_fonts,
-        create_figlet_methods,
-    )
     _has_figlet = True
-    # print("Debug: pyfiglet successfully imported", file=sys.stderr)
 except ImportError:
-    # 如果無法導入 pyfiglet，輸出調試信息
     _has_figlet = False
-    print("Warning: pyfiglet not available. FIGlet features disabled.", file=sys.stderr)
+    # print("Warning: pyfiglet not available. FIGlet features disabled.", file=sys.stderr)
+    pass
+
+# 如果 pyfiglet 可用，導入 FIGlet 功能
+if _has_figlet:
+    try:
+        from .figlet import (
+            print_figlet_header,
+            print_figlet_block,
+            get_figlet_fonts,
+            create_figlet_methods,
+        )
+    except Exception as e:
+        _has_figlet = False
+        print(f"Warning: Failed to initialize FIGlet features: {str(e)}", file=sys.stderr)
 
 # 定義對外可見的功能
 __all__ = [
