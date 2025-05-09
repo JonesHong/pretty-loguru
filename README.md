@@ -17,6 +17,7 @@
   <a href="https://github.com/JonesHong/pretty-loguru/blob/master/LICENSE">
     <img alt="License" src="https://img.shields.io/github/license/JonesHong/pretty-loguru.svg">
   </a>
+  <a href="https://deepwiki.com/JonesHong/pretty-loguru"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
 </p>
 
 
