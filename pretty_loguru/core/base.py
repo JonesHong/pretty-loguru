@@ -43,10 +43,10 @@ def configure_logger(
     timestamp_format: Optional[str] = None,
     log_file_settings: Optional[LogConfigType] = None,
     logger_instance: Any = None,
-    service_tag: Optional[str] = None,
+    name: Optional[str] = None,
     isolate_handlers: bool = True,
     # unique_id: Optional[str] = None,
-    logger_format: str = LOGGER_FORMAT,
+    logger_format: Optional[str] = None,
 ) -> str:
     """
     配置日誌系統，確保每個 logger 實例的處理器完全隔離
@@ -61,7 +61,7 @@ def configure_logger(
         timestamp_format: 時間戳格式，用於自定義時間顯示方式。
         log_file_settings: 日誌檔案的其他設定。
         logger_instance: 要初始化的日誌實例，如果為None則使用全局的_logger
-        service_tag: 服務名稱，用於在日誌檔案名中使用 {service_tag} 變數
+        name: 服務或組件名稱，用於日誌檔案名中的變數替換
         isolate_handlers: 是否隔離不同 logger 實例的處理器，預設為 True
         # unique_id: 唯一ID，用於確保每個logger實例完全獨立
         logger_format: 日誌格式字符串，預設使用 LOGGER_FORMAT
@@ -84,24 +84,29 @@ def configure_logger(
         log_name_format = log_name_format or prev.get("log_name_format", log_name_format)
         timestamp_format = timestamp_format or prev.get("timestamp_format", timestamp_format)
         log_file_settings = log_file_settings or prev.get("log_file_settings", log_file_settings)
-        service_tag = service_tag or prev.get("service_tag", service_tag)
+        name = name or prev.get("name", name)
         logger_format = logger_format or prev.get("logger_format", logger_format)
+    
+    # 如果 logger_format 仍然是 None，則使用預設格式
+    if logger_format is None:
+        logger_format = LOGGER_FORMAT
         
-    # 1. 決定最終要用的資料夾
-    if log_path is None:
-        base = Path.cwd() / "logs"  # 預設日誌資料夾
-    else:
+    # 1. 決定是否需要檔案輸出
+    should_create_file = log_path is not None and log_path != ""
+    
+    if should_create_file:
+        # 決定最終要用的資料夾
         base = Path(log_path)
-    
-    # 如果指定了子目錄，將其添加到基礎路徑中
-    if subdirectory:
-        base = base / subdirectory
-    
-    global log_path_global
-    log_path_global = base  # 更新全域變數
-    
-    # 確保資料夾存在
-    base.mkdir(parents=True, exist_ok=True)
+        
+        # 如果指定了子目錄，將其添加到基礎路徑中
+        if subdirectory:
+            base = base / subdirectory
+        
+        global log_path_global
+        log_path_global = base  # 更新全域變數
+        
+        # 確保資料夾存在
+        base.mkdir(parents=True, exist_ok=True)
 
     # 2. 移除所有現有的處理器 - 這是一種激進但有效的方法
     if isolate_handlers and hasattr(target_logger, "_core"):
@@ -114,8 +119,8 @@ def configure_logger(
     
     # 3. 設定附加資訊
     # 生成唯一的 logger_id，結合 component_name, service_tag 和 unique_id
-    # logger_id = f"{component_name}_{service_tag}_{unique_id}" if unique_id else f"{component_name}_{service_tag}"
-    logger_id = f"{component_name}_{service_tag}" 
+    # logger_id = f"{component_name}_{name}_{unique_id}" if unique_id else f"{component_name}_{name}"
+    logger_id = f"{component_name}_{name}" if name else component_name 
     
     extra_config = {
         "folder": component_name,      # 額外資訊：處理程序 ID
@@ -124,25 +129,29 @@ def configure_logger(
         "to_log_file_only": False, # 是否僅輸出到日誌檔案
     }
     
-    # 如果提供了 service_name，將其添加到額外資訊中
-    if service_tag:
-        extra_config["service_tag"] = service_tag
+    # 如果提供了 name，將其添加到額外資訊中
+    if name:
+        extra_config["name"] = name
     
     # 更新 logger 的額外資訊
     target_logger.configure(extra=extra_config)
 
-    # 4. 生成日誌檔案名
-    log_filename = format_filename(component_name, log_name_format, timestamp_format, service_tag)
-    
-    # 如果提供了唯一ID，將其添加到檔案名中以確保唯一性
-    # if unique_id:
-    #     base_name, ext = log_filename.rsplit(".", 1) if "." in log_filename else (log_filename, "log")
-    #     log_filename = f"{base_name}_{unique_id}.{ext}"
-    
-    logfile = base / log_filename
-    
-    # 輸出調試信息
-    print(f"Logger '{service_tag or component_name}' (ID: {logger_id}): Log file path set to {logfile}")
+    # 4. 如果需要檔案輸出，生成日誌檔案名
+    logfile = None
+    if should_create_file:
+        log_filename = format_filename(component_name, log_name_format, timestamp_format, name)
+        
+        # 如果提供了唯一ID，將其添加到檔案名中以確保唯一性
+        # if unique_id:
+        #     base_name, ext = log_filename.rsplit(".", 1) if "." in log_filename else (log_filename, "log")
+        #     log_filename = f"{base_name}_{unique_id}.{ext}"
+        
+        logfile = base / log_filename
+        
+        # 輸出調試信息
+        print(f"Logger '{name or component_name}' (ID: {logger_id}): Log file path set to {logfile}")
+    else:
+        print(f"Logger '{name or component_name}' (ID: {logger_id}): Console only mode (no log_path specified)")
     
     # 5. 創建目標過濾器
     filters = create_destination_filters()
@@ -164,25 +173,27 @@ def configure_logger(
             except ValueError:
                 rotation_value = rotation  # 不是數字，保持不變
     
-    # 6. 準備日誌檔案設置
-    file_settings = {
-        "rotation": rotation_value,  # 設定日誌輪換大小，修正後的格式
-        "encoding": "utf-8",         # 檔案編碼
-        "enqueue": True,             # 使用多線程安全的方式寫入
-        "filter": filters["file"],   # 文件過濾器
-    }
-    
-    # 合併自定義設置
-    if log_file_settings:
-        file_settings.update(log_file_settings)
-    
-    # 7. 新增檔案 handler - 確保檔案處理器綁定到正確的文件
-    file_handler_id = target_logger.add(
-        str(logfile),
-        format=logger_format,  # 使用定義的日誌格式
-        level=level,           # 設定日誌級別
-        **file_settings
-    )
+    # 6. 如果需要檔案輸出，準備日誌檔案設置並添加檔案 handler
+    file_handler_id = None
+    if should_create_file:
+        file_settings = {
+            "rotation": rotation_value,  # 設定日誌輪換大小，修正後的格式
+            "encoding": "utf-8",         # 檔案編碼
+            "enqueue": True,             # 使用多線程安全的方式寫入
+            "filter": filters["file"],   # 文件過濾器
+        }
+        
+        # 合併自定義設置
+        if log_file_settings:
+            file_settings.update(log_file_settings)
+        
+        # 7. 新增檔案 handler - 確保檔案處理器綁定到正確的文件
+        file_handler_id = target_logger.add(
+            str(logfile),
+            format=logger_format,  # 使用定義的日誌格式
+            level=level,           # 設定日誌級別
+            **file_settings
+        )
     
     # 8. 新增 console handler - 確保控制台處理器不會干擾其他實例
     console_handler_id = target_logger.add(
@@ -195,7 +206,8 @@ def configure_logger(
     # 保存處理器 ID，以便將來需要更新或移除
     if not hasattr(target_logger, "_handler_ids"):
         target_logger._handler_ids = {}
-    target_logger._handler_ids["file"] = file_handler_id
+    if file_handler_id is not None:
+        target_logger._handler_ids["file"] = file_handler_id
     target_logger._handler_ids["console"] = console_handler_id
     
     # 存儲最新配置
@@ -208,12 +220,12 @@ def configure_logger(
         "log_name_format": log_name_format,
         "timestamp_format": timestamp_format,
         "log_file_settings": log_file_settings,
-        "service_tag": service_tag,
+        "name": name,
         "logger_format": logger_format,
     }
     
-    # 返回完整的日誌文件路徑，方便外部使用
-    return str(logfile)
+    # 返回完整的日誌文件路徑，如果沒有創建檔案則返回空字符串
+    return str(logfile) if logfile else ""
 
 
 # 新增目標導向日誌方法 - 只輸出到控制台
@@ -243,6 +255,23 @@ def _file_only(logger_instance: Any, level: str, message: str, *args: Any, **kwa
         *args: 其他位置參數
         **kwargs: 其他關鍵字參數
     """
+    # 檢查是否有檔案 handler
+    has_file_handler = False
+    if hasattr(logger_instance, "_handler_ids") and "file" in logger_instance._handler_ids:
+        has_file_handler = True
+    
+    if not has_file_handler:
+        # 沒有檔案 handler，發出警告並降級到控制台
+        import warnings
+        warnings.warn(
+            f"調用了 file_{level.lower()} 方法，但此 logger 沒有配置檔案輸出（未指定 log_path）。"
+            f"訊息將輸出到控制台。若要啟用檔案輸出，請在創建 logger 時指定 log_path 參數。",
+            UserWarning,
+            stacklevel=3
+        )
+        # 降級到控制台輸出
+        return logger_instance.opt(ansi=True, depth=2).log(level, message, *args, **kwargs)
+    
     return logger_instance.bind(to_log_file_only=True).log(level, message, *args, **kwargs)
 
 

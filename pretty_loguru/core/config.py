@@ -24,7 +24,6 @@ LOG_NAME_FORMATS: Dict[str, str] = {
     # detailed/simple 是一次性或手動管理，啟動即寫入，暫不處理
     "detailed": "[{component_name}]{timestamp}.log",  # 預設格式
     "simple": "{component_name}.log",  # 簡單格式，只包含元件名稱
-    
     # 週期性日誌統一加上 _latest.temp.log 作為臨時標記，之後再用 compression 重新命名
     "minute": "[{component_name}]minute_latest.temp.log",
     "hourly": "[{component_name}]hourly_latest.temp.log",
@@ -40,8 +39,8 @@ LOG_NAME_FORMATS: Dict[str, str] = {
 
 # 輸出目標類型
 OUTPUT_DESTINATIONS: Dict[str, str] = {
-    "console_only": "to_console_only",    # 僅顯示在控制台
-    "file_only": "to_log_file_only",      # 僅寫入文件 
+    "console_only": "to_console_only",  # 僅顯示在控制台
+    "file_only": "to_log_file_only",  # 僅寫入文件
 }
 
 
@@ -50,6 +49,7 @@ class LogLevelEnum(Enum):
 
     定義了不同的日誌級別，用於設定和過濾日誌輸出。
     """
+
     TRACE = "TRACE"
     DEBUG = "DEBUG"
     INFO = "INFO"
@@ -67,23 +67,31 @@ LOGGER_FORMAT: str = (
     "<level>{message}</level>"
 )
 
+# 使用 loguru 原生 {file} 變數的格式設定 (當 name=None 時使用)
+LOGGER_FORMAT_NATIVE: str = (
+    "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
+    "<level>{level: <8}{process}</level> | "
+    "<cyan>{file}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
+    "<level>{message}</level>"
+)
+
 
 class LoggerConfig:
     """日誌配置類
-    
+
     此類提供了統一的配置管理，可從環境變數或配置文件中載入配置。
     """
-    
+
     def __init__(
         self,
         level: Optional[LogLevelType] = None,
         rotation: Optional[LogRotationType] = None,
         log_path: Optional[LogPathType] = None,
         logger_format: Optional[str] = None,
-        env_prefix: str = "PRETTY_LOGURU_"
+        env_prefix: str = "PRETTY_LOGURU_",
     ):
         """初始化日誌配置
-        
+
         Args:
             level: 日誌級別，預設從環境變數或全局默認值獲取
             rotation: 日誌輪換設置，預設從環境變數或全局默認值獲取
@@ -93,7 +101,7 @@ class LoggerConfig:
         """
         # 從環境變數或傳入參數中獲取配置值
         self.level = level or os.environ.get(f"{env_prefix}LEVEL", LOG_LEVEL)
-        
+
         # 處理 rotation 的特殊情況
         if rotation is None:
             rotation_env = os.environ.get(f"{env_prefix}ROTATION")
@@ -103,7 +111,7 @@ class LoggerConfig:
                 self.rotation = LOG_ROTATION
         else:
             self.rotation = rotation
-        
+
         # 處理日誌路徑
         if log_path is None:
             log_path_env = os.environ.get(f"{env_prefix}PATH")
@@ -113,17 +121,19 @@ class LoggerConfig:
                 self.log_path = LOG_PATH
         else:
             self.log_path = Path(log_path)
-        
+
         # 日誌格式
-        self.format = logger_format or os.environ.get(f"{env_prefix}FORMAT", LOGGER_FORMAT)
-    
+        self.format = logger_format or os.environ.get(
+            f"{env_prefix}FORMAT", LOGGER_FORMAT
+        )
+
     @classmethod
-    def from_dict(cls, config_dict: Dict[str, Any]) -> 'LoggerConfig':
+    def from_dict(cls, config_dict: Dict[str, Any]) -> "LoggerConfig":
         """從字典創建配置實例
-        
+
         Args:
             config_dict: 包含配置值的字典
-            
+
         Returns:
             LoggerConfig: 配置實例
         """
@@ -132,20 +142,22 @@ class LoggerConfig:
             rotation=config_dict.get("rotation"),
             log_path=config_dict.get("log_path"),
             logger_format=config_dict.get("format"),
-            env_prefix=config_dict.get("env_prefix", "PRETTY_LOGURU_")
+            env_prefix=config_dict.get("env_prefix", "PRETTY_LOGURU_"),
         )
-    
+
     @classmethod
-    def from_file(cls, file_path: Union[str, Path], format: Literal["json", "yaml"] = "json") -> 'LoggerConfig':
+    def from_file(
+        cls, file_path: Union[str, Path], format: Literal["json", "yaml"] = "json"
+    ) -> "LoggerConfig":
         """從文件載入配置
-        
+
         Args:
             file_path: 配置文件路徑
             format: 文件格式，支援 "json" 或 "yaml"
-            
+
         Returns:
             LoggerConfig: 配置實例
-            
+
         Raises:
             ValueError: 不支援的文件格式
             FileNotFoundError: 文件不存在
@@ -153,29 +165,32 @@ class LoggerConfig:
         path = Path(file_path)
         if not path.exists():
             raise FileNotFoundError(f"配置文件 '{file_path}' 不存在")
-        
+
         if format.lower() == "json":
             import json
+
             with open(path, "r", encoding="utf-8") as f:
                 config_dict = json.load(f)
             return cls.from_dict(config_dict)
-        
+
         elif format.lower() == "yaml":
             try:
                 import yaml
             except ImportError:
-                raise ImportError("使用 YAML 格式需要安裝 PyYAML 套件: pip install pyyaml")
-            
+                raise ImportError(
+                    "使用 YAML 格式需要安裝 PyYAML 套件: pip install pyyaml"
+                )
+
             with open(path, "r", encoding="utf-8") as f:
                 config_dict = yaml.safe_load(f)
             return cls.from_dict(config_dict)
-        
+
         else:
             raise ValueError(f"不支援的文件格式: {format}，支援的格式為: json, yaml")
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """轉換為字典
-        
+
         Returns:
             Dict[str, Any]: 包含配置值的字典
         """
@@ -183,39 +198,44 @@ class LoggerConfig:
             "level": self.level,
             "rotation": self.rotation,
             "log_path": str(self.log_path),
-            "format": self.format
+            "format": self.format,
         }
-    
-    def save_to_file(self, file_path: Union[str, Path], format: Literal["json", "yaml"] = "json") -> None:
+
+    def save_to_file(
+        self, file_path: Union[str, Path], format: Literal["json", "yaml"] = "json"
+    ) -> None:
         """將配置保存到文件
-        
+
         Args:
             file_path: 配置文件路徑
             format: 文件格式，支援 "json" 或 "yaml"
-            
+
         Raises:
             ValueError: 不支援的文件格式
         """
         path = Path(file_path)
         # 確保目錄存在
         path.parent.mkdir(parents=True, exist_ok=True)
-        
+
         config_dict = self.to_dict()
-        
+
         if format.lower() == "json":
             import json
+
             with open(path, "w", encoding="utf-8") as f:
                 json.dump(config_dict, f, indent=2, ensure_ascii=False)
-        
+
         elif format.lower() == "yaml":
             try:
                 import yaml
             except ImportError:
-                raise ImportError("使用 YAML 格式需要安裝 PyYAML 套件: pip install pyyaml")
-            
+                raise ImportError(
+                    "使用 YAML 格式需要安裝 PyYAML 套件: pip install pyyaml"
+                )
+
             with open(path, "w", encoding="utf-8") as f:
                 yaml.dump(config_dict, f, default_flow_style=False, sort_keys=False)
-        
+
         else:
             raise ValueError(f"不支援的文件格式: {format}，支援的格式為: json, yaml")
 

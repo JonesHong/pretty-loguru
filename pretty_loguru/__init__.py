@@ -32,7 +32,6 @@ from .core.config import (
 # 日誌預設參數
 from .core.presets import (
     PresetType,
-    LogPreset,
     PresetFactory
 )
 
@@ -51,7 +50,8 @@ from .factory.creator import (
     get_logger,
     set_logger,
     unregister_logger,
-    list_loggers
+    list_loggers,
+    reinit_logger
 )
 
 # 導入格式化功能
@@ -87,8 +87,7 @@ if has_figlet():
 # 定義對外可見的功能
 __all__ = [
     # 日誌預設參數
-    "PresetType",
-    "LogPreset",
+    "PresetType", 
     "PresetFactory",
     # 類型和配置
     "EnhancedLogger",
@@ -112,8 +111,9 @@ __all__ = [
     "default_logger",
     "get_logger",
     "set_logger",
-    "unregister_logger",
+    "unregister_logger", 
     "list_loggers",
+    "reinit_logger",
     # 格式化功能
     "print_block",
     "print_ascii_header",

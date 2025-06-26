@@ -93,7 +93,7 @@ def example_1_basic_usage():
     # 1.1 建立 logger（使用預設 format）
     app_logger = create_logger(
         name="app",
-        service_tag="example_app",
+        # service_tag="example_app",
         subdirectory="example_1_basic",
         log_name_preset="daily",
         level=config.level,
@@ -147,7 +147,7 @@ def example_1_basic_usage():
         logger_instance=app_logger,
         service_tag="example_app",
         isolate_handlers=True,
-        logger_format=LOGGER_FORMAT,  # 恢復預設
+        # logger_format=LOGGER_FORMAT,  # 恢復預設
     )
 
     # 1.7 測試全域 logger (原 default_logger)

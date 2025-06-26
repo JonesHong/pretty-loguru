@@ -29,9 +29,12 @@
 - **ASCII Blocks**: Combine ASCII art and block logs for comprehensive sections.
 - **FIGlet Support**: Use FIGlet fonts for even more impressive text art (optional).
 - **Multiple Logger Management**: Create, retrieve, and manage multiple logger instances.
+- **Logger Synchronization**: Proxy pattern for seamless logger reinitialization across modules.
+- **Flexible File Output**: Optional file logging - console-only by default, like native loguru.
+- **Smart Format Detection**: Automatic format selection based on usage patterns.
 - **Time-based Log Files**: Auto-organize logs by date, hour, or minute.
 - **Subdirectory Support**: Organize logs in nested directories by component.
-- **Easy Initialization**: One-call setup for both file and console logging.
+- **Output Targeting**: Separate console-only and file-only logging methods.
 - **Framework Integrations**: Ready-to-use integrations with Uvicorn and FastAPI.
 - **Configuration Management**: Load and save configurations from various sources.
 
@@ -85,12 +88,16 @@ pip install pretty-loguru
 ## Quick Start
 
 ```python
-from pretty_loguru import create_logger, logger, print_block
+from pretty_loguru import create_logger, print_block
 
-# Create a logger with a specific name and configuration
+# Console-only logger (like native loguru)
+dev_logger = create_logger("dev_app")
+dev_logger.info("Development message - console only")
+
+# Logger with file output
 app_logger = create_logger(
-    name="app",
-    service_tag="my_application",
+    name="my_application",
+    log_path="./logs",  # Enable file logging
     log_name_preset="daily",  # Use daily log files
     subdirectory="services/api"  # Save in logs/services/api/
 )
@@ -100,6 +107,10 @@ app_logger.info("Application started")
 app_logger.success("Database connected")
 app_logger.warning("Cache nearly full")
 app_logger.error("API request failed")
+
+# Output targeting
+app_logger.console_info("Console-only debug info")
+app_logger.file_error("Critical error - file only")
 
 # Block logging with borders
 app_logger.block(
@@ -125,22 +136,25 @@ app_logger.ascii_header(
 
 ### Logger Factory
 
-Create multiple loggers with different configurations:
+Create and manage multiple loggers with different configurations:
 
 ```python
-from pretty_loguru import create_logger, get_logger, list_loggers
+from pretty_loguru import create_logger, get_logger, list_loggers, reinit_logger
 
-# Create loggers for different components
+# Console-only logger (no log_path specified)
+dev_logger = create_logger("development")
+
+# File-enabled loggers with different configurations
 db_logger = create_logger(
     name="database",
-    service_tag="db_service",
+    log_path="./logs",
     subdirectory="database",
     log_name_preset="hourly"
 )
 
 auth_logger = create_logger(
     name="auth",
-    service_tag="auth_service",
+    log_path="./logs",
     subdirectory="auth",
     level="DEBUG"
 )
@@ -149,59 +163,70 @@ auth_logger = create_logger(
 auth_log = get_logger("auth")
 
 # List all registered loggers
-all_loggers = list_loggers()  # Returns ["database", "auth"]
+all_loggers = list_loggers()  # Returns ["development", "database", "auth"]
+
+# Reinitialize logger with new configuration
+reinit_logger("database", log_path="./production_logs", level="WARNING")
 ```
 
-### Time-based Log Files
+### Flexible File Output
 
-Choose from various log filename formats:
+Control whether logs are written to files:
 
 ```python
 from pretty_loguru import create_logger
 
-# Daily logs: logs/api/20250429_api_service.log
+# Console-only (like native loguru) - no files created
+console_logger = create_logger("console_app")
+console_logger.info("This only appears in console")
+
+# File + console output 
+file_logger = create_logger(
+    name="file_app", 
+    log_path="./logs"  # Enables file logging
+)
+file_logger.info("This appears in both console and file")
+
+# Different file organization
 api_logger = create_logger(
-    name="api",
-    service_tag="api_service",
-    log_name_preset="daily"
+    name="api_service",
+    log_path="./logs",
+    log_name_preset="daily",
+    subdirectory="api"  # logs/api/[api_service]daily_latest.temp.log
 )
 
-# Hourly logs: logs/worker/20250429_14_worker_service.log
 worker_logger = create_logger(
-    name="worker",
-    service_tag="worker_service",
-    log_name_preset="hourly"
-)
-
-# Minute-level logs: logs/critical/20250429_1430_critical_service.log
-critical_logger = create_logger(
-    name="critical",
-    service_tag="critical_service",
-    log_name_preset="minute"
+    name="worker_service", 
+    log_path="./logs",
+    log_name_preset="hourly",
+    subdirectory="workers"  # logs/workers/[worker_service]hourly_latest.temp.log
 )
 
 # Custom format
 custom_logger = create_logger(
-    name="custom",
-    service_tag="custom_service",
-    log_name_format="{year}-{month}-{day}_{service_tag}.log"
+    name="custom_service",
+    log_path="./logs",
+    log_name_format="{year}-{month}-{day}_{name}.log"
 )
 ```
 
 Available presets:
 - `"detailed"`: "[{component_name}]{timestamp}.log"
 - `"simple"`: "{component_name}.log"
-- `"minute"`: "[{component_name}]minute_latest.temp.log",
-- `"hourly"`: "[{component_name}]hourly_latest.temp.log",
-- `"daily":` "[{component_name}]daily_latest.temp.log",
-- `"weekly"`: "[{component_name}]weekly_latest.temp.log",
-- `"monthly"`: "[{component_name}]monthly_latest.temp.log",
+- `"minute"`: "[{component_name}]minute_latest.temp.log"
+- `"hourly"`: "[{component_name}]hourly_latest.temp.log"
+- `"daily"`: "[{component_name}]daily_latest.temp.log"
+- `"weekly"`: "[{component_name}]weekly_latest.temp.log"
+- `"monthly"`: "[{component_name}]monthly_latest.temp.log"
 
 ### Output Targeting
 
 Control where logs appear:
 
 ```python
+# Create logger with file output enabled
+logger = create_logger("app", log_path="./logs")
+
 # Regular log (both console and file)
 logger.info("This appears everywhere")
 
@@ -210,10 +235,12 @@ logger.console_info("This only appears in the console")
 logger.console_warning("Console-only warning")
 logger.dev_info("Development info - console only")
 
-# File-only logs
+# File-only logs  
 logger.file_info("This only appears in the log file")
 logger.file_error("File-only error message")
 ```
+
+**Note**: If you use `file_*` methods on a console-only logger (no `log_path`), you'll get a warning and the message will be output to console instead.
 
 ### Rich Block Logging
 
@@ -256,6 +283,35 @@ logger.ascii_block(
 )
 ```
 
+### Logger Synchronization
+
+Solve the cross-module logger synchronization problem using proxy pattern:
+
+```python
+# config/logger_config.py
+from pretty_loguru import create_logger, reinit_logger
+
+# Create logger with proxy enabled
+app_logger = create_logger("app", use_proxy=True)
+
+def init_logger(**kwargs):
+    """Reinitialize logger - all imports will sync automatically"""
+    return reinit_logger("app", **kwargs)
+
+# modules/service.py  
+from config.logger_config import app_logger
+
+def do_work():
+    app_logger.info("Working...")  # Always uses latest configuration
+
+# main.py
+from config.logger_config import init_logger
+
+# Initialize with production settings
+init_logger(log_path="./production_logs", level="WARNING")
+# All modules automatically use new configuration!
+```
+
 ### FIGlet Support (Optional)
 
 If you install pyfiglet, you can use FIGlet fonts:
@@ -291,8 +347,8 @@ from pretty_loguru import setup_fastapi_logging, create_logger
 
 # Create a logger for the API
 api_logger = create_logger(
-    name="api",
-    service_tag="api_service",
+    name="api_service",
+    log_path="./logs",
     subdirectory="api"
 )
 
@@ -337,8 +393,7 @@ loaded_config = LoggerConfig.from_file("logger_config.json")
 # Use in logger creation
 from pretty_loguru import create_logger
 logger = create_logger(
-    name="configured",
-    service_tag="config_service",
+    name="config_service",
     level=config.level,
     rotation=config.rotation,
     log_path=config.log_path
@@ -347,14 +402,36 @@ logger = create_logger(
 
 ## Advanced Configuration
 
+### Smart Format Selection
+
+pretty-loguru automatically selects the appropriate format based on usage:
+
+```python
+# No name provided -> uses native loguru format with {file}
+logger1 = create_logger()
+logger1.info("Message")  # Shows actual filename
+
+# Name provided -> uses pretty-loguru format with enhanced info
+logger2 = create_logger("my_service") 
+logger2.info("Message")  # Shows service name, function, line number
+
+# Custom format override
+logger3 = create_logger(
+    "custom_service",
+    logger_format="{time} | {level} | {message}"
+)
+```
+
+### Advanced Options
+
 Customize logger with advanced options:
 
 ```python
 from pretty_loguru import create_logger
 
 logger = create_logger(
-    name="advanced",
-    service_tag="advanced_app",
+    name="advanced_app",
+    log_path="./logs",
     subdirectory="advanced",
     log_name_preset="daily",
     timestamp_format="%Y-%m-%d_%H-%M-%S",
@@ -368,22 +445,54 @@ logger = create_logger(
 )
 ```
 
-## Backward Compatibility
+## Migration Guide
 
-For those upgrading from older versions:
+### Key Changes in Latest Version
+
+1. **Console-only by default**: No files created unless `log_path` is specified
+2. **Simplified parameters**: `service_tag` is deprecated, use `name` instead  
+3. **Smart format selection**: Automatic format based on usage patterns
+4. **Proxy support**: Solve cross-module synchronization with `use_proxy=True`
+
+### Upgrading from Older Versions
 
 ```python
-from pretty_loguru import logger, logger_start
+# OLD: Automatic file creation
+logger = create_logger("app", service_tag="my_service")
 
-# Old-style initialization (still supported)
-component_name = logger_start(
-    file=__file__,
-    folder="my_app"
-)
+# NEW: Explicit file control  
+console_logger = create_logger("my_service")  # Console only
+file_logger = create_logger("my_service", log_path="./logs")  # Files enabled
 
-# Using the global logger
-logger.info("Using global logger instance")
+# OLD: Complex parameter combinations
+logger = create_logger(name="app", service_tag="my_service")
+
+# NEW: Simplified 
+logger = create_logger("my_service")  # Single parameter
+
+# NEW: Proxy for cross-module sync
+logger = create_logger("my_service", use_proxy=True)
+reinit_logger("my_service", log_path="./production")  # All modules sync
 ```
+
+## API Reference
+
+### Core Functions
+
+- `create_logger(name, log_path=None, use_proxy=False, ...)` - Create logger instance
+- `get_logger(name)` - Get existing logger by name
+- `reinit_logger(name, **kwargs)` - Reinitialize logger with new config
+- `list_loggers()` - List all registered logger names
+- `default_logger()` - Get default logger instance
+
+### Output Methods
+
+- `logger.info/debug/warning/error/critical()` - Standard logging
+- `logger.console_*()` - Console-only output
+- `logger.file_*()` - File-only output (warns if no file configured)
+- `logger.block()` - Rich bordered blocks
+- `logger.ascii_header()` - ASCII art headers
+- `logger.figlet_header()` - FIGlet headers (if pyfiglet installed)
 
 
 ## Contributing
