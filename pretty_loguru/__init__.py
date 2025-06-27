@@ -50,6 +50,7 @@ from .factory.creator import (
 # 導入格式化功能
 from .formats.block import print_block
 from .formats.ascii_art import print_ascii_header, print_ascii_block, is_ascii_only
+from .formats.rich_components import print_table, print_tree, print_columns, LoggerProgress
 
 # 導入集成功能
 from .integrations import has_uvicorn
@@ -103,7 +104,12 @@ __all__ = [
     "print_block",
     "print_ascii_header",
     "print_ascii_block",
-    "is_ascii_only"
+    "is_ascii_only",
+    # Rich 組件
+    "print_table",
+    "print_tree",
+    "print_columns",
+    "LoggerProgress"
 ]
 
 # 如果 Uvicorn 可用，添加相關功能
@@ -128,6 +134,17 @@ if has_figlet():
             "get_figlet_fonts"
         ]
     )
+
+# 嘗試導入 Advanced 模組（為進階用戶提供底層庫直接訪問）
+try:
+    from . import advanced
+    _has_advanced = True
+except ImportError:
+    _has_advanced = False
+
+# 如果 Advanced 模組可用，添加到導出列表
+if _has_advanced:
+    __all__.append("advanced")
 
 # 版本信息
 __version__ = "0.2.14"

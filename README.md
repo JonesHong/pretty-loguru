@@ -130,6 +130,20 @@ app_logger.ascii_header(
     font="slant",
     border_style="blue"
 )
+
+# Rich components for advanced visualization
+data = [
+    {"service": "API", "status": "Running", "cpu": "15%"},
+    {"service": "DB", "status": "Running", "cpu": "8%"}
+]
+app_logger.table("System Status", data, show_lines=True)
+
+# Progress tracking
+with app_logger.progress.progress_context("Initializing", 10) as update:
+    for i in range(10):
+        # Simulate work
+        time.sleep(0.1)
+        update(1)
 ```
 
 ## Features
@@ -282,6 +296,76 @@ logger.ascii_block(
     log_level="SUCCESS"
 )
 ```
+
+### Rich Components
+
+Pretty-loguru integrates powerful Rich components for advanced data visualization:
+
+#### Tables
+Display tabular data with rich formatting:
+
+```python
+# Basic table
+data = [
+    {"name": "Alice", "age": 30, "role": "Developer"},
+    {"name": "Bob", "age": 25, "role": "Designer"}
+]
+logger.table("Team Members", data, show_lines=True)
+
+# Console-only table for debugging
+logger.console_table("Debug Data", debug_info)
+
+# File-only table for reports
+logger.file_table("Report Data", report_data)
+```
+
+#### Tree Structures
+Display hierarchical data:
+
+```python
+system_status = {
+    "Services": {
+        "Web Server": "Running",
+        "Database": "Running",
+        "Cache": {
+            "Redis": "Running",
+            "Memcached": "Stopped"
+        }
+    }
+}
+logger.tree("System Overview", system_status)
+```
+
+#### Column Layouts
+Display items in multiple columns:
+
+```python
+features = ["Tables", "Trees", "Progress", "Columns", "ASCII Art"]
+logger.columns("Available Features", features, columns=3)
+```
+
+#### Progress Tracking
+Track progress of long-running operations:
+
+```python
+# Progress context for manual updates
+with logger.progress.progress_context("Processing files", 100) as update:
+    for i in range(100):
+        # Do work
+        time.sleep(0.01)
+        update(1)  # Advance by 1
+
+# Auto-tracking for lists
+items = ["file1.txt", "file2.txt", "file3.txt"]
+for item in logger.progress.track_list(items, "Processing files"):
+    # Process each item
+    process_file(item)
+```
+
+All Rich components support the same target-specific output as other pretty-loguru features:
+- `logger.console_table()` - Console only
+- `logger.file_tree()` - File only
+- Standard methods output to both console and file
 
 ### Logger Synchronization
 
@@ -644,6 +728,160 @@ reinit_logger("my_service", log_path="./production")  # All modules sync
 - `logger.ascii_header()` - ASCII art headers
 - `logger.figlet_header()` - FIGlet headers (if pyfiglet installed)
 
+### Rich Component Methods
+
+- `logger.table(title, data, **kwargs)` - Display tabular data
+- `logger.tree(title, tree_data, **kwargs)` - Display hierarchical structures
+- `logger.columns(title, items, columns=3, **kwargs)` - Display items in columns
+- `logger.progress.progress_context(description, total)` - Progress tracking context
+- `logger.progress.track_list(items, description)` - Auto-track list processing
+
+All Rich component methods support target-specific variants:
+- `logger.console_table()`, `logger.file_table()` 
+- `logger.console_tree()`, `logger.file_tree()`
+- `logger.console_columns()`, `logger.file_columns()`
+
+## Advanced API - Direct Library Access
+
+For power users who need direct access to underlying libraries (loguru, rich, art, pyfiglet), pretty-loguru provides an advanced module that exposes these libraries without modification.
+
+### Philosophy
+
+- **KISS Principle**: Simple, clear, and maintainable
+- **Integration over Replacement**: Expose original APIs without modification  
+- **Familiar Learning Curve**: Keep original library patterns intact
+- **Optional Enhancement**: Add minimal helpers only when truly beneficial
+
+### Basic Usage
+
+```python
+# Check availability
+from pretty_loguru.advanced import get_available_libraries, check_library
+
+available = get_available_libraries()
+print(available)  # {'loguru': True, 'rich': True, 'art': True, 'pyfiglet': True}
+
+if check_library('rich'):
+    # Use Rich exactly like the original library
+    from pretty_loguru.advanced import Console, Table, Panel
+    
+    console = Console()
+    table = Table(title="My Data")
+    table.add_column("Name")
+    table.add_column("Value") 
+    table.add_row("CPU", "75%")
+    console.print(table)
+```
+
+### Direct Library Access
+
+Use libraries exactly as documented in their original documentation:
+
+#### Rich Components
+```python
+from pretty_loguru.advanced import Console, Table, Panel, Progress, Layout
+
+# Exactly like Rich documentation
+console = Console()
+console.print("Hello [bold red]World[/bold red]!")
+
+# All Rich components available
+table = Table(show_header=True)
+panel = Panel("Content", border_style="blue")
+layout = Layout()
+```
+
+#### Loguru Logger
+```python
+from pretty_loguru.advanced import loguru_logger
+
+# Exactly like Loguru documentation  
+loguru_logger.add("file.log", rotation="1 MB")
+loguru_logger.info("Direct loguru usage")
+loguru_logger.bind(user_id="123").warning("With context")
+```
+
+#### ASCII Art Libraries
+```python
+# Art library
+from pretty_loguru.advanced import text2art, tprint, FONT_NAMES
+
+ascii_art = text2art("Hello", font="slant")
+tprint("World", font="block")
+
+# PyFiglet library  
+from pretty_loguru.advanced import Figlet
+
+f = Figlet(font='slant')
+figlet_text = f.renderText('Hello')
+```
+
+### Integration Helpers
+
+Minimal helpers for common integration scenarios:
+
+```python
+from pretty_loguru import create_logger
+from pretty_loguru.advanced.helpers import create_rich_table_log
+
+logger = create_logger("app", log_path="./logs")
+
+# Rich table integrated with logging
+data = [{"name": "Alice", "score": 95}, {"name": "Bob", "score": 87}]
+create_rich_table_log(logger, "Scores", data, show_header=True)
+```
+
+### Mixed Usage Example
+
+Combine pretty-loguru's simplicity with direct library power:
+
+```python
+from pretty_loguru import create_logger
+from pretty_loguru.advanced import Console, Layout, Panel, loguru_logger
+
+# Use pretty-loguru for standard logging
+logger = create_logger("app", log_path="./logs")
+logger.info("Application started")
+
+# Use Rich directly for complex layouts
+console = Console()
+layout = Layout()
+layout.split_column(
+    Layout(Panel("Status: Running", border_style="green")),
+    Layout(Panel("Metrics: CPU 45%", border_style="blue"))
+)
+console.print(layout)
+
+# Use Loguru directly for advanced features
+def error_filter(record):
+    return record["level"].name == "ERROR"
+
+loguru_logger.add("errors.log", filter=error_filter)
+```
+
+### Available Libraries
+
+| Library | Import | Description |
+|---------|--------|-------------|
+| **Loguru** | `from pretty_loguru.advanced import loguru_logger` | Direct access to loguru logger |
+| **Rich** | `from pretty_loguru.advanced import Console, Table, Panel, ...` | All Rich components |
+| **Art** | `from pretty_loguru.advanced import text2art, tprint` | ASCII art generation |
+| **PyFiglet** | `from pretty_loguru.advanced import Figlet` | FIGlet font rendering |
+
+### When to Use Advanced API
+
+**Use Advanced API when:**
+- You need specific Rich components not wrapped by pretty-loguru
+- You want advanced Loguru features (custom filters, complex formatting)
+- You need direct control over ASCII art generation
+- You're integrating with existing code that uses these libraries
+
+**Stick with Standard API when:**
+- Basic logging, blocks, and ASCII headers meet your needs
+- You want maximum simplicity and minimal learning curve
+- You're building new applications without legacy constraints
+
+For complete examples, see [examples/advanced_usage_examples.py](examples/advanced_usage_examples.py).
 
 ## Contributing
 

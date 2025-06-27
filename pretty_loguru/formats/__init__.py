@@ -19,7 +19,17 @@ from .block import (
 from .ascii_art import (
     print_ascii_header,
     print_ascii_block,
+    is_ascii_only,
     create_ascii_methods,
+)
+
+# 導入 Rich 組件功能
+from .rich_components import (
+    print_table,
+    print_tree,
+    print_columns,
+    LoggerProgress,
+    create_rich_methods,
 )
 
 # 檢查 pyfiglet 是否可用 - 使用更安全的導入方式
@@ -58,6 +68,13 @@ __all__ = [
     "print_ascii_block",
     "is_ascii_only",
     "create_ascii_methods",
+    
+    # Rich 組件
+    "print_table",
+    "print_tree", 
+    "print_columns",
+    "LoggerProgress",
+    "create_rich_methods",
 ]
 
 # 如果 FIGlet 可用，則添加相關功能

@@ -38,6 +38,10 @@ def add_format_methods(logger_instance: Any, console: Optional[Console] = None) 
     # 添加 ASCII 藝術方法
     create_ascii_methods(logger_instance, console)
     
+    # 添加 Rich 組件方法
+    from ..formats import create_rich_methods
+    create_rich_methods(logger_instance, console)
+    
     # 嘗試添加 FIGlet 方法
     if has_figlet():
         try:

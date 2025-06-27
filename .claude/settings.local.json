@@ -1,0 +1,57 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(rg:*)",
+      "Bash(rm:*)",
+      "Bash(find:*)",
+      "Bash(mv:*)",
+      "Bash(PYTHONPATH=/mnt/c/work/pretty-loguru python3 examples/environment_config.py)",
+      "Bash(pip3 install:*)",
+      "Bash(apt list:*)",
+      "Bash(sudo apt:*)",
+      "Bash(sudo apt install:*)",
+      "Bash(PYTHONPATH=/mnt/c/work/pretty-loguru python3 test_function_names.py)",
+      "Bash(grep:*)",
+      "Bash(pip install:*)",
+      "Bash(PYTHONPATH=/mnt/c/work/pretty-loguru python3 examples/quickstart_example.py)",
+      "Bash(PYTHONPATH=/mnt/c/work/pretty-loguru python3 examples/detailed_example_en.py)",
+      "mcp__zen__planner",
+      "mcp__zen__thinkdeep",
+      "Bash(ls:*)",
+      "mcp__zen__analyze",
+      "Bash(git add:*)",
+      "Bash(mkdir:*)",
+      "mcp__zen__consensus",
+      "mcp__zen__chat",
+      "mcp__zen__codereview"
+    ],
+    "deny": []
+  },
+  "xxx": {
+    "theme": "Default",
+    "selectedAuthType": "oauth-personal",
+    "mcpServers": {
+      "context7": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@upstash/context7-mcp"
+        ]
+      },
+      "taskmaster-ai": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "--package=task-master-ai",
+          "task-master-ai"
+        ],
+        "env": {
+          "ANTHROPIC_API_KEY": "sk-ant-",
+          "OPENAI_API_KEY": "sk-proj-",
+          "GOOGLE_API_KEY": "sk-proj-"
+        }
+      }
+    }
+  }
+}
