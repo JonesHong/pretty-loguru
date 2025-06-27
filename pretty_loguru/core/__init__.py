@@ -7,26 +7,13 @@
 
 # 導入基本配置
 from .config import (
-    LOG_LEVEL,
-    LOG_ROTATION,
-    LOG_PATH,
-    LOG_NAME_FORMATS,
-    OUTPUT_DESTINATIONS,
-    LOGGER_FORMAT,
-    LogLevelEnum
+    LoggerConfig
 )
-# 對 Sphinx 說明：這是轉出來的，不需要索引
-LogLevelEnum.__doc__ = """
-:meta noindex:
-
-參見 :class:`pretty_loguru.core.config.LogLevelEnum`
-"""
 
 # 導入基本日誌功能
 from .base import (
     configure_logger,
     get_console,
-    log_path_global
 )
 
 # 導入處理器功能
@@ -45,16 +32,20 @@ from .target_formatter import (
     ensure_target_parameters
 )
 
+# 導入註冊表
+from .registry import (
+    register_logger,
+    get_logger,
+    unregister_logger,
+    list_loggers,
+    post_event,
+    subscribe
+)
+
 # 定義對外可見的功能
 __all__ = [
-    # 配置常數
-    "LOG_LEVEL",
-    "LOG_ROTATION",
-    "LOG_PATH",
-    "LOG_NAME_FORMATS",
-    "OUTPUT_DESTINATIONS",
-    "LOGGER_FORMAT",
-    "LogLevelEnum",
+    # 配置
+    "LoggerConfig",
     
     # 基本功能
     "configure_logger",
@@ -66,10 +57,17 @@ __all__ = [
     
     # 日誌清理
     "LoggerCleaner",
-    "log_path_global",  # 全域變數，用於儲存日誌路徑
     
     # 目標導向格式化工具
     "create_target_method",
     "add_target_methods",
-    "ensure_target_parameters"  
+    "ensure_target_parameters",
+    
+    # 註冊表功能
+    "register_logger",
+    "get_logger",
+    "unregister_logger",
+    "list_loggers",
+    "post_event",
+    "subscribe"
 ]

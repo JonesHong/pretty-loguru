@@ -13,298 +13,94 @@ from typing import Dict, Any, Optional, Union, Callable, cast
 from loguru import logger as _logger
 from rich.console import Console
 
-from ..types import (
-    EnhancedLogger, LogLevelType, LogPathType, LogNameFormatType, 
-    LogRotationType, LogHandlerIdType, LogFilterType, LogConfigType
-)
-from .config import LOG_LEVEL, LOGGER_FORMAT
+from ..types import EnhancedLogger
+from .config import LoggerConfig
 from .handlers import create_destination_filters, format_filename
 
-log_path_global: Optional[Path] = None  # 全域變數，用於儲存日誌路徑
 # Rich Console 實例，用於美化輸出
 _console = Console()
 
 def get_console() -> Console:
-    """獲取 Rich Console 實例
-    
-    Returns:
-        Console: Rich Console 實例，用於美化輸出
-    """
+    """獲取 Rich Console 實例"""
     return _console
 
-
-def configure_logger(
-    level: LogLevelType = LOG_LEVEL,
-    log_path: Optional[LogPathType] = None,
-    component_name: str = "",
-    rotation: LogRotationType = "20 MB",
-    subdirectory: Optional[str] = None,
-    log_name_format: LogNameFormatType = None,
-    timestamp_format: Optional[str] = None,
-    log_file_settings: Optional[LogConfigType] = None,
-    logger_instance: Any = None,
-    name: Optional[str] = None,
-    isolate_handlers: bool = True,
-    # unique_id: Optional[str] = None,
-    logger_format: Optional[str] = None,
-) -> str:
+def configure_logger(logger_instance: EnhancedLogger, config: LoggerConfig) -> None:
     """
-    配置日誌系統，確保每個 logger 實例的處理器完全隔離
-
-    Args:
-        level: 日誌級別，預設為全域變數 LOG_LEVEL。
-        log_path: 日誌儲存路徑，若為 None 則使用預設路徑。
-        component_name: 處理程序 ID，用於標記日誌檔案。
-        rotation: 日誌輪換大小，單位為 MB。
-        subdirectory: 子目錄名稱，用於分類不同類型的日誌。
-        log_name_format: 日誌檔案名稱格式。
-        timestamp_format: 時間戳格式，用於自定義時間顯示方式。
-        log_file_settings: 日誌檔案的其他設定。
-        logger_instance: 要初始化的日誌實例，如果為None則使用全局的_logger
-        name: 服務或組件名稱，用於日誌檔案名中的變數替換
-        isolate_handlers: 是否隔離不同 logger 實例的處理器，預設為 True
-        # unique_id: 唯一ID，用於確保每個logger實例完全獨立
-        logger_format: 日誌格式字符串，預設使用 LOGGER_FORMAT
-
-    Returns:
-        str: 日誌檔案的完整路徑
+    根據 LoggerConfig 配置日誌實例。
     """
-    # 決定要使用的logger實例
-    target_logger = _logger if logger_instance is None else logger_instance
-    
-
-    # Upsert：若已有先前配置，合併未提供的參數
-    if logger_instance and hasattr(target_logger, "_config"):
-        prev = target_logger._config
-        level = level or prev.get("level", level)
-        log_path = log_path or prev.get("log_path", log_path)
-        component_name = component_name or prev.get("component_name", component_name)
-        rotation = rotation or prev.get("rotation", rotation)
-        subdirectory = subdirectory or prev.get("subdirectory", subdirectory)
-        log_name_format = log_name_format or prev.get("log_name_format", log_name_format)
-        timestamp_format = timestamp_format or prev.get("timestamp_format", timestamp_format)
-        log_file_settings = log_file_settings or prev.get("log_file_settings", log_file_settings)
-        name = name or prev.get("name", name)
-        logger_format = logger_format or prev.get("logger_format", logger_format)
-    
-    # 如果 logger_format 仍然是 None，則使用預設格式
-    if logger_format is None:
-        logger_format = LOGGER_FORMAT
-        
-    # 1. 決定是否需要檔案輸出
-    should_create_file = log_path is not None and log_path != ""
-    
-    if should_create_file:
-        # 決定最終要用的資料夾
-        base = Path(log_path)
-        
-        # 如果指定了子目錄，將其添加到基礎路徑中
-        if subdirectory:
-            base = base / subdirectory
-        
-        global log_path_global
-        log_path_global = base  # 更新全域變數
-        
-        # 確保資料夾存在
-        base.mkdir(parents=True, exist_ok=True)
-
-    # 2. 移除所有現有的處理器 - 這是一種激進但有效的方法
-    if isolate_handlers and hasattr(target_logger, "_core"):
-        handler_ids = list(target_logger._core.handlers.keys())
+    # 1. 移除所有現有的處理器以確保隔離
+    if hasattr(logger_instance, "_core"):
+        handler_ids = list(logger_instance._core.handlers.keys())
         for handler_id in handler_ids:
             try:
-                target_logger.remove(handler_id)
+                logger_instance.remove(handler_id)
             except Exception as e:
-                print(f"Warning: Failed to remove handler {handler_id}: {str(e)}")
-    
-    # 3. 設定附加資訊
-    # 生成唯一的 logger_id，結合 component_name, service_tag 和 unique_id
-    # logger_id = f"{component_name}_{name}_{unique_id}" if unique_id else f"{component_name}_{name}"
-    logger_id = f"{component_name}_{name}" if name else component_name 
-    
-    extra_config = {
-        "folder": component_name,      # 額外資訊：處理程序 ID
-        "logger_id": logger_id,    # 唯一的 logger 識別碼
-        "to_console_only": False,  # 是否僅輸出到控制台
-        "to_log_file_only": False, # 是否僅輸出到日誌檔案
-    }
-    
-    # 如果提供了 name，將其添加到額外資訊中
-    if name:
-        extra_config["name"] = name
-    
-    # 更新 logger 的額外資訊
-    target_logger.configure(extra=extra_config)
+                warnings.warn(f"Failed to remove handler {handler_id}: {e}")
 
-    # 4. 如果需要檔案輸出，生成日誌檔案名
-    logfile = None
-    if should_create_file:
-        log_filename = format_filename(component_name, log_name_format, timestamp_format, name)
-        
-        # 如果提供了唯一ID，將其添加到檔案名中以確保唯一性
-        # if unique_id:
-        #     base_name, ext = log_filename.rsplit(".", 1) if "." in log_filename else (log_filename, "log")
-        #     log_filename = f"{base_name}_{unique_id}.{ext}"
-        
-        logfile = base / log_filename
-        
-        # 輸出調試信息
-        print(f"Logger '{name or component_name}' (ID: {logger_id}): Log file path set to {logfile}")
-    else:
-        print(f"Logger '{name or component_name}' (ID: {logger_id}): Console only mode (no log_path specified)")
-    
-    # 5. 創建目標過濾器
+    # 2. 設定附加資訊 (extra)
+    extra_config = {
+        "folder": config.component_name or config.name,
+        "logger_id": config.name,
+        "to_console_only": False,
+        "to_log_file_only": False,
+    }
+    logger_instance.configure(extra=extra_config)
+
+    # 3. 創建目標過濾器
     filters = create_destination_filters()
-    
-    # 處理輪換大小格式
-    rotation_value = rotation
-    if isinstance(rotation, (int, float)) or (isinstance(rotation, str) and rotation.isdigit()):
-        # 如果是數字或純數字字符串，添加空格和單位
-        rotation_value = f"{rotation} MB"
-    elif isinstance(rotation, str):
-        # 如果是字符串但不是純數字，檢查是否已經包含單位
-        if any(unit in rotation.lower() for unit in ["kb", "mb", "gb", "b", "day", "month", "week", "hour", "minute", "second"]):
-            rotation_value = rotation  # 已經有單位，保持不變
-        else:
-            # 嘗試轉換為數字，如果成功則添加 MB 單位
-            try:
-                float(rotation)
-                rotation_value = f"{rotation} MB"  # 添加空格和單位
-            except ValueError:
-                rotation_value = rotation  # 不是數字，保持不變
-    
-    # 6. 如果需要檔案輸出，準備日誌檔案設置並添加檔案 handler
-    file_handler_id = None
-    if should_create_file:
+
+    # 4. 新增 console handler
+    logger_instance.add(
+        sys.stderr,
+        format=config.logger_format,
+        level=config.level,
+        filter=filters["console"],
+    )
+
+    # 5. 如果需要，新增 file handler
+    if config.log_path:
+        log_path = Path(config.log_path)
+        if config.subdirectory:
+            log_path = log_path / config.subdirectory
+        
+        log_path.mkdir(parents=True, exist_ok=True)
+        
+        # 從 preset 或 config 獲取檔名格式
+        from ..core.presets import get_preset_config
+        preset_conf = get_preset_config(config.preset) if config.preset else {}
+        log_name_format = preset_conf.get('name_format')
+
+        log_filename = format_filename(config.component_name or config.name, log_name_format)
+        logfile = log_path / log_filename
+
+        # 處理自定義壓縮格式
+        compression_function = config.compression
+        if config.compression_format and compression_function:
+            # 如果有自定義格式且有壓縮函數，創建包含自定義格式的新函數
+            from ..core.presets import create_custom_compression_function
+            compression_function = create_custom_compression_function(config.compression_format)
+        elif config.compression_format and not compression_function:
+            # 如果只有自定義格式沒有壓縮函數，創建新的函數
+            from ..core.presets import create_custom_compression_function
+            compression_function = create_custom_compression_function(config.compression_format)
+
         file_settings = {
-            "rotation": rotation_value,  # 設定日誌輪換大小，修正後的格式
-            "encoding": "utf-8",         # 檔案編碼
-            "enqueue": True,             # 使用多線程安全的方式寫入
-            "filter": filters["file"],   # 文件過濾器
+            "rotation": config.rotation,
+            "retention": config.retention,
+            "compression": compression_function,
+            "encoding": "utf-8",
+            "enqueue": True,
+            "filter": filters["file"],
         }
-        
-        # 合併自定義設置
-        if log_file_settings:
-            file_settings.update(log_file_settings)
-        
-        # 7. 新增檔案 handler - 確保檔案處理器綁定到正確的文件
-        file_handler_id = target_logger.add(
+        # 過濾掉值為 None 的設置
+        file_settings = {k: v for k, v in file_settings.items() if v is not None}
+
+        logger_instance.add(
             str(logfile),
-            format=logger_format,  # 使用定義的日誌格式
-            level=level,           # 設定日誌級別
+            format=config.logger_format,
+            level=config.level,
             **file_settings
         )
-    
-    # 8. 新增 console handler - 確保控制台處理器不會干擾其他實例
-    console_handler_id = target_logger.add(
-        sys.stderr,
-        format=logger_format,     # 使用相同的日誌格式
-        level=level,              # 設定日誌級別
-        filter=filters["console"], # 控制台過濾器
-    )
-    
-    # 保存處理器 ID，以便將來需要更新或移除
-    if not hasattr(target_logger, "_handler_ids"):
-        target_logger._handler_ids = {}
-    if file_handler_id is not None:
-        target_logger._handler_ids["file"] = file_handler_id
-    target_logger._handler_ids["console"] = console_handler_id
-    
-    # 存儲最新配置
-    target_logger._config = {
-        "level": level,
-        "log_path": log_path,
-        "component_name": component_name,
-        "rotation": rotation,
-        "subdirectory": subdirectory,
-        "log_name_format": log_name_format,
-        "timestamp_format": timestamp_format,
-        "log_file_settings": log_file_settings,
-        "name": name,
-        "logger_format": logger_format,
-    }
-    
-    # 返回完整的日誌文件路徑，如果沒有創建檔案則返回空字符串
-    return str(logfile) if logfile else ""
-
-
-# 新增目標導向日誌方法 - 只輸出到控制台
-def _console_only(logger_instance: Any, level: str, message: str, *args: Any, **kwargs: Any) -> None:
-    """
-    僅在控制台顯示的日誌記錄方法
-    
-    Args:
-        logger_instance: 日誌實例
-        level: 日誌級別
-        message: 日誌訊息
-        *args: 其他位置參數
-        **kwargs: 其他關鍵字參數
-    """
-    return logger_instance.opt(ansi=True, depth=2).bind(to_console_only=True).log(level, message, *args, **kwargs)
-
-
-# 新增目標導向日誌方法 - 只輸出到文件
-def _file_only(logger_instance: Any, level: str, message: str, *args: Any, **kwargs: Any) -> None:
-    """
-    僅寫入文件的日誌記錄方法
-    
-    Args:
-        logger_instance: 日誌實例
-        level: 日誌級別
-        message: 日誌訊息
-        *args: 其他位置參數
-        **kwargs: 其他關鍵字參數
-    """
-    # 檢查是否有檔案 handler
-    has_file_handler = False
-    if hasattr(logger_instance, "_handler_ids") and "file" in logger_instance._handler_ids:
-        has_file_handler = True
-    
-    if not has_file_handler:
-        # 沒有檔案 handler，發出警告並降級到控制台
-        import warnings
-        warnings.warn(
-            f"調用了 file_{level.lower()} 方法，但此 logger 沒有配置檔案輸出（未指定 log_path）。"
-            f"訊息將輸出到控制台。若要啟用檔案輸出，請在創建 logger 時指定 log_path 參數。",
-            UserWarning,
-            stacklevel=3
-        )
-        # 降級到控制台輸出
-        return logger_instance.opt(ansi=True, depth=2).log(level, message, *args, **kwargs)
-    
-    return logger_instance.bind(to_log_file_only=True).log(level, message, *args, **kwargs)
-
-
-def add_custom_output_methods(logger_instance: Any) -> None:
-    """
-    為日誌實例添加自定義輸出方法
-    
-    Args:
-        logger_instance: 要擴展的日誌實例
-    """
-    # 控制台專用方法
-    logger_instance.console = lambda level, message, *args, **kwargs: _console_only(logger_instance, level, message, *args, **kwargs)
-    logger_instance.console_debug = lambda message, *args, **kwargs: _console_only(logger_instance, "DEBUG", message, *args, **kwargs)
-    logger_instance.console_info = lambda message, *args, **kwargs: _console_only(logger_instance, "INFO", message, *args, **kwargs)
-    logger_instance.console_success = lambda message, *args, **kwargs: _console_only(logger_instance, "SUCCESS", message, *args, **kwargs)
-    logger_instance.console_warning = lambda message, *args, **kwargs: _console_only(logger_instance, "WARNING", message, *args, **kwargs)
-    logger_instance.console_error = lambda message, *args, **kwargs: _console_only(logger_instance, "ERROR", message, *args, **kwargs)
-    logger_instance.console_critical = lambda message, *args, **kwargs: _console_only(logger_instance, "CRITICAL", message, *args, **kwargs)
-
-    # 文件專用方法
-    logger_instance.file = lambda level, message, *args, **kwargs: _file_only(logger_instance, level, message, *args, **kwargs)
-    logger_instance.file_debug = lambda message, *args, **kwargs: _file_only(logger_instance, "DEBUG", message, *args, **kwargs)
-    logger_instance.file_info = lambda message, *args, **kwargs: _file_only(logger_instance, "INFO", message, *args, **kwargs)
-    logger_instance.file_success = lambda message, *args, **kwargs: _file_only(logger_instance, "SUCCESS", message, *args, **kwargs)
-    logger_instance.file_warning = lambda message, *args, **kwargs: _file_only(logger_instance, "WARNING", message, *args, **kwargs)
-    logger_instance.file_error = lambda message, *args, **kwargs: _file_only(logger_instance, "ERROR", message, *args, **kwargs)
-    logger_instance.file_critical = lambda message, *args, **kwargs: _file_only(logger_instance, "CRITICAL", message, *args, **kwargs)
-
-    # 開發模式方法 (別名為控制台方法)
-    logger_instance.dev = logger_instance.console
-    logger_instance.dev_debug = logger_instance.console_debug
-    logger_instance.dev_info = logger_instance.console_info
-    logger_instance.dev_success = logger_instance.console_success
-    logger_instance.dev_warning = logger_instance.console_warning
-    logger_instance.dev_error = logger_instance.console_error
-    logger_instance.dev_critical = logger_instance.console_critical
+        print(f"Logger '{config.name}' (ID: {config.name}): Log file path set to {logfile}")
+    else:
+        print(f"Logger '{config.name}' (ID: {config.name}): Console only mode")

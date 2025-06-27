@@ -7,8 +7,7 @@ name = "pretty-loguru"
 version = "0.2.14"
 description = "A Loguru-based logger with Rich panels, ASCII art headers, blocks and more."
 readme = "README.md"
-license = "MIT"
-license-files = ["LICENSE"]
+license = { file = "LICENSE" }
 authors = [
   { name = "JonesHong", email = "latte831104@gmail.com" }
 ]
@@ -16,8 +15,8 @@ dependencies = [
   "loguru>=0.6.0",
   "rich>=12.0.0",
   "art>=5.0.0",
-  "pyfiglet>=1.0.2",
-  "matplotlib>=3.8.4",
+  "pyfiglet>=1.0.0",
+  "matplotlib>=3.7.0",
 ]
 classifiers = [
   "Programming Language :: Python :: 3",

@@ -8,6 +8,7 @@ import time
 import random
 from pathlib import Path
 from pretty_loguru import create_logger
+from pretty_loguru.factory.proxy import LoggerProxy
 
 print("=== 真實業務場景範例 ===\n")
 
@@ -93,7 +94,8 @@ monitor_logger = create_logger(
     "system_monitor",
     log_path="./logs",
     preset="daily",
-    subdirectory="monitoring"
+    subdirectory="monitoring",
+    use_proxy=True
 )
 
 def check_system_health():
@@ -101,6 +103,8 @@ def check_system_health():
     services = ["database", "redis", "elasticsearch", "message_queue"]
     
     monitor_logger.ascii_header("HEALTH CHECK", font="standard", border_style="blue")
+    print(f"Type of monitor_logger: {type(monitor_logger)}")
+    print(f"Is monitor_logger an instance of LoggerProxy: {isinstance(monitor_logger, LoggerProxy)}")
     
     for service in services:
         # 模擬服務檢查
@@ -108,6 +112,8 @@ def check_system_health():
         response_time = random.uniform(10, 500)
         
         service_logger = monitor_logger.bind(service=service, response_time=f"{response_time:.1f}ms")
+        print(f"Type of service_logger: {type(service_logger)}")
+        print(f"Is service_logger an instance of LoggerProxy: {isinstance(service_logger, LoggerProxy)}")
         
         if is_healthy:
             service_logger.success(f"{service} 服務正常")

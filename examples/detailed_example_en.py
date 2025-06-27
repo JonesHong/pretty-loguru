@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 # 提前處理載入路徑選擇
-use_local_lib = input("Do you want to load global libraries? [Y/n]: ").strip().lower()
+use_local_lib = "n"
 if use_local_lib in {"no", "n"}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     print("Local libraries will be used.\n")
@@ -308,10 +308,10 @@ def example_3_special_formats():
     text2 = "你好，世界！"
 
     format_logger.info(
-        f"'{text1}' contains only ASCII characters: {format_logger.is_ascii_only(text1)}"
+        f"'{text1}' contains only ASCII characters: {is_ascii_only(text1)}"
     )
     format_logger.info(
-        f"'{text2}' contains only ASCII characters: {format_logger.is_ascii_only(text2)}"
+        f"'{text2}' contains only ASCII characters: {is_ascii_only(text2)}"
     )
     format_logger.info(
         f"Using global function: '{text1}' contains only ASCII characters: {is_ascii_only(text1)}"

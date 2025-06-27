@@ -11,6 +11,8 @@ from typing import List, Optional, Any
 from rich.panel import Panel
 from rich.console import Console
 
+from pretty_loguru.core.registry import register_extension_method
+
 try:
     from art import text2art
     _has_art = True
@@ -29,19 +31,12 @@ from .block import print_block, format_block_message
 # 僅匹配英文、數字和標準 ASCII 符號
 ASCII_PATTERN = re.compile(r'^[\x00-\x7F]+$')
 
-
 def is_ascii_only(text: str) -> bool:
-    """
-    檢查文本是否只包含 ASCII 字符
-    
-    Args:
-        text: 要檢查的文本
-        
-    Returns:
-        bool: 如果只包含 ASCII 字符則返回 True，否則返回 False
-    """
-    # 使用正則表達式檢查文本是否符合 ASCII 範圍
-    return bool(ASCII_PATTERN.match(text))
+    """檢查文本是否只包含 ASCII 字符"""
+    return ASCII_PATTERN.match(text) is not None
+
+
+
 
 
 @ensure_target_parameters
@@ -238,6 +233,7 @@ def print_ascii_block(
         )
 
 
+
 def create_ascii_methods(logger_instance: Any, console: Optional[Console] = None) -> None:
     """
     為 logger 實例創建 ASCII 藝術相關方法
@@ -248,13 +244,11 @@ def create_ascii_methods(logger_instance: Any, console: Optional[Console] = None
     """
     if console is None:
         console = Console()
-    
-    # 為 logger 添加 is_ascii_only 方法
-    logger_instance.is_ascii_only = is_ascii_only
    
-    # 添加 ascii_header 方法
+    # 定義 ascii_header 的實現
     @ensure_target_parameters
-    def ascii_header_method(
+    def _ascii_header_impl(
+        self,
         text: str,
         font: str = "standard",
         log_level: str = "INFO",
@@ -263,34 +257,15 @@ def create_ascii_methods(logger_instance: Any, console: Optional[Console] = None
         to_log_file_only: bool = False,
         _target_depth: int = None,
     ) -> None:
-        """
-        logger 實例的 ASCII 藝術標題方法
-        
-        Args:
-            text: 要轉換為 ASCII 藝術的文本
-            font: ASCII 藝術字體
-            log_level: 日誌級別
-            border_style: 邊框樣式
-            to_console_only: 是否僅輸出到控制台，預設為 False
-            to_log_file_only: 是否僅輸出到日誌文件，預設為 False
-            _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置
-        """
-        # 使用 kwargs 傳遞參數，避免參數重複
-        kwargs = {
-            "font": font,
-            "log_level": log_level,
-            "border_style": border_style,
-            "logger_instance": logger_instance,
-            "console": console,
-            "_target_depth": _target_depth,  # 傳遞深度
-        }
-        
-        # 使用當前方法的 to_console_only 和 to_log_file_only
-        print_ascii_header(text, **kwargs, to_console_only=to_console_only, to_log_file_only=to_log_file_only)
-    
-    # 添加 ascii_block 方法
+        print_ascii_header(text, font=font, log_level=log_level, border_style=border_style,
+                           logger_instance=self, console=console,
+                           to_console_only=to_console_only, to_log_file_only=to_log_file_only,
+                           _target_depth=_target_depth)
+
+    # 定義 ascii_block 的實現
     @ensure_target_parameters
-    def ascii_block_method(
+    def _ascii_block_impl(
+        self,
         title: str,
         message_list: List[str],
         ascii_header: Optional[str] = None,
@@ -301,38 +276,12 @@ def create_ascii_methods(logger_instance: Any, console: Optional[Console] = None
         to_log_file_only: bool = False,
         _target_depth: int = None,
     ) -> None:
-        """
-        logger 實例的 ASCII 藝術區塊方法
-        
-        Args:
-            title: 區塊的標題
-            message_list: 區塊內的內容列表
-            ascii_header: ASCII 藝術標題文本 (如果不提供，則使用 title)
-            ascii_font: ASCII 藝術字體
-            border_style: 邊框樣式，預設為 "cyan"
-            log_level: 日誌級別，預設為 "INFO"
-            to_console_only: 是否僅輸出到控制台，預設為 False
-            to_log_file_only: 是否僅輸出到日誌文件，預設為 False
-            _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置
-        """
-        # 使用 kwargs 傳遞參數，避免參數重複
-        kwargs = {
-            "ascii_header": ascii_header,
-            "ascii_font": ascii_font,
-            "border_style": border_style,
-            "log_level": log_level,
-            "logger_instance": logger_instance,
-            "console": console,
-            "_target_depth": _target_depth,  # 傳遞深度
-        }
-        
-        # 使用當前方法的 to_console_only 和 to_log_file_only
-        print_ascii_block(title, message_list, **kwargs, to_console_only=to_console_only, to_log_file_only=to_log_file_only)
-    
-    # 將方法添加到 logger 實例
-    logger_instance.ascii_header = ascii_header_method
-    logger_instance.ascii_block = ascii_block_method
-    
-    # 添加目標特定方法
-    add_target_methods(logger_instance, "ascii_header", ascii_header_method)
-    add_target_methods(logger_instance, "ascii_block", ascii_block_method)
+        print_ascii_block(title, message_list, ascii_header=ascii_header, ascii_font=ascii_font,
+                          border_style=border_style, log_level=log_level,
+                          logger_instance=self, console=console,
+                          to_console_only=to_console_only, to_log_file_only=to_log_file_only,
+                          _target_depth=_target_depth)
+
+    # 註冊方法
+    register_extension_method(logger_instance, "ascii_header", _ascii_header_impl, overwrite=True)
+    register_extension_method(logger_instance, "ascii_block", _ascii_block_impl, overwrite=True)

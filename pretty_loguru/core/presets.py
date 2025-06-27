@@ -14,14 +14,23 @@ from typing import Optional, Dict, Any, Callable, Literal, List
 PresetType = Literal["detailed", "simple", "daily", "hourly", "minute", "weekly", "monthly"]
 
 # 重命名函數模板
-def _create_rename_function(pattern: str) -> Callable:
-    """創建日誌重命名函數"""
+def _create_rename_function(pattern: str, custom_format: Optional[str] = None) -> Callable:
+    """
+    創建日誌重命名函數
+    
+    Args:
+        pattern: 默認的命名模式
+        custom_format: 自定義壓縮檔名格式，如果提供則優先使用
+    """
     def rename_function(filepath: str):
         log_path = Path(filepath)
         current_time = datetime.now()
         
+        # 使用自定義格式或默認模式
+        actual_pattern = custom_format if custom_format else pattern
+        
         # 格式化模式替換
-        new_name = pattern.format(
+        new_name = actual_pattern.format(
             name=log_path.stem.replace('_latest.temp', ''),
             timestamp=current_time.strftime("%Y%m%d-%H%M%S"),
             date=current_time.strftime("%Y%m%d"),
@@ -40,6 +49,22 @@ def _create_rename_function(pattern: str) -> Callable:
         return str(new_path)
     
     return rename_function
+
+def create_custom_compression_function(compression_format: str) -> Callable:
+    """
+    創建自定義壓縮函數
+    
+    Args:
+        compression_format: 自定義的壓縮檔名格式
+        
+    Returns:
+        Callable: 壓縮函數
+        
+    Examples:
+        >>> func = create_custom_compression_function("backup_{name}_{date}")
+        >>> # 會產生如 backup_my_app_20250627.log 的檔名
+    """
+    return _create_rename_function("", compression_format)
 
 # 預設配置定義 - 簡單的字典結構
 PRESET_CONFIGS: Dict[PresetType, Dict[str, Any]] = {

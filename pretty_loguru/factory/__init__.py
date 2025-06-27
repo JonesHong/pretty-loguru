@@ -16,8 +16,8 @@ from .creator import (
 
 from .methods import (
     add_custom_methods,
-    add_output_methods,
     add_format_methods,
+    register_extension_method,
 )
 
 # 定義對外可見的功能

@@ -400,6 +400,156 @@ logger = create_logger(
 )
 ```
 
+## Configuration Guide
+
+Understanding how pretty-loguru configuration works is essential for avoiding common pitfalls and getting the most out of the library.
+
+### Configuration Hierarchy
+
+pretty-loguru follows a clear configuration priority order:
+
+1. **Direct Parameters** (highest priority) - Parameters passed directly to `create_logger()`
+2. **Preset Configuration** (medium priority) - Settings from `log_name_preset`
+3. **Default Values** (lowest priority) - Built-in fallback values
+
+```python
+from pretty_loguru import create_logger
+
+# Example: Direct parameters override preset settings
+logger = create_logger(
+    name="my_app",
+    log_name_preset="daily",    # Sets rotation="1 day", retention="30 days"
+    rotation="12 hours"         # OVERRIDES the preset's "1 day" setting
+)
+# Result: rotation="12 hours", retention="30 days" (from preset)
+```
+
+### Configuration Methods
+
+pretty-loguru supports three main configuration approaches:
+
+#### 1. Direct Parameters (Recommended for simple cases)
+```python
+logger = create_logger(
+    name="simple_app",
+    log_path="./logs",
+    rotation="20 MB",
+    retention="7 days"
+)
+```
+
+#### 2. Using LoggerConfig (Recommended for complex cases)
+```python
+from pretty_loguru import create_logger, LoggerConfig
+
+config = LoggerConfig(
+    name="complex_app",
+    log_path="./logs",
+    subdirectory="services",
+    rotation="1 day",
+    retention="30 days",
+    compression_format="backup_{name}_{date}"  # Custom compression naming
+)
+logger = create_logger(config=config)
+```
+
+#### 3. Preset-based Configuration (Recommended for standardization)
+```python
+# Available presets: "detailed", "simple", "daily", "hourly", "minute", "weekly", "monthly"
+logger = create_logger(
+    name="standard_app",
+    log_path="./logs",
+    log_name_preset="daily"  # Auto-configures daily rotation with 30-day retention
+)
+```
+
+### Log File Path Generation
+
+Understanding how file paths are generated helps avoid conflicts and organize logs effectively:
+
+#### Path Generation Formula
+```
+Final Path = log_path / subdirectory / filename
+```
+
+#### Filename Generation Rules
+The filename depends on the preset and component naming:
+
+```python
+# Without preset (simple naming)
+logger = create_logger("my_app", log_path="./logs")
+# Result: logs/my_app_YYYYMMDD-HHMMSS.log
+
+# With daily preset
+logger = create_logger("my_app", log_path="./logs", log_name_preset="daily")
+# Result: logs/[my_app]daily_latest.temp.log
+# After rotation: logs/[my_app]20250627.log
+
+# With subdirectory
+logger = create_logger("api", log_path="./logs", subdirectory="services")
+# Result: logs/services/api_YYYYMMDD-HHMMSS.log
+```
+
+#### Path Examples
+
+| Configuration | Final Path |
+|---------------|------------|
+| `create_logger("app")` | `logs/app_20250627-143022.log` |
+| `create_logger("app", subdirectory="api")` | `logs/api/app_20250627-143022.log` |
+| `create_logger("app", log_name_preset="daily")` | `logs/[app]daily_latest.temp.log` |
+| `create_logger("app", subdirectory="api", log_name_preset="hourly")` | `logs/api/[app]hourly_latest.temp.log` |
+
+### Log File Sharing Behavior
+
+**IMPORTANT WARNING**: Multiple loggers can write to the same file if they generate identical paths. This behavior might be unintended and can cause issues.
+
+#### When File Sharing Occurs
+```python
+# ❌ THESE LOGGERS WILL SHARE THE SAME FILE
+logger1 = create_logger("service", log_path="./logs", log_name_preset="daily")
+logger2 = create_logger("service", log_path="./logs", log_name_preset="daily")
+# Both write to: logs/[service]daily_latest.temp.log
+
+# ❌ THESE ALSO SHARE THE SAME FILE (same component_name)
+api_logger = create_logger("api_v1", component_name="api", log_path="./logs")
+web_logger = create_logger("api_v2", component_name="api", log_path="./logs")
+# Both write to: logs/api_YYYYMMDD-HHMMSS.log
+```
+
+#### How to Avoid Unintended Sharing
+```python
+# ✅ Use unique names
+logger1 = create_logger("user_service", log_path="./logs", log_name_preset="daily")
+logger2 = create_logger("auth_service", log_path="./logs", log_name_preset="daily")
+
+# ✅ Use different subdirectories
+api_logger = create_logger("service", log_path="./logs", subdirectory="api")
+db_logger = create_logger("service", log_path="./logs", subdirectory="database")
+
+# ✅ Use different component names
+v1_logger = create_logger("api", component_name="api_v1", log_path="./logs")
+v2_logger = create_logger("api", component_name="api_v2", log_path="./logs")
+```
+
+#### When File Sharing is Intentional
+Sometimes you want multiple loggers to write to the same file:
+
+```python
+# ✅ Intentional sharing for related components
+user_auth = create_logger("user_auth", component_name="auth", log_path="./logs")
+admin_auth = create_logger("admin_auth", component_name="auth", log_path="./logs")
+# Both write to the same auth log file - this is intentional
+```
+
+### Best Practices
+
+1. **Use meaningful, unique names** for different services
+2. **Leverage subdirectories** to organize related logs
+3. **Choose appropriate presets** for your rotation needs
+4. **Test your configuration** to ensure paths are as expected
+5. **Use LoggerConfig** for complex setups to improve readability
+6. **Be explicit about file sharing** - make it intentional, not accidental
+
 ## Advanced Configuration
 
 ### Smart Format Selection

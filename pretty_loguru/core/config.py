@@ -13,53 +13,17 @@ from typing import Dict, Any, Optional, Union, Literal
 from ..types import LogLevelType, LogNameFormatType, LogRotationType, LogPathType
 
 
+from dataclasses import dataclass, field
+from typing import Dict, Any, Optional, Union, Literal, Callable
+
+from ..types import LogLevelType, LogRotationType, LogPathType
+
+
 # 日誌相關的全域變數
-LOG_LEVEL: LogLevelType = "INFO"  # 預設日誌級別
-LOG_ROTATION: LogRotationType = 20  # 日誌輪換大小，單位為 MB
-LOG_PATH: Path = Path.cwd() / "logs"  # 預設日誌儲存路徑
-
-
-# 預定義的日誌檔案名格式
-LOG_NAME_FORMATS: Dict[str, str] = {
-    # detailed/simple 是一次性或手動管理，啟動即寫入，暫不處理
-    "detailed": "[{component_name}]{timestamp}.log",  # 預設格式
-    "simple": "{component_name}.log",  # 簡單格式，只包含元件名稱
-    # 週期性日誌統一加上 _latest.temp.log 作為臨時標記，之後再用 compression 重新命名
-    "minute": "[{component_name}]minute_latest.temp.log",
-    "hourly": "[{component_name}]hourly_latest.temp.log",
-    "daily": "[{component_name}]daily_latest.temp.log",
-    "weekly": "[{component_name}]weekly_latest.temp.log",
-    "monthly": "[{component_name}]monthly_latest.temp.log",
-    # "minute": "[{component_name}]{date}_{hour}{minute}.temp.log",  # 每分鐘一檔
-    # "hourly": "[{component_name}]{date}_{hour}.temp.log",  # 每小時一檔
-    # "daily": "[{component_name}]{date}.temp.log",  # 每日一檔
-    # "weekly": "[{component_name}]week{week}.temp.log",  # 每周一檔
-    # "monthly": "[{component_name}]{year}{month}.temp.log",  # 每月一檔
-}
-
-# 輸出目標類型
-OUTPUT_DESTINATIONS: Dict[str, str] = {
-    "console_only": "to_console_only",  # 僅顯示在控制台
-    "file_only": "to_log_file_only",  # 僅寫入文件
-}
-
-
-class LogLevelEnum(Enum):
-    """日誌級別枚舉類別
-
-    定義了不同的日誌級別，用於設定和過濾日誌輸出。
-    """
-
-    TRACE = "TRACE"
-    DEBUG = "DEBUG"
-    INFO = "INFO"
-    SUCCESS = "SUCCESS"
-    WARNING = "WARNING"
-    ERROR = "ERROR"
-    CRITICAL = "CRITICAL"
-
-
-# 日誌輸出的格式設定
+LOG_LEVEL: LogLevelType = "INFO"
+LOG_ROTATION: LogRotationType = "20 MB"
+LOG_RETENTION: str = "30 days"
+LOG_PATH: Path = Path.cwd() / "logs"
 LOGGER_FORMAT: str = (
     "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
     "<level>{level: <8}{process}</level> | "
@@ -67,178 +31,76 @@ LOGGER_FORMAT: str = (
     "<level>{message}</level>"
 )
 
-# 使用 loguru 原生 {file} 變數的格式設定 (當 name=None 時使用)
-LOGGER_FORMAT_NATIVE: str = (
-    "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
-    "<level>{level: <8}{process}</level> | "
-    "<cyan>{file}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
-    "<level>{message}</level>"
-)
-
-
+@dataclass
 class LoggerConfig:
-    """日誌配置類
-
-    此類提供了統一的配置管理，可從環境變數或配置文件中載入配置。
     """
+    統一的日誌配置類，作為所有 logger 創建的唯一事實來源。
+    """
+    # --- 核心配置 ---
+    name: Optional[str] = None
+    level: LogLevelType = LOG_LEVEL
+    
+    # --- 檔案輸出 (Sink) ---
+    log_path: Optional[LogPathType] = None  # 預設不產生檔案，需要明確指定才會寫入檔案
+    rotation: Optional[LogRotationType] = LOG_ROTATION
+    retention: Optional[str] = LOG_RETENTION
+    compression: Optional[Union[str, Callable]] = None
+    compression_format: Optional[str] = None
+    
+    # --- 格式化 ---
+    logger_format: Optional[str] = LOGGER_FORMAT
+    component_name: Optional[str] = None
+    subdirectory: Optional[str] = None
+    
+    # --- 行為控制 ---
+    use_proxy: bool = False
+    start_cleaner: bool = False
+    
+    # --- 內部使用 ---
+    # preset 用於載入預設配置，不直接參與 loguru 的 sink 設置
+    preset: Optional[str] = field(default=None, metadata={"internal": True})
 
-    def __init__(
-        self,
-        level: Optional[LogLevelType] = None,
-        rotation: Optional[LogRotationType] = None,
-        log_path: Optional[LogPathType] = None,
-        logger_format: Optional[str] = None,
-        env_prefix: str = "PRETTY_LOGURU_",
-    ):
-        """初始化日誌配置
-
-        Args:
-            level: 日誌級別，預設從環境變數或全局默認值獲取
-            rotation: 日誌輪換設置，預設從環境變數或全局默認值獲取
-            log_path: 日誌路徑，預設從環境變數或全局默認值獲取
-            logger_format: 日誌格式，預設從環境變數或全局默認值獲取
-            env_prefix: 環境變數前綴，用於區分不同應用的配置
-        """
-        # 從環境變數或傳入參數中獲取配置值
-        self.level = level or os.environ.get(f"{env_prefix}LEVEL", LOG_LEVEL)
-
-        # 處理 rotation 的特殊情況
-        if rotation is None:
-            rotation_env = os.environ.get(f"{env_prefix}ROTATION")
-            if rotation_env:
-                self.rotation = rotation_env
-            else:
-                self.rotation = LOG_ROTATION
-        else:
-            self.rotation = rotation
-
-        # 處理日誌路徑
-        if log_path is None:
-            log_path_env = os.environ.get(f"{env_prefix}PATH")
-            if log_path_env:
-                self.log_path = Path(log_path_env)
-            else:
-                self.log_path = LOG_PATH
-        else:
-            self.log_path = Path(log_path)
-
-        # 日誌格式
-        self.format = logger_format or os.environ.get(
-            f"{env_prefix}FORMAT", LOGGER_FORMAT
-        )
+    def to_dict(self) -> Dict[str, Any]:
+        """將配置轉換為字典，方便序列化。"""
+        return {
+            "name": self.name,
+            "level": self.level,
+            "log_path": str(self.log_path) if self.log_path else None,
+            "rotation": self.rotation,
+            "retention": self.retention,
+            "compression": self.compression,
+            "compression_format": self.compression_format,
+            "logger_format": self.logger_format,
+            "component_name": self.component_name,
+            "subdirectory": self.subdirectory,
+            "use_proxy": self.use_proxy,
+            "start_cleaner": self.start_cleaner,
+            "preset": self.preset,
+        }
 
     @classmethod
     def from_dict(cls, config_dict: Dict[str, Any]) -> "LoggerConfig":
-        """從字典創建配置實例
+        """從字典創建配置實例。"""
+        # 過濾掉字典中不存在於 LoggerConfig 字段的鍵
+        valid_keys = {f.name for f in cls.__dataclass_fields__.values()}
+        filtered_dict = {k: v for k, v in config_dict.items() if k in valid_keys}
+        return cls(**filtered_dict)
 
-        Args:
-            config_dict: 包含配置值的字典
-
-        Returns:
-            LoggerConfig: 配置實例
-        """
-        return cls(
-            level=config_dict.get("level"),
-            rotation=config_dict.get("rotation"),
-            log_path=config_dict.get("log_path"),
-            logger_format=config_dict.get("format"),
-            env_prefix=config_dict.get("env_prefix", "PRETTY_LOGURU_"),
-        )
+    def save_to_file(self, file_path: Union[str, Path]) -> None:
+        """將配置保存到 JSON 文件。"""
+        path = Path(file_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        import json
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(self.to_dict(), f, indent=2, ensure_ascii=False)
 
     @classmethod
-    def from_file(
-        cls, file_path: Union[str, Path], format: Literal["json", "yaml"] = "json"
-    ) -> "LoggerConfig":
-        """從文件載入配置
-
-        Args:
-            file_path: 配置文件路徑
-            format: 文件格式，支援 "json" 或 "yaml"
-
-        Returns:
-            LoggerConfig: 配置實例
-
-        Raises:
-            ValueError: 不支援的文件格式
-            FileNotFoundError: 文件不存在
-        """
+    def from_file(cls, file_path: Union[str, Path]) -> "LoggerConfig":
+        """從 JSON 文件載入配置。"""
         path = Path(file_path)
         if not path.exists():
             raise FileNotFoundError(f"配置文件 '{file_path}' 不存在")
-
-        if format.lower() == "json":
-            import json
-
-            with open(path, "r", encoding="utf-8") as f:
-                config_dict = json.load(f)
-            return cls.from_dict(config_dict)
-
-        elif format.lower() == "yaml":
-            try:
-                import yaml
-            except ImportError:
-                raise ImportError(
-                    "使用 YAML 格式需要安裝 PyYAML 套件: pip install pyyaml"
-                )
-
-            with open(path, "r", encoding="utf-8") as f:
-                config_dict = yaml.safe_load(f)
-            return cls.from_dict(config_dict)
-
-        else:
-            raise ValueError(f"不支援的文件格式: {format}，支援的格式為: json, yaml")
-
-    def to_dict(self) -> Dict[str, Any]:
-        """轉換為字典
-
-        Returns:
-            Dict[str, Any]: 包含配置值的字典
-        """
-        return {
-            "level": self.level,
-            "rotation": self.rotation,
-            "log_path": str(self.log_path),
-            "format": self.format,
-        }
-
-    def save_to_file(
-        self, file_path: Union[str, Path], format: Literal["json", "yaml"] = "json"
-    ) -> None:
-        """將配置保存到文件
-
-        Args:
-            file_path: 配置文件路徑
-            format: 文件格式，支援 "json" 或 "yaml"
-
-        Raises:
-            ValueError: 不支援的文件格式
-        """
-        path = Path(file_path)
-        # 確保目錄存在
-        path.parent.mkdir(parents=True, exist_ok=True)
-
-        config_dict = self.to_dict()
-
-        if format.lower() == "json":
-            import json
-
-            with open(path, "w", encoding="utf-8") as f:
-                json.dump(config_dict, f, indent=2, ensure_ascii=False)
-
-        elif format.lower() == "yaml":
-            try:
-                import yaml
-            except ImportError:
-                raise ImportError(
-                    "使用 YAML 格式需要安裝 PyYAML 套件: pip install pyyaml"
-                )
-
-            with open(path, "w", encoding="utf-8") as f:
-                yaml.dump(config_dict, f, default_flow_style=False, sort_keys=False)
-
-        else:
-            raise ValueError(f"不支援的文件格式: {format}，支援的格式為: json, yaml")
-
-
-# 創建默認配置實例
-default_config = LoggerConfig()
+        import json
+        with open(path, "r", encoding="utf-8") as f:
+            config_dict = json.load(f)
+        return cls.from_dict(config_dict)

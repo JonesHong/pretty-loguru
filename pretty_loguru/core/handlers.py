@@ -8,10 +8,7 @@
 from datetime import datetime
 import os
 from typing import Dict, Callable, Optional, Any
-
-from ..types import LogFilterType, LogNameFormatType
-from .config import LOG_NAME_FORMATS
-
+from ..types import LogFilterType
 
 def create_destination_filters() -> Dict[str, LogFilterType]:
     """
@@ -60,8 +57,7 @@ def create_destination_filters() -> Dict[str, LogFilterType]:
 
 def format_filename(
     component_name: str,
-    log_name_format: LogNameFormatType = None,
-    timestamp_format: Optional[str] = None,
+    log_name_format: Optional[str] = None,
     name: Optional[str] = None,
 ) -> str:
     """
@@ -69,8 +65,8 @@ def format_filename(
     
     Args:
         component_name: 進程 ID 或服務名稱
-        log_name_format: 日誌檔案名格式，可以是自定義的格式或 LOG_NAME_FORMATS 中的鍵
-        timestamp_format: 時間戳格式，預設為 "%Y%m%d-%H%M%S"
+        log_name_format: 日誌檔案名格式字串，例如 "{name}_{date}.log"。
+                         如果為 None，則使用預設格式 "{name}_{timestamp}.log"。
         name: 服務或組件名稱，用於在日誌檔案名中使用變數替換
         
     Returns:
@@ -81,21 +77,14 @@ def format_filename(
     """
     now = datetime.now()
     
-    # 如果提供的是預定義格式的鍵，則獲取對應的格式
-    if log_name_format in LOG_NAME_FORMATS:
-        log_name_format = LOG_NAME_FORMATS[log_name_format]
     # 如果沒有提供格式，使用預設格式
-    elif log_name_format is None:
-        log_name_format = LOG_NAME_FORMATS["detailed"]
-    
-    # 使用提供的時間戳格式或預設格式
-    ts_format = timestamp_format or "%Y%m%d-%H%M%S"
-    timestamp = now.strftime(ts_format)
+    if log_name_format is None:
+        log_name_format = "{name}_{timestamp}.log"
     
     # 準備替換變數
     format_vars = {
         "component_name": component_name,
-        "timestamp": timestamp,
+        "timestamp": now.strftime("%Y%m%d-%H%M%S"),
         "date": now.strftime("%Y%m%d"),
         "time": now.strftime("%H%M%S"),
         "year": now.strftime("%Y"),
@@ -109,12 +98,10 @@ def format_filename(
     # 如果提供了名稱，則添加到替換變數中
     if name:
         format_vars["name"] = name
-        # 向後兼容：同時設置 service_tag
-        format_vars["service_tag"] = name
-    # 如果沒有提供名稱但格式中包含相關變數，則使用 component_name
-    elif "{service_tag}" in log_name_format or "{name}" in log_name_format:
-        format_vars["service_tag"] = component_name
-        format_vars["name"] = component_name
+    else:
+        # 如果沒有提供名稱，但格式中包含 {name}，則使用 component_name
+        if "{name}" in log_name_format:
+            format_vars["name"] = component_name
     
     # 替換格式中的變數
     try:
@@ -125,8 +112,7 @@ def format_filename(
         raise KeyError(f"日誌檔案名格式 '{log_name_format}' 使用了未提供的變數 '{missing_key}'")
     
     # 替換文件名中的不合法字符
-    # Windows 不允許的字符: \ / : * ? " < > |
-    illegal_chars = ['\\', '/', ':', '*', '?', '"', '<', '>', '|']
+    illegal_chars = ['/', ':', '*', '?', '"', '<', '>', '|']
     for char in illegal_chars:
         filename = filename.replace(char, '_')
     

@@ -19,7 +19,6 @@ from .block import (
 from .ascii_art import (
     print_ascii_header,
     print_ascii_block,
-    is_ascii_only,
     create_ascii_methods,
 )
 

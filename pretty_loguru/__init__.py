@@ -13,19 +13,12 @@ from pathlib import Path
 from .types import EnhancedLogger
 
 from .core.base import (
-    log_path_global,
-    configure_logger
+    configure_logger,
+    get_console,
 )
 
 # 導入核心配置和功能
 from .core.config import (
-    LOG_LEVEL,
-    LOG_ROTATION,
-    LOG_PATH,
-    LOG_NAME_FORMATS,
-    LOGGER_FORMAT,
-    OUTPUT_DESTINATIONS,
-    LogLevelEnum,
     LoggerConfig
 )
 
@@ -91,16 +84,8 @@ __all__ = [
     "PresetFactory",
     # 類型和配置
     "EnhancedLogger",
-    "LOG_LEVEL",
-    "LOG_ROTATION",
-    "LOG_PATH",
-    "LOGGER_FORMAT",
-    "LOG_NAME_FORMATS",
-    "OUTPUT_DESTINATIONS",
-    "LogLevelEnum",
     "LoggerConfig",
     # 核心功能
-    "log_path_global",
     "configure_logger",
     # 目標導向格式化工具
     "create_target_method",
