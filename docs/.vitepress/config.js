@@ -4,11 +4,14 @@ export default defineConfig({
   title: 'pretty-loguru',
   description: 'Enhanced Python Logging Library - Based on Loguru, integrated with Rich and ASCII Art',
   
+  // GitHub Pages 配置
+  base: '/pretty-loguru/',
+  
   // 暫時忽略死連結檢查，因為文檔還在建構中
   ignoreDeadLinks: true,
   
   head: [
-    ['link', { rel: 'icon', href: '/logo.png' }],
+    ['link', { rel: 'icon', href: '/pretty-loguru/logo.png' }],
     ['meta', { name: 'theme-color', content: '#3c8772' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'pretty-loguru' }],
@@ -197,7 +200,7 @@ export default defineConfig({
   },
 
   themeConfig: {
-    logo: '/logo.png',
+    logo: '/pretty-loguru/logo.png',
     
     socialLinks: [
       { icon: 'github', link: 'https://github.com/JonesHong/pretty-loguru' }
