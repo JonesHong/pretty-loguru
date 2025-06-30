@@ -186,7 +186,7 @@ import uvicorn
 logger_start(folder="webapp_logs")
 uvicorn_init_config()
 
-app = FastAPI(title="Demo API", version="1.0.0")
+app = FastAPI(title="Demo API", version="1.0.1")
 
 @app.middleware("http")
 async def logging_middleware(request: Request, call_next):
@@ -238,7 +238,7 @@ async def startup_event():
         "應用配置",
         [
             "🌐 名稱: Demo API",
-            "📦 版本: 1.0.0",
+            "📦 版本: 1.0.1",
             "🔧 環境: Development",
             "🚀 狀態: 啟動中"
         ],

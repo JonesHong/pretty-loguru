@@ -41,7 +41,7 @@ logger = create_logger("middleware_demo", log_path="./logs")
 app = FastAPI(
     title="Pretty Loguru Middleware Demo",
     description="展示 Pretty Loguru 中間件的完整功能",
-    version="1.0.0"
+    version="1.0.1"
 )
 
 # 添加自定義中間件進行日誌記錄

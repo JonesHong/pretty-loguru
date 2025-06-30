@@ -128,7 +128,7 @@ def main():
         "System Initialization Status",
         [
             "Application Name: Quick Demo App",
-            "Version: 1.0.0", 
+            "Version: 1.0.1", 
             "Environment: Development",
             "Log Level: DEBUG"
         ],

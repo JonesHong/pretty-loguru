@@ -16,7 +16,7 @@ import uvicorn
 # Initialize the logging system
 logger_start(folder="fastapi_logs", preset="development")
 
-app = FastAPI(title="Pretty Loguru API Demo", version="1.0.0")
+app = FastAPI(title="Pretty Loguru API Demo", version="1.0.1")
 
 @app.on_event("startup")
 async def startup_event():
@@ -27,7 +27,7 @@ async def startup_event():
         "FastAPI Application Startup",
         [
             "🚀 Application Name: Pretty Loguru API Demo",
-            "📦 Version: 1.0.0",
+            "📦 Version: 1.0.1",
             "🌐 Environment: Development",
             "📝 Logging System: pretty-loguru",
             "⚡ Status: Ready"
@@ -55,7 +55,7 @@ async def health_check():
     health_status = {
         "status": "healthy",
         "timestamp": time.time(),
-        "version": "1.0.0"
+        "version": "1.0.1"
     }
     
     logger.block(

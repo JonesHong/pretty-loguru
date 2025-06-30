@@ -17,7 +17,7 @@ logger.block(
     "基本資訊",
     [
         "應用名稱: MyApp",
-        "版本: 1.0.0",
+        "版本: 1.0.1",
         "作者: 開發團隊"
     ]
 )
@@ -88,7 +88,7 @@ def demo_border_colors():
         [
             "🖥️  作業系統: Linux",
             "🐍 Python 版本: 3.9",
-            "📦 套件版本: 1.0.0"
+            "📦 套件版本: 1.0.1"
         ],
         border_style="blue"
     )
@@ -233,7 +233,7 @@ def application_config_report(config):
         "應用程式配置",
         [
             f"📱 應用名稱: {config.get('app_name', 'Unknown')}",
-            f"🏷️  版本: {config.get('version', '1.0.0')}",
+            f"🏷️  版本: {config.get('version', '1.0.1')}",
             f"🌍 環境: {config.get('environment', 'development')}",
             f"🔧 除錯模式: {'開啟' if config.get('debug', False) else '關閉'}"
         ],
@@ -526,7 +526,7 @@ def complete_blocks_demo():
         "應用程式資訊",
         [
             "名稱: Pretty Loguru Demo",
-            "版本: 1.0.0",
+            "版本: 1.0.1",
             "作者: 開發團隊"
         ],
         border_style="blue"
