@@ -1,10 +1,10 @@
-name: Build and Deploy Documentation
+name: Build and Deploy VitePress Documentation
 
 # 讓 GITHUB_TOKEN 擁有 push gh-pages 所需的權限
 permissions:
-  contents: write   # 允許寫程式碼與 git push
-  pages:   write   # 允許操作 GitHub Pages
-  id-token: write  # 有些 action 需要用到
+  contents: read
+  pages: write
+  id-token: write
 
 on:
   push:
@@ -13,106 +13,54 @@ on:
     branches: [ master ]
   workflow_dispatch:
 
+# 只允許一個 workflow 同時運行
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - name: Checkout
+      uses: actions/checkout@v4
       with:
-        python-version: '3.10'
+        fetch-depth: 0 # 為了 lastUpdated 功能需要完整的 git history
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        cache: npm
+        cache-dependency-path: docs/package-lock.json
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
     
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints myst-parser sphinx-intl sphinx-copybutton sphinx_rtd_dark_mode
-        pip install -e .
+        cd docs
+        npm ci
     
-    # - name: Build Default docs
-    #   run: |
-    #     cd docs
-    #     # 確認 Makefile 位置並查看其內容
-    #     ls -la
-    #     if [ -f "Makefile" ]; then
-    #       make html
-    #     else
-    #       # 如果沒有 Makefile，直接使用 sphinx-build
-    #       sphinx-build -b html source build/html
-    #     fi
-
-    # - name: Build Chinese docs
-    #   run: |
-    #     cd docs
-    #     sphinx-build -b gettext source build/gettext
-    #     sphinx-intl update -p build/gettext -l zh_TW
-    #     sphinx-intl build
-    #     sphinx-build -b html -D language=zh_TW source build/html/zh_TW
-    
-    # - name: Build English docs
-    #   run: |
-    #     cd docs
-    #     sphinx-build -b gettext source build/gettext
-    #     sphinx-intl update -p build/gettext -l en
-    #     sphinx-intl build
-    #     sphinx-build -b html -D language=en source build/html/en
-    
-    - name: Generate gettext (once)
-      if: github.ref == 'refs/heads/master' && github.event_name == 'workflow_dispatch'
+    - name: Build VitePress
       run: |
         cd docs
-        sphinx-build -b gettext source build/gettext
-        sphinx-intl update -p build/gettext -l zh_TW
-        sphinx-intl update -p build/gettext -l en
-
-    - name: Build Chinese docs
-      run: |
-        cd docs
-        sphinx-intl build
-        sphinx-build -b html -D language=zh_TW source build/html/zh_TW
-
-    - name: Build English docs
-      run: |
-        cd docs
-        sphinx-intl build
-        sphinx-build -b html -D language=en source build/html/en
+        npm run build
     
-    # - name: Create .nojekyll file
-    #   run: |
-    #     cd docs/build/html
-    #     touch .nojekyll
-    #     # 創建根目錄重定向檔案
-    #     echo '<meta http-equiv="refresh" content="0; url=./zh_TW/index.html">' > index.html
-    
-    - name: Create language selector landing page
-      run: |
-        cd docs/build/html
-        touch .nojekyll
-        cat << 'EOF' > index.html
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <title>Select Language</title>
-          <style>
-            body { font-family: sans-serif; text-align:center; padding:2rem; }
-            a { margin:0 1rem; font-size:1.2rem; text-decoration:none; }
-          </style>
-        </head>
-        <body>
-          <h1>Choose Your Language / 選擇語言</h1>
-          <p>
-            <a href="zh_TW/index.html">繁體中文</a> |
-            <a href="en/index.html">English</a>
-          </p>
-        </body>
-        </html>
-        EOF
-
-
-    - name: Deploy to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@4.1.5
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
       with:
-        branch: gh-pages
-        folder: docs/build/html
+        path: docs/.vitepress/dist
+
+  # 部署作業
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

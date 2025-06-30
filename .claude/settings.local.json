@@ -71,7 +71,11 @@
       "Bash(pkill:*)",
       "Bash(true)",
       "Bash(npm run build:*)",
-      "mcp__zen__testgen"
+      "mcp__zen__testgen",
+      "Bash(git commit:*)",
+      "Bash(apt:*)",
+      "Bash(apt install:*)",
+      "Bash(git tag:*)"
     ],
     "deny": []
   },
