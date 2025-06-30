@@ -75,3 +75,7 @@ $RECYCLE.BIN/
 
 # VS Code Jupyter Metadata
 *.jupyterlab-settings
+
+node_modules/
+package-lock.json
+**/.vitepress/**

@@ -66,7 +66,7 @@ def format_filename(
     Args:
         component_name: 進程 ID 或服務名稱
         log_name_format: 日誌檔案名格式字串，例如 "{name}_{date}.log"。
-                         如果為 None，則使用預設格式 "{name}_{timestamp}.log"。
+                         如果為 None，則則使用預設格式 "[{name}]_{timestamp}.log"。
         name: 服務或組件名稱，用於在日誌檔案名中使用變數替換
         
     Returns:
@@ -79,11 +79,12 @@ def format_filename(
     
     # 如果沒有提供格式，使用預設格式
     if log_name_format is None:
-        log_name_format = "{name}_{timestamp}.log"
+        log_name_format = "[{name}]_{timestamp}.log"
     
     # 準備替換變數
     format_vars = {
-        "component_name": component_name,
+        "name": component_name, # 使用 component_name 作為 {name} 佔位符的值
+        "component_name": component_name, # 保留以兼容其他可能使用它的部分
         "timestamp": now.strftime("%Y%m%d-%H%M%S"),
         "date": now.strftime("%Y%m%d"),
         "time": now.strftime("%H%M%S"),
@@ -95,20 +96,12 @@ def format_filename(
         "second": now.strftime("%S"),
     }
     
-    # 如果提供了名稱，則添加到替換變數中
-    if name:
-        format_vars["name"] = name
-    else:
-        # 如果沒有提供名稱，但格式中包含 {name}，則使用 component_name
-        if "{name}" in log_name_format:
-            format_vars["name"] = component_name
-    
     # 替換格式中的變數
     try:
         filename = log_name_format.format(**format_vars)
     except KeyError as e:
         # 處理缺少的變數，使用更友好的錯誤訊息
-        missing_key = str(e).strip("'")
+        missing_key = str(e).strip("''")
         raise KeyError(f"日誌檔案名格式 '{log_name_format}' 使用了未提供的變數 '{missing_key}'")
     
     # 替換文件名中的不合法字符

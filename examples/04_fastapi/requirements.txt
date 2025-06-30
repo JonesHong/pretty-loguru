@@ -1,0 +1,10 @@
+# FastAPI 範例所需依賴
+fastapi>=0.68.0
+uvicorn[standard]>=0.15.0
+
+# 如果需要測試 API
+httpx>=0.24.0
+
+# 可選：API 文檔美化
+# python-multipart  # 支援表單上傳
+# python-jose[cryptography]  # JWT 支援

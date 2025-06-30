@@ -6,6 +6,7 @@ Uvicorn 整合模組
 """
 
 import logging
+import re
 import sys
 from typing import cast, Optional, Dict, Any, List
 import warnings
@@ -104,21 +105,20 @@ def configure_uvicorn(
 
     # 默認的 Uvicorn logger 名稱
     if logger_names is None:
-        logger_names = ["uvicorn.asgi", "uvicorn.access", "uvicorn"]
+        logger_names = ["uvicorn.asgi", "uvicorn.access", "uvicorn", "uvicorn.error"]
 
     # 延遲獲取 default_logger
     if logger_instance is None:
         from ..factory.creator import default_logger
         logger_instance = default_logger()
 
-    # 先移除所有現有的處理器，避免重複輸出
-    root_logger = logging.getLogger()
-    if root_logger.handlers:
-        for handler in root_logger.handlers[:]:
-            root_logger.removeHandler(handler)
-    
     # 創建拦截处理器
     intercept_handler = InterceptHandler(logger_instance)
+    
+    # 先移除所有現有的處理器，避免重複輸出
+    root_logger = logging.getLogger()
+    for handler in root_logger.handlers[:]:
+        root_logger.removeHandler(handler)
     
     # 添加到根 logger
     root_logger.addHandler(intercept_handler)
@@ -127,9 +127,8 @@ def configure_uvicorn(
     # 設定 Uvicorn 特定日誌的處理器
     for logger_name in logger_names:
         logging_logger = logging.getLogger(logger_name)
-        if logging_logger.handlers:
-            for handler in logging_logger.handlers[:]:
-                logging_logger.removeHandler(handler)
+        for handler in logging_logger.handlers[:]:
+            logging_logger.removeHandler(handler)
         logging_logger.addHandler(intercept_handler)
         logging_logger.propagate = False
         logging_logger.setLevel(level)
@@ -137,3 +136,71 @@ def configure_uvicorn(
     # 記錄配置信息
     if logger_instance:
         logger_instance.debug(f"Uvicorn logging configured with level: {level}")
+
+
+def setup_uvicorn_logging(logger_instance: Optional[Any] = None, level: LogLevelType = "INFO"):
+    """在 uvicorn.run 之前調用此函數來設置日誌攔截"""
+    configure_uvicorn(logger_instance, level)
+    
+    # 確保 uvicorn 使用我們的配置
+    import uvicorn.config
+    import uvicorn.server
+    
+    # 保存原始的 configure_logging 方法
+    _original_configure_logging = uvicorn.config.Config.configure_logging
+    
+    def patched_configure_logging(self):
+        # 先調用原始方法
+        _original_configure_logging(self)
+        # 然後重新配置為我們的攔截器
+        configure_uvicorn(logger_instance, level)
+    
+    # 替換方法
+    uvicorn.config.Config.configure_logging = patched_configure_logging
+
+
+def integrate_uvicorn(
+    logger: Any,
+    level: LogLevelType = "INFO",
+    logger_names: Optional[List[str]] = None
+) -> None:
+    """
+    將 Uvicorn 與 Pretty Loguru logger 進行集成
+    
+    Args:
+        logger: Pretty Loguru logger 實例 (必需)
+        level: 日誌級別，預設為 "INFO"
+        logger_names: 要配置的 logger 名稱列表，默認為 Uvicorn 相關的 logger
+    
+    Example:
+        from pretty_loguru import create_logger
+        from pretty_loguru.integrations.uvicorn import integrate_uvicorn
+        
+        logger = create_logger("my_app", log_path="./logs")
+        integrate_uvicorn(logger)
+        
+        # 然後正常使用 uvicorn
+        uvicorn.run(app, host="127.0.0.1", port=8000)
+    """
+    if not _has_uvicorn:
+        raise ImportError("未安裝 uvicorn 套件，無法配置 Uvicorn 日誌。可使用 'pip install uvicorn' 安裝。")
+    
+    # 調用原有的配置函數
+    configure_uvicorn(logger, level, logger_names)
+    
+    # 確保 uvicorn 使用我們的配置
+    import uvicorn.config
+    import uvicorn.server
+    
+    # 保存原始的 configure_logging 方法
+    _original_configure_logging = uvicorn.config.Config.configure_logging
+    
+    def patched_configure_logging(self):
+        # 先調用原始方法
+        _original_configure_logging(self)
+        # 然後重新配置為我們的攔截器
+        configure_uvicorn(logger, level, logger_names)
+    
+    # 替換方法
+    uvicorn.config.Config.configure_logging = patched_configure_logging
+    

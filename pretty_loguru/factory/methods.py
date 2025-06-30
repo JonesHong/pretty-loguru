@@ -10,7 +10,7 @@ from typing import Any, Callable, Optional
 from rich.console import Console
 
 from pretty_loguru.formats import has_figlet
-from pretty_loguru.core.registry import register_extension_method
+from pretty_loguru.core.extension_system import register_extension_method
 
 from ..types import EnhancedLogger
 from ..core.target_formatter import add_target_methods

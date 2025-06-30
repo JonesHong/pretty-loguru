@@ -11,7 +11,7 @@ from typing import List, Optional, Any
 from rich.panel import Panel
 from rich.console import Console
 
-from pretty_loguru.core.registry import register_extension_method
+from pretty_loguru.core.extension_system import register_extension_method
 
 try:
     from art import text2art

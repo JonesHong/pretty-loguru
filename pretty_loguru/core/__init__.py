@@ -38,8 +38,21 @@ from .registry import (
     get_logger,
     unregister_logger,
     list_loggers,
+    update_logger
+)
+
+# 導入事件系統
+from .event_system import (
+    subscribe,
+    unsubscribe,
     post_event,
-    subscribe
+    list_events,
+    clear_events
+)
+
+# 導入擴展系統
+from .extension_system import (
+    register_extension_method
 )
 
 # 定義對外可見的功能
@@ -68,6 +81,15 @@ __all__ = [
     "get_logger",
     "unregister_logger",
     "list_loggers",
+    "update_logger",
+    
+    # 事件系統功能
+    "subscribe",
+    "unsubscribe", 
     "post_event",
-    "subscribe"
+    "list_events",
+    "clear_events",
+    
+    # 擴展系統功能
+    "register_extension_method"
 ]

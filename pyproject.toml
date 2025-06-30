@@ -17,6 +17,7 @@ dependencies = [
   "art>=5.0.0",
   "pyfiglet>=1.0.0",
   "matplotlib>=3.7.0",
+  "python-dateutil>=2.8.2", # Added for relativedelta
 ]
 classifiers = [
   "Programming Language :: Python :: 3",

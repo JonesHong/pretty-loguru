@@ -394,3 +394,67 @@ if _has_fastapi:
                 log_response_body=log_response_body,
             )
             logger_instance.info("FastAPI custom route class has been set")
+
+
+    def integrate_fastapi(
+        app: FastAPI,
+        logger: EnhancedLogger,
+        enable_uvicorn: bool = True,
+        exclude_health_checks: bool = True,
+        exclude_paths: Optional[List[str]] = None,
+        exclude_methods: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        將 FastAPI 應用與 Pretty Loguru logger 進行完整集成
+        
+        Args:
+            app: FastAPI 應用實例
+            logger: 已創建的 Pretty Loguru logger 實例
+            enable_uvicorn: 是否同時配置 uvicorn 日誌，默認為 True
+            exclude_health_checks: 是否排除健康檢查路徑，默認為 True
+            exclude_paths: 額外排除的路徑列表
+            exclude_methods: 排除的 HTTP 方法列表
+            **kwargs: 其他傳遞給 setup_fastapi_logging 的參數
+        
+        Example:
+            from fastapi import FastAPI
+            from pretty_loguru import create_logger
+            from pretty_loguru.integrations.fastapi import integrate_fastapi
+            
+            app = FastAPI()
+            logger = create_logger("my_api", log_path="./logs")
+            integrate_fastapi(app, logger)
+            
+            @app.get("/")
+            async def root():
+                logger.info("處理首頁請求")
+                return {"message": "Hello World"}
+        """
+        # 設置排除路徑
+        final_exclude_paths = exclude_paths or []
+        if exclude_health_checks:
+            default_exclude = ["/health", "/metrics", "/docs", "/openapi.json", "/redoc"]
+            final_exclude_paths.extend(default_exclude)
+        
+        # 設置排除方法
+        final_exclude_methods = exclude_methods or ["OPTIONS"]
+        
+        # 設置 FastAPI 日誌
+        setup_fastapi_logging(
+            app=app,
+            logger_instance=logger,
+            middleware=True,
+            exclude_paths=final_exclude_paths,
+            exclude_methods=final_exclude_methods,
+            **kwargs
+        )
+        
+        # 配置 uvicorn 日誌（如果啟用）
+        if enable_uvicorn:
+            try:
+                from .uvicorn import integrate_uvicorn
+                integrate_uvicorn(logger)
+            except ImportError:
+                logger.warning("Uvicorn not available, skipping uvicorn logging setup")
+        

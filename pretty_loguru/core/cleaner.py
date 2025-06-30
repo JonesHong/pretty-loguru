@@ -7,9 +7,11 @@
 
 import os
 import time
+import atexit
+import re
 from datetime import datetime, timedelta
 from pathlib import Path
-from threading import Thread
+from threading import Thread, Event
 from typing import Union, Optional, Any
 
 from ..types import LogPathType, LogRotationType
@@ -20,10 +22,10 @@ class LoggerCleaner:
 
     用於定期清理過舊的日誌檔案，避免磁碟空間被佔滿。
     """
-    
+
     def __init__(
         self,
-        log_retention: Union[int, str] = 30,
+        log_retention: Union[int, str] = "30 days",
         log_path: Optional[LogPathType] = None,
         check_interval: int = 3600,  # 預設每小時檢查一次
         logger_instance: Any = None,
@@ -33,146 +35,144 @@ class LoggerCleaner:
         初始化日誌清理器
 
         Args:
-            log_retention: 日誌保留天數，預設為 30 天
-            log_path: 日誌儲存路徑，預設為當前目錄下的 logs 資料夾
+            log_retention: 日誌保留期限。可以是整數（天數），或字串（例如 "10 days", "1 week", "6 months"）。
+                           支援單位: seconds, minutes, hours, days, weeks, months, years.
+            log_path: 日誌儲存路徑，預設為當��目錄下的 logs 資料夾
             check_interval: 檢查間隔，單位為秒，預設為 3600（1小時）
             logger_instance: 記錄清理操作的日誌實例，如果為 None 則使用 print
             recursive: 是否遞歸清理子目錄，預設為 True
         """
-        # 設置日誌路徑
         self.log_path = Path(log_path) if log_path else Path.cwd() / "logs"
-        
-        # 解析保留天數
-        if isinstance(log_retention, str):
-            try:
-                self.retention_days = int(log_retention)
-            except ValueError:
-                # 如果無法轉換為整數，則使用預設值
-                self.retention_days = 30
-                if logger_instance:
-                    logger_instance.warning(f"Unable to convert '{log_retention}' to an integer, using the default value of 30 days")
-                else:
-                    print(f"Warning: Unable to convert '{log_retention}' to an integer, using the default value of 30 days")
-        else:
-            self.retention_days = log_retention
-        
-        # 設置檢查間隔
         self.check_interval = check_interval
-        
-        # 設置日誌實例
         self.logger = logger_instance
-        
-        # 設置遞歸清理標誌
         self.recursive = recursive
-        
-        # 創建清理線程
+
+        try:
+            self.retention_delta = self._parse_retention(log_retention)
+            self.retention_str = str(log_retention)
+        except (ValueError, TypeError) as e:
+            self.retention_delta = timedelta(days=30)
+            self.retention_str = "30 days"
+            self._log_message(
+                f"LoggerCleaner: 無效的保留時間格式 '{log_retention}'，將使用預設值 '30 days'。錯誤: {e}",
+                "WARNING",
+            )
+
+        self._stop_event = Event()
         self.cleaner_thread = Thread(
             target=self._clean_logs_loop,
             args=(),
-            daemon=True,  # 設定為守護線程
+            daemon=False,
         )
-        
-        # 初始化執行狀態
         self._is_running = False
-    
+        atexit.register(self.stop)
+
+    def _parse_retention(self, retention: Union[int, str]) -> timedelta:
+        """解析保留時間參數，轉換為 timedelta 物件"""
+        if isinstance(retention, int):
+            return timedelta(days=retention)
+        if not isinstance(retention, str):
+            raise TypeError("Retention must be an integer (days) or a string.")
+
+        # 使用正則表達式來解析 "value unit" 格式
+        match = re.match(r"(\d+)\s*([a-z]+)", retention.lower())
+        if not match:
+            raise ValueError(
+                f"Invalid retention format: '{retention}'. "
+                "Expected format like '10 days', '1 week'."
+            )
+
+        value = int(match.group(1))
+        unit = match.group(2).rstrip("s")  # 移除複數 's'
+
+        unit_map = {
+            "second": "seconds",
+            "minute": "minutes",
+            "hour": "hours",
+            "day": "days",
+            "week": "weeks",
+        }
+
+        if unit in unit_map:
+            return timedelta(**{unit_map[unit]: value})
+        elif unit == "month":
+            # 近似值：一個月約為 30.5 天
+            return timedelta(days=value * 30.5)
+        elif unit == "year":
+            # 近似值：一年約為 365.25 天
+            return timedelta(days=value * 365.25)
+        else:
+            raise ValueError(f"Unknown time unit: '{unit}'")
+
     def start(self) -> None:
-        """
-        啟動日誌清理線程
-        
-        如果清理器已經在運行，則不會重複啟動。
-        """
+        """啟動日誌清理線程"""
         if self._is_running:
-            self._log_message(f"LoggerCleaner: 已經在運行中")
+            self._log_message("LoggerCleaner: 已經在運行中")
         else:
             self.cleaner_thread.start()
-            self._log_message(f"LoggerCleaner: 清理線程已啟動，保留 {self.retention_days} 天內的日誌")
+            self._log_message(f"LoggerCleaner: 清理線程已啟動，保留 {self.retention_str} 內的日誌")
             self._is_running = True
-    
+
+    def stop(self) -> None:
+        """優雅地停止清理線程"""
+        if self._is_running:
+            self._log_message("LoggerCleaner: 正在停止清理線程...")
+            self._stop_event.set()
+            if self.cleaner_thread.is_alive():
+                self.cleaner_thread.join(timeout=30)
+            self._is_running = False
+            self._log_message("LoggerCleaner: 清理線程已停止")
+
     def _log_message(self, message: str, level: str = "INFO") -> None:
-        """
-        記錄日誌消息
-        
-        Args:
-            message: 日誌消息
-            level: 日誌級別，預設為 INFO
-        """
+        """記錄日誌消息"""
         if self.logger:
-            # 根據不同級別記錄日誌
-            if level == "INFO":
-                self.logger.info(message)
-            elif level == "WARNING":
-                self.logger.warning(message)
-            elif level == "ERROR":
-                self.logger.error(message)
-            elif level == "DEBUG":
-                self.logger.debug(message)
-            else:
-                self.logger.info(message)
+            getattr(self.logger, level.lower(), self.logger.info)(message)
         else:
-            # 如果沒有提供日誌實例，則使用 print
             print(message)
-    
+
     def _clean_logs_loop(self) -> None:
-        """
-        清理日誌的循環執行函數
-        
-        此方法會在單獨的線程中運行，定期檢查並清理過期日誌
-        """
-        while True:
+        """清理日誌的循環執行函數"""
+        while not self._stop_event.is_set():
             try:
                 self._clean_old_logs()
             except Exception as e:
-                self._log_message(f"LoggerCleaner: 清理日誌時發生錯誤: {str(e)}", "ERROR")
-            
-            # 等待一段時間再次執行
-            time.sleep(self.check_interval)
-    
+                self._log_message(f"LoggerCleaner: 清理日誌時發生錯誤: {e}", "ERROR")
+            self._stop_event.wait(self.check_interval)
+
     def _clean_old_logs(self) -> None:
-        """
-        執行實際的日誌清理操作
-        
-        根據設置的保留天數，刪除過期的日誌文件
-        """
-        if not os.path.exists(self.log_path):
-            # 如果日誌路徑不存在，則創建它
-            os.makedirs(self.log_path, exist_ok=True)
+        """執行實際的日誌清理操作"""
+        if not self.log_path.exists():
+            self.log_path.mkdir(parents=True, exist_ok=True)
             self._log_message(f"LoggerCleaner: 創建日誌目錄 {self.log_path}", "DEBUG")
             return
-        
-        # 計算截止日期
-        cutoff_date = datetime.now() - timedelta(days=self.retention_days)
+
+        # 使用 self.retention_delta 來計算截止日期
+        cutoff_date = datetime.now() - self.retention_delta
         cutoff_timestamp = cutoff_date.timestamp()
-        
-        # 決定要遍歷的路徑
+
         paths_to_check = []
         if self.recursive:
-            # 遞歸遍歷所有子目錄
-            for root, dirs, files in os.walk(self.log_path):
+            for root, _, files in os.walk(self.log_path):
                 for file in files:
-                    paths_to_check.append(os.path.join(root, file))
+                    paths_to_check.append(Path(root) / file)
         else:
-            # 只檢查指定目錄下的文件
-            for file in os.listdir(self.log_path):
-                file_path = os.path.join(self.log_path, file)
-                if os.path.isfile(file_path):
+            for file_path in self.log_path.iterdir():
+                if file_path.is_file():
                     paths_to_check.append(file_path)
-        
-        # 清理過期日誌
+
         for file_path in paths_to_check:
             try:
-                # 忽略隱藏文件
-                if os.path.basename(file_path).startswith('.'):
+                if file_path.name.startswith('.'):
                     continue
-                
-                # 檢查文件的創建時間是否早於截止日期
-                file_ctime = os.path.getctime(file_path)
-                if file_ctime < cutoff_timestamp:
-                    # 刪除過期文件
-                    os.remove(file_path)
+
+                file_mtime = file_path.stat().st_mtime
+                if file_mtime < cutoff_timestamp:
+                    file_path.unlink()
                     self._log_message(f"LoggerCleaner: 已刪除過期日誌文件 {file_path}", "INFO")
+            except FileNotFoundError:
+                # 檔案可能在檢查和刪除之間被其他程序移除（例如壓縮），這不是錯誤
+                continue
             except (PermissionError, OSError) as e:
-                # 處理權限錯誤或其他 IO 錯誤
-                self._log_message(f"LoggerCleaner: 無法刪除文件 {file_path}: {str(e)}", "WARNING")
+                self._log_message(f"LoggerCleaner: 無法刪除文件 {file_path}: {e}", "WARNING")
             except Exception as e:
-                # 處理其他未預期的錯誤
-                self._log_message(f"LoggerCleaner: 處理文件 {file_path} 時發生錯誤: {str(e)}", "ERROR")
+                self._log_message(f"LoggerCleaner: 處理文件 {file_path} 時發生錯誤: {e}", "ERROR")

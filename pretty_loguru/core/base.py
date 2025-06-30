@@ -14,7 +14,7 @@ from loguru import logger as _logger
 from rich.console import Console
 
 from ..types import EnhancedLogger
-from .config import LoggerConfig
+from .config import LoggerConfig, NATIVE_LOGGER_FORMAT
 from .handlers import create_destination_filters, format_filename
 
 # Rich Console 實例，用於美化輸出
@@ -37,13 +37,24 @@ def configure_logger(logger_instance: EnhancedLogger, config: LoggerConfig) -> N
             except Exception as e:
                 warnings.warn(f"Failed to remove handler {handler_id}: {e}")
 
-    # 2. 設定附加資訊 (extra)
-    extra_config = {
-        "folder": config.component_name or config.name,
-        "logger_id": config.name,
-        "to_console_only": False,
-        "to_log_file_only": False,
-    }
+    # 2. 根據 use_native_format 決定格式和 extra 配置
+    if config.use_native_format:
+        # 使用原生格式時，minimal extra 配置，不影響 loguru 的 file.name
+        extra_config = {
+            "to_console_only": False,
+            "to_log_file_only": False,
+        }
+        actual_format = NATIVE_LOGGER_FORMAT
+    else:
+        # 使用自定義格式時，保持原有行為
+        extra_config = {
+            "folder": config.component_name or config.name,
+            "logger_id": config.name,
+            "to_console_only": False,
+            "to_log_file_only": False,
+        }
+        actual_format = config.logger_format
+    
     logger_instance.configure(extra=extra_config)
 
     # 3. 創建目標過濾器
@@ -52,7 +63,7 @@ def configure_logger(logger_instance: EnhancedLogger, config: LoggerConfig) -> N
     # 4. 新增 console handler
     logger_instance.add(
         sys.stderr,
-        format=config.logger_format,
+        format=actual_format,
         level=config.level,
         filter=filters["console"],
     )
@@ -65,12 +76,16 @@ def configure_logger(logger_instance: EnhancedLogger, config: LoggerConfig) -> N
         
         log_path.mkdir(parents=True, exist_ok=True)
         
-        # 從 preset 或 config 獲取檔名格式
-        from ..core.presets import get_preset_config
-        preset_conf = get_preset_config(config.preset) if config.preset else {}
-        log_name_format = preset_conf.get('name_format')
-
-        log_filename = format_filename(config.component_name or config.name, log_name_format)
+        # 決定檔案名稱
+        if config.use_native_format:
+            # 使用原生格式時，檔案名使用 logger 名稱，不使用自定義格式
+            log_filename = f"{config.name}.log"
+        else:
+            # 使用自定義格式時，保持原有行為
+            from ..core.presets import get_preset_config
+            preset_conf = get_preset_config(config.preset) if config.preset else {}
+            log_name_format = preset_conf.get('name_format')
+            log_filename = format_filename(config.component_name or config.name, log_name_format)
         logfile = log_path / log_filename
 
         # 處理自定義壓縮格式
@@ -97,7 +112,7 @@ def configure_logger(logger_instance: EnhancedLogger, config: LoggerConfig) -> N
 
         logger_instance.add(
             str(logfile),
-            format=config.logger_format,
+            format=actual_format,
             level=config.level,
             **file_settings
         )

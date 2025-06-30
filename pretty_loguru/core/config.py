@@ -31,6 +31,14 @@ LOGGER_FORMAT: str = (
     "<level>{message}</level>"
 )
 
+# Loguru 原生格式，接近 loguru 預設格式
+NATIVE_LOGGER_FORMAT: str = (
+    "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | "
+    "<level>{level: <8}</level> | "
+    "<cyan>{file.name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
+    "<level>{message}</level>"
+)
+
 @dataclass
 class LoggerConfig:
     """
@@ -55,6 +63,7 @@ class LoggerConfig:
     # --- 行為控制 ---
     use_proxy: bool = False
     start_cleaner: bool = False
+    use_native_format: bool = False  # 使用 loguru 原生 file:function:line 格式
     
     # --- 內部使用 ---
     # preset 用於載入預設配置，不直接參與 loguru 的 sink 設置
@@ -75,6 +84,7 @@ class LoggerConfig:
             "subdirectory": self.subdirectory,
             "use_proxy": self.use_proxy,
             "start_cleaner": self.start_cleaner,
+            "use_native_format": self.use_native_format,
             "preset": self.preset,
         }
 

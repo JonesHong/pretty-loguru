@@ -1,4 +1,5 @@
-# pretty-loguru
+# Pretty Loguru
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/JonesHong/pretty-loguru/refs/heads/master/assets/images/logo.png" alt="pretty-loguru icon" width="200"/>
 </p>
@@ -16,384 +17,277 @@
   <a href="https://github.com/JonesHong/pretty-loguru/blob/master/LICENSE">
     <img alt="License" src="https://img.shields.io/github/license/JonesHong/pretty-loguru.svg">
   </a>
+  <a href="https://deepwiki.com/JonesHong/pretty-loguru"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
 </p>
 
-## 說明
+## 🎯 為什麼選擇 Pretty Loguru？
 
-**pretty-loguru** 是一個 Python 日誌庫，擴展了 [Loguru](https://github.com/Delgan/loguru) 的功能，並使用 [Rich](https://github.com/Textualize/rich) 面板、ASCII [art](https://github.com/sepandhaghighi/art) 與 [pyfiglet](https://github.com/pwaller/pyfiglet) 標題和可自定義區塊來呈現優雅的輸出。它提供：
+**Pretty Loguru** 是一個美觀且易用的 Python 日誌庫，在 [Loguru](https://github.com/Delgan/loguru) 的基礎上增加了視覺增強和生產就緒功能：
 
-- **Rich Panels**：顯示帶有邊框和樣式的結構化日誌區塊。
-- **ASCII Art Headers**：使用 `art` 庫生成引人注目的標題。
-- **ASCII Blocks**：結合 ASCII 藝術和區塊日誌，形成完整的區段。
-- **輕鬆初始化**：一次呼叫即可同時設置文件和控制台日誌。
-- **Uvicorn 整合**：攔截並統一 Uvicorn 日誌為 Loguru 格式。
+### 🆚 與原始 Loguru 的核心差異
 
-### 效果展示
+| 特色 | Loguru | Pretty Loguru |
+|------|--------|---------------|
+| **視覺效果** | 純文字輸出 | ✨ ASCII 藝術、色彩區塊、Rich 元件 |
+| **框架整合** | 手動配置 | 🚀 一行整合 FastAPI + Uvicorn |
+| **生產就緒** | 基礎功能 | 📊 監控、壓縮、錯誤追蹤 |
+| **配置管理** | 程式碼配置 | ⚙️ 工廠模式、預設系統 |
+| **學習曲線** | 需要學習 | 📚 5分鐘上手，範例完整 |
 
-以下是使用 **pretty-loguru** 的一些效果展示：
+---
 
-#### 基本日誌輸出
-![Basic Example Terminal](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_1_en_terminal.png)
-![Basic Example File 1](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_1_en_file_1.png)
-![Basic Example File 2](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_1_en_file_2.png)
+## ⚡ 5分鐘快速上手
 
-#### 多個 Logger 管理
-![Multiple Logger Example Terminal](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_2_en_terminal.png)
-![Multiple Logger Example File 1](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_2_en_file_1.png)
-![Multiple Logger Example File 2](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_2_en_file_2.png)
-![Multiple Logger Example File 3](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_2_en_file_3.png)
-
-#### 特殊格式輸出
-![Special Format Example Terminal](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_3_en_terminal.png)
-![Special Format Example File](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_3_en_file_1.png)
-
-#### 不同輸出目標
-![Different Output Example Terminal](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_4_en_terminal.png)
-![Different Output Example File](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_4_en_file_1.png)
-
-#### 整合功能
-![Integrated Example Terminal](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_5_en_terminal.png)
-![Integrated Example File](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_5_en_file_1.png)
-
-#### 進階功能與自定義
-![Advanced Features and Customization Example Terminal 1](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_6_en_terminal_1.png)
-![Advanced Features and Customization Example Terminal 2](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_6_en_terminal_2.png)
-![Advanced Features and Customization Example File 1](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_6_en_file_1.png)
-![Advanced Features and Customization Example File 2](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/assets/images/example_6_en_file_2.png)
-
-### 範例程式碼
-
-完整範例程式碼請參考 [examples/detailed_example_zh.py](https://raw.githubusercontent.com/JonesHong/pretty-loguru/master/examples/detailed_example_zh.py)。
-
-## 安裝
-
-通過 pip 安裝：
+### 安裝
 
 ```bash
 pip install pretty-loguru
 ```
 
-## 快速開始
+### 最簡單的使用方式
 
 ```python
-# 定義主函式以執行所有測試\import random
-import time
+from pretty_loguru import create_logger
 
+# 創建 logger 並開始使用
+logger = create_logger("my_app", log_path="./logs")
 
-def main_example():
-    try:
-        # 首先，導入日誌模組
-        from pretty_loguru import logger, logger_start, is_ascii_only
-        # 初始化日誌系統
-        component_name = logger_start(folder="logger_test")
-        logger.info(f"Logger system initialized, process ID: {component_name}")
-        logger.info("Logging system feature test example")
-        
-        # 執行每個測試套件
-        test_basic_logging()
-        time.sleep(1)
-        
-        test_block_logging()
-        time.sleep(1)
-        
-        test_ascii_logging()
-        time.sleep(1)
-        
-        test_mock_application()
-        
-        logger.success("All tests completed!")
-    except Exception as e:
-        # 初始化日誌系統時出錯
-        print(f"Error initializing logger system: {e}")
-        import traceback
-        traceback.print_exc()
-
-
-def test_basic_logging():
-    """測試基本日誌功能"""
-    from pretty_loguru import logger
-    
-    logger.info("=== Testing Basic Logging ===")
-    logger.debug("This is a debug message")
-    logger.info("This is an info message")
-    logger.success("This is a success message")
-    logger.warning("This is a warning message")
-    logger.error("This is an error message")
-    logger.critical("This is a critical message")
-    logger.info("Basic logging test completed")
-
-
-def test_block_logging():
-    """測試區塊日誌功能"""
-    from pretty_loguru import logger
-    
-    logger.info("=== Testing Block Logging ===")
-    
-    logger.block(
-        "System Status Summary",
-        [
-            "CPU Usage: 45%",
-            "Memory Usage: 60%",
-            "Disk Space: 120GB available",
-            "Network Connection: OK",
-            "Service Status: All running"
-        ],
-        border_style="green",
-        log_level="INFO"
-    )
-    
-    logger.block(
-        "Warning Messages",
-        [
-            "High memory usage detected",
-            "Current growth rate: 5% / min",
-            "Estimated to reach threshold in 30 minutes",
-            "Suggested action: check for memory leaks"
-        ],
-        border_style="yellow",
-        log_level="WARNING"
-    )
-    
-    logger.info("Block logging test completed")
-
-
-def test_ascii_logging():
-    """測試 ASCII 藝術日誌功能"""
-    from pretty_loguru import logger, is_ascii_only
-    
-    logger.info("=== Testing ASCII Art Logging ===")
-    
-    # 測試僅 ASCII 檢查函數
-    logger.info("Checking if text contains only ASCII characters:")
-    test_strings = [
-        "Hello World",
-        "Hello 世界",
-        "123-456-789",
-        "Special chars: ©®™",
-        "ASCII symbols: !@#$%^&*()"
-    ]
-    
-    for s in test_strings:
-        result = is_ascii_only(s)
-        logger.info(f"'{s}' only ASCII: {result}")
-    
-    # 顯示簡單的 ASCII 藝術標題
-    logger.ascii_header(
-        "SYSTEM START",
-        font="standard",
-        border_style="blue",
-        log_level="INFO"
-    )
-    
-    # 顯示不同字體的標題
-    fonts = ["standard", "slant", "doom", "small", "block"]
-    for font in fonts:
-        try:
-            logger.ascii_header(
-                f"Font: {font}",
-                font=font,
-                border_style="cyan",
-                log_level="INFO"
-            )
-        except Exception as e:
-            logger.error(f"Failed to generate ASCII art with font '{font}': {e}")
-    
-    # 測試包含非 ASCII 字符的標題
-    try:
-        logger.ascii_header(
-            "ASCII and café mix",  # 包含非 ASCII 字符 é
-            font="standard",
-            border_style="magenta",
-            log_level="WARNING"
-        )
-    except ValueError as e:
-        logger.error(f"Expected error: {e}")
-    
-    # 測試 ASCII 藝術區塊
-    logger.ascii_block(
-        "System Diagnostics Report",
-        [
-            "Check Time: " + time.strftime("%Y-%m-%d %H:%M:%S"),
-            "System Load: OK",
-            "Security Status: Good",
-            "Recent Error Count: 0",
-            "Uptime: 24h 12m"
-        ],
-        ascii_header="SYSTEM OK",
-        ascii_font="small",
-        border_style="green",
-        log_level="SUCCESS"
-    )
-    
-    logger.info("ASCII art logging test completed")
-
-
-def test_mock_application():
-    """模擬真實應用場景"""
-    from pretty_loguru import logger
-    
-    logger.info("=== Simulated Application Scenario ===")
-    
-    # 應用啟動
-    logger.ascii_header(
-        "APP STARTUP",
-        font="slant",
-        border_style="blue",
-        log_level="INFO"
-    )
-    
-    logger.info("Loading configuration...")
-    time.sleep(0.5)
-    logger.success("Configuration loaded successfully")
-    
-    logger.block(
-        "Application Configuration Summary",
-        [
-            "Application Name: Logging System Test",
-            "Version: 1.0.0",
-            "Environment: Development",
-            "Log Level: DEBUG",
-            "Max Log File Size: 20MB"
-        ],
-        border_style="cyan",
-        log_level="INFO"
-    )
-    
-    logger.info("Connecting to the database...")
-    time.sleep(1)
-    
-    # 隨機模擬錯誤情況
-    if random.random() < 0.3:
-        logger.error("Database connection failed")
-        logger.ascii_block(
-            "Error Report",
-            [
-                "Error Type: Database connection failed",
-                "Error Code: DB-5001",
-                "Reason: Unable to resolve hostname",
-                "Attempt Count: 3",
-                "Suggested Action: Check network connection and database service status"
-            ],
-            ascii_header="ERROR",
-            ascii_font="doom",
-            border_style="red",
-            log_level="ERROR"
-        )
-    else:
-        logger.success("Database connected successfully")
-        
-        logger.info("Initializing services...")
-        time.sleep(1.5)
-        logger.success("Services initialized successfully")
-        
-        logger.ascii_block(
-            "System Ready",
-            [
-                "Start Time: " + time.strftime("%Y-%m-%d %H:%M:%S"),
-                "Registered Modules: User Management, Authorization Center, Data Processing, Report Generation",
-                "System Status: Running",
-                "Listening Port: 8080",
-                "API Version: v2"
-            ],
-            ascii_header="READY",
-            ascii_font="block",
-            border_style="green",
-            log_level="SUCCESS"
-        )
-        
-        # 模擬處理請求
-        for i in range(3):
-            logger.info(f"Received request #{i+1}")
-            time.sleep(0.8)
-            logger.success(f"Request #{i+1} processed successfully")
-    
-    # 應用關閉
-    logger.info("Shutting down services...")
-    time.sleep(1)
-    logger.success("Services shut down safely")
-    
-    logger.ascii_header(
-        "SHUTDOWN",
-        font="standard",
-        border_style="magenta",
-        log_level="INFO"
-    )
-    
-    logger.info("Mock application scenario test completed")
-
-
-if __name__ == "__main__":
-    main_example()
+logger.info("這是普通訊息")
+logger.success("這是成功訊息") 
+logger.warning("這是警告訊息")
+logger.error("這是錯誤訊息")
 ```
 
-## 功能
-
-### Rich 區塊日誌
+### 原生格式支援 (v2.1.0+)
 
 ```python
-logger.block(
-    "System Summary",
-    [
-        "CPU Usage: 45%",
-        "Memory Usage: 60%",
-        "Disk Space: 120GB free"
-    ],
-    border_style="green",
-    log_level="INFO"
-)
+# 適合從 loguru 遷移或開發調試
+logger = create_logger("my_app", use_native_format=True)
+logger.info("接近 loguru 原生格式")
+# 輸出：main.py:function:42 - 接近 loguru 原生格式
 ```
+
+### 一行整合 FastAPI
+
+```python
+from fastapi import FastAPI
+from pretty_loguru import create_logger
+from pretty_loguru.integrations.fastapi import integrate_fastapi
+
+app = FastAPI()
+logger = create_logger("api", log_path="./logs")
+
+# 一行整合所有日誌功能（包含 uvicorn）
+integrate_fastapi(app, logger)
+
+@app.get("/")
+async def root():
+    logger.info("API 請求處理")
+    return {"message": "Hello World"}
+```
+
+---
+
+## 🎨 視覺特色展示
 
 ### ASCII 藝術標題
 
 ```python
-logger.ascii_header(
-    "APP START",
-    font="slant",
-    border_style="blue",
-    log_level="INFO"
+logger.ascii_header("WELCOME", style="block")
+```
+
+輸出效果：
+```
+╭──────────────────────────────────────────────╮
+│  _       __    ______    __    ______   ___  │
+│ | |     / /   / ____/   / /   / ____/  / _ \ │
+│ | | /| / /   / __/     / /   / /      / / / │
+│ | |/ |/ /   / /___    / /___/ /___   / /_/ / │
+│ |__/|__/   /_____/   /_____/\____/   \____/  │
+╰──────────────────────────────────────────────╯
+```
+
+### 彩色資訊區塊
+
+```python
+logger.block(
+    "系統狀態檢查",
+    "✅ 資料庫連線正常\n✅ API 服務運行中\n⚠️  記憶體使用率 85%",
+    border_style="green"
 )
 ```
 
-### ASCII 藝術區塊
+### Rich 元件整合
 
 ```python
-logger.ascii_block(
-    "Startup Report",
-    ["Step 1: OK", "Step 2: OK", "Step 3: OK"],
-    ascii_header="SYSTEM READY",
-    ascii_font="small",
-    border_style="cyan",
-    log_level="SUCCESS"
+# 表格顯示
+logger.table(
+    ["用戶", "狀態", "登入時間"],
+    [
+        ["Alice", "在線", "10:30"],
+        ["Bob", "離線", "09:15"]
+    ]
+)
+
+# 進度追蹤
+for item in logger.progress.track_list(items, description="處理中..."):
+    process(item)
+```
+
+---
+
+## 🏭 生產環境就緒
+
+### 自動輪替與壓縮
+
+```python
+# 按大小輪替（10MB）+ ZIP 壓縮
+logger = create_logger(
+    "production_app",
+    log_path="./logs",
+    rotation="10 MB",
+    retention="30 days",
+    compression="zip"
 )
 ```
 
-### Uvicorn 整合
+### 環境自適應配置
 
 ```python
-from pretty_loguru import uvicorn_init_config
-uvicorn_init_config()
+import os
+
+# 根據環境自動調整
+env = os.getenv("APP_ENV", "development")
+if env == "production":
+    logger = create_logger("app", level="WARNING", rotation="daily")
+else:
+    logger = create_logger("app", level="DEBUG")
 ```
 
-## 設定
-
-自定義文件路徑、輪換和級別：
+### 錯誤追蹤與重試機制
 
 ```python
-from pretty_loguru import init_logger
+@retry_with_logging(max_attempts=3, logger=logger)
+def database_operation():
+    # 自動記錄重試過程
+    return db.query("SELECT * FROM users")
 
-init_logger(
-    level="DEBUG",
-    log_path="logs",
-    component_name="my_app",
-    rotation="10MB"
+# 結構化錯誤記錄
+logger.error("資料庫連線失敗", extra={
+    "error_type": "ConnectionError",
+    "host": "db.example.com",
+    "retry_count": 2
+})
+```
+
+---
+
+## 📚 完整學習路徑
+
+### 🟢 新手級別 (5分鐘)
+- [基礎使用](examples_new/01_basics/simple_usage.py) - 創建 logger 和基本輸出
+- [控制台vs檔案](examples_new/01_basics/console_vs_file.py) - 分離輸出目標
+- [目標導向日誌](examples_new/01_basics/target_logging.py) - console_info, file_error 等
+
+### 🟡 進階級別 (15分鐘)  
+- [ASCII 藝術](examples_new/02_visual/ascii_art.py) - 美化標題和狀態
+- [色彩區塊](examples_new/02_visual/blocks.py) - 結構化資訊展示
+- [Rich 元件](examples_new/02_visual/rich_components.py) - 表格、樹狀圖、進度條
+
+### 🟠 專業級別 (30分鐘)
+- [預設配置](examples_new/03_presets/preset_comparison.py) - 快速配置不同場景
+- [輪替策略](examples_new/03_presets/rotation_examples.py) - 檔案管理最佳實踐
+- [自訂預設](examples_new/03_presets/custom_presets.py) - 客製化配置
+
+### 🔴 專家級別 (60分鐘)
+- [FastAPI 整合](examples_new/04_fastapi/simple_api.py) - Web 應用日誌
+- [中間件應用](examples_new/04_fastapi/middleware_demo.py) - 請求追蹤
+- [生產部署](examples_new/05_production/deployment_logging.py) - 企業級配置
+- [錯誤監控](examples_new/05_production/error_tracking.py) - 異常處理與分析
+- [性能監控](examples_new/05_production/performance_monitoring.py) - 系統健康檢查
+
+---
+
+## 🔧 核心 API 參考
+
+### 基本使用
+
+```python
+from pretty_loguru import create_logger
+
+# 基本創建
+logger = create_logger("app_name")
+
+# 完整配置
+logger = create_logger(
+    name="my_service",
+    log_path="./logs",
+    level="INFO",
+    rotation="1 day",
+    retention="1 month",
+    compression="zip"
+)
+
+# 原生格式 (v2.1.0+)
+logger = create_logger(
+    name="my_app",
+    use_native_format=True,  # 使用接近 loguru 原生格式
+    log_path="./logs"
 )
 ```
 
-## 貢獻
+### 框架整合
 
-歡迎貢獻！請在 [GitHub](https://github.com/yourusername/pretty-loguru) 上提交 issue 和 pull request。
+```python
+# FastAPI 整合
+from pretty_loguru.integrations.fastapi import integrate_fastapi
+integrate_fastapi(app, logger)
 
-## 授權
+# Uvicorn 整合
+from pretty_loguru.integrations.uvicorn import integrate_uvicorn  
+integrate_uvicorn(logger)
+```
 
-本專案採用 [MIT License](LICENSE) 授權。
+### 視覺元件
 
+```python
+# ASCII 標題
+logger.ascii_header("TITLE", style="block")
+
+# 自訂區塊
+logger.block("標題", "內容", border_style="blue")
+
+# Rich 元件
+logger.table(headers, rows)
+logger.tree("Root", {"child1": "value1"})
+```
+
+---
+
+## 🎯 核心優勢總結
+
+1. **🎨 視覺優先**: 比 Loguru 更美觀的輸出，ASCII 藝術讓日誌有視覺衝擊力
+2. **🚀 即插即用**: FastAPI 一行整合，比手動配置節省 80% 時間  
+3. **🏭 生產就緒**: 企業級功能（輪替、壓縮、監控）開箱即用
+4. **⚙️ 配置簡化**: 工廠模式和預設系統，告別複雜的手動配置
+5. **📚 學習友善**: 5分鐘上手，完整範例覆蓋所有使用場景
+
+---
+
+## 📖 進階資源
+
+- [📘 完整文檔](https://joneshong.github.io/pretty-loguru/en/index.html)
+- [🎯 範例集合](examples_new/) - 從新手到專家的完整學習路徑
+- [⚙️ API 參考](https://joneshong.github.io/pretty-loguru/en/api/index.html)
+- [🐛 問題回報](https://github.com/JonesHong/pretty-loguru/issues)
+- [💡 功能建議](https://github.com/JonesHong/pretty-loguru/discussions)
+
+---
+
+## 🤝 貢獻
+
+歡迎貢獻！請查看 [貢獻指南](CONTRIBUTING.md) 了解如何參與專案開發。
+
+## 📜 授權
+
+本專案採用 [MIT 授權](LICENSE)。
