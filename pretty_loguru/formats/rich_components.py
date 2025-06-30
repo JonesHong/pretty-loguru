@@ -23,6 +23,8 @@ from rich.tree import Tree
 from rich.columns import Columns
 from rich.progress import Progress, TaskID, BarColumn, TextColumn, TimeElapsedColumn
 from rich.text import Text
+from rich.syntax import Syntax
+from rich.panel import Panel
 
 from ..types import EnhancedLogger
 from ..core.target_formatter import add_target_methods, ensure_target_parameters
@@ -363,6 +365,345 @@ class LoggerProgress:
             self.logger.success(f"Completed tracking: {description}")
 
 
+@ensure_target_parameters
+def print_code(
+    code: str,
+    language: str = "python",
+    theme: str = "monokai",
+    line_numbers: bool = True,
+    word_wrap: bool = False,
+    indent_guides: bool = True,
+    title: Optional[str] = None,
+    log_level: str = "INFO",
+    logger_instance: Any = None,
+    console: Optional[Console] = None,
+    to_console_only: bool = False,
+    to_log_file_only: bool = False,
+    _target_depth: int = None,
+    **syntax_kwargs
+) -> None:
+    """
+    顯示語法高亮的程式碼
+    
+    Args:
+        code: 要顯示的程式碼字符串
+        language: 程式語言 (python, javascript, html, css, json, sql, etc.)
+        theme: 語法高亮主題 (monokai, github-dark, one-dark, etc.)
+        line_numbers: 是否顯示行號
+        word_wrap: 是否自動換行
+        indent_guides: 是否顯示縮排引導線
+        title: 可選的程式碼標題
+        log_level: 日誌級別
+        logger_instance: logger 實例
+        console: Rich console 實例
+        to_console_only: 僅輸出到控制台
+        to_log_file_only: 僅輸出到文件
+        _target_depth: 調用深度
+        **syntax_kwargs: 傳遞給 Rich Syntax 的額外參數
+        
+    Example:
+        >>> code = '''
+        ... def hello_world():
+        ...     print("Hello, World!")
+        ...     return True
+        ... '''
+        >>> print_code(code, language="python", title="Hello World Example")
+    """
+    if console is None:
+        console = Console()
+    
+    if not code.strip():
+        if logger_instance:
+            logger_instance.warning("Code block is empty")
+        return
+    
+    # 創建 Rich Syntax 對象
+    syntax = Syntax(
+        code,
+        language,
+        theme=theme,
+        line_numbers=line_numbers,
+        word_wrap=word_wrap,
+        indent_guides=indent_guides,
+        **syntax_kwargs
+    )
+    
+    # 輸出到控制台
+    if not to_log_file_only and logger_instance:
+        display_title = title or f"Code ({language.upper()})"
+        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_console_only=True).log(
+            log_level, f"Displaying code: {display_title}"
+        )
+        
+        if title:
+            console.print(f"[bold cyan]{title}[/bold cyan]")
+        console.print(syntax)
+    
+    # 輸出到文件
+    if not to_console_only and logger_instance:
+        # 創建純文本版本的程式碼
+        code_text = f"Code: {title or f'({language.upper()})'}\n"
+        code_text += "=" * 50 + "\n"
+        
+        if line_numbers:
+            lines = code.split('\n')
+            for i, line in enumerate(lines, 1):
+                code_text += f"{i:4d} | {line}\n"
+        else:
+            code_text += code + "\n"
+        
+        code_text += "=" * 50
+        
+        logger_instance.opt(ansi=False, depth=_target_depth).bind(to_log_file_only=True).log(
+            log_level, f"\n{code_text}"
+        )
+
+
+@ensure_target_parameters
+def print_code_from_file(
+    file_path: str,
+    language: Optional[str] = None,
+    theme: str = "monokai",
+    line_numbers: bool = True,
+    word_wrap: bool = False,
+    indent_guides: bool = True,
+    start_line: Optional[int] = None,
+    end_line: Optional[int] = None,
+    log_level: str = "INFO",
+    logger_instance: Any = None,
+    console: Optional[Console] = None,
+    to_console_only: bool = False,
+    to_log_file_only: bool = False,
+    _target_depth: int = None,
+    **syntax_kwargs
+) -> None:
+    """
+    從文件讀取並顯示語法高亮的程式碼
+    
+    Args:
+        file_path: 文件路徑
+        language: 程式語言，如果不提供則嘗試從文件擴展名推斷
+        theme: 語法高亮主題
+        line_numbers: 是否顯示行號
+        word_wrap: 是否自動換行
+        indent_guides: 是否顯示縮排引導線
+        start_line: 開始行號 (1-based)
+        end_line: 結束行號 (1-based)
+        log_level: 日誌級別
+        logger_instance: logger 實例
+        console: Rich console 實例
+        to_console_only: 僅輸出到控制台
+        to_log_file_only: 僅輸出到文件
+        _target_depth: 調用深度
+        **syntax_kwargs: 傳遞給 Rich Syntax 的額外參數
+        
+    Example:
+        >>> print_code_from_file("example.py", start_line=10, end_line=20)
+    """
+    import os
+    
+    if console is None:
+        console = Console()
+    
+    if not os.path.exists(file_path):
+        if logger_instance:
+            logger_instance.error(f"File not found: {file_path}")
+        return
+    
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+        
+        # 處理行號範圍
+        if start_line is not None:
+            start_idx = max(0, start_line - 1)
+        else:
+            start_idx = 0
+            
+        if end_line is not None:
+            end_idx = min(len(lines), end_line)
+        else:
+            end_idx = len(lines)
+        
+        code = ''.join(lines[start_idx:end_idx])
+        
+        # 自動推斷語言
+        if language is None:
+            ext = os.path.splitext(file_path)[1].lower()
+            language_map = {
+                '.py': 'python',
+                '.js': 'javascript',
+                '.ts': 'typescript',
+                '.html': 'html',
+                '.css': 'css',
+                '.json': 'json',
+                '.sql': 'sql',
+                '.md': 'markdown',
+                '.yaml': 'yaml',
+                '.yml': 'yaml',
+                '.xml': 'xml',
+                '.sh': 'bash',
+                '.cpp': 'cpp',
+                '.c': 'c',
+                '.java': 'java',
+                '.go': 'go',
+                '.rs': 'rust',
+                '.php': 'php',
+                '.rb': 'ruby'
+            }
+            language = language_map.get(ext, 'text')
+        
+        # 構建標題
+        range_info = ""
+        if start_line is not None or end_line is not None:
+            range_info = f" (lines {start_line or 1}-{end_line or len(lines)})"
+        title = f"{os.path.basename(file_path)}{range_info}"
+        
+        # 確保不與 syntax_kwargs 衝突
+        code_kwargs = {
+            'code': code,
+            'language': language,
+            'theme': theme,
+            'line_numbers': line_numbers,
+            'word_wrap': word_wrap,
+            'indent_guides': indent_guides,
+            'title': title,
+            'log_level': log_level,
+            'logger_instance': logger_instance,
+            'console': console,
+            'to_console_only': to_console_only,
+            'to_log_file_only': to_log_file_only,
+            '_target_depth': _target_depth
+        }
+        
+        # 合併額外參數，但不覆蓋已定義的參數
+        for key, value in syntax_kwargs.items():
+            if key not in code_kwargs:
+                code_kwargs[key] = value
+        
+        # 調用 print_code
+        print_code(**code_kwargs)
+        
+    except Exception as e:
+        if logger_instance:
+            logger_instance.error(f"Error reading file {file_path}: {str(e)}")
+
+
+@ensure_target_parameters
+def print_diff(
+    old_code: str,
+    new_code: str,
+    old_title: str = "Before",
+    new_title: str = "After",
+    language: str = "python",
+    theme: str = "monokai",
+    log_level: str = "INFO",
+    logger_instance: Any = None,
+    console: Optional[Console] = None,
+    to_console_only: bool = False,
+    to_log_file_only: bool = False,
+    _target_depth: int = None,
+    **syntax_kwargs
+) -> None:
+    """
+    並排顯示程式碼差異對比，使用紅色（舊版本）和綠色（新版本）視覺區分
+    
+    Args:
+        old_code: 舊版本程式碼
+        new_code: 新版本程式碼
+        old_title: 舊版本標題
+        new_title: 新版本標題
+        language: 程式語言
+        theme: 語法高亮主題
+        log_level: 日誌級別
+        logger_instance: logger 實例
+        console: Rich console 實例
+        to_console_only: 僅輸出到控制台
+        to_log_file_only: 僅輸出到文件
+        _target_depth: 調用深度
+        **syntax_kwargs: 傳遞給 Rich Syntax 的額外參數
+        
+    Example:
+        >>> old = "def hello():\n    print('Hi')"
+        >>> new = "def hello():\n    print('Hello, World!')"
+        >>> print_diff(old, new)
+    """
+    if console is None:
+        console = Console()
+    
+    # 創建語法高亮的程式碼
+    old_syntax = Syntax(
+        old_code,
+        language,
+        theme=theme,
+        line_numbers=True,
+        **syntax_kwargs
+    )
+    
+    new_syntax = Syntax(
+        new_code,
+        language,
+        theme=theme,
+        line_numbers=True,
+        **syntax_kwargs
+    )
+    
+    # 輸出到控制台
+    if not to_log_file_only and logger_instance:
+        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_console_only=True).log(
+            log_level, "Displaying code diff"
+        )
+        
+        # 使用 Panel 包裝，加上紅色和綠色邊框
+        old_panel = Panel(
+            old_syntax,
+            title=f"[bold red]- {old_title}[/bold red]",
+            border_style="red",
+            title_align="left"
+        )
+        
+        new_panel = Panel(
+            new_syntax,
+            title=f"[bold green]+ {new_title}[/bold green]",
+            border_style="green", 
+            title_align="left"
+        )
+        
+        # 顯示差異標題
+        console.print(f"\n[bold cyan]Code Diff: {old_title} → {new_title}[/bold cyan]")
+        
+        # 並排顯示帶邊框的程式碼
+        columns = Columns([old_panel, new_panel], equal=True, expand=True)
+        console.print(columns)
+        console.print()
+    
+    # 輸出到文件
+    if not to_console_only and logger_instance:
+        diff_text = f"Code Diff: {old_title} → {new_title}\n"
+        diff_text += "=" * 60 + "\n"
+        diff_text += f"\n[-] {old_title}:\n"
+        diff_text += "-" * 30 + "\n"
+        
+        # 為舊程式碼每行添加 - 前綴
+        old_lines = old_code.strip().split('\n')
+        for i, line in enumerate(old_lines, 1):
+            diff_text += f"- {i:3d} | {line}\n"
+        
+        diff_text += f"\n[+] {new_title}:\n"
+        diff_text += "+" * 30 + "\n"
+        
+        # 為新程式碼每行添加 + 前綴
+        new_lines = new_code.strip().split('\n')
+        for i, line in enumerate(new_lines, 1):
+            diff_text += f"+ {i:3d} | {line}\n"
+            
+        diff_text += "\n" + "=" * 60
+        
+        logger_instance.opt(ansi=False, depth=_target_depth).bind(to_log_file_only=True).log(
+            log_level, f"\n{diff_text}"
+        )
+
+
 def create_rich_methods(logger_instance: Any, console: Optional[Console] = None) -> None:
     """
     為 logger 實例創建 Rich 組件方法
@@ -451,7 +792,106 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
             **columns_kwargs
         )
     
-    # 4. 進度條方法（作為屬性）
+    # 4. 程式碼高亮方法
+    @ensure_target_parameters
+    def code_method(
+        code: str,
+        language: str = "python",
+        theme: str = "monokai",
+        line_numbers: bool = True,
+        word_wrap: bool = False,
+        indent_guides: bool = True,
+        title: Optional[str] = None,
+        log_level: str = "INFO",
+        to_console_only: bool = False,
+        to_log_file_only: bool = False,
+        _target_depth: int = None,
+        **syntax_kwargs
+    ) -> None:
+        print_code(
+            code=code,
+            language=language,
+            theme=theme,
+            line_numbers=line_numbers,
+            word_wrap=word_wrap,
+            indent_guides=indent_guides,
+            title=title,
+            log_level=log_level,
+            logger_instance=logger_instance,
+            console=console,
+            to_console_only=to_console_only,
+            to_log_file_only=to_log_file_only,
+            _target_depth=_target_depth,
+            **syntax_kwargs
+        )
+    
+    # 5. 從文件讀取程式碼方法
+    @ensure_target_parameters
+    def code_file_method(
+        file_path: str,
+        language: Optional[str] = None,
+        theme: str = "monokai",
+        line_numbers: bool = True,
+        word_wrap: bool = False,
+        indent_guides: bool = True,
+        start_line: Optional[int] = None,
+        end_line: Optional[int] = None,
+        log_level: str = "INFO",
+        to_console_only: bool = False,
+        to_log_file_only: bool = False,
+        _target_depth: int = None,
+        **syntax_kwargs
+    ) -> None:
+        print_code_from_file(
+            file_path=file_path,
+            language=language,
+            theme=theme,
+            line_numbers=line_numbers,
+            word_wrap=word_wrap,
+            indent_guides=indent_guides,
+            start_line=start_line,
+            end_line=end_line,
+            log_level=log_level,
+            logger_instance=logger_instance,
+            console=console,
+            to_console_only=to_console_only,
+            to_log_file_only=to_log_file_only,
+            _target_depth=_target_depth,
+            **syntax_kwargs
+        )
+    
+    # 6. 程式碼差異對比方法
+    @ensure_target_parameters
+    def diff_method(
+        old_code: str,
+        new_code: str,
+        old_title: str = "Before",
+        new_title: str = "After",
+        language: str = "python",
+        theme: str = "monokai",
+        log_level: str = "INFO",
+        to_console_only: bool = False,
+        to_log_file_only: bool = False,
+        _target_depth: int = None,
+        **syntax_kwargs
+    ) -> None:
+        print_diff(
+            old_code=old_code,
+            new_code=new_code,
+            old_title=old_title,
+            new_title=new_title,
+            language=language,
+            theme=theme,
+            log_level=log_level,
+            logger_instance=logger_instance,
+            console=console,
+            to_console_only=to_console_only,
+            to_log_file_only=to_log_file_only,
+            _target_depth=_target_depth,
+            **syntax_kwargs
+        )
+    
+    # 7. 進度條方法（作為屬性）
     def get_progress():
         return LoggerProgress(logger_instance, console)
     
@@ -459,12 +899,18 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
     logger_instance.table = table_method
     logger_instance.tree = tree_method  
     logger_instance.columns = columns_method
+    logger_instance.code = code_method
+    logger_instance.code_file = code_file_method
+    logger_instance.diff = diff_method
     logger_instance.progress = get_progress()
     
     # 添加目標特定方法
     add_target_methods(logger_instance, "table", table_method)
     add_target_methods(logger_instance, "tree", tree_method)
     add_target_methods(logger_instance, "columns", columns_method)
+    add_target_methods(logger_instance, "code", code_method)
+    add_target_methods(logger_instance, "code_file", code_file_method)
+    add_target_methods(logger_instance, "diff", diff_method)
 
 
 # 導出的函數和類
@@ -472,6 +918,9 @@ __all__ = [
     'print_table',
     'print_tree', 
     'print_columns',
+    'print_code',
+    'print_code_from_file',
+    'print_diff',
     'LoggerProgress',
     'create_rich_methods'
 ]

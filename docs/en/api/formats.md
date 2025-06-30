@@ -250,4 +250,192 @@ for task in logger.progress.track_list(tasks, "Executing tasks"):
 
 ---
 
+## Code Highlighting Features
+
+`pretty-loguru` provides powerful syntax highlighting capabilities through Rich integration.
+
+### `logger.code()` - Display Code Snippets
+
+Display syntax-highlighted code directly from strings.
+
+```python
+def code(
+    code: str,
+    language: str = "python",
+    theme: str = "monokai",
+    line_numbers: bool = True,
+    word_wrap: bool = False,
+    indent_guides: bool = True,
+    title: Optional[str] = None,
+    log_level: str = "INFO",
+    to_console_only: bool = False,
+    to_log_file_only: bool = False,
+    **syntax_kwargs
+) -> None:
+    ...
+```
+
+**Parameter Descriptions:**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `code` | `str` | Source code to display |
+| `language` | `str` | Programming language (python, javascript, sql, etc.) |
+| `theme` | `str` | Syntax highlighting theme |
+| `line_numbers` | `bool` | Whether to show line numbers |
+| `word_wrap` | `bool` | Enable automatic word wrapping |
+| `indent_guides` | `bool` | Show indentation guide lines |
+| `title` | `Optional[str]` | Optional title for the code block |
+| `log_level` | `str` | Log level |
+| `to_console_only` | `bool` | Display only in console |
+| `to_log_file_only` | `bool` | Save only to log files |
+| `**syntax_kwargs` | `Any` | Additional parameters for Rich Syntax |
+
+**Examples:**
+
+```python
+code = '''
+def fibonacci(n):
+    """Calculate nth Fibonacci number"""
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+'''
+
+logger.code(code, language="python", title="Fibonacci Function")
+```
+
+### `logger.code_file()` - Display Code from Files
+
+Read and display code directly from files with automatic language detection.
+
+```python
+def code_file(
+    file_path: str,
+    language: Optional[str] = None,
+    theme: str = "monokai",
+    line_numbers: bool = True,
+    start_line: Optional[int] = None,
+    end_line: Optional[int] = None,
+    log_level: str = "INFO",
+    to_console_only: bool = False,
+    to_log_file_only: bool = False,
+    **syntax_kwargs
+) -> None:
+    ...
+```
+
+**Parameter Descriptions:**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `file_path` | `str` | Path to the source file |
+| `language` | `Optional[str]` | Override automatic language detection |
+| `theme` | `str` | Syntax highlighting theme |
+| `line_numbers` | `bool` | Whether to show line numbers |
+| `start_line` | `Optional[int]` | First line to display (1-based) |
+| `end_line` | `Optional[int]` | Last line to display (1-based) |
+| `log_level` | `str` | Log level |
+| `to_console_only` | `bool` | Display only in console |
+| `to_log_file_only` | `bool` | Save only to log files |
+| `**syntax_kwargs` | `Any` | Additional parameters for Rich Syntax |
+
+**Examples:**
+
+```python
+# Display specific lines from a file
+logger.code_file("script.py", start_line=10, end_line=25)
+
+# Display entire file with auto-detected language
+logger.code_file("config.json", theme="github-dark")
+```
+
+### `logger.diff()` - Code Comparison
+
+Display side-by-side code comparison with Git-style visual differentiation.
+
+```python
+def diff(
+    old_code: str,
+    new_code: str,
+    old_title: str = "Before",
+    new_title: str = "After",
+    language: str = "python",
+    theme: str = "monokai",
+    log_level: str = "INFO",
+    to_console_only: bool = False,
+    to_log_file_only: bool = False,
+    **syntax_kwargs
+) -> None:
+    ...
+```
+
+**Parameter Descriptions:**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `old_code` | `str` | Original version of the code |
+| `new_code` | `str` | Updated version of the code |
+| `old_title` | `str` | Label for old version (red border) |
+| `new_title` | `str` | Label for new version (green border) |
+| `language` | `str` | Programming language for syntax highlighting |
+| `theme` | `str` | Syntax highlighting theme |
+| `log_level` | `str` | Log level |
+| `to_console_only` | `bool` | Display only in console |
+| `to_log_file_only` | `bool` | Save only to log files |
+| `**syntax_kwargs` | `Any` | Additional parameters for Rich Syntax |
+
+**Examples:**
+
+```python
+old_func = "def hello(): print('Hi')"
+new_func = "def hello(): print('Hello, World!')"
+
+logger.diff(
+    old_code=old_func,
+    new_code=new_func,
+    old_title="Before Refactoring",
+    new_title="After Refactoring",
+    language="python"
+)
+```
+
+### Supported Languages
+
+The code highlighting feature supports many programming languages:
+
+- **Python** (.py) - `python`
+- **JavaScript** (.js) - `javascript`
+- **TypeScript** (.ts) - `typescript`
+- **HTML** (.html) - `html`
+- **CSS** (.css) - `css`
+- **JSON** (.json) - `json`
+- **SQL** (.sql) - `sql`
+- **Markdown** (.md) - `markdown`
+- **YAML** (.yaml, .yml) - `yaml`
+- **XML** (.xml) - `xml`
+- **Bash** (.sh) - `bash`
+- **C/C++** (.c, .cpp) - `c`, `cpp`
+- **Java** (.java) - `java`
+- **Go** (.go) - `go`
+- **Rust** (.rs) - `rust`
+- **PHP** (.php) - `php`
+- **Ruby** (.rb) - `ruby`
+
+### Available Themes
+
+Choose from various syntax highlighting themes:
+
+- `monokai` (default)
+- `github-dark`
+- `github-light`
+- `one-dark`
+- `material`
+- `dracula`
+- `nord`
+- `solarized-dark`
+- `solarized-light`
+
+---
+
 [Back to API Overview](./index.md)

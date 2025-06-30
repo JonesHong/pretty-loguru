@@ -31,6 +31,17 @@ pretty-loguru 的核心優勢在於其豐富的視覺化功能。這裡將詳細
 
 [了解 ASCII 區塊 →](./ascii-blocks)
 
+### 程式碼高亮
+透過 Rich 集成顯示語法高亮的程式碼片段。
+
+- 💻 多語言語法高亮
+- 🎨 多種顏色主題
+- 📁 直接文件內容顯示
+- 🔀 並排程式碼對比
+- 📏 行範圍選擇
+
+[了解程式碼高亮 →](./code-highlighting)
+
 ### Native 格式 (v2.1.0+)
 提供接近 loguru 原生的日誌格式，便於遷移和開發。
 
@@ -86,6 +97,29 @@ logger.ascii_block(
 )
 ```
 
+### 程式碼高亮範例
+
+```python
+# 顯示帶語法高亮的 Python 程式碼
+code = '''
+def fibonacci(n):
+    """計算第 n 個斐波那契數"""
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+'''
+
+logger.code(code, language="python", title="斐波那契函數")
+
+# 對比程式碼版本
+logger.diff(
+    old_code="def old_func(): pass",
+    new_code="def new_func(): return True",
+    old_title="重構前",
+    new_title="重構後"
+)
+```
+
 ## 🎯 使用場景
 
 ### 🖥️ 系統監控
@@ -102,6 +136,9 @@ logger.ascii_block(
 
 ### 🔄 工作流程
 在長時間運行的任務中使用視覺化日誌標記進度。
+
+### 💻 程式碼文檔
+使用程式碼高亮在日誌中顯示程式碼片段、檔案內容和程式碼對比。
 
 ## 🎮 互動式學習
 

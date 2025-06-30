@@ -31,6 +31,17 @@ Combine the power of ASCII art headers and Rich blocks.
 
 [Learn about ASCII Blocks →](./ascii-blocks)
 
+### Code Highlighting
+Display syntax-highlighted code snippets with Rich integration.
+
+- 💻 Multi-language syntax highlighting
+- 🎨 Multiple color themes
+- 📁 Direct file content display
+- 🔀 Side-by-side code comparison
+- 📏 Line range selection
+
+[Learn about Code Highlighting →](./code-highlighting)
+
 ## 🚀 Quick Preview
 
 ### Rich Block Example
@@ -77,6 +88,29 @@ logger.ascii_block(
 )
 ```
 
+### Code Highlighting Example
+
+```python
+# Display Python code with syntax highlighting
+code = '''
+def fibonacci(n):
+    """Calculate the nth Fibonacci number"""
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+'''
+
+logger.code(code, language="python", title="Fibonacci Function")
+
+# Compare code versions
+logger.diff(
+    old_code="def old_func(): pass",
+    new_code="def new_func(): return True",
+    old_title="Before",
+    new_title="After"
+)
+```
+
 ## 🎯 Use Cases
 
 ### 🖥️ System Monitoring
@@ -93,6 +127,9 @@ Use different border colors and styles to distinguish the severity of errors.
 
 ### 🔄 Workflows
 Use visual logs to mark progress in long-running tasks.
+
+### 💻 Code Documentation
+Use code highlighting to display code snippets, file contents, and code comparisons in logs.
 
 ## 🎮 Interactive Learning
 

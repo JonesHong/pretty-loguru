@@ -76,7 +76,9 @@
       "Bash(apt:*)",
       "Bash(apt install:*)",
       "Bash(git tag:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(diff:*)",
+      "WebFetch(domain:joneshong.github.io)"
     ],
     "deny": []
   },

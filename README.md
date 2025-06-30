@@ -185,26 +185,26 @@ logger.error("Database connection failed", extra={
 ## 📚 Complete Learning Path
 
 ### 🟢 Beginner Level (5 minutes)
-- [Basic Usage](examples_new/01_basics/simple_usage.py) - Create logger and basic output
-- [Console vs File](examples_new/01_basics/console_vs_file.py) - Separate output targets
-- [Targeted Logging](examples_new/01_basics/target_logging.py) - console_info, file_error, etc.
+- [Basic Usage](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/01_basics/simple_usage.py) - Create logger and basic output
+- [Console vs File](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/01_basics/console_vs_file.py) - Separate output targets
+- [Targeted Logging](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/01_basics/target_logging.py) - console_info, file_error, etc.
 
 ### 🟡 Intermediate Level (15 minutes)
-- [ASCII Art](examples_new/02_visual/ascii_art.py) - Beautify titles and status
-- [Color Blocks](examples_new/02_visual/blocks.py) - Structured information display
-- [Rich Components](examples_new/02_visual/rich_components.py) - Tables, trees, progress bars
+- [ASCII Art](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/02_visual/ascii_art.py) - Beautify titles and status
+- [Color Blocks](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/02_visual/blocks.py) - Structured information display
+- [Rich Components](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/02_visual/rich_components.py) - Tables, trees, progress bars
 
 ### 🟠 Professional Level (30 minutes)
-- [Preset Configuration](examples_new/03_presets/preset_comparison.py) - Quickly configure for different scenarios
-- [Rotation Strategy](examples_new/03_presets/rotation_examples.py) - File management best practices
-- [Custom Presets](examples_new/03_presets/custom_presets.py) - Customized configuration
+- [Preset Configuration](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/03_presets/preset_comparison.py) - Quickly configure for different scenarios
+- [Rotation Strategy](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/03_presets/rotation_examples.py) - File management best practices
+- [Custom Presets](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/03_presets/custom_presets.py) - Customized configuration
 
 ### 🔴 Expert Level (60 minutes)
-- [FastAPI Integration](examples_new/04_fastapi/simple_api.py) - Web application logging
-- [Middleware Application](examples_new/04_fastapi/middleware_demo.py) - Request tracking
-- [Production Deployment](examples_new/05_production/deployment_logging.py) - Enterprise-grade configuration
-- [Error Monitoring](examples_new/05_production/error_tracking.py) - Exception handling and analysis
-- [Performance Monitoring](examples_new/05_production/performance_monitoring.py) - System health check
+- [FastAPI Integration](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/04_fastapi/simple_api.py) - Web application logging
+- [Middleware Application](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/04_fastapi/middleware_demo.py) - Request tracking
+- [Production Deployment](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/05_production/deployment_logging.py) - Enterprise-grade configuration
+- [Error Monitoring](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/05_production/error_tracking.py) - Exception handling and analysis
+- [Performance Monitoring](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/05_production/performance_monitoring.py) - System health check
 
 ---
 
@@ -277,7 +277,7 @@ logger.tree("Root", {"child1": "value1"})
 ## 📖 Advanced Resources
 
 - [📘 Full Documentation](https://joneshong.github.io/pretty-loguru/en/index.html)
-- [🎯 Example Collection](examples_new/) - Complete learning path from beginner to expert
+- [🎯 Example Collection](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/) - Complete learning path from beginner to expert
 - [⚙️ API Reference](https://joneshong.github.io/pretty-loguru/en/api/index.html)
 - [🐛 Report Issues](https://github.com/JonesHong/pretty-loguru/issues)
 - [💡 Feature Suggestions](https://github.com/JonesHong/pretty-loguru/discussions)
