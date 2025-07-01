@@ -187,26 +187,26 @@ logger.error("資料庫連線失敗", extra={
 ## 📚 完整學習路徑
 
 ### 🟢 新手級別 (5分鐘)
-- [基礎使用](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/01_basics/simple_usage.py) - 創建 logger 和基本輸出
-- [控制台vs檔案](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/01_basics/console_vs_file.py) - 分離輸出目標
-- [目標導向日誌](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/01_basics/target_logging.py) - console_info, file_error 等
+- [基礎使用](https://github.com/JonesHong/pretty-loguru/tree/master/examples/01_basics/simple_usage.py) - 創建 logger 和基本輸出
+- [控制台vs檔案](https://github.com/JonesHong/pretty-loguru/tree/master/examples/01_basics/console_vs_file.py) - 分離輸出目標
+- [目標導向日誌](https://github.com/JonesHong/pretty-loguru/tree/master/examples/01_basics/target_logging.py) - console_info, file_error 等
 
 ### 🟡 進階級別 (15分鐘)  
-- [ASCII 藝術](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/02_visual/ascii_art.py) - 美化標題和狀態
-- [色彩區塊](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/02_visual/blocks.py) - 結構化資訊展示
-- [Rich 元件](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/02_visual/rich_components.py) - 表格、樹狀圖、進度條
+- [ASCII 藝術](https://github.com/JonesHong/pretty-loguru/tree/master/examples/02_visual/ascii_art.py) - 美化標題和狀態
+- [色彩區塊](https://github.com/JonesHong/pretty-loguru/tree/master/examples/02_visual/blocks.py) - 結構化資訊展示
+- [Rich 元件](https://github.com/JonesHong/pretty-loguru/tree/master/examples/02_visual/rich_components.py) - 表格、樹狀圖、進度條
 
 ### 🟠 專業級別 (30分鐘)
-- [預設配置](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/03_presets/preset_comparison.py) - 快速配置不同場景
-- [輪替策略](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/03_presets/rotation_examples.py) - 檔案管理最佳實踐
-- [自訂預設](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/03_presets/custom_presets.py) - 客製化配置
+- [預設配置](https://github.com/JonesHong/pretty-loguru/tree/master/examples/03_presets/preset_comparison.py) - 快速配置不同場景
+- [輪替策略](https://github.com/JonesHong/pretty-loguru/tree/master/examples/03_presets/rotation_examples.py) - 檔案管理最佳實踐
+- [自訂預設](https://github.com/JonesHong/pretty-loguru/tree/master/examples/03_presets/custom_presets.py) - 客製化配置
 
 ### 🔴 專家級別 (60分鐘)
-- [FastAPI 整合](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/04_fastapi/simple_api.py) - Web 應用日誌
-- [中間件應用](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/04_fastapi/middleware_demo.py) - 請求追蹤
-- [生產部署](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/05_production/deployment_logging.py) - 企業級配置
-- [錯誤監控](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/05_production/error_tracking.py) - 異常處理與分析
-- [性能監控](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/05_production/performance_monitoring.py) - 系統健康檢查
+- [FastAPI 整合](https://github.com/JonesHong/pretty-loguru/tree/master/examples/04_fastapi/simple_api.py) - Web 應用日誌
+- [中間件應用](https://github.com/JonesHong/pretty-loguru/tree/master/examples/04_fastapi/middleware_demo.py) - 請求追蹤
+- [生產部署](https://github.com/JonesHong/pretty-loguru/tree/master/examples/05_production/deployment_logging.py) - 企業級配置
+- [錯誤監控](https://github.com/JonesHong/pretty-loguru/tree/master/examples/05_production/error_tracking.py) - 異常處理與分析
+- [性能監控](https://github.com/JonesHong/pretty-loguru/tree/master/examples/05_production/performance_monitoring.py) - 系統健康檢查
 
 ---
 
@@ -279,7 +279,7 @@ logger.tree("Root", {"child1": "value1"})
 ## 📖 進階資源
 
 - [📘 完整文檔](https://joneshong.github.io/pretty-loguru/en/index.html)
-- [🎯 範例集合](https://github.com/JonesHong/pretty-loguru/tree/master/examples_new/) - 從新手到專家的完整學習路徑
+- [🎯 範例集合](https://github.com/JonesHong/pretty-loguru/tree/master/examples/) - 從新手到專家的完整學習路徑
 - [⚙️ API 參考](https://joneshong.github.io/pretty-loguru/en/api/index.html)
 - [🐛 問題回報](https://github.com/JonesHong/pretty-loguru/issues)
 - [💡 功能建議](https://github.com/JonesHong/pretty-loguru/discussions)
