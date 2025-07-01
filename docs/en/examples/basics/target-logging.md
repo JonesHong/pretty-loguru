@@ -18,10 +18,10 @@ logger = create_logger(
     name="demo",
     log_path="logs",
     level="INFO"
-), init_logger
+), create_logger
 
 # Initialize base logger
-init_logger(level="DEBUG", log_path="logs")
+create_logger(level="DEBUG", log_path="logs")
 
 # Target 1: Console (INFO and above, colored)
 logger.add(
@@ -117,12 +117,12 @@ logger = create_logger(
     name="demo",
     log_path="logs",
     level="INFO"
-), init_logger
+), create_logger
 import json
 import socket
 
 # Initialize base logger
-init_logger(level="INFO", log_path="logs", component_name="api_server")
+create_logger(level="INFO", log_path="logs", component_name="api_server")
 
 # Target 1: Application logs (structured JSON)
 logger.add(

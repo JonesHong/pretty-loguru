@@ -576,9 +576,9 @@ async def startup_with_config():
     
     # 根據環境配置日誌
     if settings.debug:
-        logger_start(preset="debug", folder=settings.log_folder)
+        create_logger(preset="debug", folder=settings.log_folder)
     else:
-        logger_start(preset="production", folder=settings.log_folder)
+        create_logger(preset="production", folder=settings.log_folder)
     
     logger.ascii_header("CONFIG LOADED", font="standard", border_style="cyan")
     
@@ -651,7 +651,7 @@ app.add_middleware(PrettyLoguruMiddleware)
 @app.on_event("startup")
 async def startup():
     """應用啟動"""
-    logger_start(preset="development", folder="fastapi_complete_logs")
+    create_logger(preset="development", folder="fastapi_complete_logs")
     
     logger.ascii_block(
         "FastAPI 應用啟動完成",

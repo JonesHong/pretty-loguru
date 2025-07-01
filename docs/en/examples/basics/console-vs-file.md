@@ -9,12 +9,13 @@ Console logging outputs directly to the terminal, perfect for development and de
 ### Basic Console Setup
 
 ```python
-from pretty_loguru import create_logger, logger
+from pretty_loguru import create_logger
 
 # Start with console logging only
 logger = create_logger(
     name="demo",
-    log_path=console_only=True)
+    console_only=True
+)
 
 logger.info("This appears in the console")
 logger.debug("Debug information for development")
@@ -26,10 +27,11 @@ logger.error("Something went wrong")
 ### Console Output Formatting
 
 ```python
-from pretty_loguru import init_logger, logger
+from pretty_loguru import create_logger
 
 # Configure console with custom format
-init_logger(
+logger = create_logger(
+    name="console_demo",
     level="DEBUG",
     console_only=True,
     format="<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>"
@@ -68,7 +70,7 @@ File logging saves logs to disk for persistence, auditing, and analysis.
 ### Basic File Setup
 
 ```python
-from pretty_loguru import create_logger, logger
+from pretty_loguru import create_logger
 
 # Start with file logging only
 logger = create_logger(
@@ -85,10 +87,10 @@ logger.error("Errors are persisted for investigation")
 ### Custom File Configuration
 
 ```python
-from pretty_loguru import init_logger, logger
+from pretty_loguru import create_logger
 
 # Configure file logging with rotation
-init_logger(
+create_logger(
     level="INFO",
     log_path="application_logs",
     component_name="my_app",
@@ -110,10 +112,10 @@ logger = create_logger(
     name="demo",
     log_path="logs",
     level="INFO"
-), init_logger
+), create_logger
 
 # Initialize base logger
-init_logger(level="DEBUG", log_path="logs")
+create_logger(level="DEBUG", log_path="logs")
 
 # Add specific error file
 logger.add(
@@ -145,10 +147,10 @@ The most common setup uses both console and file outputs.
 ### Hybrid Configuration
 
 ```python
-from pretty_loguru import init_logger, logger
+from pretty_loguru import create_logger
 
 # Initialize with both console and file
-init_logger(
+create_logger(
     level="DEBUG",
     log_path="logs",
     component_name="web_app"
@@ -171,10 +173,10 @@ logger = create_logger(
     name="demo",
     log_path="logs",
     level="INFO"
-), init_logger
+), create_logger
 
 # Base initialization
-init_logger(level="DEBUG", log_path="logs")
+create_logger(level="DEBUG", log_path="logs")
 
 # Remove default console handler and add custom ones
 logger.remove()
@@ -225,7 +227,7 @@ logger.error("Error: Console and file")
 
 ```python
 # Development setup
-from pretty_loguru import create_logger, logger
+from pretty_loguru import create_logger
 
 logger = create_logger(
     name="console_demo",
@@ -243,11 +245,11 @@ logger.info("Perfect for development")
 
 ```python
 # Background service
-from pretty_loguru import init_logger, logger
+from pretty_loguru import create_logger
 import sys
 
 # Disable console output
-init_logger(
+create_logger(
     level="INFO",
     log_path="service_logs",
     component_name="background_service"
@@ -269,9 +271,9 @@ logger.info("Service started - logged to file only")
 
 ```python
 # Production-ready setup
-from pretty_loguru import init_logger, logger
+from pretty_loguru import create_logger
 
-init_logger(
+create_logger(
     level="INFO",
     log_path="logs",
     component_name="api_server",
@@ -289,21 +291,21 @@ logger.success("Server ready - logged to both console and file")
 
 ```python
 import os
-from pretty_loguru import init_logger, logger
+from pretty_loguru import create_logger
 
 env = os.getenv('ENVIRONMENT', 'development')
 
 if env == 'development':
     # Development: Console only with debug level
-    init_logger(level="DEBUG", console_only=True)
+    create_logger(level="DEBUG", console_only=True)
 elif env == 'testing':
     # Testing: File only to avoid cluttering test output
-    init_logger(level="INFO", log_path="test_logs", console_only=False)
+    create_logger(level="INFO", log_path="test_logs", console_only=False)
     logger.remove()  # Remove console handler
     logger.add("test_logs/test.log", level="INFO")
 else:
     # Production: Both console and file
-    init_logger(
+    create_logger(
         level="INFO",
         log_path="logs",
         component_name="prod_app",
@@ -324,7 +326,7 @@ logger = create_logger(
     name="demo",
     log_path="logs",
     level="INFO"
-), init_logger
+), create_logger
 
 class LoggerManager:
     def __init__(self):

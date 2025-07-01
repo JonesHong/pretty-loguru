@@ -9,7 +9,7 @@ Complete guide for integrating pretty-loguru with Uvicorn ASGI server for enhanc
 ```python
 # main.py
 from fastapi import FastAPI
-from pretty_loguru import create_logger, logger
+from pretty_loguru import create_logger
 import uvicorn
 
 # Initialize pretty-loguru
@@ -43,10 +43,10 @@ if __name__ == "__main__":
 
 ```python
 import uvicorn
-from pretty_loguru import init_logger, logger
+from pretty_loguru import create_logger
 
 # Configure pretty-loguru for server logging
-init_logger(
+create_logger(
     level="INFO",
     log_path="logs",
     component_name="uvicorn_server",
@@ -257,13 +257,13 @@ if __name__ == "__main__":
 ```python
 import os
 import multiprocessing
-from pretty_loguru import create_logger, init_logger
+from pretty_loguru import create_logger, create_logger
 
 def setup_worker_logging():
     """Setup logging for worker processes"""
     worker_id = os.getpid()
     
-    init_logger(
+    create_logger(
         level="INFO",
         log_path=f"logs/worker_{worker_id}",
         component_name=f"uvicorn_worker_{worker_id}",
@@ -470,7 +470,7 @@ async def startup_monitoring():
 import os
 from typing import Optional
 from pydantic import BaseSettings
-from pretty_loguru import init_logger, logger
+from pretty_loguru import create_logger
 
 class UvicornLoggingConfig(BaseSettings):
     """Configuration for Uvicorn with pretty-loguru"""
@@ -498,7 +498,7 @@ class UvicornLoggingConfig(BaseSettings):
 def setup_logging_from_config(config: UvicornLoggingConfig):
     """Setup pretty-loguru based on configuration"""
     
-    init_logger(
+    create_logger(
         level=config.log_level,
         log_path=config.log_path,
         component_name="uvicorn_server",
@@ -569,7 +569,7 @@ CMD ["python", "uvicorn_server.py"]
 import os
 import signal
 import asyncio
-from pretty_loguru import create_logger, init_logger
+from pretty_loguru import create_logger, create_logger
 import uvicorn
 
 # Docker-specific logging setup
@@ -580,7 +580,7 @@ def setup_docker_logging():
     log_level = os.getenv("UVICORN_LOG_LEVEL", "INFO")
     log_path = os.getenv("UVICORN_LOG_PATH", "logs")
     
-    init_logger(
+    create_logger(
         level=log_level,
         log_path=log_path,
         component_name="uvicorn_docker",

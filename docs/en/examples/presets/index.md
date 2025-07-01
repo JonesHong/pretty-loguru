@@ -254,7 +254,7 @@ def create_custom_preset():
         "compression": "zip"
     }
     
-    logger_start(**api_preset)
+    create_logger(**api_preset)
     
     logger.ascii_header("API SERVICE", font="small", border_style="blue")
     logger.info("API service has started")
@@ -308,7 +308,7 @@ def load_config_from_file(config_path="logger_config.json"):
     try:
         with open(config_path, 'r', encoding='utf-8') as f:
             config = json.load(f)
-        logger_start(**config)
+        create_logger(**config)
         logger.success(f"Loaded configuration from: {config_path}")
     except FileNotFoundError:
         logger.warning(f"Config file {config_path} not found, using default.")

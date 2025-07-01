@@ -10,7 +10,7 @@ Configure pretty-loguru through environment variables for deployment flexibility
 
 ```python
 import os
-from pretty_loguru import init_logger
+from pretty_loguru import create_logger
 
 # Set environment variables
 os.environ['PRETTY_LOG_LEVEL'] = 'DEBUG'
@@ -19,7 +19,7 @@ os.environ['PRETTY_LOG_ROTATION'] = '50MB'
 os.environ['PRETTY_LOG_RETENTION'] = '30 days'
 
 # Initialize with environment settings
-logger = init_logger()
+logger = create_logger()
 ```
 
 ### 2. Configuration File
@@ -55,14 +55,14 @@ Load the configuration:
 
 ```python
 import json
-from pretty_loguru import init_logger, logger
+from pretty_loguru import create_logger
 
 # Load configuration
 with open('logger_config.json', 'r') as f:
     config = json.load(f)
 
 # Apply configuration
-init_logger(**config)
+create_logger(**config)
 
 logger.info("Logger configured from file")
 ```
@@ -72,7 +72,7 @@ logger.info("Logger configured from file")
 For dynamic configuration in your application:
 
 ```python
-from pretty_loguru import create_logger, init_logger
+from pretty_loguru import create_logger, create_logger
 
 # Custom configuration
 config = {
@@ -85,7 +85,7 @@ config = {
 }
 
 # Initialize with custom config
-init_logger(**config)
+create_logger(**config)
 
 # Add custom handlers
 logger.add(
@@ -110,7 +110,7 @@ logger.add(
 
 ```python
 from rich.console import Console
-from pretty_loguru import create_logger, init_logger
+from pretty_loguru import create_logger, create_logger
 
 # Custom rich format
 custom_format = (
@@ -120,7 +120,7 @@ custom_format = (
     "<level>{message}</level>"
 )
 
-init_logger(
+create_logger(
     level="DEBUG",
     format=custom_format,
     colorize=True
@@ -158,10 +158,10 @@ logger.add(
 ### Multiple Output Targets
 
 ```python
-from pretty_loguru import create_logger, init_logger
+from pretty_loguru import create_logger, create_logger
 
 # Initialize base logger
-init_logger(level="DEBUG", log_path="logs")
+create_logger(level="DEBUG", log_path="logs")
 
 # Console output for INFO and above
 logger.add(
@@ -222,10 +222,10 @@ logger.add("logs/errors.log", filter=error_filter)
 ### High-Performance Setup
 
 ```python
-from pretty_loguru import init_logger, logger
+from pretty_loguru import create_logger
 
 # Production configuration
-init_logger(
+create_logger(
     level="INFO",
     log_path="logs",
     component_name="production_app",
@@ -254,12 +254,12 @@ logger.add(
 
 ```python
 import os
-from pretty_loguru import init_logger, logger
+from pretty_loguru import create_logger
 
 service_name = os.getenv('SERVICE_NAME', 'unknown_service')
 environment = os.getenv('ENVIRONMENT', 'development')
 
-init_logger(
+create_logger(
     level="INFO" if environment == "production" else "DEBUG",
     log_path=f"logs/{service_name}",
     component_name=service_name,

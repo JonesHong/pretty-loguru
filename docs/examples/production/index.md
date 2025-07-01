@@ -20,7 +20,7 @@ def setup_production_logging():
     log_dir.mkdir(parents=True, exist_ok=True)
     
     # 生產環境配置
-    logger_start(
+    create_logger(
         preset="production",
         folder=str(log_dir),
         file_name="app_{time:YYYY-MM-DD}.log",
@@ -103,7 +103,7 @@ def setup_environment_logging():
     }
     
     config = configs[env]
-    logger_start(**config)
+    create_logger(**config)
     
     logger.ascii_block(
         f"環境配置載入完成",
@@ -637,7 +637,7 @@ class LogManager:
     
     def setup_advanced_rotation(self):
         """設置高級日誌輪換"""
-        logger_start(
+        create_logger(
             folder=str(self.log_dir),
             file_name="app_{time:YYYY-MM-DD_HH}.log",  # 每小時一個檔案
             rotation="1 hour",                          # 每小時輪換

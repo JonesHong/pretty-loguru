@@ -25,9 +25,9 @@ print(f"Logger 已初始化，元件名稱：{component_name}")
 #### 自定義初始化
 
 ```python
-from pretty_loguru import init_logger
+from pretty_loguru import create_logger
 
-init_logger(
+create_logger(
     level="INFO",
     log_path="custom_logs",
     component_name="my_app",

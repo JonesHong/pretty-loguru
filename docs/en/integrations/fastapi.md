@@ -8,7 +8,7 @@ Complete guide for integrating pretty-loguru with FastAPI applications for enhan
 
 ```python
 from fastapi import FastAPI
-from pretty_loguru import create_logger, logger
+from pretty_loguru import create_logger
 
 # Initialize logger
 logger = create_logger(
@@ -46,13 +46,13 @@ async def health_check():
 ```python
 from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse
-from pretty_loguru import init_logger, logger
+from pretty_loguru import create_logger
 import time
 import uuid
 from contextlib import asynccontextmanager
 
 # Configure logging for production
-init_logger(
+create_logger(
     level="INFO",
     log_path="logs",
     component_name="fastapi_app",

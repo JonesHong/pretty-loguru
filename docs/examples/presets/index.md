@@ -12,29 +12,28 @@ from pretty_loguru import create_logger
 # 使用預設配置
 logger = create_logger(
     name="demo",
-    log_path="logs",
-    level="INFO"
+    log_path="logs/demo.log"
 )
 
 # 使用開發環境預設配置
 logger = create_logger(
     name="development_demo",
-    log_path="development_logs",
-    level="INFO"
+    preset="development",
+    log_path="development_logs/dev.log"
 )
 
 # 使用生產環境預設配置
 logger = create_logger(
     name="production_demo",
-    log_path="production_logs",
-    level="INFO"
+    preset="production",
+    log_path="production_logs/prod.log"
 )
 
 # 使用除錯預設配置
 logger = create_logger(
     name="debug_demo",
-    log_path="debug_logs",
-    level="INFO"
+    preset="debug",
+    log_path="debug_logs/debug.log"
 )
 ```
 
@@ -309,7 +308,7 @@ def create_custom_preset():
     }
     
     # 使用自定義配置
-    logger_start(**api_preset)
+    logger = create_logger(**api_preset)
     
     logger.ascii_header("API SERVICE", font="small", border_style="blue")
     logger.info("API 服務已啟動")
@@ -359,7 +358,7 @@ def environment_specific_config():
     }
     
     config = config_map.get(env, config_map["development"])
-    logger_start(**config)
+    create_logger(**config)
     
     logger.ascii_block(
         f"環境配置已載入",
@@ -465,7 +464,7 @@ def load_config_from_file(config_path="logger_config.json"):
         with open(config_path, 'r', encoding='utf-8') as f:
             config = json.load(f)
         
-        logger_start(**config)
+        create_logger(**config)
         
         logger.success(f"已載入配置檔: {config_path}")
         logger.block(
@@ -555,7 +554,7 @@ def comprehensive_preset_demo():
         print(f"{'='*50}")
         
         # 初始化配置
-        logger_start(preset=preset, folder=f"{preset}_demo_logs")
+        create_logger(preset=preset, folder=f"{preset}_demo_logs")
         
         # 配置標題
         logger.ascii_header(preset.upper(), font="slant", border_style="blue")

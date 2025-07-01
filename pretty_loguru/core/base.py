@@ -48,7 +48,7 @@ def configure_logger(logger_instance: EnhancedLogger, config: LoggerConfig) -> N
     else:
         # 使用自定義格式時，保持原有行為
         extra_config = {
-            "folder": config.component_name or config.name,
+            "name": config.component_name or config.name,
             "logger_id": config.name,
             "to_console_only": False,
             "to_log_file_only": False,

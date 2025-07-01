@@ -22,7 +22,9 @@ def main():
     
     # 1. 最簡單的使用方式 - 只有控制台輸出
     print("1. 創建基本 logger（僅控制台輸出）")
-    logger = create_logger()
+    logger = create_logger(
+        # logger_format="{time} {level} {message}",  # 自定義日誌格式
+    )
     
     # 2. 基本日誌輸出
     logger.info("應用程式啟動")

@@ -55,8 +55,8 @@ my_logger = create_logger(
 )
 
 # 方式三：進階配置
-from pretty_loguru import init_logger
-init_logger(
+from pretty_loguru import create_logger
+create_logger(
     level="INFO",
     log_path="logs",
     component_name="web_app",

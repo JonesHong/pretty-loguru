@@ -27,14 +27,15 @@ LOG_PATH: Path = Path.cwd() / "logs"
 LOGGER_FORMAT: str = (
     "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
     "<level>{level: <8}{process}</level> | "
-    "<cyan>{extra[folder]}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
+    "<cyan>{extra[name]}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
     "<level>{message}</level>"
 )
 
 # Loguru 原生格式，接近 loguru 預設格式
 NATIVE_LOGGER_FORMAT: str = (
-    "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | "
-    "<level>{level: <8}</level> | "
+    # "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | "
+    "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
+    "<level>{level: <8}{process}</level> | "
     "<cyan>{file.name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
     "<level>{message}</level>"
 )

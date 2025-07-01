@@ -11,9 +11,8 @@ Main imports and functions:
 ```python
 from pretty_loguru import (
     create_logger,    # Create custom logger (RECOMMENDED)
-    logger,           # Main logger instance (legacy)
-    logger_start,     # Quick initialization function (legacy)
-    init_logger,      # Advanced initialization
+    default_logger,   # Get default logger instance
+    get_logger,       # Get existing logger by name
     is_ascii_only     # Utility function
 )
 ```
@@ -22,10 +21,9 @@ from pretty_loguru import (
 
 | Class/Function | Purpose | Module |
 |----------------|---------|--------|
-| `logger` | Main logging instance | `pretty_loguru` |
 | `create_logger()` | Create custom logger | `pretty_loguru.factory` |
-| `create_logger()` | Create custom logger | `pretty_loguru.factory` |
-| `init_logger()` | Advanced initialization | `pretty_loguru.core` |
+| `default_logger()` | Get default logger instance | `pretty_loguru.factory` |
+| `get_logger()` | Get existing logger by name | `pretty_loguru.factory` |
 
 ## 🚀 Core API
 

@@ -10,10 +10,9 @@
 
 ```python
 from pretty_loguru import (
-    logger,           # 主要的 logger 實例
-    logger_start,     # 快速初始化函數
-    create_logger,    # 建立自定義 logger
-    init_logger,      # 進階初始化
+    create_logger,    # 建立自定義 logger (推薦)
+    default_logger,   # 獲取預設 logger 實例
+    get_logger,       # 根據名稱獲取 logger
     is_ascii_only     # 工具函數
 )
 ```
@@ -22,20 +21,26 @@ from pretty_loguru import (
 
 | 類別/函數 | 用途 | 模組 |
 |-----------|------|------|
-| `logger` | 主要的日誌實例 | `pretty_loguru` |
-| `logger = create_logger(
-    name="demo",
-    log_path="logs",
-    level="INFO"
-)` | 快速初始化 | `pretty_loguru.factory` |
-| `create_logger()` | 建立客製 logger | `pretty_loguru.factory` |
-| `init_logger()` | 進階初始化 | `pretty_loguru.core` |
+| `create_logger()` | 建立自定義 logger | `pretty_loguru.factory` |
+| `default_logger()` | 獲取預設 logger 實例 | `pretty_loguru.factory` |
+| `get_logger()` | 根據名稱獲取已存在的 logger | `pretty_loguru.factory` |
 
 ## 🚀 核心 API
 
-### `logger` - 主要日誌實例
+### 推薦使用模式
 
-這是你最常使用的物件，提供所有日誌功能。
+建議使用以下方式獲取 logger 實例：
+
+```python
+# 方式一：創建自定義 logger (推薦)
+logger = create_logger(name="my_app", log_path="logs/app.log")
+
+# 方式二：使用預設 logger
+logger = default_logger()
+
+# 方式三：獲取已存在的 logger
+logger = get_logger("my_app")
+```
 
 #### 基本日誌方法
 
@@ -83,37 +88,39 @@ logger.file_error(message)
 logger.file_critical(message)
 ```
 
-### `logger = create_logger(
-    name="demo",
-    log_path="logs",
-    level="INFO"
-)` - 快速初始化
+### `create_logger()` - Logger 創建函數
 
-最常用的初始化方法，一行代碼完成所有設定。
+主要的 logger 創建函數，用於建立具有特定配置的 logger 實例。
 
 ```python
 def create_logger(
-    name: str,
-    folder: str = "logs",
-    level: str = "DEBUG", 
-    rotation: str = "10MB",
-    retention: str = "7 days",
-    compression: str = "zip"
-) -> str
+    name: Optional[str] = None,
+    use_native_format: bool = False,
+    **kwargs: Any
+) -> EnhancedLogger
 ```
 
 **參數說明：**
 
 | 參數 | 類型 | 預設值 | 說明 |
 |------|------|--------|------|
-| `folder` | `str` | `"logs"` | 日誌資料夾名稱 |
-| `level` | `str` | `"DEBUG"` | 最低日誌級別 |
-| `rotation` | `str` | `"10MB"` | 檔案輪換條件 |
-| `retention` | `str` | `"7 days"` | 檔案保留時間 |
-| `compression` | `str` | `"zip"` | 壓縮格式 |
+| `name` | `Optional[str]` | `None` | Logger 名稱，若未提供則從調用文件名推斷 |
+| `use_native_format` | `bool` | `False` | 是否使用 loguru 原生格式 (file:function:line) |
+| `**kwargs` | `Any` | - | 其他配置參數，傳遞給 LoggerConfig |
+
+**常用 kwargs 參數：**
+
+| 參數 | 類型 | 說明 |
+|------|------|------|
+| `log_path` | `str` | 日誌檔案路徑 |
+| `level` | `str` | 日誌級別 ("DEBUG", "INFO", "WARNING", "ERROR") |
+| `preset` | `str` | 預設配置名稱 |
+| `rotation` | `str` | 檔案輪換條件 (如 "10MB", "1 day") |
+| `retention` | `str` | 檔案保留時間 (如 "7 days", "30 days") |
+| `compression` | `str` | 壓縮格式 ("zip", "gz", "bz2") |
 
 **回傳值：**
-- `str`: 自動生成的元件名稱
+- `EnhancedLogger`: 配置好的 logger 實例
 
 **範例：**
 
@@ -121,56 +128,27 @@ def create_logger(
 # 基本用法
 logger = create_logger(
     name="demo",
-    log_path=)
+    log_path="logs/demo.log"
+)
 
 # 自定義設定
 logger = create_logger(
-    name="demo",
-    log_path=
-    folder="api_logs",
+    name="api_service",
+    log_path="api_logs/api.log",
     level="INFO",
     rotation="50MB", 
     retention="30 days"
 )
 ```
 
-### `create_logger()` - 建立自定義 Logger
+# 使用預設配置
+logger = create_logger(preset="development")
 
-建立具有特定名稱和配置的 logger 實例。
-
-```python
-def create_logger(
-    name: str,
-    level: str = "DEBUG",
-    log_path: Optional[str] = None,
-    rotation: str = "10MB",
-    retention: str = "7 days",
-    compression: str = "zip"
-) -> Logger
-```
-
-**參數說明：**
-
-| 參數 | 類型 | 預設值 | 說明 |
-|------|------|--------|------|
-| `name` | `str` | 必填 | Logger 名稱 |
-| `level` | `str` | `"DEBUG"` | 最低日誌級別 |
-| `log_path` | `Optional[str]` | `None` | 日誌檔案路徑 |
-| `rotation` | `str` | `"10MB"` | 檔案輪換條件 |
-| `retention` | `str` | `"7 days"` | 檔案保留時間 |
-| `compression` | `str` | `"zip"` | 壓縮格式 |
-
-**範例：**
-
-```python
-# 建立專用的 API logger
-api_logger = create_logger(
-    name="api_service",
-    level="INFO",
-    log_path="logs/api"
+# 使用原生格式
+native_logger = create_logger(
+    name="native_demo", 
+    use_native_format=True
 )
-
-api_logger.info("API 服務啟動")
 ```
 
 ## 🎨 視覺化 API
@@ -355,11 +333,11 @@ from pretty_loguru import create_logger
 
 # FastAPI 應用
 def setup_logging():
-    return logger = create_logger(
-    name="demo",
-    log_path="api_logs",
-    level="INFO"
-)
+    return create_logger(
+        name="fastapi_app",
+        log_path="api_logs/app.log",
+        level="INFO"
+    )
 
 # 中介軟體中使用
 async def log_requests(request, call_next):
