@@ -7,19 +7,35 @@ pretty-loguru 提供了多種預設配置，讓你能快速在不同場景下使
 ### 基本預設配置
 
 ```python
-from pretty_loguru import logger_start
+from pretty_loguru import create_logger
 
 # 使用預設配置
-logger_start()
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 # 使用開發環境預設配置
-logger_start(preset="development")
+logger = create_logger(
+    name="development_demo",
+    log_path="development_logs",
+    level="INFO"
+)
 
 # 使用生產環境預設配置
-logger_start(preset="production")
+logger = create_logger(
+    name="production_demo",
+    log_path="production_logs",
+    level="INFO"
+)
 
 # 使用除錯預設配置
-logger_start(preset="debug")
+logger = create_logger(
+    name="debug_demo",
+    log_path="debug_logs",
+    level="INFO"
+)
 ```
 
 ## 🎯 預設配置類型
@@ -39,7 +55,11 @@ logger = create_logger(
 )
 
 # 啟用開發環境預設配置
-logger_start(preset="development", folder="dev_logs")
+logger = create_logger(
+    name="development_demo",
+    log_path="dev_logs",
+    level="INFO"
+)
 
 def development_demo():
     """開發環境配置展示"""
@@ -91,7 +111,11 @@ logger = create_logger(
 )
 
 # 啟用生產環境預設配置
-logger_start(preset="production", folder="prod_logs")
+logger = create_logger(
+    name="production_demo",
+    log_path="prod_logs",
+    level="INFO"
+)
 
 def production_demo():
     """生產環境配置展示"""
@@ -140,7 +164,11 @@ logger = create_logger(
 )
 
 # 啟用除錯預設配置
-logger_start(preset="debug", folder="debug_logs")
+logger = create_logger(
+    name="debug_demo",
+    log_path="debug_logs",
+    level="INFO"
+)
 
 def debug_demo():
     """除錯配置展示"""
@@ -194,7 +222,11 @@ logger = create_logger(
 )
 
 # 啟用測試預設配置
-logger_start(preset="testing", folder="test_logs")
+logger = create_logger(
+    name="testing_demo",
+    log_path="test_logs",
+    level="INFO"
+)
 
 def testing_demo():
     """測試配置展示"""
@@ -259,7 +291,7 @@ testing_demo()
 ### 創建自己的預設配置
 
 ```python
-from pretty_loguru import logger_start
+from pretty_loguru import create_logger
 
 def create_custom_preset():
     """創建自定義預設配置"""
@@ -301,7 +333,7 @@ create_custom_preset()
 
 ```python
 import os
-from pretty_loguru import logger_start
+from pretty_loguru import create_logger
 
 def environment_specific_config():
     """根據環境變數選擇配置"""
@@ -393,13 +425,29 @@ def smart_logger_init():
     import os
     
     if os.getenv("DEBUG"):
-        logger_start(preset="debug")
+        logger = create_logger(
+    name="debug_demo",
+    log_path="debug_logs",
+    level="INFO"
+)
     elif os.getenv("TESTING"):
-        logger_start(preset="testing")
+        logger = create_logger(
+    name="testing_demo",
+    log_path="testing_logs",
+    level="INFO"
+)
     elif os.getenv("PROD"):
-        logger_start(preset="production")
+        logger = create_logger(
+    name="production_demo",
+    log_path="production_logs",
+    level="INFO"
+)
     else:
-        logger_start(preset="development")
+        logger = create_logger(
+    name="development_demo",
+    log_path="development_logs",
+    level="INFO"
+)
 
 smart_logger_init()
 ```
@@ -428,10 +476,18 @@ def load_config_from_file(config_path="logger_config.json"):
         
     except FileNotFoundError:
         logger.warning(f"配置檔 {config_path} 不存在，使用預設配置")
-        logger_start(preset="development")
+        logger = create_logger(
+    name="development_demo",
+    log_path="development_logs",
+    level="INFO"
+)
     except json.JSONDecodeError:
         logger.error(f"配置檔 {config_path} 格式錯誤")
-        logger_start(preset="development")
+        logger = create_logger(
+    name="development_demo",
+    log_path="development_logs",
+    level="INFO"
+)
 
 load_config_from_file()
 ```
@@ -443,7 +499,11 @@ def dynamic_config_switching():
     """動態切換配置"""
     
     # 初始配置
-    logger_start(preset="development")
+    logger = create_logger(
+    name="development_demo",
+    log_path="development_logs",
+    level="INFO"
+)
     logger.info("使用開發配置啟動")
     
     # 模擬切換到生產模式
@@ -452,7 +512,11 @@ def dynamic_config_switching():
         logger.warning("切換到生產環境配置...")
         
         # 重新初始化為生產配置
-        logger_start(preset="production", folder="prod_logs")
+        logger = create_logger(
+    name="production_demo",
+    log_path="prod_logs",
+    level="INFO"
+)
         
         logger.ascii_block(
             "配置切換完成",

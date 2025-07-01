@@ -41,7 +41,7 @@ pretty-loguru 提供多種初始化方式：
 from pretty_loguru import create_logger, create_logger
 
 # 方式一：快速開始（推薦）
-component_name = logger = create_logger(
+logger  = create_logger(
     name="guide_demo",
     log_path="logs",
     level="INFO"

@@ -14,7 +14,7 @@ pretty-loguru 提供多種初始化方式，滿足不同場景的需求。
 from pretty_loguru import create_logger
 
 # 一行代碼完成所有設定
-component_name = logger = create_logger(
+logger  
     name="basic-usage_demo",
     log_path="my_logs",
     level="INFO"
@@ -169,70 +169,11 @@ logger = create_logger(
 
 ```python
 # 自動清理舊檔案
-logger_start(
-    folder="logs",
-    retention="7 days"  # 保留 7 天
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
 )
-
-logger_start(
-    folder="logs", 
-    retention=5  # 保留 5 個檔案
-)
-```
-
-## 🎨 格式比較
-
-### Enhanced vs Native 格式
-
-pretty-loguru 提供兩種輸出格式，滿足不同需求：
-
-#### Enhanced 格式 (預設)
-```python
-# 預設行為
-logger = create_logger("my_app")
-logger.info("測試訊息")
-# 輸出：2025-06-30 20:15:30 | INFO | my_app:function:42 - 測試訊息
-```
-
-**特點：**
-- 自定義名稱顯示
-- 包含 process ID
-- 檔案命名：`[name]_timestamp.log`
-- 適合生產環境
-
-#### Native 格式 (原生)
-```python
-# 原生格式
-logger = create_logger("my_app", use_native_format=True)
-logger.info("測試訊息")
-# 輸出：2025-06-30 20:15:30.123 | INFO | main.py:function:42 - 測試訊息
-```
-
-**特點：**
-- 接近 loguru 原生格式
-- 檔案名稱顯示
-- 包含毫秒時間戳
-- 檔案命名：`name.log`
-- 適合開發調試和遷移
-
-### 格式選擇建議
-
-| 使用情境 | 推薦格式 | 原因 |
-|---------|---------|------|
-| 生產環境 | Enhanced | 更好的服務識別和監控 |
-| 開發調試 | Native | 快速定位程式碼位置 |
-| 從 loguru 遷移 | Native | 保持熟悉的格式體驗 |
-| 多服務部署 | Enhanced | 清晰的服務區分 |
-
-## 🔧 進階配置
-
-### 自定義格式
-
-```python
-from pretty_loguru import create_logger
-
-# 記錄額外資訊
-logger.info("用戶登入", extra={"user_id": 12345, "ip": "192.168.1.1"})
 ```
 
 ### 多環境配置
@@ -244,19 +185,17 @@ def setup_logging():
     env = os.getenv("ENVIRONMENT", "development")
     
     if env == "production":
-        return logger_start(
-            folder="prod_logs",
-            level="INFO",
-            rotation="100MB",
-            retention="30 days"
-        )
+        return logger = create_logger(
+    name="demo",
+    log_path="prod_logs",
+    level="INFO"
+)
     else:
-        return logger_start(
-            folder="dev_logs",
-            level="DEBUG",
-            rotation="10MB",
-            retention="7 days"
-        )
+        return logger = create_logger(
+    name="demo",
+    log_path="dev_logs",
+    level="INFO"
+)
 ```
 
 ### 條件式日誌
@@ -279,7 +218,9 @@ from pretty_loguru import create_logger
 
 def main():
     # 初始化日誌系統
-    component_name = logger_start(
+    logger = create_logger(
+    name="demo",
+    log_path=
         folder="app_logs",
         level="INFO",
         rotation="50MB",

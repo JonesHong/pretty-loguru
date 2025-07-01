@@ -23,7 +23,11 @@ from pretty_loguru import (
 | 類別/函數 | 用途 | 模組 |
 |-----------|------|------|
 | `logger` | 主要的日誌實例 | `pretty_loguru` |
-| `logger_start()` | 快速初始化 | `pretty_loguru.factory` |
+| `logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)` | 快速初始化 | `pretty_loguru.factory` |
 | `create_logger()` | 建立客製 logger | `pretty_loguru.factory` |
 | `init_logger()` | 進階初始化 | `pretty_loguru.core` |
 
@@ -79,12 +83,17 @@ logger.file_error(message)
 logger.file_critical(message)
 ```
 
-### `logger_start()` - 快速初始化
+### `logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)` - 快速初始化
 
 最常用的初始化方法，一行代碼完成所有設定。
 
 ```python
-def logger_start(
+def create_logger(
+    name: str,
     folder: str = "logs",
     level: str = "DEBUG", 
     rotation: str = "10MB",
@@ -110,10 +119,14 @@ def logger_start(
 
 ```python
 # 基本用法
-component_name = logger_start()
+logger = create_logger(
+    name="demo",
+    log_path=)
 
 # 自定義設定
-component_name = logger_start(
+logger = create_logger(
+    name="demo",
+    log_path=
     folder="api_logs",
     level="INFO",
     rotation="50MB", 
@@ -342,12 +355,11 @@ from pretty_loguru import create_logger
 
 # FastAPI 應用
 def setup_logging():
-    return logger_start(
-        folder="api_logs",
-        level="INFO",
-        rotation="50MB",
-        retention="30 days"
-    )
+    return logger = create_logger(
+    name="demo",
+    log_path="api_logs",
+    level="INFO"
+)
 
 # 中介軟體中使用
 async def log_requests(request, call_next):

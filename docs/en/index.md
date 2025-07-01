@@ -53,7 +53,7 @@ pip install pretty-loguru
 from pretty_loguru import create_logger
 
 # Initialize the logging system with one line of code
-component_name = logger = create_logger(
+logger  = create_logger(
     name="en_demo",
     log_path="my_logs",
     level="INFO"

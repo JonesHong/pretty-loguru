@@ -14,7 +14,7 @@ pretty-loguru offers multiple initialization methods to meet the needs of differ
 from pretty_loguru import create_logger
 
 # Complete all settings with one line of code
-component_name = logger = create_logger(
+logger  
     name="basic-usage_demo",
     log_path="my_logs",
     level="INFO"
@@ -155,26 +155,11 @@ logger = create_logger(
 
 ```python
 # Automatically clean up old files
-logger_start(
-    folder="logs",
-    retention="7 days"  # Keep for 7 days
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
 )
-
-logger_start(
-    folder="logs", 
-    retention=5  # Keep 5 files
-)
-```
-
-## 🔧 Advanced Configuration
-
-### Custom Formatting
-
-```python
-from pretty_loguru import create_logger
-
-# Log extra information
-logger.info("User login", extra={"user_id": 12345, "ip": "192.168.1.1"})
 ```
 
 ### Multi-Environment Configuration
@@ -186,19 +171,17 @@ def setup_logging():
     env = os.getenv("ENVIRONMENT", "development")
     
     if env == "production":
-        return logger_start(
-            folder="prod_logs",
-            level="INFO",
-            rotation="100MB",
-            retention="30 days"
-        )
+        return logger = create_logger(
+    name="demo",
+    log_path="prod_logs",
+    level="INFO"
+)
     else:
-        return logger_start(
-            folder="dev_logs",
-            level="DEBUG",
-            rotation="10MB",
-            retention="7 days"
-        )
+        return logger = create_logger(
+    name="demo",
+    log_path="dev_logs",
+    level="INFO"
+)
 ```
 
 ### Conditional Logging
@@ -221,7 +204,9 @@ from pretty_loguru import create_logger
 
 def main():
     # Initialize the logging system
-    component_name = logger_start(
+    logger = create_logger(
+    name="demo",
+    log_path=
         folder="app_logs",
         level="INFO",
         rotation="50MB",

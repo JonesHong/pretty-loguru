@@ -9,10 +9,12 @@ Console logging outputs directly to the terminal, perfect for development and de
 ### Basic Console Setup
 
 ```python
-from pretty_loguru import logger_start, logger
+from pretty_loguru import create_logger, logger
 
 # Start with console logging only
-component_name = logger_start(console_only=True)
+logger = create_logger(
+    name="demo",
+    log_path=console_only=True)
 
 logger.info("This appears in the console")
 logger.debug("Debug information for development")
@@ -66,10 +68,12 @@ File logging saves logs to disk for persistence, auditing, and analysis.
 ### Basic File Setup
 
 ```python
-from pretty_loguru import logger_start, logger
+from pretty_loguru import create_logger, logger
 
 # Start with file logging only
-component_name = logger_start(
+logger = create_logger(
+    name="demo",
+    log_path=
     folder="logs",
     console_only=False  # Enable file logging
 )
@@ -221,9 +225,13 @@ logger.error("Error: Console and file")
 
 ```python
 # Development setup
-from pretty_loguru import logger_start, logger
+from pretty_loguru import create_logger, logger
 
-logger_start(console_only=True)
+logger = create_logger(
+    name="console_demo",
+    log_path=None,  # Console only
+    level="INFO"
+)
 logger.info("Perfect for development")
 ```
 

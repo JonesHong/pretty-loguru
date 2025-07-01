@@ -23,7 +23,7 @@ from pretty_loguru import (
 | Class/Function | Purpose | Module |
 |----------------|---------|--------|
 | `logger` | Main logging instance | `pretty_loguru` |
-| `logger_start()` | Quick initialization | `pretty_loguru.factory` |
+| `create_logger()` | Create custom logger | `pretty_loguru.factory` |
 | `create_logger()` | Create custom logger | `pretty_loguru.factory` |
 | `init_logger()` | Advanced initialization | `pretty_loguru.core` |
 
@@ -97,18 +97,19 @@ logger.file_error(message)
 logger.file_critical(message)
 ```
 
-### `logger_start()` - Quick Initialization
+### `create_logger()` - Create Custom Logger
 
-The most commonly used initialization method, completing all setup in one line.
+Create a logger instance with specific name and configuration.
 
 ```python
-def logger_start(
-    folder: str = "logs",
+def create_logger(
+    name: str,
+    log_path: Optional[str] = None,
     level: str = "DEBUG", 
     rotation: str = "10MB",
     retention: str = "7 days",
     compression: str = "zip"
-) -> str
+) -> Logger
 ```
 
 **Parameters:**
@@ -128,11 +129,15 @@ def logger_start(
 
 ```python
 # Basic usage
-component_name = logger_start()
+logger = create_logger(
+    name="demo",
+    log_path="logs"
+)
 
 # Custom configuration
-component_name = logger_start(
-    folder="api_logs",
+logger = create_logger(
+    name="api_service",
+    log_path="api_logs",
     level="INFO",
     rotation="50MB", 
     retention="30 days"
@@ -360,11 +365,10 @@ from pretty_loguru import create_logger
 
 # FastAPI application
 def setup_logging():
-    return logger_start(
-        folder="api_logs",
-        level="INFO",
-        rotation="50MB",
-        retention="30 days"
+    return create_logger(
+        name="api_service",
+        log_path="api_logs",
+        level="INFO"
     )
 
 # Middleware usage

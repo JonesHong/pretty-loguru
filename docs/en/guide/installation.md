@@ -45,7 +45,7 @@ After installation, run the following code to verify:
 from pretty_loguru import create_logger
 
 # Test basic functionality
-component_name = logger = create_logger(
+logger  = create_logger(
     name="installation_demo",
     log_path="test_logs",
     level="INFO"
@@ -198,7 +198,7 @@ def check_installation():
         print("✅ pretty-loguru: Installed")
         
         # Basic functionality test
-        component_name = logger = create_logger(
+        logger  = create_logger(
     name="installation_demo",
     log_path="diagnose_test",
     level="INFO"

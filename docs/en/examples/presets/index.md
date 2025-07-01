@@ -7,19 +7,35 @@ pretty-loguru provides multiple preset configurations to help you quickly use th
 ### Basic Preset Configurations
 
 ```python
-from pretty_loguru import logger_start
+from pretty_loguru import create_logger
 
 # Use the default configuration
-logger_start()
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 # Use the development environment preset
-logger_start(preset="development")
+logger = create_logger(
+    name="development_demo",
+    log_path="development_logs",
+    level="INFO"
+)
 
 # Use the production environment preset
-logger_start(preset="production")
+logger = create_logger(
+    name="production_demo",
+    log_path="production_logs",
+    level="INFO"
+)
 
 # Use the debug preset
-logger_start(preset="debug")
+logger = create_logger(
+    name="debug_demo",
+    log_path="debug_logs",
+    level="INFO"
+)
 ```
 
 ## 🎯 Preset Configuration Types
@@ -39,7 +55,11 @@ logger = create_logger(
 )
 
 # Enable the development environment preset
-logger_start(preset="development", folder="dev_logs")
+logger = create_logger(
+    name="development_demo",
+    log_path="dev_logs",
+    level="INFO"
+)
 
 def development_demo():
     """Showcase of the development environment configuration"""
@@ -85,7 +105,11 @@ logger = create_logger(
 )
 
 # Enable the production environment preset
-logger_start(preset="production", folder="prod_logs")
+logger = create_logger(
+    name="production_demo",
+    log_path="prod_logs",
+    level="INFO"
+)
 
 def production_demo():
     """Showcase of the production environment configuration"""
@@ -131,7 +155,11 @@ logger = create_logger(
 )
 
 # Enable the debug preset
-logger_start(preset="debug", folder="debug_logs")
+logger = create_logger(
+    name="debug_demo",
+    log_path="debug_logs",
+    level="INFO"
+)
 
 def debug_demo():
     """Showcase of the debug configuration"""
@@ -177,7 +205,11 @@ logger = create_logger(
 )
 
 # Enable the testing preset
-logger_start(preset="testing", folder="test_logs")
+logger = create_logger(
+    name="testing_demo",
+    log_path="test_logs",
+    level="INFO"
+)
 
 def testing_demo():
     """Showcase of the testing configuration"""
@@ -209,7 +241,7 @@ testing_demo()
 ### Creating Your Own Preset
 
 ```python
-from pretty_loguru import logger_start
+from pretty_loguru import create_logger
 
 def create_custom_preset():
     """Create a custom preset configuration"""
@@ -239,13 +271,29 @@ import os
 
 def smart_logger_init():
     if os.getenv("DEBUG"):
-        logger_start(preset="debug")
+        logger = create_logger(
+    name="debug_demo",
+    log_path="debug_logs",
+    level="INFO"
+)
     elif os.getenv("TESTING"):
-        logger_start(preset="testing")
+        logger = create_logger(
+    name="testing_demo",
+    log_path="testing_logs",
+    level="INFO"
+)
     elif os.getenv("PROD"):
-        logger_start(preset="production")
+        logger = create_logger(
+    name="production_demo",
+    log_path="production_logs",
+    level="INFO"
+)
     else:
-        logger_start(preset="development")
+        logger = create_logger(
+    name="development_demo",
+    log_path="development_logs",
+    level="INFO"
+)
 
 smart_logger_init()
 ```
@@ -264,7 +312,11 @@ def load_config_from_file(config_path="logger_config.json"):
         logger.success(f"Loaded configuration from: {config_path}")
     except FileNotFoundError:
         logger.warning(f"Config file {config_path} not found, using default.")
-        logger_start(preset="development")
+        logger = create_logger(
+    name="development_demo",
+    log_path="development_logs",
+    level="INFO"
+)
 
 load_config_from_file()
 ```

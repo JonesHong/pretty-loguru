@@ -52,7 +52,7 @@ pip install pretty-loguru
 from pretty_loguru import create_logger
 
 # 一行代碼初始化日誌系統
-component_name = logger = create_logger(
+logger = create_logger(
     name="docs_demo",
     log_path="my_logs",
     level="INFO"

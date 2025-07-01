@@ -103,7 +103,7 @@ FastAPI 依賴注入模式
 from pretty_loguru import create_logger
 
 # 一行初始化
-component_name = logger = create_logger(
+logger  
     name="examples_demo",
     log_path="demo",
     level="INFO"
@@ -224,7 +224,11 @@ if __name__ == "__main__":
 
 ### 對於初學者
 - 從 [基礎用法](./basics/) 開始
-- 重點關注 `logger_start()` 的使用
+- 重點關注 `logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)` 的使用
 - 理解控制台和檔案輸出的差異
 
 ### 對於有經驗的開發者

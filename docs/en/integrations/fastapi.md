@@ -8,10 +8,12 @@ Complete guide for integrating pretty-loguru with FastAPI applications for enhan
 
 ```python
 from fastapi import FastAPI
-from pretty_loguru import logger_start, logger
+from pretty_loguru import create_logger, logger
 
 # Initialize logger
-component_name = logger_start(
+logger = create_logger(
+    name="demo",
+    log_path=
     folder="logs",
     level="INFO"
 )

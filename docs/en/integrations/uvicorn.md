@@ -9,11 +9,13 @@ Complete guide for integrating pretty-loguru with Uvicorn ASGI server for enhanc
 ```python
 # main.py
 from fastapi import FastAPI
-from pretty_loguru import logger_start, logger
+from pretty_loguru import create_logger, logger
 import uvicorn
 
 # Initialize pretty-loguru
-component_name = logger_start(
+logger = create_logger(
+    name="demo",
+    log_path=
     folder="logs",
     level="INFO"
 )

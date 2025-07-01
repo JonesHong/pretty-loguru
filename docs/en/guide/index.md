@@ -41,7 +41,7 @@ pretty-loguru offers multiple initialization methods:
 from pretty_loguru import create_logger, create_logger
 
 # Method 1: Quick Start (Recommended)
-component_name = logger = create_logger(
+logger  = create_logger(
     name="guide_demo",
     log_path="logs",
     level="INFO"

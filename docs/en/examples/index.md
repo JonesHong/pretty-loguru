@@ -103,7 +103,7 @@ Want to see the effect immediately? Copy the following code into your Python env
 from pretty_loguru import create_logger
 
 # One-line initialization
-component_name = logger = create_logger(
+logger  
     name="examples_demo",
     log_path="demo",
     level="INFO"
@@ -224,7 +224,11 @@ Pay special attention to:
 
 ### For Beginners
 - Start with [Basic Usage](./basics/)
-- Focus on the usage of `logger_start()`
+- Focus on the usage of `logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)`
 - Understand the difference between console and file output
 
 ### For Experienced Developers

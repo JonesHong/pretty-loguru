@@ -125,32 +125,29 @@ async def startup():
 
 ```python
 import os
-from pretty_loguru import logger_start
+from pretty_loguru import create_logger
 
 def setup_logging():
     env = os.getenv("ENVIRONMENT", "development")
     
     if env == "production":
-        return logger_start(
-            folder="prod_logs",
-            level="INFO",
-            rotation="100MB",
-            retention="30 days"
-        )
+        return logger = create_logger(
+    name="demo",
+    log_path="prod_logs",
+    level="INFO"
+)
     elif env == "staging":
-        return logger_start(
-            folder="staging_logs", 
-            level="DEBUG",
-            rotation="50MB",
-            retention="14 days"
-        )
+        return logger = create_logger(
+    name="demo",
+    log_path="staging_logs",
+    level="INFO"
+)
     else:  # development
-        return logger_start(
-            folder="dev_logs",
-            level="DEBUG",
-            rotation="10MB",
-            retention="7 days"
-        )
+        return logger = create_logger(
+    name="demo",
+    log_path="dev_logs",
+    level="INFO"
+)
 ```
 
 ### Multiple Log Targets

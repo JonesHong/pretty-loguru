@@ -4,7 +4,11 @@
 
 ## 🎯 學習目標
 
-- 了解 `logger_start()` 的用法
+- 了解 `logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)` 的用法
 - 掌握基本的日誌級別
 - 理解日誌檔案的自動管理
 
@@ -12,11 +16,11 @@
 
 ### 最簡單的開始
 
-```python
+logger  
 from pretty_loguru import create_logger
 
 # 初始化日誌系統
-component_name = logger = create_logger(
+logger = create_logger(
     name="simple-usage_demo",
     log_path="simple_logs",
     level="INFO"
@@ -51,10 +55,16 @@ logger.critical("這是嚴重錯誤訊息")
 
 ## 🔧 參數說明
 
-### `logger_start()` 參數
+### `logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)` 參數
 
 ```python
-component_name = logger_start(
+logger = create_logger(
+    name="demo",
+    log_path=
     folder="logs",           # 日誌資料夾名稱
     level="DEBUG",           # 日誌級別（可選）
     rotation="10MB",         # 檔案輪換大小（可選）
@@ -75,7 +85,7 @@ component_name = logger_start(
 
 ## 🎮 實際練習
 
-### 練習 1：基本日誌
+### logger  
 
 建立一個簡單的 Python 腳本：
 
@@ -85,7 +95,7 @@ from pretty_loguru import create_logger
 
 def main():
     # 初始化日誌
-    component_name = logger = create_logger(
+    logger = create_logger(
     name="simple-usage_demo",
     log_path="practice_logs",
     level="INFO"
@@ -166,7 +176,11 @@ your_project/
 ## 💡 重要概念
 
 ### 1. 自動元件命名
-`logger_start()` 會自動產生一個唯一的元件名稱，格式為：
+`logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)` 會自動產生一個唯一的元件名稱，格式為：
 `{folder_name}_{timestamp}`
 
 ### 2. 同時輸出

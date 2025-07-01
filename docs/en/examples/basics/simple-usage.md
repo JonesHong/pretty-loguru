@@ -50,14 +50,15 @@ A log file will be generated in the `simple_logs/` directory, for example:
 
 ## 🔧 Parameter Explanation
 
-### `logger_start()` Parameters
+### `create_logger()` Parameters
 
 ```python
-component_name = logger_start(
-    folder="logs",           // Log folder name
-    level="DEBUG",           // Log level (optional)
-    rotation="10MB",         // File rotation size (optional)
-    retention="7 days"       // Retention period (optional)
+logger = create_logger(
+    name="demo",               // Logger name (required)
+    log_path="logs",           // Log folder path (required)
+    level="DEBUG",             // Log level (optional)
+    rotation="10MB",           // File rotation size (optional)
+    retention="7 days"         // Retention period (optional)
 )
 ```
 
@@ -78,13 +79,13 @@ component_name = logger_start(
 
 Create a simple Python script:
 
-```python
+```plogger  
 # practice_1.py
 from pretty_loguru import create_logger
 
 def main():
     # Initialize logging
-    component_name = logger = create_logger(
+    logger = create_logger(
     name="simple-usage_demo",
     log_path="practice_logs",
     level="INFO"
@@ -165,7 +166,7 @@ your_project/
 ## 💡 Important Concepts
 
 ### 1. Automatic Component Naming
-`logger_start()` automatically generates a unique component name in the format:
+`create_logger()` automatically generates a unique component name in the format:
 `{folder_name}_{timestamp}`
 
 ### 2. Simultaneous Output

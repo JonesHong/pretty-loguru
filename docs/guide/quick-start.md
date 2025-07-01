@@ -16,7 +16,7 @@ pip install pretty-loguru
 from pretty_loguru import create_logger
 
 # 初始化日誌系統
-component_name = logger = create_logger(
+logger = create_logger(
     name="quick-start_demo",
     log_path="quick_start_logs",
     level="INFO"
@@ -118,7 +118,7 @@ from pretty_loguru import create_logger
 
 def main():
     # 初始化
-    component_name = logger = create_logger(
+    logger  
     name="quick-start_demo",
     log_path="demo_logs",
     level="INFO"

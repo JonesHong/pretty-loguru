@@ -16,7 +16,7 @@
 from pretty_loguru import create_logger
 
 # 一行初始化
-component_name = logger = create_logger(
+logger  = create_logger(
     name="basics_demo",
     log_path="my_logs",
     level="INFO"
