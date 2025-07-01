@@ -16,7 +16,7 @@ pretty-loguru 的視覺化功能是其最大特色，本章節將展示所有視
 Rich 區塊提供帶邊框的結構化內容展示：
 
 ```python
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 
 logger.block(
     "系統狀態檢查",
@@ -90,13 +90,17 @@ logger.ascii_block(
 
 ```python
 import time
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 def visual_showcase():
     """視覺化功能完整展示"""
     
     # 初始化日誌系統
-    logger_start(folder="visual_demo")
+    logger = create_logger(
+    name="visual_demo",
+    log_path="visual_demo",
+    level="INFO"
+)
     
     # 1. 啟動標題
     logger.ascii_header("VISUAL DEMO", font="slant", border_style="blue")

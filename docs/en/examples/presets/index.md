@@ -29,7 +29,14 @@ logger_start(preset="debug")
 Suitable for local development, with rich visual effects and detailed log information:
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 # Enable the development environment preset
 logger_start(preset="development", folder="dev_logs")
@@ -68,7 +75,14 @@ development_demo()
 Suitable for production environments, emphasizing performance and conciseness:
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 # Enable the production environment preset
 logger_start(preset="production", folder="prod_logs")
@@ -107,7 +121,14 @@ production_demo()
 Suitable for troubleshooting and in-depth debugging:
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 # Enable the debug preset
 logger_start(preset="debug", folder="debug_logs")
@@ -146,7 +167,14 @@ debug_demo()
 Suitable for unit and integration testing:
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 # Enable the testing preset
 logger_start(preset="testing", folder="test_logs")

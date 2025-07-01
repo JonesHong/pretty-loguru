@@ -50,10 +50,14 @@ pip install pretty-loguru
 ## ⚡ Quick Start
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # Initialize the logging system with one line of code
-component_name = logger_start(folder="my_logs")
+component_name = logger = create_logger(
+    name="en_demo",
+    log_path="my_logs",
+    level="INFO"
+)
 
 # Start using various logging features
 logger.info("Application started successfully")

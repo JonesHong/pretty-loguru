@@ -7,7 +7,7 @@
 ### 基本生產配置
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 import os
 import sys
 from pathlib import Path

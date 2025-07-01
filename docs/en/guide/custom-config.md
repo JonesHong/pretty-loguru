@@ -72,7 +72,7 @@ logger.info("Logger configured from file")
 For dynamic configuration in your application:
 
 ```python
-from pretty_loguru import logger, init_logger
+from pretty_loguru import create_logger, init_logger
 
 # Custom configuration
 config = {
@@ -110,7 +110,7 @@ logger.add(
 
 ```python
 from rich.console import Console
-from pretty_loguru import logger, init_logger
+from pretty_loguru import create_logger, init_logger
 
 # Custom rich format
 custom_format = (
@@ -133,7 +133,7 @@ logger.info("Custom formatted message")
 
 ```python
 import json
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 
 def json_formatter(record):
     return json.dumps({
@@ -158,7 +158,7 @@ logger.add(
 ### Multiple Output Targets
 
 ```python
-from pretty_loguru import logger, init_logger
+from pretty_loguru import create_logger, init_logger
 
 # Initialize base logger
 init_logger(level="DEBUG", log_path="logs")
@@ -201,7 +201,7 @@ logger.add(
 ### Conditional Logging
 
 ```python
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 
 def dev_filter(record):
     """Only log in development environment"""
@@ -281,7 +281,7 @@ logger.info("Processing request")
 
 ```python
 import pytest
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 
 @pytest.fixture
 def test_logger():
@@ -313,7 +313,7 @@ def test_logging(test_logger):
 
 ```python
 import re
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 
 def sanitize_record(record):
     """Remove sensitive data from logs"""
@@ -347,7 +347,7 @@ logger.info("User login with password=secret123")  # Will log: "User login with 
 ```python
 import time
 from contextlib import contextmanager
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 
 @contextmanager
 def log_performance(operation_name):

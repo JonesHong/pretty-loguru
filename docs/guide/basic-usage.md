@@ -11,10 +11,14 @@ pretty-loguru 提供多種初始化方式，滿足不同場景的需求。
 #### 快速初始化 (推薦)
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # 一行代碼完成所有設定
-component_name = logger_start(folder="my_logs")
+component_name = logger = create_logger(
+    name="basic-usage_demo",
+    log_path="my_logs",
+    level="INFO"
+)
 print(f"Logger 已初始化，元件名稱：{component_name}")
 ```
 
@@ -140,13 +144,25 @@ pretty-loguru 會自動生成有意義的檔名：
 
 ```python
 # 按檔案大小輪換
-logger_start(folder="logs", rotation="10MB")
+logger = create_logger(
+    name="basic-usage_demo",
+    log_path="logs", rotation="10MB",
+    level="INFO"
+)
 
 # 按時間輪換
-logger_start(folder="logs", rotation="1 day")
+logger = create_logger(
+    name="basic-usage_demo",
+    log_path="logs", rotation="1 day",
+    level="INFO"
+)
 
 # 按數量輪換
-logger_start(folder="logs", rotation="midnight", retention=10)
+logger = create_logger(
+    name="basic-usage_demo",
+    log_path="logs", rotation="midnight", retention=10,
+    level="INFO"
+)
 ```
 
 ### 日誌清理
@@ -213,7 +229,7 @@ logger.info("測試訊息")
 ### 自定義格式
 
 ```python
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 
 # 記錄額外資訊
 logger.info("用戶登入", extra={"user_id": 12345, "ip": "192.168.1.1"})
@@ -259,7 +275,7 @@ if logger.level("DEBUG").no >= logging.DEBUG:
 
 ```python
 import time
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 def main():
     # 初始化日誌系統
@@ -331,7 +347,11 @@ def process_data(data):
 ### Q: 為什麼看不到 DEBUG 級別的日誌？
 A: 檢查日誌級別設定：
 ```python
-logger_start(folder="logs", level="DEBUG")
+logger = create_logger(
+    name="basic-usage_demo",
+    log_path="logs", level="DEBUG",
+    level="INFO"
+)
 ```
 
 ### Q: 如何只在檔案中記錄敏感資訊？
@@ -344,18 +364,22 @@ logger.console_info("用戶密碼重設成功")        # 只顯示在控制台
 ### Q: 日誌檔案太多怎麼辦？
 A: 設定自動清理：
 ```python
-logger_start(folder="logs", retention="7 days")
+logger = create_logger(
+    name="basic-usage_demo",
+    log_path="logs", retention="7 days",
+    level="INFO"
+)
 ```
 
 ### Q: 如何在不同模組中使用同一個 logger？
 A: logger 是全域的，直接匯入即可：
 ```python
 # module_a.py
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 logger.info("模組 A 的訊息")
 
 # module_b.py  
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 logger.info("模組 B 的訊息")
 ```
 

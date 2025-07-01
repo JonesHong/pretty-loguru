@@ -7,7 +7,14 @@ Rich 區塊是 pretty-loguru 最實用的功能之一，它讓你能夠建立結
 ### 簡單區塊
 
 ```python
-from pretty_loguru import logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 logger.block(
     "基本資訊",

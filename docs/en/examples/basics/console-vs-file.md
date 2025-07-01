@@ -40,7 +40,14 @@ logger.debug("Debug with timestamp")
 ### Rich Console Features
 
 ```python
-from pretty_loguru import logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 # Use visual features in console
 logger.block("Status Report", [
@@ -92,7 +99,14 @@ logger.info("File logging with rotation enabled")
 ### Multiple Log Files
 
 ```python
-from pretty_loguru import logger, init_logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+), init_logger
 
 # Initialize base logger
 init_logger(level="DEBUG", log_path="logs")
@@ -146,7 +160,14 @@ logger.error("Error message (console + file)")
 ### Different Levels for Console vs File
 
 ```python
-from pretty_loguru import logger, init_logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+), init_logger
 
 # Base initialization
 init_logger(level="DEBUG", log_path="logs")
@@ -288,7 +309,14 @@ logger.info(f"Logger configured for {env} environment")
 ### Dynamic Switching
 
 ```python
-from pretty_loguru import logger, init_logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+), init_logger
 
 class LoggerManager:
     def __init__(self):

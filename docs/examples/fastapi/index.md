@@ -9,12 +9,16 @@ pretty-loguru 與 FastAPI 完美整合，提供美觀且實用的 API 日誌記�
 ```python
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 import time
 import uvicorn
 
 # 初始化日誌系統
-logger_start(folder="fastapi_logs", preset="development")
+logger = create_logger(
+    name="fastapi_demo",
+    log_path="fastapi_logs", preset="development",
+    level="INFO"
+)
 
 app = FastAPI(title="Pretty Loguru API Demo", version="1.0.1")
 
@@ -620,7 +624,7 @@ async def get_config():
 ```python
 from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 import uvicorn
 import time
 import asyncio

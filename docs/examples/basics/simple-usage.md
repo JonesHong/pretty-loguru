@@ -13,10 +13,14 @@
 ### 最簡單的開始
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # 初始化日誌系統
-component_name = logger_start(folder="simple_logs")
+component_name = logger = create_logger(
+    name="simple-usage_demo",
+    log_path="simple_logs",
+    level="INFO"
+)
 print(f"日誌元件 ID: {component_name}")
 
 # 基本日誌輸出
@@ -77,11 +81,15 @@ component_name = logger_start(
 
 ```python
 # practice_1.py
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 def main():
     # 初始化日誌
-    component_name = logger_start(folder="practice_logs")
+    component_name = logger = create_logger(
+    name="simple-usage_demo",
+    log_path="practice_logs",
+    level="INFO"
+)
     
     # 模擬應用程式啟動
     logger.info("應用程式開始啟動...")
@@ -113,11 +121,15 @@ if __name__ == "__main__":
 
 ```python
 # practice_2.py
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 import time
 
 def test_all_levels():
-    logger_start(folder="level_test")
+    logger = create_logger(
+    name="simple-usage_demo",
+    log_path="level_test",
+    level="INFO"
+)
     
     # 測試所有日誌級別
     levels = [
@@ -173,7 +185,11 @@ pretty-loguru 會自動：
 ### Q: 為什麼我看不到 DEBUG 級別的日誌？
 A: 預設情況下，DEBUG 級別在生產環境可能被過濾。可以明確設定：
 ```python
-logger_start(folder="logs", level="DEBUG")
+logger = create_logger(
+    name="simple-usage_demo",
+    log_path="logs", level="DEBUG",
+    level="INFO"
+)
 ```
 
 ### Q: 如何自定義日誌格式？
@@ -182,7 +198,11 @@ A: 這屬於進階功能，請參考 [自定義配置](../../guide/custom-config
 ### Q: 日誌檔案太多怎麼辦？
 A: 可以設定自動清理：
 ```python
-logger_start(folder="logs", retention="7 days")
+logger = create_logger(
+    name="simple-usage_demo",
+    log_path="logs", retention="7 days",
+    level="INFO"
+)
 ```
 
 ## 🚀 下一步

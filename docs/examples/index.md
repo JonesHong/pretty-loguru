@@ -100,10 +100,14 @@ FastAPI 依賴注入模式
 
 ```python
 # 安裝: pip install pretty-loguru
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # 一行初始化
-component_name = logger_start(folder="demo")
+component_name = logger = create_logger(
+    name="examples_demo",
+    log_path="demo",
+    level="INFO"
+)
 
 # 基本日誌
 logger.info("歡迎使用 pretty-loguru!")
@@ -131,12 +135,16 @@ logger.ascii_header("WELCOME", font="slant")
 # demo_complete.py
 import time
 import random
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 def complete_demo():
     """完整功能示範"""
     # 初始化
-    logger_start(folder="complete_demo")
+    logger = create_logger(
+    name="examples_demo",
+    log_path="complete_demo",
+    level="INFO"
+)
     
     # 啟動序列
     logger.ascii_header("DEMO START", font="slant", border_style="blue")

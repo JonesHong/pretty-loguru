@@ -17,7 +17,14 @@ ASCII 藝術區塊 = ASCII 藝術標題 + Rich 區塊內容
 ### 簡單的 ASCII 區塊
 
 ```python
-from pretty_loguru import logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 logger.ascii_block(
     "系統狀態報告",           # 區塊標題

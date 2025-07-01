@@ -9,12 +9,16 @@ pretty-loguru integrates perfectly with FastAPI, providing beautiful and practic
 ```python
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 import time
 import uvicorn
 
 # Initialize the logging system
-logger_start(folder="fastapi_logs", preset="development")
+logger = create_logger(
+    name="fastapi_demo",
+    log_path="fastapi_logs", preset="development",
+    level="INFO"
+)
 
 app = FastAPI(title="Pretty Loguru API Demo", version="1.0.1")
 

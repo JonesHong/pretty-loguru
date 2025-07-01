@@ -83,7 +83,7 @@ import logging
 import time
 from typing import Callable, Any
 from uvicorn.protocols.http.h11_impl import H11Protocol
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 
 class PrettyLoguruAccessLogger:
     """Custom access logger using pretty-loguru"""
@@ -198,7 +198,7 @@ config = uvicorn.Config(
 ```python
 import signal
 import uvicorn
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 
 class LoggingServer(uvicorn.Server):
     """Custom Uvicorn server with enhanced logging"""
@@ -255,7 +255,7 @@ if __name__ == "__main__":
 ```python
 import os
 import multiprocessing
-from pretty_loguru import logger, init_logger
+from pretty_loguru import create_logger, init_logger
 
 def setup_worker_logging():
     """Setup logging for worker processes"""
@@ -309,7 +309,7 @@ import time
 import asyncio
 from typing import Dict, List
 from collections import defaultdict, deque
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 
 class PerformanceMonitor:
     """Monitor and log server performance metrics"""
@@ -387,7 +387,7 @@ async def startup_event():
 ```python
 import psutil
 import asyncio
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 
 class ResourceMonitor:
     """Monitor system resources used by Uvicorn"""
@@ -567,7 +567,7 @@ CMD ["python", "uvicorn_server.py"]
 import os
 import signal
 import asyncio
-from pretty_loguru import logger, init_logger
+from pretty_loguru import create_logger, init_logger
 import uvicorn
 
 # Docker-specific logging setup

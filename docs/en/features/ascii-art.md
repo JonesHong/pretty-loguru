@@ -7,7 +7,14 @@ ASCII art headers are one of the signature features of pretty-loguru, allowing y
 ### Simple ASCII Header
 
 ```python
-from pretty_loguru import logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 # The most basic ASCII header
 logger.ascii_header("HELLO WORLD")

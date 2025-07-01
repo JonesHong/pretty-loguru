@@ -11,7 +11,14 @@ Target-based logging allows you to send the same log messages to different desti
 ### Console + File Targets
 
 ```python
-from pretty_loguru import logger, init_logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+), init_logger
 
 # Initialize base logger
 init_logger(level="DEBUG", log_path="logs")
@@ -50,7 +57,14 @@ logger.error("Error message - all three targets")
 ### Level-based Target Separation
 
 ```python
-from pretty_loguru import logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 # Remove default handlers
 logger.remove()
@@ -96,7 +110,14 @@ logger.error("Error message")
 ### Production Logging Architecture
 
 ```python
-from pretty_loguru import logger, init_logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+), init_logger
 import json
 import socket
 
@@ -184,7 +205,14 @@ logger.critical("Database connection lost - immediate attention required")
 ```python
 import socket
 import json
-from pretty_loguru import logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 def syslog_handler(message):
     """Send logs to syslog server"""
@@ -212,7 +240,14 @@ logger.warning("This message goes to syslog")
 ```python
 import json
 import requests
-from pretty_loguru import logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 def elasticsearch_handler(record):
     """Send logs to Elasticsearch"""
@@ -254,7 +289,14 @@ logger.info("Log sent to Elasticsearch")
 ### Runtime Target Configuration
 
 ```python
-from pretty_loguru import logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 import os
 from typing import Dict, Any
 
@@ -336,7 +378,14 @@ logger.info(f"Active targets: {target_manager.list_targets()}")
 
 ```python
 import json
-from pretty_loguru import logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 def load_logging_config(config_file: str):
     """Load and apply logging configuration from JSON file"""
@@ -398,7 +447,14 @@ logger.error("Error message")
 
 ```python
 import time
-from pretty_loguru import logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 from contextlib import contextmanager
 
 class PerformanceTarget:
@@ -449,7 +505,14 @@ print(f"File average time: {file_target.average_time:.6f}s")
 ### Content-based Routing
 
 ```python
-from pretty_loguru import logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 # Define routing functions
 def route_database_logs(record):

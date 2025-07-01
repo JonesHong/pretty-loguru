@@ -10,9 +10,9 @@ Main imports and functions:
 
 ```python
 from pretty_loguru import (
-    logger,           # Main logger instance
-    logger_start,     # Quick initialization function
-    create_logger,    # Create custom logger
+    create_logger,    # Create custom logger (RECOMMENDED)
+    logger,           # Main logger instance (legacy)
+    logger_start,     # Quick initialization function (legacy)
     init_logger,      # Advanced initialization
     is_ascii_only     # Utility function
 )
@@ -28,6 +28,24 @@ from pretty_loguru import (
 | `init_logger()` | Advanced initialization | `pretty_loguru.core` |
 
 ## 🚀 Core API
+
+### Recommended Usage Pattern
+
+The modern and recommended way to use pretty-loguru:
+
+```python
+from pretty_loguru import create_logger
+
+# Create your logger instance
+logger = create_logger(
+    name="my_app",
+    log_path="logs",
+    level="INFO"
+)
+
+# Use the logger
+logger.info("Application started")
+```
 
 ### `logger` - Main Logger Instance
 
@@ -338,7 +356,7 @@ compression=None     # No compression
 ### Web Application Integration
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # FastAPI application
 def setup_logging():

@@ -13,10 +13,14 @@ This section demonstrates the basic features of pretty-loguru, suitable for begi
 ### Getting Started Simply
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # One-line initialization
-component_name = logger_start(folder="my_logs")
+component_name = logger = create_logger(
+    name="basics_demo",
+    log_path="my_logs",
+    level="INFO"
+)
 
 # Start logging
 logger.info("Application has started")

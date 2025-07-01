@@ -100,10 +100,14 @@ Want to see the effect immediately? Copy the following code into your Python env
 
 ```python
 # Install: pip install pretty-loguru
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # One-line initialization
-component_name = logger_start(folder="demo")
+component_name = logger = create_logger(
+    name="examples_demo",
+    log_path="demo",
+    level="INFO"
+)
 
 # Basic logs
 logger.info("Welcome to pretty-loguru!")
@@ -131,12 +135,16 @@ We have prepared a complete demo program to showcase all major features:
 # demo_complete.py
 import time
 import random
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 def complete_demo():
     """Complete feature demonstration"""
     # Initialization
-    logger_start(folder="complete_demo")
+    logger = create_logger(
+    name="examples_demo",
+    log_path="complete_demo",
+    level="INFO"
+)
     
     # Startup sequence
     logger.ascii_header("DEMO START", font="slant", border_style="blue")

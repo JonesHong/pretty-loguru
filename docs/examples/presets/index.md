@@ -29,7 +29,14 @@ logger_start(preset="debug")
 適合本地開發使用，包含豐富的視覺效果和詳細的日誌資訊：
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 # 啟用開發環境預設配置
 logger_start(preset="development", folder="dev_logs")
@@ -74,7 +81,14 @@ development_demo()
 適合生產環境使用，強調效能和簡潔性：
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 # 啟用生產環境預設配置
 logger_start(preset="production", folder="prod_logs")
@@ -116,7 +130,14 @@ production_demo()
 適合問題排查和深度除錯：
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 # 啟用除錯預設配置
 logger_start(preset="debug", folder="debug_logs")
@@ -163,7 +184,14 @@ debug_demo()
 適合單元測試和整合測試：
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 # 啟用測試預設配置
 logger_start(preset="testing", folder="test_logs")

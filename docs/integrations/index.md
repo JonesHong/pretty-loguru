@@ -19,10 +19,14 @@ pretty-loguru 設計為與現代 Python 框架無縫整合。本章節將展示�
 
 ```python
 from fastapi import FastAPI
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # 初始化日誌
-logger_start(folder="api_logs")
+logger = create_logger(
+    name="integrations_demo",
+    log_path="api_logs",
+    level="INFO"
+)
 
 app = FastAPI()
 
@@ -178,12 +182,16 @@ class DatabaseService:
 
 ```python
 from fastapi import FastAPI, Request, HTTPException
-from pretty_loguru import logger, logger_start, uvicorn_init_config
+from pretty_loguru import create_logger, uvicorn_init_config
 import time
 import uvicorn
 
 # 初始化日誌系統
-logger_start(folder="webapp_logs")
+logger = create_logger(
+    name="integrations_demo",
+    log_path="webapp_logs",
+    level="INFO"
+)
 uvicorn_init_config()
 
 app = FastAPI(title="Demo API", version="1.0.1")

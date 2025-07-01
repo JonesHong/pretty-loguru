@@ -38,10 +38,14 @@ Integrate pretty-loguru into your projects:
 pretty-loguru offers multiple initialization methods:
 
 ```python
-from pretty_loguru import logger, logger_start, create_logger
+from pretty_loguru import create_logger, create_logger
 
 # Method 1: Quick Start (Recommended)
-component_name = logger_start(folder="logs")
+component_name = logger = create_logger(
+    name="guide_demo",
+    log_path="logs",
+    level="INFO"
+)
 
 # Method 2: Custom Logger
 my_logger = create_logger(

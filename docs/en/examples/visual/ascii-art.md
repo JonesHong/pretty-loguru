@@ -7,10 +7,14 @@ ASCII art is a signature feature of pretty-loguru, capable of creating impressiv
 ### Application Startup Header
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # Initialize the logging system
-logger_start(folder="ascii_demo")
+logger = create_logger(
+    name="ascii-art_demo",
+    log_path="ascii_demo",
+    level="INFO"
+)
 
 # Application startup
 logger.ascii_header("APP START", font="slant", border_style="blue")

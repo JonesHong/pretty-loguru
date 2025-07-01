@@ -13,10 +13,14 @@
 ### 簡單開始
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # 一行初始化
-component_name = logger_start(folder="my_logs")
+component_name = logger = create_logger(
+    name="basics_demo",
+    log_path="my_logs",
+    level="INFO"
+)
 
 # 開始記錄日誌
 logger.info("應用程式已啟動")

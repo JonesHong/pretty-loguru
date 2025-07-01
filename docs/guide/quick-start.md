@@ -13,10 +13,14 @@ pip install pretty-loguru
 建立一個新的 Python 檔案，複製以下代碼：
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # 初始化日誌系統
-component_name = logger_start(folder="quick_start_logs")
+component_name = logger = create_logger(
+    name="quick-start_demo",
+    log_path="quick_start_logs",
+    level="INFO"
+)
 print(f"日誌系統已初始化，元件 ID: {component_name}")
 
 # 基本日誌輸出
@@ -110,11 +114,15 @@ logger.ascii_block(
 ```python
 import time
 import random
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 def main():
     # 初始化
-    component_name = logger_start(folder="demo_logs")
+    component_name = logger = create_logger(
+    name="quick-start_demo",
+    log_path="demo_logs",
+    level="INFO"
+)
     
     # 應用啟動
     logger.ascii_header("APP STARTUP", font="slant", border_style="blue")

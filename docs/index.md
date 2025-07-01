@@ -49,10 +49,14 @@ pip install pretty-loguru
 ## ⚡ 超快速開始
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # 一行代碼初始化日誌系統
-component_name = logger_start(folder="my_logs")
+component_name = logger = create_logger(
+    name="docs_demo",
+    log_path="my_logs",
+    level="INFO"
+)
 
 # 開始使用各種日誌功能
 logger.info("應用程式啟動成功")

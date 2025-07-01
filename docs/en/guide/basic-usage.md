@@ -11,10 +11,14 @@ pretty-loguru offers multiple initialization methods to meet the needs of differ
 #### Quick Initialization (Recommended)
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # Complete all settings with one line of code
-component_name = logger_start(folder="my_logs")
+component_name = logger = create_logger(
+    name="basic-usage_demo",
+    log_path="my_logs",
+    level="INFO"
+)
 print(f"Logger has been initialized, component name: {component_name}")
 ```
 
@@ -126,13 +130,25 @@ Example: [my_app_20240630_143022]_20240630-143022.log
 
 ```python
 # Rotate by file size
-logger_start(folder="logs", rotation="10MB")
+logger = create_logger(
+    name="basic-usage_demo",
+    log_path="logs", rotation="10MB",
+    level="INFO"
+)
 
 # Rotate by time
-logger_start(folder="logs", rotation="1 day")
+logger = create_logger(
+    name="basic-usage_demo",
+    log_path="logs", rotation="1 day",
+    level="INFO"
+)
 
 # Rotate by count (at midnight)
-logger_start(folder="logs", rotation="midnight", retention=10)
+logger = create_logger(
+    name="basic-usage_demo",
+    log_path="logs", rotation="midnight", retention=10,
+    level="INFO"
+)
 ```
 
 ### Log Cleanup
@@ -155,7 +171,7 @@ logger_start(
 ### Custom Formatting
 
 ```python
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 
 # Log extra information
 logger.info("User login", extra={"user_id": 12345, "ip": "192.168.1.1"})
@@ -201,7 +217,7 @@ if logger.level("DEBUG").no >= logging.DEBUG:
 
 ```python
 import time
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 def main():
     # Initialize the logging system
@@ -273,7 +289,11 @@ def process_data(data):
 ### Q: Why can't I see DEBUG level logs?
 A: Check the log level setting:
 ```python
-logger_start(folder="logs", level="DEBUG")
+logger = create_logger(
+    name="basic-usage_demo",
+    log_path="logs", level="DEBUG",
+    level="INFO"
+)
 ```
 
 ### Q: How to log sensitive information only in the file?
@@ -286,18 +306,22 @@ logger.console_info("User password reset successful")      # Displays only in co
 ### Q: What to do if there are too many log files?
 A: Set up automatic cleanup:
 ```python
-logger_start(folder="logs", retention="7 days")
+logger = create_logger(
+    name="basic-usage_demo",
+    log_path="logs", retention="7 days",
+    level="INFO"
+)
 ```
 
 ### Q: How to use the same logger in different modules?
 A: The logger is global, just import it directly:
 ```python
 # module_a.py
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 logger.info("Message from Module A")
 
 # module_b.py  
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 logger.info("Message from Module B")
 ```
 

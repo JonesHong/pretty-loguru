@@ -7,10 +7,14 @@ ASCII 藝術是 pretty-loguru 的招牌功能，能夠建立令人印象深刻�
 ### 應用程式啟動標題
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # 初始化日誌系統
-logger_start(folder="ascii_demo")
+logger = create_logger(
+    name="ascii-art_demo",
+    log_path="ascii_demo",
+    level="INFO"
+)
 
 # 應用程式啟動
 logger.ascii_header("APP START", font="slant", border_style="blue")
@@ -495,7 +499,11 @@ def complete_ascii_demo():
     """ASCII 藝術功能完整展示"""
     import time
     
-    logger_start(folder="complete_ascii_demo")
+    logger = create_logger(
+    name="ascii-art_demo",
+    log_path="complete_ascii_demo",
+    level="INFO"
+)
     
     # 1. 歡迎標題
     logger.ascii_header("WELCOME", font="slant", border_style="blue")

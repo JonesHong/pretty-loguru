@@ -7,7 +7,7 @@ Using pretty-loguru in a production environment requires special consideration f
 ### Basic Production Configuration
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 import os
 from pathlib import Path
 

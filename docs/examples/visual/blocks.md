@@ -7,10 +7,14 @@ Rich 區塊是 pretty-loguru 最實用的視覺化功能，本頁面將展示各
 ### 簡單區塊
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # 初始化日誌系統
-logger_start(folder="blocks_demo")
+logger = create_logger(
+    name="blocks_demo",
+    log_path="blocks_demo",
+    level="INFO"
+)
 
 # 最基本的區塊
 logger.block(
@@ -519,7 +523,11 @@ logger.block(
 def complete_blocks_demo():
     """Rich 區塊功能完整展示"""
     
-    logger_start(folder="complete_blocks_demo")
+    logger = create_logger(
+    name="blocks_demo",
+    log_path="complete_blocks_demo",
+    level="INFO"
+)
     
     # 1. 基本資訊
     logger.block(

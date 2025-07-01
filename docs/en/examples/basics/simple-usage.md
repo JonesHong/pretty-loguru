@@ -4,7 +4,7 @@ This is the most basic example of using pretty-loguru, demonstrating how to quic
 
 ## 🎯 Learning Objectives
 
-- Understand the usage of `logger_start()`
+- Understand the usage of `create_logger()`
 - Master the basic log levels
 - Understand automatic management of log files
 
@@ -13,11 +13,14 @@ This is the most basic example of using pretty-loguru, demonstrating how to quic
 ### The Simplest Start
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
-# Initialize the logging system
-component_name = logger_start(folder="simple_logs")
-print(f"Log component ID: {component_name}")
+# Create logger instance
+logger = create_logger(
+    name="simple_usage_demo",
+    log_path="simple_logs",
+    level="INFO"
+)
 
 # Basic log output
 logger.debug("This is a debug message")
@@ -77,11 +80,15 @@ Create a simple Python script:
 
 ```python
 # practice_1.py
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 def main():
     # Initialize logging
-    component_name = logger_start(folder="practice_logs")
+    component_name = logger = create_logger(
+    name="simple-usage_demo",
+    log_path="practice_logs",
+    level="INFO"
+)
     
     # Simulate application startup
     logger.info("Application is starting...")
@@ -113,11 +120,15 @@ if __name__ == "__main__":
 
 ```python
 # practice_2.py
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 import time
 
 def test_all_levels():
-    logger_start(folder="level_test")
+    logger = create_logger(
+    name="simple-usage_demo",
+    log_path="level_test",
+    level="INFO"
+)
     
     # Test all log levels
     levels = [
@@ -173,7 +184,11 @@ pretty-loguru automatically:
 ### Q: Why can't I see DEBUG level logs?
 A: By default, the DEBUG level might be filtered in a production environment. You can set it explicitly:
 ```python
-logger_start(folder="logs", level="DEBUG")
+logger = create_logger(
+    name="simple-usage_demo",
+    log_path="logs", level="DEBUG",
+    level="INFO"
+)
 ```
 
 ### Q: How to customize the log format?
@@ -182,7 +197,11 @@ A: This is an advanced feature. Please refer to the [Custom Configuration](../..
 ### Q: What to do if there are too many log files?
 A: You can set up automatic cleanup:
 ```python
-logger_start(folder="logs", retention="7 days")
+logger = create_logger(
+    name="simple-usage_demo",
+    log_path="logs", retention="7 days",
+    level="INFO"
+)
 ```
 
 ## 🚀 Next Steps

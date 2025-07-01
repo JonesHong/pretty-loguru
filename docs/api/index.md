@@ -338,7 +338,7 @@ compression=None     # 不壓縮
 ### Web 應用整合
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # FastAPI 應用
 def setup_logging():

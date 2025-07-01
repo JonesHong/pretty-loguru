@@ -7,7 +7,14 @@ ASCII 藝術標題是 pretty-loguru 的特色功能之一，能夠建立引人�
 ### 簡單的 ASCII 標題
 
 ```python
-from pretty_loguru import logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 # 最基本的 ASCII 標題
 logger.ascii_header("HELLO WORLD")

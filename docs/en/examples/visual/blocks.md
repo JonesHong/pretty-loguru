@@ -7,10 +7,14 @@ Rich blocks are the most practical visualization feature of pretty-loguru. This 
 ### Simple Block
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
-# Initialize the logging system
-logger_start(folder="blocks_demo")
+# Create logger instance
+logger = create_logger(
+    name="blocks_demo",
+    log_path="blocks_demo",
+    level="INFO"
+)
 
 # The most basic block
 logger.block(

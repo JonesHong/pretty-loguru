@@ -7,12 +7,16 @@ pretty-loguru provides rich visualization components by integrating with the Ric
 ### Basic Table
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 from rich.table import Table
 from rich.console import Console
 
 # Initialize the logging system
-logger_start(folder="rich_components_demo")
+logger = create_logger(
+    name="rich-components_demo",
+    log_path="rich_components_demo",
+    level="INFO"
+)
 
 def system_status_table():
     """Display system status using a table"""

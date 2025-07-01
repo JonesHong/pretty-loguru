@@ -7,12 +7,16 @@ pretty-loguru 透過整合 Rich 庫，提供了豐富的視覺化組件。本頁
 ### 基本表格
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 from rich.table import Table
 from rich.console import Console
 
 # 初始化日誌系統
-logger_start(folder="rich_components_demo")
+logger = create_logger(
+    name="rich-components_demo",
+    log_path="rich_components_demo",
+    level="INFO"
+)
 
 def system_status_table():
     """使用表格展示系統狀態"""
@@ -626,7 +630,11 @@ show_complex_chart()         # 複雜但無必要的圖表
 def complete_rich_components_demo():
     """Rich 組件功能完整展示"""
     
-    logger_start(folder="complete_rich_demo")
+    logger = create_logger(
+    name="rich-components_demo",
+    log_path="complete_rich_demo",
+    level="INFO"
+)
     console = Console()
     
     # 1. 歡迎面板

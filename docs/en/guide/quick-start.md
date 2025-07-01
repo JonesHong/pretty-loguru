@@ -13,11 +13,14 @@ pip install pretty-loguru
 Create a new Python file and copy the following code:
 
 ```python
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
-# Initialize the logging system
-component_name = logger_start(folder="quick_start_logs")
-print(f"Logging system initialized, component ID: {component_name}")
+# Create logger instance
+logger = create_logger(
+    name="quick_start_demo",
+    log_path="quick_start_logs",
+    level="DEBUG"
+)
 
 # Basic log output
 logger.debug("This is a debug message")
@@ -110,11 +113,15 @@ Save the following code as `quick_demo.py`:
 ```python
 import time
 import random
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 def main():
-    # Initialization
-    component_name = logger_start(folder="demo_logs")
+    # Create logger instance
+    logger = create_logger(
+        name="quick_demo",
+        log_path="demo_logs",
+        level="INFO"
+    )
     
     # Application startup
     logger.ascii_header("APP STARTUP", font="slant", border_style="blue")

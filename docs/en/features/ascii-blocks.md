@@ -17,7 +17,14 @@ This combination provides:
 ### Simple ASCII Block
 
 ```python
-from pretty_loguru import logger
+from pretty_loguru import create_logger
+
+# Create logger instance
+logger = create_logger(
+    name="demo",
+    log_path="logs",
+    level="INFO"
+)
 
 logger.ascii_block(
     "System Status Report",   // Block title

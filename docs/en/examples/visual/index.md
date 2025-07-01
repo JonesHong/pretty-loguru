@@ -16,7 +16,7 @@ The visualization features of pretty-loguru are its main characteristic. This ch
 Rich blocks provide a structured content display with borders:
 
 ```python
-from pretty_loguru import logger
+from pretty_loguru import create_logger
 
 logger.block(
     "System Status Check",
@@ -90,13 +90,17 @@ Here is a comprehensive example showcasing all visual features:
 
 ```python
 import time
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 def visual_showcase():
     """Complete showcase of visualization features"""
     
     # Initialize the logging system
-    logger_start(folder="visual_demo")
+    logger = create_logger(
+    name="visual_demo",
+    log_path="visual_demo",
+    level="INFO"
+)
     
     # 1. Startup title
     logger.ascii_header("VISUAL DEMO", font="slant", border_style="blue")

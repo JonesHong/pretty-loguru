@@ -42,10 +42,14 @@ pretty-loguru 會自動安裝以下依賴：
 
 ```python
 # test_installation.py
-from pretty_loguru import logger, logger_start
+from pretty_loguru import create_logger
 
 # 測試基本功能
-component_name = logger_start(folder="test_logs")
+component_name = logger = create_logger(
+    name="installation_demo",
+    log_path="test_logs",
+    level="INFO"
+)
 logger.info("✅ pretty-loguru 安裝成功！")
 logger.success("🎉 所有功能正常運作！")
 
@@ -190,11 +194,15 @@ def check_installation():
     
     # 檢查 pretty-loguru
     try:
-        from pretty_loguru import logger, logger_start
+        from pretty_loguru import create_logger
         print("✅ pretty-loguru: 已安裝")
         
         # 基本功能測試
-        component_name = logger_start(folder="diagnose_test")
+        component_name = logger = create_logger(
+    name="installation_demo",
+    log_path="diagnose_test",
+    level="INFO"
+)
         logger.info("基本功能測試通過")
         print("✅ 基本功能: 正常")
         
