@@ -59,7 +59,7 @@ def application_branding():
 def status_headers():
     """狀態標題演示"""
     logger = create_logger("status_app", log_path="./logs")
-    
+    logger.ascii_header("WELCOME")
     print("\n=== 狀態標題演示 ===\n")
     
     # 1. 初始化階段

@@ -19,7 +19,7 @@ def setup_production_logging():
     log_dir.mkdir(parents=True, exist_ok=True)
     
     # Production environment configuration
-    create_logger(
+    logger = create_logger(
         preset="production",
         folder=str(log_dir),
         file_name="app_{time:YYYY-MM-DD}.log",
@@ -81,7 +81,7 @@ def setup_environment_logging():
     }
     
     config = configs[env]
-    create_logger(**config)
+    logger = create_logger(**config)
     
     logger.ascii_block(
         f"Environment Configuration Loaded",
