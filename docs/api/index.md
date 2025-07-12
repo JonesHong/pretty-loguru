@@ -95,6 +95,7 @@ logger.file_critical(message)
 ```python
 def create_logger(
     name: Optional[str] = None,
+    config: Optional[LoggerConfig] = None,
     use_native_format: bool = False,
     # 檔案輸出配置
     log_path: Optional[LogPathType] = None,
@@ -108,7 +109,6 @@ def create_logger(
     component_name: Optional[str] = None,
     subdirectory: Optional[str] = None,
     # 行為控制
-    use_proxy: Optional[bool] = None,
     start_cleaner: Optional[bool] = None,
     # 預設和實例控制
     preset: Optional[str] = None,
@@ -121,6 +121,7 @@ def create_logger(
 | 參數 | 類型 | 預設值 | 說明 |
 |------|------|--------|------|
 | `name` | `Optional[str]` | `None` | Logger 名稱，若未提供則從調用文件名推斷 |
+| `config` | `Optional[LoggerConfig]` | `None` | LoggerConfig 物件，如果提供將優先使用其配置 |
 | `use_native_format` | `bool` | `False` | 是否使用 loguru 原生格式 (file:function:line) |
 
 **檔案輸出配置：**
@@ -146,7 +147,6 @@ def create_logger(
 
 | 參數 | 類型 | 預設值 | 說明 |
 |------|------|--------|------|
-| `use_proxy` | `Optional[bool]` | `None` | 是否使用代理模式 |
 | `start_cleaner` | `Optional[bool]` | `None` | 是否啟動自動清理器 |
 
 **預設和實例控制：**
@@ -168,6 +168,28 @@ logger = create_logger(
     log_path="logs/demo.log"
 )
 
+# 使用 LoggerConfig 物件
+from pretty_loguru import LoggerConfig, ConfigTemplates
+
+config = ConfigTemplates.production()
+logger = create_logger("app", config=config)
+
+# 自定義配置物件
+custom_config = LoggerConfig(
+    level="DEBUG",
+    log_path="logs",
+    rotation="1 day",
+    retention="7 days"
+)
+logger = create_logger("debug_app", config=custom_config)
+
+# 使用 config + 覆寫參數
+logger = create_logger(
+    "special_app", 
+    config=config,
+    level="DEBUG"  # 覆寫 config 中的 level
+)
+
 # 自定義設定
 logger = create_logger(
     name="api_service",
@@ -176,7 +198,6 @@ logger = create_logger(
     rotation="50MB", 
     retention="30 days"
 )
-```
 
 # 使用預設配置
 logger = create_logger(preset="development")
@@ -408,6 +429,58 @@ except Exception as e:
         border_style="red",
         log_level="ERROR"
     )
+```
+
+## 🛠️ 工具函數
+
+### `get_logger(name: str) -> Optional[EnhancedLogger]`
+
+根據名稱獲取已註冊的 logger 實例。
+
+```python
+logger = get_logger("my_app")
+if logger:
+    logger.info("找到 logger")
+else:
+    logger = create_logger("my_app")
+```
+
+### `cleanup_loggers() -> int`
+
+清理所有註冊的 logger 和相關資源。
+
+```python
+# 清理所有 logger
+count = cleanup_loggers()
+print(f"清理了 {count} 個 logger")
+```
+
+### `list_loggers() -> List[str]`
+
+列出所有已註冊的 logger 名稱。
+
+```python
+loggers = list_loggers()
+print(f"當前註冊的 logger: {loggers}")
+```
+
+### `ConfigTemplates` - 配置模板
+
+提供預定義的配置模板。
+
+```python
+from pretty_loguru import ConfigTemplates
+
+# 可用模板
+config = ConfigTemplates.development()  # 開發環境
+config = ConfigTemplates.production()   # 生產環境
+config = ConfigTemplates.testing()      # 測試環境
+
+# 輪替模板
+config = ConfigTemplates.daily()        # 每日輪替
+config = ConfigTemplates.hourly()       # 每小時輪替
+config = ConfigTemplates.weekly()       # 每週輪替
+config = ConfigTemplates.monthly()      # 每月輪替
 ```
 
 ## 📖 更多資源

@@ -81,7 +81,9 @@
       "WebFetch(domain:joneshong.github.io)",
       "mcp__sequential-thinking__sequentialthinking",
       "Bash(timeout:*)",
-      "Bash(touch:*)"
+      "Bash(touch:*)",
+      "Bash(git config:*)",
+      "Bash(git remote get-url:*)"
     ],
     "deny": []
   },

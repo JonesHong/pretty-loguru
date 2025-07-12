@@ -99,14 +99,14 @@ logger.ascii_block(
 
 想要立即體驗？查看我們的 [範例集合](../examples/)，包含：
 
-- [快速開始範例](../examples/basics/) - 從簡單開始
-- [基礎用法範例](../examples/basics/) - 核心功能展示
-- [視覺化範例](../examples/visual/) - 展示所有視覺功能
-- [配置管理範例](../examples/presets/) - 配置和輪替策略
-- [整合範例](../examples/fastapi/) - Web 應用整合
-- [生產環境範例](../examples/production/) - 實際部署案例
-- [進階功能範例](../examples/advanced/) - 底層存取和自訂
-- [企業級範例](../examples/enterprise/) - 企業級部署方案
+- [快速開始](../examples/quickstart.md) - 3分鐘上手
+- [基礎功能](../examples/basics.md) - 核心功能展示
+- [視覺化功能](../examples/visual.md) - Rich 區塊和 ASCII 藝術
+- [配置管理](../examples/configuration.md) - LoggerConfig 和輪替策略
+- [框架整合](../examples/integrations.md) - FastAPI/Uvicorn 整合
+- [生產環境](../examples/production.md) - 部署最佳實踐
+- [進階功能](../examples/advanced.md) - 底層功能存取
+- [企業級應用](../examples/enterprise.md) - 大規模部署方案
 
 ## ❓ 遇到問題？
 

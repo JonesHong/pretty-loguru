@@ -56,6 +56,55 @@ class LoggerConfig:
 | `preset` | `Optional[str]` | 使用的預設配置名稱。 |
 | `extra` | `Dict[str, Any]` | 傳遞給 `logger.configure` 的額外參數。 |
 
+**方法說明：**
+
+### `apply_to(*names) -> Union[EnhancedLogger, Tuple[EnhancedLogger, ...]]`
+
+將配置應用到一個或多個**現有的** logger。
+
+
+```python
+# 更新單個 logger
+config = LoggerConfig(level="DEBUG")
+updated_logger = config.apply_to("existing_logger")
+
+# 更新多個 logger
+loggers = config.apply_to("auth", "api", "database")
+```
+
+### `update(**kwargs) -> None`
+
+動態更新配置並自動應用到所有相關的 logger。
+
+```python
+config = LoggerConfig(level="INFO")
+config.apply_to("app1", "app2", "app3")
+
+# 更新所有相關 logger 的日誌級別
+config.update(level="DEBUG")
+```
+
+### `clone() -> LoggerConfig`
+
+創建配置的深拷貝，避免相互影響。
+
+```python
+base_config = LoggerConfig(level="INFO", log_path="logs")
+dev_config = base_config.clone()
+dev_config.update(level="DEBUG")
+```
+
+### `logger_exists(name: str) -> bool` (靜態方法)
+
+檢查指定名稱的 logger 是否已經存在。
+
+```python
+if LoggerConfig.logger_exists("my_logger"):
+    config.apply_to("my_logger")
+else:
+    create_logger("my_logger", config=config)
+```
+
 ---
 
 ## `base.py` - 基礎功能
