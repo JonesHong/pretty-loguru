@@ -103,14 +103,42 @@ logger.ascii_header(
 - **🌐 框架整合**: 完美支援 FastAPI、Uvicorn 等主流框架
 - **📦 生產就緒**: 內建日誌輪換、壓縮、清理等企業級功能
 
-## 🚀 下一步
+## 🧭 **我該從哪裡開始？**
+
+### 📊 根據您的身份選擇
+
+| 我是... | 建議路徑 | 預估時間 |
+|---------|----------|----------|
+| 🆕 **Python 日誌新手** | [5分鐘體驗](/examples/) → [核心功能](/examples/) → [視覺化](/examples/) | 30分鐘 |
+| 🌐 **Web 開發者** | [快速開始](/guide/quick-start) → [核心功能](/examples/) → [框架整合](/integrations/) | 45分鐘 |
+| 🏭 **DevOps/運維** | [安裝配置](/guide/installation) → [生產實踐](/examples/) → [進階配置](/examples/) | 1小時 |
+| 🔬 **進階開發者** | [API文件](/api/) → [完整範例](/examples/) → [自定義開發](/examples/) | 2-3小時 |
+
+### 🎯 根據您的需求選擇
 
 <div class="vp-doc">
 
-- [📖 閱讀完整指南](/guide/) - 了解所有功能和配置選項
-- [🎮 查看範例](/examples/) - 從基礎到進階的完整範例
-- [🔌 整合指南](/integrations/) - 與 FastAPI、Uvicorn 等框架整合
-- [📚 API 文件](/api/) - 詳細的 API 參考文件
+| 我想要... | 直接跳到 |
+|-----------|----------|
+| ⚡ **5分鐘快速體驗** | [快速體驗](/examples/) |
+| 🎨 **美化日誌輸出** | [視覺化功能](/examples/) |
+| 🚀 **FastAPI 整合** | [框架整合](/integrations/) |
+| 🏭 **生產環境部署** | [生產實踐](/examples/) |
+| 📚 **完整學習** | [學習中心](/examples/) |
+
+</div>
+
+## 🚀 學習路徑
+
+<div class="vp-doc">
+
+- [🚀 5分鐘快速體驗](/examples/) - 立即感受 pretty-loguru 的魅力
+- [📚 核心功能掌握](/examples/) - 掌握所有基礎功能
+- [🎨 視覺化功能](/examples/) - Rich 區塊和 ASCII 藝術
+- [⚙️ 配置和管理](/examples/) - 檔案輪替和進階配置
+- [🌐 框架整合](/integrations/) - FastAPI、Uvicorn 整合
+- [🏭 生產環境](/examples/) - 企業級部署和維運
+- [📚 API 參考](/api/) - 完整的函數說明文件
 
 </div>
 

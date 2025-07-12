@@ -20,20 +20,45 @@ def integrate_fastapi(
     logger: EnhancedLogger,
     enable_uvicorn: bool = True,
     exclude_health_checks: bool = True,
-    **kwargs: Any
+    exclude_paths: Optional[List[str]] = None,
+    exclude_methods: Optional[List[str]] = None,
+    # Middleware configuration
+    middleware: bool = True,
+    custom_routes: bool = False,
+    log_request_body: bool = False,
+    log_response_body: bool = False,
+    log_headers: bool = True,
+    sensitive_headers: Optional[Set[str]] = None
 ) -> None:
     ...
 ```
 
 **Parameter Descriptions:**
 
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `app` | `FastAPI` | Your FastAPI application instance. |
-| `logger` | `EnhancedLogger` | An already created `pretty-loguru` logger instance. |
-| `enable_uvicorn` | `bool` | If `True`, will also call `integrate_uvicorn` to unify logging. |
-| `exclude_health_checks` | `bool` | If `True`, automatically excludes common non-business paths like `/health`, `/metrics`, `/docs`. |
-| `**kwargs` | `Any` | Other parameters to pass to `LoggingMiddleware`, such as `log_request_body=True`. |
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| `app` | `FastAPI` | - | Your FastAPI application instance. |
+| `logger` | `EnhancedLogger` | - | An already created `pretty-loguru` logger instance. |
+| `enable_uvicorn` | `bool` | `True` | If `True`, will also call `integrate_uvicorn` to unify logging. |
+| `exclude_health_checks` | `bool` | `True` | If `True`, automatically excludes common non-business paths like `/health`, `/metrics`, `/docs`. |
+
+**Path and Method Control:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| `exclude_paths` | `Optional[List[str]]` | `None` | Additional paths to exclude from logging |
+| `exclude_methods` | `Optional[List[str]]` | `None` | HTTP methods to exclude from logging |
+
+**Middleware Configuration:**
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| `middleware` | `bool` | `True` | Whether to add logging middleware |
+| `custom_routes` | `bool` | `False` | Whether to use custom LoggingRoute |
+| `log_request_body` | `bool` | `False` | Whether to log request body |
+| `log_response_body` | `bool` | `False` | Whether to log response body |
+| `log_headers` | `bool` | `True` | Whether to log request and response headers |
+| `sensitive_headers` | `Optional[Set[str]]` | `None` | Sensitive header fields whose values will be masked |
 
 **Examples:**
 
@@ -46,8 +71,19 @@ from pretty_loguru.integrations.fastapi import integrate_fastapi
 app = FastAPI()
 logger = create_logger("my_api", log_path="logs/")
 
-# 2. Complete integration with one line
+# 2. Basic integration
 integrate_fastapi(app, logger)
+
+# 3. Full configuration integration
+integrate_fastapi(
+    app,
+    logger,
+    log_request_body=True,        # Log request body
+    log_response_body=False,      # Don't log response body
+    log_headers=True,             # Log header information
+    exclude_paths=["/metrics"],   # Additional excluded paths
+    sensitive_headers={"x-api-key", "authorization"}  # Sensitive headers
+)
 
 @app.get("/")
 async def root():
@@ -90,7 +126,24 @@ Creates a FastAPI dependency that allows you to easily inject logger instances i
 ```python
 def get_logger_dependency(
     name: Optional[str] = None,
-    **kwargs: Any
+    service_tag: Optional[str] = None,  # Deprecated, use component_name instead
+    # File output configuration
+    log_path: Optional[LogPathType] = None,
+    rotation: Optional[LogRotationType] = None,
+    retention: Optional[str] = None,
+    compression: Optional[Union[str, Callable]] = None,
+    compression_format: Optional[str] = None,
+    # Formatting configuration
+    level: Optional[LogLevelType] = None,
+    logger_format: Optional[str] = None,
+    component_name: Optional[str] = None,
+    subdirectory: Optional[str] = None,
+    # Behavior control
+    use_proxy: Optional[bool] = None,
+    start_cleaner: Optional[bool] = None,
+    use_native_format: bool = False,
+    # Preset configuration
+    preset: Optional[str] = None
 ) -> Callable[[], EnhancedLogger]:
     ...
 ```

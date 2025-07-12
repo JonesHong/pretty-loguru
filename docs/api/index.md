@@ -96,7 +96,23 @@ logger.file_critical(message)
 def create_logger(
     name: Optional[str] = None,
     use_native_format: bool = False,
-    **kwargs: Any
+    # 檔案輸出配置
+    log_path: Optional[LogPathType] = None,
+    rotation: Optional[LogRotationType] = None,
+    retention: Optional[str] = None,
+    compression: Optional[Union[str, Callable]] = None,
+    compression_format: Optional[str] = None,
+    # 格式化配置
+    level: Optional[LogLevelType] = None,
+    logger_format: Optional[str] = None,
+    component_name: Optional[str] = None,
+    subdirectory: Optional[str] = None,
+    # 行為控制
+    use_proxy: Optional[bool] = None,
+    start_cleaner: Optional[bool] = None,
+    # 預設和實例控制
+    preset: Optional[str] = None,
+    force_new_instance: bool = False
 ) -> EnhancedLogger
 ```
 
@@ -106,18 +122,39 @@ def create_logger(
 |------|------|--------|------|
 | `name` | `Optional[str]` | `None` | Logger 名稱，若未提供則從調用文件名推斷 |
 | `use_native_format` | `bool` | `False` | 是否使用 loguru 原生格式 (file:function:line) |
-| `**kwargs` | `Any` | - | 其他配置參數，傳遞給 LoggerConfig |
 
-**常用 kwargs 參數：**
+**檔案輸出配置：**
 
-| 參數 | 類型 | 說明 |
-|------|------|------|
-| `log_path` | `str` | 日誌檔案路徑 |
-| `level` | `str` | 日誌級別 ("DEBUG", "INFO", "WARNING", "ERROR") |
-| `preset` | `str` | 預設配置名稱 |
-| `rotation` | `str` | 檔案輪換條件 (如 "10MB", "1 day") |
-| `retention` | `str` | 檔案保留時間 (如 "7 days", "30 days") |
-| `compression` | `str` | 壓縮格式 ("zip", "gz", "bz2") |
+| 參數 | 類型 | 預設值 | 說明 |
+|------|------|--------|------|
+| `log_path` | `Optional[LogPathType]` | `None` | 日誌檔案輸出路徑 |
+| `rotation` | `Optional[LogRotationType]` | `None` | 日誌輪轉設定 (例如: "1 day", "100 MB") |
+| `retention` | `Optional[str]` | `None` | 日誌保留設定 (例如: "7 days") |
+| `compression` | `Optional[Union[str, Callable]]` | `None` | 壓縮設定 (函數或字符串) |
+| `compression_format` | `Optional[str]` | `None` | 壓縮格式 |
+
+**格式化配置：**
+
+| 參數 | 類型 | 預設值 | 說明 |
+|------|------|--------|------|
+| `level` | `Optional[LogLevelType]` | `None` | 日誌等級 ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL") |
+| `logger_format` | `Optional[str]` | `None` | 自定義日誌格式字符串 |
+| `component_name` | `Optional[str]` | `None` | 組件名稱，用於日誌標識 |
+| `subdirectory` | `Optional[str]` | `None` | 子目錄，用於組織日誌檔案 |
+
+**行為控制：**
+
+| 參數 | 類型 | 預設值 | 說明 |
+|------|------|--------|------|
+| `use_proxy` | `Optional[bool]` | `None` | 是否使用代理模式 |
+| `start_cleaner` | `Optional[bool]` | `None` | 是否啟動自動清理器 |
+
+**預設和實例控制：**
+
+| 參數 | 類型 | 預設值 | 說明 |
+|------|------|--------|------|
+| `preset` | `Optional[str]` | `None` | 預設配置名稱 ("minimal", "detailed", "production") |
+| `force_new_instance` | `bool` | `False` | 是否強制創建新實例 |
 
 **回傳值：**
 - `EnhancedLogger`: 配置好的 logger 實例

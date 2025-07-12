@@ -5,13 +5,15 @@ ASCII 藝術模組
 增強日誌的視覺效果和結構化呈現。
 """
 
-import re
 from typing import List, Optional, Any
 
 from rich.panel import Panel
 from rich.console import Console
 
 from pretty_loguru.core.extension_system import register_extension_method
+from pretty_loguru.core.base import get_console
+from pretty_loguru.utils.dependencies import ensure_art_dependency
+from pretty_loguru.utils.validators import validate_ascii_art_text, validate_ascii_header
 
 try:
     from art import text2art
@@ -27,13 +29,7 @@ from ..core.target_formatter import add_target_methods, ensure_target_parameters
 from .block import print_block, format_block_message
 
 
-# ASCII 字符檢查的正則表達式
-# 僅匹配英文、數字和標準 ASCII 符號
-ASCII_PATTERN = re.compile(r'^[\x00-\x7F]+$')
-
-def is_ascii_only(text: str) -> bool:
-    """檢查文本是否只包含 ASCII 字符"""
-    return ASCII_PATTERN.match(text) is not None
+# ASCII 字符檢查現在統一在 utils.validators 中處理
 
 
 
@@ -70,32 +66,14 @@ def print_ascii_header(
         ImportError: 如果未安裝 art 庫
     """
     # 檢查 art 庫是否已安裝
-    if not _has_art:
-        error_msg = "The 'art' library is not installed. Please install it using 'pip install art'."
-        if logger_instance:
-            logger_instance.error(error_msg)
-        raise ImportError(error_msg)
+    ensure_art_dependency(logger_instance)
     
-    # 如果沒有提供 console，則創建一個新的
+    # 如果沒有提供 console，則使用統一的 console 實例
     if console is None:
-        console = Console()
+        console = get_console()
     
-    # 檢查是否包含非 ASCII 字符
-    if not is_ascii_only(text):
-        warning_msg = f"ASCII art only supports ASCII characters. The text '{text}' contains non-ASCII characters."
-        if logger_instance:
-            logger_instance.warning(warning_msg)
-        
-        # 移除非 ASCII 字符
-        cleaned_text = re.sub(r'[^\x00-\x7F]+', '', text)
-        
-        if logger_instance:
-            logger_instance.warning(f"Removed non-ASCII characters. Using: '{cleaned_text}'")
-        
-        if not cleaned_text:  # 如果移除後為空，則拋出異常
-            raise ValueError("The text contains only non-ASCII characters and cannot create ASCII art.")
-        
-        text = cleaned_text
+    # 檢查並清理 ASCII 字符
+    text = validate_ascii_art_text(text, logger_instance)
     
     # 使用 art 庫生成 ASCII 藝術
     try:
@@ -159,35 +137,17 @@ def print_ascii_block(
         ImportError: 如果未安裝 art 庫
     """
     # 檢查 art 庫是否已安裝
-    if not _has_art:
-        error_msg = "The 'art' library is not installed. Please install it using 'pip install art'."
-        if logger_instance:
-            logger_instance.error(error_msg)
-        raise ImportError(error_msg)
+    ensure_art_dependency(logger_instance)
     
-    # 如果沒有提供 console，則創建一個新的
+    # 如果沒有提供 console，則使用統一的 console 實例
     if console is None:
-        console = Console()
+        console = get_console()
     
     # 如果沒有提供 ASCII 標題，則使用普通標題
     header_text = ascii_header if ascii_header is not None else title
     
-    # 檢查是否包含非 ASCII 字符
-    if not is_ascii_only(header_text):
-        warning_msg = f"ASCII art only supports ASCII characters. The text '{header_text}' contains non-ASCII characters."
-        if logger_instance:
-            logger_instance.warning(warning_msg)
-        
-        # 移除非 ASCII 字符
-        cleaned_text = re.sub(r'[^\x00-\x7F]+', '', header_text)
-        
-        if logger_instance:
-            logger_instance.warning(f"Removed non-ASCII characters. Using: '{cleaned_text}'")
-        
-        if not cleaned_text:  # 如果移除後為空，則拋出異常
-            raise ValueError("The ASCII header contains only non-ASCII characters and cannot create ASCII art.")
-        
-        header_text = cleaned_text
+    # 檢查並清理 ASCII 字符
+    header_text = validate_ascii_header(header_text, logger_instance)
     
     # 生成 ASCII 藝術
     try:
@@ -243,7 +203,7 @@ def create_ascii_methods(logger_instance: Any, console: Optional[Console] = None
         console: 要使用的 rich console 實例，如果為 None 則使用新創建的
     """
     if console is None:
-        console = Console()
+        console = get_console()
    
     # 定義 ascii_header 的實現
     @ensure_target_parameters

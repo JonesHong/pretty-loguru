@@ -15,8 +15,7 @@ import uvicorn
 # Initialize pretty-loguru
 logger = create_logger(
     name="demo",
-    log_path=
-    folder="logs",
+    log_path="logs/",
     level="INFO"
 )
 

@@ -8,10 +8,6 @@ pretty-loguru 設計為與現代 Python 框架無縫整合。本章節將展示�
 - **[FastAPI](./fastapi)** - 現代、快速的 Web 框架
 - **[Uvicorn](./uvicorn)** - 高效能 ASGI 伺服器
 
-### 即將支援
-- **Flask** - 輕量級 Web 框架
-- **Django** - 全功能 Web 框架
-- **Starlette** - 輕量級 ASGI 框架
 
 ## 🚀 快速開始
 

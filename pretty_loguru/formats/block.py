@@ -9,6 +9,7 @@ from typing import List, Optional, Any
 
 from rich.panel import Panel
 from rich.console import Console
+from ..core.base import get_console
 
 from ..types import EnhancedLogger
 from ..core.target_formatter import add_target_methods, ensure_target_parameters
@@ -70,7 +71,7 @@ def print_block(
     """
     # 如果沒有提供 console，則創建一個新的
     if console is None:
-        console = Console()
+        console = get_console()
     
     # 構造區塊內容，將多行訊息合併為單一字串
     message = "\n".join(message_list)
@@ -113,7 +114,7 @@ def create_block_method(logger_instance: Any, console: Optional[Console] = None)
         console: 要使用的 rich console 實例，如果為 None 則使用新創建的
     """
     if console is None:
-        console = Console()
+        console = get_console()
     
     @ensure_target_parameters
     def block_method(
@@ -137,17 +138,18 @@ def create_block_method(logger_instance: Any, console: Optional[Console] = None)
             to_log_file_only: 是否僅輸出到日誌文件，預設為 False
             _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置
         """
-        # 使用 kwargs 傳遞參數，避免參數重複
-        kwargs = {
-            "border_style": border_style,
-            "log_level": log_level,
-            "logger_instance": logger_instance,
-            "console": console,
-            "_target_depth": _target_depth,  # 傳遞深度
-        }
-        
-        # 使用當前方法的 to_console_only 和 to_log_file_only
-        print_block(title, message_list, **kwargs, to_console_only=to_console_only, to_log_file_only=to_log_file_only)
+        # 直接傳遞明確參數
+        print_block(
+            title,
+            message_list,
+            border_style=border_style,
+            log_level=log_level,
+            logger_instance=logger_instance,
+            console=console,
+            to_console_only=to_console_only,
+            to_log_file_only=to_log_file_only,
+            _target_depth=_target_depth
+        )
     
     # 將方法添加到 logger 實例
     logger_instance.block = block_method

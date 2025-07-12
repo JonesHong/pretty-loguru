@@ -97,31 +97,74 @@ logger.file_critical(message)
 
 ### `create_logger()` - Create Custom Logger
 
-Create a logger instance with specific name and configuration.
+The main logger creation function for building logger instances with specific configuration.
 
 ```python
 def create_logger(
-    name: str,
-    log_path: Optional[str] = None,
-    level: str = "DEBUG", 
-    rotation: str = "10MB",
-    retention: str = "7 days",
-    compression: str = "zip"
-) -> Logger
+    name: Optional[str] = None,
+    use_native_format: bool = False,
+    # File output configuration
+    log_path: Optional[LogPathType] = None,
+    rotation: Optional[LogRotationType] = None,
+    retention: Optional[str] = None,
+    compression: Optional[Union[str, Callable]] = None,
+    compression_format: Optional[str] = None,
+    # Formatting configuration
+    level: Optional[LogLevelType] = None,
+    logger_format: Optional[str] = None,
+    component_name: Optional[str] = None,
+    subdirectory: Optional[str] = None,
+    # Behavior control
+    use_proxy: Optional[bool] = None,
+    start_cleaner: Optional[bool] = None,
+    # Preset and instance control
+    preset: Optional[str] = None,
+    force_new_instance: bool = False
+) -> EnhancedLogger
 ```
 
-**Parameters:**
+**Parameter Descriptions:**
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `folder` | `str` | `"logs"` | Log folder name |
-| `level` | `str` | `"DEBUG"` | Minimum log level |
-| `rotation` | `str` | `"10MB"` | File rotation condition |
-| `retention` | `str` | `"7 days"` | File retention time |
-| `compression` | `str` | `"zip"` | Compression format |
+| `name` | `Optional[str]` | `None` | Logger name, inferred from calling file if not provided |
+| `use_native_format` | `bool` | `False` | Whether to use loguru native format (file:function:line) |
+
+**File Output Configuration:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `log_path` | `Optional[LogPathType]` | `None` | Log file output path |
+| `rotation` | `Optional[LogRotationType]` | `None` | Log rotation setting (e.g., "1 day", "100 MB") |
+| `retention` | `Optional[str]` | `None` | Log retention setting (e.g., "7 days") |
+| `compression` | `Optional[Union[str, Callable]]` | `None` | Compression setting (function or string) |
+| `compression_format` | `Optional[str]` | `None` | Compression format |
+
+**Formatting Configuration:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `level` | `Optional[LogLevelType]` | `None` | Log level ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL") |
+| `logger_format` | `Optional[str]` | `None` | Custom log format string |
+| `component_name` | `Optional[str]` | `None` | Component name for log identification |
+| `subdirectory` | `Optional[str]` | `None` | Subdirectory for organizing log files |
+
+**Behavior Control:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `use_proxy` | `Optional[bool]` | `None` | Whether to use proxy mode |
+| `start_cleaner` | `Optional[bool]` | `None` | Whether to start automatic cleaner |
+
+**Preset and Instance Control:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `preset` | `Optional[str]` | `None` | Preset configuration name ("minimal", "detailed", "production") |
+| `force_new_instance` | `bool` | `False` | Whether to force creation of new instance |
 
 **Returns:**
-- `str`: Auto-generated component name
+- `EnhancedLogger`: Configured logger instance
 
 **Examples:**
 
@@ -129,53 +172,33 @@ def create_logger(
 # Basic usage
 logger = create_logger(
     name="demo",
-    log_path="logs"
+    log_path="logs/demo.log"
 )
 
 # Custom configuration
 logger = create_logger(
     name="api_service",
-    log_path="api_logs",
+    log_path="api_logs/api.log",
     level="INFO",
     rotation="50MB", 
     retention="30 days"
 )
 ```
 
-### `create_logger()` - Create Custom Logger
+# Using preset configuration
+logger = create_logger(preset="development")
 
-Create a logger instance with specific name and configuration.
+# Using native format
+native_logger = create_logger(
+    name="native_demo", 
+    use_native_format=True
+)
 
-```python
-def create_logger(
-    name: str,
-    level: str = "DEBUG",
-    log_path: Optional[str] = None,
-    rotation: str = "10MB",
-    retention: str = "7 days",
-    compression: str = "zip"
-) -> Logger
-```
-
-**Parameters:**
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `name` | `str` | Required | Logger name |
-| `level` | `str` | `"DEBUG"` | Minimum log level |
-| `log_path` | `Optional[str]` | `None` | Log file path |
-| `rotation` | `str` | `"10MB"` | File rotation condition |
-| `retention` | `str` | `"7 days"` | File retention time |
-| `compression` | `str` | `"zip"` | Compression format |
-
-**Examples:**
-
-```python
 # Create dedicated API logger
 api_logger = create_logger(
     name="api_service",
     level="INFO",
-    log_path="logs/api"
+    log_path="logs/api.log"
 )
 
 api_logger.info("API service started")

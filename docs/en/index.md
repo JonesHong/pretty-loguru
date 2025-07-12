@@ -104,14 +104,42 @@ logger.ascii_header(
 - **🌐 Framework Integration**: Perfect support for mainstream frameworks like FastAPI and Uvicorn.
 - **📦 Production-Ready**: Built-in enterprise-level features like log rotation, compression, and cleanup.
 
-## 🚀 Next Steps
+## 🧭 **Where Should I Start?**
+
+### 📊 Choose Based on Your Role
+
+| I am... | Recommended Path | Estimated Time |
+|---------|----------|----------|
+| 🆕 **Python Logging Beginner** | [5-min Experience](/en/examples/) → [Core Features](/en/examples/) → [Visualization](/en/examples/) | 30 minutes |
+| 🌐 **Web Developer** | [Quick Start](/en/guide/quick-start) → [Core Features](/en/examples/) → [Framework Integration](/en/integrations/) | 45 minutes |
+| 🏭 **DevOps/Operations** | [Installation](/en/guide/installation) → [Production Guide](/en/examples/) → [Advanced Config](/en/examples/) | 1 hour |
+| 🔬 **Advanced Developer** | [API Docs](/en/api/) → [Complete Examples](/en/examples/) → [Custom Development](/en/examples/) | 2-3 hours |
+
+### 🎯 Choose Based on Your Needs
 
 <div class="vp-doc">
 
-- [📖 Read the Full Guide](/en/guide/) - Learn about all features and configuration options.
-- [🎮 View Examples](/en/examples/) - Complete examples from basic to advanced.
-- [🔌 Integration Guide](/en/integrations/) - Integrate with frameworks like FastAPI and Uvicorn.
-- [📚 API Documentation](/en/api/) - Detailed API reference documentation.
+| I want to... | Jump directly to |
+|-----------|----------|
+| ⚡ **5-minute Quick Experience** | [Quick Experience](/en/examples/) |
+| 🎨 **Beautiful Log Output** | [Visualization Features](/en/examples/) |
+| 🚀 **FastAPI Integration** | [Framework Integration](/en/integrations/) |
+| 🏭 **Production Deployment** | [Production Guide](/en/examples/) |
+| 📚 **Complete Learning** | [Learning Center](/en/examples/) |
+
+</div>
+
+## 🚀 Learning Paths
+
+<div class="vp-doc">
+
+- [🚀 5-minute Quick Experience](/en/examples/) - Immediately feel the charm of pretty-loguru
+- [📚 Master Core Features](/en/examples/) - Master all basic functionality  
+- [🎨 Visualization Features](/en/examples/) - Rich blocks and ASCII art
+- [⚙️ Configuration & Management](/en/examples/) - File rotation and advanced configuration
+- [🌐 Framework Integration](/en/integrations/) - FastAPI, Uvicorn integration
+- [🏭 Production Environment](/en/examples/) - Enterprise deployment and operations
+- [📚 API Reference](/en/api/) - Complete function documentation
 
 </div>
 

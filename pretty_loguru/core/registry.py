@@ -52,3 +52,34 @@ def update_logger(name: str, logger: EnhancedLogger) -> bool:
             post_event("logger_updated", name, logger)
             return True
         return False
+
+def clear_registry() -> int:
+    """Clears all registered loggers. Returns the number of loggers cleared. Thread-safe."""
+    with _registry_lock:
+        count = len(_logger_registry)
+        _logger_registry.clear()
+        # Notify subscribers about registry clear
+        post_event("registry_cleared", count=count)
+        return count
+
+def get_registry_size() -> int:
+    """Returns the number of registered loggers. Thread-safe."""
+    with _registry_lock:
+        return len(_logger_registry)
+
+def cleanup_unused_loggers() -> int:
+    """
+    Cleans up loggers that appear to be unused.
+    This is a basic implementation that could be extended with more sophisticated checks.
+    Returns the number of loggers removed.
+    Thread-safe.
+    """
+    with _registry_lock:
+        # 在實際應用中，您可能會檢查 logger 是否正在使用
+        # 這裡我們只提供基本的框架
+        removed_count = 0
+        
+        # 目前只是一個空的實現，可以在未來擴展
+        # 例如：檢查 logger 的最後使用時間、引用計數等
+        
+        return removed_count

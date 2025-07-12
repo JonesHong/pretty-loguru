@@ -4,14 +4,14 @@ export default defineConfig({
   title: 'pretty-loguru',
   description: 'Enhanced Python Logging Library - Based on Loguru, integrated with Rich and ASCII Art',
   
-  // GitHub Pages 配置
-  base: '/pretty-loguru/',
+  // GitHub Pages 配置 - 使用 command 來動態設定 base 路徑
+  base: process.env.VITE_BASE_PATH || '/',
   
   // 暫時忽略死連結檢查，因為文檔還在建構中
   ignoreDeadLinks: true,
   
   head: [
-    ['link', { rel: 'icon', href: '/pretty-loguru/logo.png' }],
+    ['link', { rel: 'icon', href: (process.env.VITE_BASE_PATH || '') + '/logo.png' }],
     ['meta', { name: 'theme-color', content: '#3c8772' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'pretty-loguru' }],
@@ -200,7 +200,7 @@ export default defineConfig({
   },
 
   themeConfig: {
-    logo: '/logo.png',
+    logo: (process.env.VITE_BASE_PATH || '') + '/logo.png',
     
     socialLinks: [
       { icon: 'github', link: 'https://github.com/JonesHong/pretty-loguru' }

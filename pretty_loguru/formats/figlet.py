@@ -11,6 +11,8 @@ from typing import List, Optional, Any, Set
 
 from rich.panel import Panel
 from rich.console import Console
+from pretty_loguru.core.base import get_console
+from pretty_loguru.utils.dependencies import ensure_pyfiglet_dependency, warn_missing_dependency
 
 try:
     import pyfiglet
@@ -26,7 +28,7 @@ except ImportError:
 from ..types import EnhancedLogger
 from ..core.target_formatter import add_target_methods, ensure_target_parameters
 from .block import print_block
-from .ascii_art import is_ascii_only
+from ..utils.validators import is_ascii_only
 
 
 @ensure_target_parameters
@@ -60,15 +62,11 @@ def print_figlet_header(
         ImportError: 如果未安裝 pyfiglet 庫
     """
     # 檢查 pyfiglet 庫是否已安裝
-    if not _has_pyfiglet:
-        error_msg = "The 'pyfiglet' library is not installed. Please install it using 'pip install pyfiglet'."
-        if logger_instance:
-            logger_instance.error(error_msg)
-        raise ImportError(error_msg)
+    ensure_pyfiglet_dependency(logger_instance)
     
     # 如果沒有提供 console，則創建一個新的
     if console is None:
-        console = Console()
+        console = get_console()
     
     # 檢查是否包含非 ASCII 字符
     if not is_ascii_only(text):
@@ -149,15 +147,11 @@ def print_figlet_block(
         ImportError: 如果未安裝 pyfiglet 庫
     """
     # 檢查 pyfiglet 庫是否已安裝
-    if not _has_pyfiglet:
-        error_msg = "The 'pyfiglet' library is not installed. Please install it using 'pip install pyfiglet'."
-        if logger_instance:
-            logger_instance.error(error_msg)
-        raise ImportError(error_msg)
+    ensure_pyfiglet_dependency(logger_instance)
     
     # 如果沒有提供 console，則創建一個新的
     if console is None:
-        console = Console()
+        console = get_console()
     
     # 如果沒有提供 FIGlet 標題，則使用普通標題
     header_text = figlet_header if figlet_header is not None else title
@@ -233,8 +227,7 @@ def get_figlet_fonts() -> Set[str]:
     Raises:
         ImportError: 如果未安裝 pyfiglet 庫
     """
-    if not _has_pyfiglet:
-        raise ImportError("The 'pyfiglet' library is not installed. Please install it using 'pip install pyfiglet'.")
+    ensure_pyfiglet_dependency()
     
     return set(FigletFont.getFonts())
 
@@ -252,12 +245,10 @@ def create_figlet_methods(logger_instance: Any, console: Optional[Console] = Non
     """
     # 檢查 pyfiglet 庫是否已安裝
     if not _has_pyfiglet:
-        if hasattr(logger_instance, "warning"):
-            logger_instance.warning("'pyfiglet' library is not installed. Skipping adding FIGlet methods.")
-        return False
+        return warn_missing_dependency("pyfiglet", logger_instance, False)
     
     if console is None:
-        console = Console()
+        console = get_console()
     
     # 添加 figlet_header 方法
     @ensure_target_parameters
@@ -282,18 +273,18 @@ def create_figlet_methods(logger_instance: Any, console: Optional[Console] = Non
             to_log_file_only: 是否僅輸出到日誌文件，預設為 False
             _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置
         """
-        # 使用 kwargs 傳遞參數，避免參數重複
-        kwargs = {
-            "font": font,
-            "log_level": log_level,
-            "border_style": border_style,
-            "logger_instance": logger_instance,
-            "console": console,
-            "_target_depth": _target_depth,  # 傳遞深度
-        }
-        
-        # 使用當前方法的 to_console_only 和 to_log_file_only
-        print_figlet_header(text, **kwargs, to_console_only=to_console_only, to_log_file_only=to_log_file_only)
+        # 直接傳遞明確參數
+        print_figlet_header(
+            text,
+            font=font,
+            log_level=log_level,
+            border_style=border_style,
+            logger_instance=logger_instance,
+            console=console,
+            to_console_only=to_console_only,
+            to_log_file_only=to_log_file_only,
+            _target_depth=_target_depth
+        )
     
     # 添加 figlet_block 方法
     @ensure_target_parameters
@@ -322,19 +313,20 @@ def create_figlet_methods(logger_instance: Any, console: Optional[Console] = Non
             to_log_file_only: 是否僅輸出到日誌文件，預設為 False
             _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置
         """
-        # 使用 kwargs 傳遞參數，避免參數重複
-        kwargs = {
-            "figlet_header": figlet_header,
-            "figlet_font": figlet_font,
-            "border_style": border_style,
-            "log_level": log_level,
-            "logger_instance": logger_instance,
-            "console": console,
-            "_target_depth": _target_depth,  # 傳遞深度
-        }
-        
-        # 使用當前方法的 to_console_only 和 to_log_file_only
-        print_figlet_block(title, message_list, **kwargs, to_console_only=to_console_only, to_log_file_only=to_log_file_only)
+        # 直接傳遞明確參數
+        print_figlet_block(
+            title,
+            message_list,
+            figlet_header=figlet_header,
+            figlet_font=figlet_font,
+            border_style=border_style,
+            log_level=log_level,
+            logger_instance=logger_instance,
+            console=console,
+            to_console_only=to_console_only,
+            to_log_file_only=to_log_file_only,
+            _target_depth=_target_depth
+        )
     
     # 添加 get_figlet_fonts 方法
     def get_fonts_method() -> Set[str]:

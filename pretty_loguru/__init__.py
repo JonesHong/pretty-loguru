@@ -17,9 +17,17 @@ from .core.base import (
     get_console,
 )
 
-# 導入核心配置和功能
+# 導入統一的配置系統
 from .core.config import (
     LoggerConfig
+)
+
+# 導入配置模板系統
+from .core.templates import (
+    ConfigTemplates,
+    create_config,
+    config_from_template,
+    config_from_preset  # 向後兼容別名
 )
 
 # 日誌預設參數
@@ -33,7 +41,16 @@ from .core.presets import (
 from .core.target_formatter import (
     create_target_method,
     add_target_methods,
-    ensure_target_parameters
+    ensure_target_parameters,
+    log_to_targets,
+    format_decorator_basic,
+    create_target_methods_simple,
+    # 向後兼容的別名
+    simple_format_decorator,  # 舊名稱
+    create_simple_target_methods,  # 舊名稱
+    create_target_methods_compat,
+    add_target_methods_compat,
+    ensure_target_parameters_compat
 )
 
 # 導入工廠功能 - 注意這裡使用新的 default_logger 函數
@@ -44,12 +61,14 @@ from .factory.creator import (
     set_logger,
     unregister_logger,
     list_loggers,
-    reinit_logger
+    reinit_logger,
+    cleanup_loggers
 )
 
 # 導入格式化功能
 from .formats.block import print_block
-from .formats.ascii_art import print_ascii_header, print_ascii_block, is_ascii_only
+from .formats.ascii_art import print_ascii_header, print_ascii_block
+from .utils.validators import is_ascii_only
 from .formats.rich_components import print_table, print_tree, print_columns, LoggerProgress
 
 # 導入集成功能
@@ -85,13 +104,26 @@ __all__ = [
     "PresetFactory",
     # 類型和配置
     "EnhancedLogger",
-    "LoggerConfig",
+    "LoggerConfig",          # 統一的配置類
+    "ConfigTemplates",       # 配置模板
+    "create_config",         # 配置便利函數
+    "config_from_template",  # 模板配置函數
+    "config_from_preset",    # 向後兼容別名
     # 核心功能
     "configure_logger",
     # 目標導向格式化工具
     "create_target_method",
     "add_target_methods",
     "ensure_target_parameters",
+    "log_to_targets",
+    "format_decorator_basic",
+    "create_target_methods_simple",
+    # 向後兼容的別名
+    "simple_format_decorator",
+    "create_simple_target_methods",
+    "create_target_methods_compat",
+    "add_target_methods_compat",
+    "ensure_target_parameters_compat",
     # 工廠函數與管理
     "create_logger",
     "default_logger",
@@ -100,6 +132,7 @@ __all__ = [
     "unregister_logger", 
     "list_loggers",
     "reinit_logger",
+    "cleanup_loggers",
     # 格式化功能
     "print_block",
     "print_ascii_header",

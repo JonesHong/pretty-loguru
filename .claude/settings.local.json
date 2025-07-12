@@ -78,7 +78,10 @@
       "Bash(git tag:*)",
       "Bash(git push:*)",
       "Bash(diff:*)",
-      "WebFetch(domain:joneshong.github.io)"
+      "WebFetch(domain:joneshong.github.io)",
+      "mcp__sequential-thinking__sequentialthinking",
+      "Bash(timeout:*)",
+      "Bash(touch:*)"
     ],
     "deny": []
   },

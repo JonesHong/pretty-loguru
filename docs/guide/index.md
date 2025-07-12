@@ -21,16 +21,17 @@
 ### 🔧 進階配置
 深入了解高級功能和最佳實踐：
 
-7. **[自定義配置](./custom-config)** - 客製化日誌行為
-8. **[日誌輪換](./log-rotation)** - 檔案管理和清理
-9. **[效能最佳化](./performance)** - 生產環境調優
+7. **[增強配置管理](./enhanced-config)** - 可重用配置模板系統
+8. **[自定義配置](./custom-config)** - 客製化日誌行為
+9. **[日誌輪換](./log-rotation)** - 檔案管理和清理
+10. **[效能最佳化](./performance)** - 生產環境調優
 
 ### 🌐 整合應用
 將 pretty-loguru 整合到你的專案中：
 
-10. **[FastAPI 整合](../integrations/fastapi)** - Web API 日誌
-11. **[Uvicorn 整合](../integrations/uvicorn)** - ASGI 伺服器日誌
-12. **[生產環境部署](./production)** - 企業級部署指南
+11. **[FastAPI 整合](../integrations/fastapi)** - Web API 日誌
+12. **[Uvicorn 整合](../integrations/uvicorn)** - ASGI 伺服器日誌
+13. **[生產環境部署](./production)** - 企業級部署指南
 
 ## 📚 核心概念
 
@@ -98,15 +99,19 @@ logger.ascii_block(
 
 想要立即體驗？查看我們的 [範例集合](../examples/)，包含：
 
-- [基礎用法範例](../examples/basics/) - 從簡單開始
+- [快速開始範例](../examples/basics/) - 從簡單開始
+- [基礎用法範例](../examples/basics/) - 核心功能展示
 - [視覺化範例](../examples/visual/) - 展示所有視覺功能
-- [FastAPI 範例](../examples/fastapi/) - Web 應用整合
+- [配置管理範例](../examples/presets/) - 配置和輪替策略
+- [整合範例](../examples/fastapi/) - Web 應用整合
 - [生產環境範例](../examples/production/) - 實際部署案例
+- [進階功能範例](../examples/advanced/) - 底層存取和自訂
+- [企業級範例](../examples/enterprise/) - 企業級部署方案
 
 ## ❓ 遇到問題？
 
-- 查看 [常見問題](../faq) 
 - 參考 [API 文件](../api/)
+- 查看 [功能特色](../features/)
 - 在 [GitHub](https://github.com/JonesHong/pretty-loguru/issues) 提交問題
 
 讓我們開始這個優雅的日誌之旅吧！ 🚀

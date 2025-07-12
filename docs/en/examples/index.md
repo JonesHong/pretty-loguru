@@ -1,252 +1,154 @@
-# Example Collection
+# Examples Overview
 
-Welcome to the pretty-loguru example collection! This provides a complete learning path from basic to advanced to help you quickly master all the features.
+Pretty Loguru provides comprehensive examples to help you quickly get started and master various features. All examples include complete Python code and detailed bilingual documentation.
 
 ## 🎯 Learning Path
 
-### 🚀 Must-See for Beginners (5-10 minutes)
-Start here to understand the core concepts:
+### 1. Beginner Start (5 minutes)
+**Recommended Sequence**: 01_basics → 02_visual → 03_presets
 
-1. **[Basic Usage](./basics/)** - Log initialization, basic output, file management
-2. **[Visualization Features](./visual/)** - Basic usage of Rich blocks and ASCII art
+- **[01_basics](../../../examples/01_basics/README.en.md)** - Core Features (3-minute Quick Start)
+  - Basic logger creation and usage
+  - Console vs file output
+  - Target-oriented logging methods
+  - [中文版本](../../../examples/01_basics/README.md)
 
-### 🎨 Exploring Features (15-20 minutes)
-Dive deep into the detailed usage of each feature:
+- **[02_visual](../../../examples/02_visual/README.en.md)** - Visual Features Showcase
+  - Block formatting and ASCII art
+  - Rich components and table display
+  - Monitoring dashboard examples
+  - [中文版本](../../../examples/02_visual/README.md)
 
-3. **[Preset Configurations](./presets/)** - Advanced features like log rotation, cleanup, and compression
-4. **[Web Application Integration](./fastapi/)** - Complete integration with FastAPI and Uvicorn
+- **[03_presets](../../../examples/03_presets/README.en.md)** - Preset Configurations and File Management
+  - Rotation strategy selection
+  - Environment configuration management
+  - Production environment best practices
+  - [中文版本](../../../examples/03_presets/README.md)
 
-### 🚀 Production Practices (20-30 minutes)
-Learn the best practices in real projects:
+### 2. Practical Application (15 minutes)
+**Recommended Sequence**: 04_fastapi → 05_production
 
-5. **[Production Environment](./production/)** - Enterprise-level features like deployment, monitoring, and error tracking
+- **[04_fastapi](../../../examples/04_fastapi/README.en.md)** - Real Web Application Examples
+  - FastAPI deep integration
+  - Middleware automatic logging
+  - Microservice dependency injection
+  - [中文版本](../../../examples/04_fastapi/README.md)
 
-## 📚 Example Categories
+- **[05_production](../../../examples/05_production/README.en.md)** - Production Environment Best Practices
+  - Multi-environment configuration management
+  - Performance monitoring and error tracking
+  - Security compliance requirements
+  - [中文版本](../../../examples/05_production/README.md)
 
-### 🔰 Basic Examples
-<div class="vp-card-container">
+### 3. Advanced Exploration (30 minutes)
+**Suitable for**: Developers who need deep customization features
 
-**[Simple Usage](./basics/simple-usage)**  
-The most basic logger initialization and usage methods
+- **[06_advanced](../../../examples/06_advanced/README.en.md)** - Advanced Features and Direct Library Access
+  - Advanced API module usage
+  - Custom extension development
+  - Event system and protocols
+  - [中文版本](../../../examples/06_advanced/README.md)
 
-**[Console vs. File](./basics/console-vs-file)**  
-Understand the differences between different output targets
+## 🚀 Quick Start
 
-**[Target-Oriented Logging](./basics/target-logging)**  
-Use `console_*` and `file_*` methods to control output
+1. **Clone examples**:
+   ```bash
+   git clone https://github.com/JonesHong/pretty-loguru.git
+   cd pretty-loguru/examples
+   ```
 
-</div>
+2. **Run first example**:
+   ```bash
+   cd 01_basics
+   python simple_usage.py
+   ```
 
-### 🎨 Visualization Examples
-<div class="vp-card-container">
+3. **Check generated logs**:
+   ```bash
+   ls ./logs/
+   cat ./logs/*.log
+   ```
 
-**[Rich Blocks](./visual/blocks)**  
-Structured and beautiful log blocks
+## 📚 Example Features
 
-**[ASCII Art](./visual/ascii-art)**  
-Eye-catching text art titles
+### Fully Runnable
+- All examples are complete Python programs
+- Include necessary dependencies and configurations
+- Provide detailed running instructions
 
-**[Rich Components](./visual/rich-components)**  
-A complete showcase of Rich features
+### Progressive Learning
+- Learning path from simple to complex
+- Each example has clear learning objectives
+- Provide real-world application scenarios
 
-</div>
+### Multilingual Support
+- Each example provides bilingual documentation
+- Clear and understandable code comments
+- Suitable for developers with different language backgrounds
 
-### ⚙️ Preset Configuration Examples
-<div class="vp-card-container">
+### Practical Oriented
+- Designed based on real development scenarios
+- Provide production environment best practices
+- Include performance and security considerations
 
-**[Log Rotation](./presets/rotation-examples)**  
-Automatically rotate log files by time or size
+## 🎯 Browse by Features
 
-**[Preset Comparison](./presets/preset-comparison)**  
-Best practice configurations for different environments
+### Basic Features
+- **Logger Creation**: [01_basics/simple_usage.py](../../../examples/01_basics/simple_usage.py)
+- **Output Control**: [01_basics/console_vs_file.py](../../../examples/01_basics/console_vs_file.py)
+- **Target-Oriented**: [01_basics/target_logging.py](../../../examples/01_basics/target_logging.py)
 
-**[Custom Presets](./presets/custom-presets)**  
-Create your own preset configurations
+### Visualization Features
+- **Block Formatting**: [02_visual/blocks.py](../../../examples/02_visual/blocks.py)
+- **ASCII Art**: [02_visual/ascii_art.py](../../../examples/02_visual/ascii_art.py)
+- **Rich Components**: [02_visual/rich_components.py](../../../examples/02_visual/rich_components.py)
 
-</div>
+### Configuration Management
+- **Rotation Strategy**: [03_presets/rotation_examples.py](../../../examples/03_presets/rotation_examples.py)
+- **Preset Comparison**: [03_presets/preset_comparison.py](../../../examples/03_presets/preset_comparison.py)
+- **Custom Configuration**: [03_presets/custom_presets.py](../../../examples/03_presets/custom_presets.py)
 
-### 🌐 Web Application Examples
-<div class="vp-card-container">
+### Web Application Integration
+- **Basic Integration**: [04_fastapi/simple_api.py](../../../examples/04_fastapi/simple_api.py)
+- **Middleware**: [04_fastapi/middleware_demo.py](../../../examples/04_fastapi/middleware_demo.py)
+- **Dependency Injection**: [04_fastapi/dependency_injection.py](../../../examples/04_fastapi/dependency_injection.py)
 
-**[Simple API](./fastapi/simple-api)**  
-Basic FastAPI integration
+### Production Environment
+- **Environment Management**: [05_production/deployment_logging.py](../../../examples/05_production/deployment_logging.py)
+- **Performance Monitoring**: [05_production/performance_monitoring.py](../../../examples/05_production/performance_monitoring.py)
+- **Error Tracking**: [05_production/error_tracking.py](../../../examples/05_production/error_tracking.py)
 
-**[Middleware](./fastapi/middleware-demo)**  
-Using pretty-loguru in middleware
+### Advanced Features
+- **Direct Access**: [06_advanced/direct_library_access.py](../../../examples/06_advanced/direct_library_access.py)
+- **Custom Extensions**: [06_advanced/custom_extensions.py](../../../examples/06_advanced/custom_extensions.py)
+- **Event System**: [06_advanced/event_system.py](../../../examples/06_advanced/event_system.py)
 
-**[Dependency Injection](./fastapi/dependency-injection)**  
-FastAPI dependency injection pattern
+## 💡 Usage Tips
 
-</div>
+### 1. Development Phase
+Recommend using `01_basics` and `02_visual` examples, focusing on feature implementation and debugging.
 
-### 🏭 Production Environment Examples
-<div class="vp-card-container">
+### 2. Testing Phase
+Refer to `03_presets` examples to establish appropriate log management strategies.
 
-**[Deployment Logging](./production/deployment-logging)**  
-Complete logging for the deployment process
+### 3. Deployment Phase
+Use `04_fastapi` and `05_production` examples to implement production-grade configurations.
 
-**[Performance Monitoring](./production/performance-monitoring)**  
-Continuous monitoring of system performance
+### 4. Optimization Phase
+Explore `06_advanced` examples to achieve deep customization and performance optimization.
 
-**[Error Tracking](./production/error-tracking)**  
-Complete error handling and tracking
+## 🔗 Related Resources
 
-</div>
+- **[Installation Guide](../guide/installation)** - Installation and configuration instructions
+- **[API Documentation](../api/)** - Complete API reference
+- **[Integration Guide](../integrations/)** - Framework integration instructions
+- **[GitHub Repository](https://github.com/JonesHong/pretty-loguru)** - Latest code and issue tracking
 
-## 🎮 Interactive Experience
+## ❓ Need Help?
 
-### Quick Experience
-Want to see the effect immediately? Copy the following code into your Python environment:
+- Check detailed README documentation in each example directory
+- Run example code and observe output
+- Refer to [FAQ](../guide/faq) section
+- Ask questions on [GitHub Issues](https://github.com/JonesHong/pretty-loguru/issues)
 
-```python
-# Install: pip install pretty-loguru
-from pretty_loguru import create_logger
-
-# One-line initialization
-logger  
-    name="examples_demo",
-    log_path="demo",
-    level="INFO"
-)
-
-# Basic logs
-logger.info("Welcome to pretty-loguru!")
-logger.success("Installation successful!")
-
-# Rich block
-logger.block(
-    "Quick Experience",
-    [
-        "✅ Installation complete",
-        "✅ Initialization successful", 
-        "🎯 Ready to explore more features"
-    ],
-    border_style="green"
-)
-
-# ASCII header
-logger.ascii_header("WELCOME", font="slant")
-```
-
-### Complete Demo Program
-We have prepared a complete demo program to showcase all major features:
-
-```python
-# demo_complete.py
-import time
-import random
-from pretty_loguru import create_logger
-
-def complete_demo():
-    """Complete feature demonstration"""
-    # Initialization
-    logger = create_logger(
-    name="examples_demo",
-    log_path="complete_demo",
-    level="INFO"
-)
-    
-    # Startup sequence
-    logger.ascii_header("DEMO START", font="slant", border_style="blue")
-    
-    # System check
-    logger.block(
-        "System Check",
-        [
-            "🖥️  Operating System: Checking...",
-            "🐍 Python Environment: Checking...",
-            "📦 Dependencies: Checking..."
-        ],
-        border_style="yellow"
-    )
-    
-    time.sleep(1)
-    
-    # Check results
-    logger.block(
-        "Check Results", 
-        [
-            "✅ Operating System: Linux/Windows/Mac",
-            "✅ Python Environment: 3.8+",
-            "✅ Dependencies: Installed"
-        ],
-        border_style="green"
-    )
-    
-    # Feature showcase
-    features = [
-        ("Rich Blocks", "Structured logs"),
-        ("ASCII Headers", "Artistic text titles"),
-        ("File Rotation", "Automatic management"),
-        ("Multiple Outputs", "Console + File")
-    ]
-    
-    for i, (feature, desc) in enumerate(features):
-        logger.info(f"Showcasing feature {i+1}: {feature}")
-        logger.success(f"{desc} - Complete!")
-        time.sleep(0.5)
-    
-    # Completion report
-    logger.ascii_block(
-        "Demo Summary",
-        [
-            f"📊 Features showcased: {len(features)}",
-            "⏱️  Execution time: 3.2 seconds",
-            "✨ Status: Running perfectly",
-            "🎯 Next step: Check the full documentation"
-        ],
-        ascii_header="COMPLETE",
-        ascii_font="block",
-        border_style="green"
-    )
-
-if __name__ == "__main__":
-    complete_demo()
-```
-
-## 📖 How to Use These Examples
-
-### 1. Learn Sequentially
-Follow the learning path in order. Each example builds on the previous one.
-
-### 2. Practice Hands-On
-Each example provides complete, executable code. It is recommended to run it and see the output.
-
-### 3. Modify and Experiment
-After understanding the basic usage, try modifying the example code to explore different parameters and effects.
-
-### 4. Check the Output
-Pay special attention to:
-- **Console Output** - Colorful, formatted real-time display
-- **File Output** - Complete log records, suitable for subsequent analysis
-
-## 💡 Learning Suggestions
-
-### For Beginners
-- Start with [Basic Usage](./basics/)
-- Focus on the usage of `logger = create_logger(
-    name="demo",
-    log_path="logs",
-    level="INFO"
-)`
-- Understand the difference between console and file output
-
-### For Experienced Developers
-- Jump directly to [Visualization Features](./visual/)
-- Check out [Web Application Integration](./fastapi/)
-- Study the best practices in the [Production Environment](./production/)
-
-### For System Administrators
-- Focus on [Preset Configurations](./presets/)
-- Learn about [Log Rotation and Management](./presets/rotation-examples)
-- Study [Deployment and Monitoring](./production/)
-
-## 🚀 Start Exploring
-
-Choose a starting point that suits your level and begin your pretty-loguru learning journey:
-
-- 🔰 **Beginner**: [Basic Usage →](./basics/)
-- 🎨 **Explorer**: [Visualization Features →](./visual/)  
-- 🚀 **Practitioner**: [Production Environment →](./production/)
-
-Each example includes detailed explanations, complete code, and expected output. Let's get started! 🎯
+Start your Pretty Loguru learning journey! 🎉

@@ -20,20 +20,45 @@ def integrate_fastapi(
     logger: EnhancedLogger,
     enable_uvicorn: bool = True,
     exclude_health_checks: bool = True,
-    **kwargs: Any
+    exclude_paths: Optional[List[str]] = None,
+    exclude_methods: Optional[List[str]] = None,
+    # 中間件配置
+    middleware: bool = True,
+    custom_routes: bool = False,
+    log_request_body: bool = False,
+    log_response_body: bool = False,
+    log_headers: bool = True,
+    sensitive_headers: Optional[Set[str]] = None
 ) -> None:
     ...
 ```
 
 **參數說明：**
 
-| 參數 | 類型 | 說明 |
-| --- | --- | --- |
-| `app` | `FastAPI` | 你的 FastAPI 應用實例。 |
-| `logger` | `EnhancedLogger` | 一個已創建的 `pretty-loguru` logger 實例。 |
-| `enable_uvicorn` | `bool` | 若為 `True`，會同時呼叫 `integrate_uvicorn` 來統一日誌。 |
-| `exclude_health_checks` | `bool` | 若為 `True`，會自動排除 `/health`, `/metrics`, `/docs` 等常見的非業務路徑。 |
-| `**kwargs` | `Any` | 其他要傳遞給 `LoggingMiddleware` 的參數，如 `log_request_body=True`。 |
+| 參數 | 類型 | 預設值 | 說明 |
+| --- | --- | --- | --- |
+| `app` | `FastAPI` | - | 你的 FastAPI 應用實例。 |
+| `logger` | `EnhancedLogger` | - | 一個已創建的 `pretty-loguru` logger 實例。 |
+| `enable_uvicorn` | `bool` | `True` | 若為 `True`，會同時呼叫 `integrate_uvicorn` 來統一日誌。 |
+| `exclude_health_checks` | `bool` | `True` | 若為 `True`，會自動排除 `/health`, `/metrics`, `/docs` 等常見的非業務路徑。 |
+
+**路徑和方法控制：**
+
+| 參數 | 類型 | 預設值 | 說明 |
+| --- | --- | --- | --- |
+| `exclude_paths` | `Optional[List[str]]` | `None` | 額外排除的路徑列表 |
+| `exclude_methods` | `Optional[List[str]]` | `None` | 排除的 HTTP 方法列表 |
+
+**中間件配置：**
+
+| 參數 | 類型 | 預設值 | 說明 |
+| --- | --- | --- | --- |
+| `middleware` | `bool` | `True` | 是否添加日誌中間件 |
+| `custom_routes` | `bool` | `False` | 是否使用自定義 LoggingRoute |
+| `log_request_body` | `bool` | `False` | 是否記錄請求體 |
+| `log_response_body` | `bool` | `False` | 是否記錄響應體 |
+| `log_headers` | `bool` | `True` | 是否記錄請求和響應頭 |
+| `sensitive_headers` | `Optional[Set[str]]` | `None` | 敏感頭部字段集合，這些字段的值將被遮蔽 |
 
 **範例：**
 
@@ -44,10 +69,26 @@ from pretty_loguru.integrations.fastapi import integrate_fastapi
 
 # 1. 創建 FastAPI 應用和 logger
 app = FastAPI()
-logger = create_logger("my_api", log_path="logs/")
+logger = create_logger(
+    name="my_api",
+    log_path="logs/",
+    level="INFO",
+    rotation="1 day"
+)
 
-# 2. 一行代碼完成整合
+# 2. 基本整合
 integrate_fastapi(app, logger)
+
+# 3. 完整配置整合
+integrate_fastapi(
+    app,
+    logger,
+    log_request_body=True,        # 記錄請求體
+    log_response_body=False,      # 不記錄響應體
+    log_headers=True,             # 記錄頭部資訊
+    exclude_paths=["/metrics"],   # 額外排除的路徑
+    sensitive_headers={"x-api-key", "authorization"}  # 敏感頭部
+)
 
 @app.get("/")
 async def root():
@@ -90,7 +131,24 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 ```python
 def get_logger_dependency(
     name: Optional[str] = None,
-    **kwargs: Any
+    service_tag: Optional[str] = None,  # 已廢棄，使用 component_name 替代
+    # 檔案輸出配置
+    log_path: Optional[LogPathType] = None,
+    rotation: Optional[LogRotationType] = None,
+    retention: Optional[str] = None,
+    compression: Optional[Union[str, Callable]] = None,
+    compression_format: Optional[str] = None,
+    # 格式化配置
+    level: Optional[LogLevelType] = None,
+    logger_format: Optional[str] = None,
+    component_name: Optional[str] = None,
+    subdirectory: Optional[str] = None,
+    # 行為控制
+    use_proxy: Optional[bool] = None,
+    start_cleaner: Optional[bool] = None,
+    use_native_format: bool = False,
+    # 預設配置
+    preset: Optional[str] = None
 ) -> Callable[[], EnhancedLogger]:
     ...
 ```

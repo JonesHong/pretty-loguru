@@ -8,7 +8,7 @@
 import inspect
 import warnings
 from pathlib import Path
-from typing import Dict, Optional, Union, List, cast, Any
+from typing import Dict, Optional, Union, List, cast, Any, Callable
 from datetime import datetime # Added for unique name generation
 
 from loguru import logger as _base_logger
@@ -16,7 +16,7 @@ from loguru._logger import Core as _Core
 from loguru._logger import Logger as _Logger
 from rich.console import Console
 
-from ..types import EnhancedLogger
+from ..types import EnhancedLogger, LogLevelType, LogRotationType, LogPathType
 from ..core.config import LoggerConfig
 from ..core.base import configure_logger, get_console
 from ..core.cleaner import LoggerCleaner
@@ -94,12 +94,7 @@ def _create_logger_from_config(config: LoggerConfig) -> EnhancedLogger:
     if config.start_cleaner:
         _start_cleaner_for_path(config.log_path)
 
-    # 處理代理模式
-    if config.use_proxy:
-        from .proxy import create_logger_proxy
-        enhanced_logger = create_logger_proxy(enhanced_logger, config.name)
-
-    # 添加自定義方法 - 現在在代理創建之後調用
+    # 添加自定義方法
     add_custom_methods(enhanced_logger, _console)
 
     registry.register_logger(config.name, enhanced_logger)
@@ -107,19 +102,58 @@ def _create_logger_from_config(config: LoggerConfig) -> EnhancedLogger:
 
 def create_logger(
     name: Optional[str] = None,
+    config: Optional[LoggerConfig] = None,
     use_native_format: bool = False,
-    **kwargs: Any
+    # 檔案輸出配置
+    log_path: Optional[LogPathType] = None,
+    rotation: Optional[LogRotationType] = None,
+    retention: Optional[str] = None,
+    compression: Optional[Union[str, Callable]] = None,
+    compression_format: Optional[str] = None,
+    # 格式化配置
+    level: Optional[LogLevelType] = None,
+    logger_format: Optional[str] = None,
+    component_name: Optional[str] = None,
+    subdirectory: Optional[str] = None,
+    # 行為控制
+    start_cleaner: Optional[bool] = None,
+    # 預設和實例控制
+    preset: Optional[str] = None,
+    force_new_instance: bool = False
 ) -> EnhancedLogger:
     """
     創建或獲取一個 logger 實例。
 
-    這是一個高階介面，它將參數轉換為一個標準的 LoggerConfig 物件，
-    然後調用核心工廠函數來創建 logger。
+    這是一個高階介面，可以使用 LoggerConfig 物件或個別參數來創建 logger。
+    如果提供了 config 參數，它將優先於其他參數。
     
     Args:
         name: Logger註冊名稱，若未提供則從調用文件名推斷
+        config: LoggerConfig 物件，如果提供將優先使用
         use_native_format: 是否使用 loguru 原生格式 (file:function:line)
-        **kwargs: 其他配置參數
+        log_path: 日誌檔案輸出路徑
+        rotation: 日誌輪轉設定 (例如: "1 day", "100 MB")
+        retention: 日誌保留設定 (例如: "7 days")
+        compression: 壓縮設定 (函數或字符串)
+        compression_format: 壓縮格式
+        level: 日誌等級 ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
+        logger_format: 自定義日誌格式字符串
+        component_name: 組件名稱，用於日誌標識
+        subdirectory: 子目錄，用於組織日誌檔案
+        start_cleaner: 是否啟動自動清理器
+        preset: 預設配置名稱 ("minimal", "detailed", "production")
+        force_new_instance: 是否強制創建新實例
+        
+    Examples:
+        # 使用 config 物件
+        config = LoggerConfig(level="INFO", log_path="logs")
+        logger = create_logger("app", config=config)
+        
+        # 使用個別參數
+        logger = create_logger("app", level="INFO", log_path="logs")
+        
+        # config + 覆寫參數
+        logger = create_logger("debug_app", config=config, level="DEBUG")
     """
     # 1. 確定 logger 名稱
     if not name:
@@ -127,41 +161,81 @@ def create_logger(
         name = Path(frame.f_globals.get('__file__', 'unknown')).name
     
     # 2. 如果 logger 已存在且非強制新建，直接返回
-    # 如果 force_new_instance 為 True 且同名 logger 已存在，則生成唯一名稱
-    if kwargs.get('force_new_instance') and registry.get_logger(name):
+    if force_new_instance and registry.get_logger(name):
         from datetime import datetime # Import datetime here to avoid circular dependency if moved to top
         timestamp = datetime.now().strftime("-%Y%m%d%H%M%S-%f")
         name = f"{name}{timestamp}"
         warnings.warn(f"Logger with name '{name}' already exists. Creating a new instance with unique name: '{name}'.", UserWarning)
 
-    if registry.get_logger(name) and not kwargs.get('force_new_instance'):
+    if registry.get_logger(name) and not force_new_instance:
         return registry.get_logger(name)
 
-    # 3. 整合配置
-    # 優先級: kwargs > preset > 默認值
-    config_args = kwargs.copy()
-    config_args['use_native_format'] = use_native_format
+    # 3. 如果提供了 config 參數，優先使用它
+    if config is not None:
+        # 複製 config 以避免修改原始物件
+        final_config = config.clone()
+        final_config.name = name
+        
+        # 覆寫明確提供的參數
+        explicit_params = {
+            'use_native_format': use_native_format,
+            'log_path': log_path,
+            'rotation': rotation,
+            'retention': retention,
+            'compression': compression,
+            'compression_format': compression_format,
+            'level': level,
+            'logger_format': logger_format,
+            'component_name': component_name,
+            'subdirectory': subdirectory,
+            'start_cleaner': start_cleaner,
+        }
+        
+        for key, value in explicit_params.items():
+            if value is not None:  # 只覆寫明確提供的參數
+                setattr(final_config, key, value)
+        
+        return _create_logger_from_config(final_config)
+    
+    # 4. 使用個別參數建構配置
+    config_args = {
+        'name': name,
+        'use_native_format': use_native_format,
+    }
+    
+    # 只添加非 None 的參數
+    explicit_params = {
+        'log_path': log_path,
+        'rotation': rotation,
+        'retention': retention,
+        'compression': compression,
+        'compression_format': compression_format,
+        'level': level,
+        'logger_format': logger_format,
+        'component_name': component_name,
+        'subdirectory': subdirectory,
+        'start_cleaner': start_cleaner,
+        'preset': preset,
+    }
+    
+    for key, value in explicit_params.items():
+        if value is not None:
+            config_args[key] = value
 
-    # 載入 preset 配置
-    preset_name = config_args.pop('preset', None)
-    if preset_name:
+    # 5. 載入 preset 配置（preset 作為底層，明確參數覆蓋它）
+    if preset:
         try:
-            preset_conf = get_preset_config(preset_name)
-            # 將 preset 配置作為底層，kwargs 可覆蓋它
+            preset_conf = get_preset_config(preset)
+            # 明確參數覆蓋 preset 配置
             config_args = {**preset_conf, **config_args}
-            # 保存 preset 名稱到配置中，以便後續使用
-            config_args['preset'] = preset_name
         except ValueError:
-            warnings.warn(f"Unknown preset '{preset_name}', ignoring.", UserWarning)
+            warnings.warn(f"Unknown preset '{preset}', ignoring.", UserWarning)
 
-    # 確保明確提供的 name 或推斷的 name 優先於 preset 中的 name
-    config_args['name'] = name
+    # 6. 創建 LoggerConfig 實例
+    final_config = LoggerConfig.from_dict(config_args)
 
-    # 4. 創建 LoggerConfig 實例
-    config = LoggerConfig.from_dict(config_args)
-
-    # 5. 創建 logger
-    return _create_logger_from_config(config)
+    # 7. 創建 logger
+    return _create_logger_from_config(final_config)
 
 
 
@@ -185,22 +259,68 @@ def unregister_logger(name: str) -> bool:
     return registry.unregister_logger(name)
 
 
-def reinit_logger(name: str, **kwargs) -> Optional[EnhancedLogger]:
+def reinit_logger(
+    name: str,
+    use_native_format: bool = False,
+    # 檔案輸出配置
+    log_path: Optional[LogPathType] = None,
+    rotation: Optional[LogRotationType] = None,
+    retention: Optional[str] = None,
+    compression: Optional[Union[str, Callable]] = None,
+    compression_format: Optional[str] = None,
+    # 格式化配置
+    level: Optional[LogLevelType] = None,
+    logger_format: Optional[str] = None,
+    component_name: Optional[str] = None,
+    subdirectory: Optional[str] = None,
+    # 行為控制
+    start_cleaner: Optional[bool] = None,
+    # 預設配置
+    preset: Optional[str] = None
+) -> Optional[EnhancedLogger]:
     """
     重新初始化已存在的 logger。
     
-    它會創建一個新的 logger 實例，然後發布一個事件，
-    以便代理 logger 可以更新其目標。
+    它會創建一個新的 logger 實例。
+    
+    Args:
+        name: Logger名稱
+        use_native_format: 是否使用 loguru 原生格式
+        log_path: 日誌檔案輸出路徑
+        rotation: 日誌輪轉設定
+        retention: 日誌保留設定
+        compression: 壓縮設定
+        compression_format: 壓縮格式
+        level: 日誌等級
+        logger_format: 自定義日誌格式字符串
+        component_name: 組件名稱
+        subdirectory: 子目錄
+        start_cleaner: 是否啟動自動清理器
+        preset: 預設配置名稱
     """
     if registry.get_logger(name) is None:
         warnings.warn(f"Logger '{name}' does not exist, cannot re-initialize.", UserWarning)
         return None
 
     # 強制創建一個新的實例
-    kwargs['force_new_instance'] = True
-    new_logger = create_logger(name, **kwargs)
+    new_logger = create_logger(
+        name=name,
+        use_native_format=use_native_format,
+        log_path=log_path,
+        rotation=rotation,
+        retention=retention,
+        compression=compression,
+        compression_format=compression_format,
+        level=level,
+        logger_format=logger_format,
+        component_name=component_name,
+        subdirectory=subdirectory,
+        start_cleaner=start_cleaner,
+        preset=preset,
+        force_new_instance=True
+    )
 
-    # 發布更新事件，以便代理可以捕獲
+    # 發布更新事件
     registry.post_event("logger_updated", name=name, new_logger=new_logger)
 
     return new_logger
@@ -222,3 +342,22 @@ def _get_preset(preset_name: str):
     except ValueError:
         warnings.warn(f"Unknown preset '{preset_name}', using 'detailed'", UserWarning)
         return get_preset_config("detailed")
+
+def cleanup_loggers() -> int:
+    """
+    清理所有註冊的 logger 和清理器。
+    
+    Returns:
+        int: 清理的 logger 數量
+    """
+    # 停止所有清理器
+    _stop_all_cleaners()
+    
+    # 清理 registry
+    count = registry.clear_registry()
+    
+    # 重置預設 logger
+    global _default_logger_instance
+    _default_logger_instance = None
+    
+    return count

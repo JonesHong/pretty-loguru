@@ -1,0 +1,27 @@
+{
+  "app_name": "MyApplication",
+  "version": "1.0.0",
+  "logging": {
+    "default": {
+      "log_path": "./logs/app",
+      "preset": "daily"
+    },
+    "modules": {
+      "auth": {
+        "log_path": "./logs/app/auth",
+        "preset": "detailed",
+        "retention": "7 days"
+      },
+      "api": {
+        "log_path": "./logs/app/api",
+        "preset": "hourly",
+        "retention": "3 days"
+      },
+      "database": {
+        "log_path": "./logs/app/db",
+        "preset": "simple",
+        "retention": "14 days"
+      }
+    }
+  }
+}

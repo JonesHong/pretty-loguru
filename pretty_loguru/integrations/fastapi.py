@@ -24,7 +24,7 @@ except ImportError:
         stacklevel=2,
     )
 
-from ..types import EnhancedLogger
+from ..types import EnhancedLogger, LogLevelType, LogRotationType, LogPathType
 from ..factory.creator import create_logger, default_logger
 
 
@@ -125,14 +125,14 @@ if _has_fastapi:
                         if len(body_text) > 1000:
                             body_text = body_text[:1000] + "... (truncated)"
                         self.logger.debug(f"Request [{request_id}] body: {body_text}")
-                    except:
+                    except UnicodeDecodeError:
                         # 如果無法解碼為文本，則記錄大小
                         self.logger.debug(
                             f"Request [{request_id}] body: <binary data, size: {len(body)} bytes>"
                         )
-                except:
+                except Exception as e:
                     self.logger.debug(
-                        f"Request [{request_id}] body: <unable to read body>"
+                        f"Request [{request_id}] body: <unable to read body: {type(e).__name__}>"
                     )
 
             # 記錄響應時間和狀態
@@ -172,13 +172,13 @@ if _has_fastapi:
                             self.logger.debug(
                                 f"Response [{request_id}] body: {body_text}"
                             )
-                        except:
+                        except UnicodeDecodeError:
                             self.logger.debug(
                                 f"Response [{request_id}] body: <binary data, size: {len(body)} bytes>"
                             )
-                    except:
+                    except Exception as e:
                         self.logger.debug(
-                            f"Response [{request_id}] body: <unable to read body>"
+                            f"Response [{request_id}] body: <unable to read body: {type(e).__name__}>"
                         )
 
                 return response
@@ -250,13 +250,13 @@ if _has_fastapi:
                             self.logger.debug(
                                 f"API Route [{request_id}] request body: {body_text}"
                             )
-                        except:
+                        except UnicodeDecodeError:
                             self.logger.debug(
                                 f"API Route [{request_id}] request body: <binary data, size: {len(body)} bytes>"
                             )
-                    except:
+                    except Exception as e:
                         self.logger.debug(
-                            f"API Route [{request_id}] request body: <unable to read body>"
+                            f"API Route [{request_id}] request body: <unable to read body: {type(e).__name__}>"
                         )
 
                 # 執行原始路由處理器
@@ -280,13 +280,13 @@ if _has_fastapi:
                                 self.logger.debug(
                                     f"API Route [{request_id}] response body: {body_text}"
                                 )
-                            except:
+                            except UnicodeDecodeError:
                                 self.logger.debug(
                                     f"API Route [{request_id}] response body: <binary data, size: {len(body)} bytes>"
                                 )
-                        except:
+                        except Exception as e:
                             self.logger.debug(
-                                f"API Route [{request_id}] response body: <unable to read body>"
+                                f"API Route [{request_id}] response body: <unable to read body: {type(e).__name__}>"
                             )
 
                     return response
@@ -309,17 +309,48 @@ if _has_fastapi:
             return receive
 
     def get_logger_dependency(
-        name: Optional[str] = None, service_tag: Optional[str] = None, **kwargs: Any
+        name: Optional[str] = None,
+        service_tag: Optional[str] = None,
+        # 檔案輸出配置
+        log_path: Optional[LogPathType] = None,
+        rotation: Optional[LogRotationType] = None,
+        retention: Optional[str] = None,
+        compression: Optional[Union[str, Callable]] = None,
+        compression_format: Optional[str] = None,
+        # 格式化配置
+        level: Optional[LogLevelType] = None,
+        logger_format: Optional[str] = None,
+        component_name: Optional[str] = None,
+        subdirectory: Optional[str] = None,
+        # 行為控制
+        start_cleaner: Optional[bool] = None,
+        use_native_format: bool = False,
+        # 預設配置
+        preset: Optional[str] = None
     ) -> Callable[[], EnhancedLogger]:
         """
         創建一個返回 logger 實例的依賴函數。
 
         該函數可用於在 FastAPI 路由中注入 logger 實例。
 
-        :param name: logger 實例的名稱，如果為 None 則使用路由路徑
-        :param service_tag: 服務名稱
-        :param kwargs: 傳遞給 create_logger 的其他參數
-        :return: Callable[[], EnhancedLogger] 依賴函數，返回 logger 實例
+        Args:
+            name: logger 實例的名稱，如果為 None 則使用路由路徑
+            service_tag: 服務名稱 (已廢棄，使用 component_name 替代)
+            log_path: 日誌檔案輸出路徑
+            rotation: 日誌輪轉設定
+            retention: 日誌保留設定
+            compression: 壓縮設定
+            compression_format: 壓縮格式
+            level: 日誌等級
+            logger_format: 自定義日誌格式字符串
+            component_name: 組件名稱
+            subdirectory: 子目錄
+            start_cleaner: 是否啟動自動清理器
+            use_native_format: 是否使用 loguru 原生格式
+            preset: 預設配置名稱
+
+        Returns:
+            Callable[[], EnhancedLogger]: 依賴函數，返回 logger 實例
 
         Example::
 
@@ -327,17 +358,36 @@ if _has_fastapi:
             from pretty_loguru.integrations.fastapi import get_logger_dependency
 
             app = FastAPI()
-            route_logger = get_logger_dependency(name="my_api")
+            route_logger = get_logger_dependency(
+                name="my_api",
+                log_path="./logs",
+                level="INFO"
+            )
 
             @app.get("/items/")
             async def get_items(logger: EnhancedLogger = Depends(route_logger)):
                 logger.info("Getting items")
                 return {"items": []}
         """
-
-
         def get_logger() -> EnhancedLogger:
-            return create_logger(name=name, service_tag=service_tag, **kwargs)
+            # 處理向後兼容的 service_tag 參數
+            final_component_name = component_name or service_tag
+            
+            return create_logger(
+                name=name,
+                use_native_format=use_native_format,
+                log_path=log_path,
+                rotation=rotation,
+                retention=retention,
+                compression=compression,
+                compression_format=compression_format,
+                level=level,
+                logger_format=logger_format,
+                component_name=final_component_name,
+                subdirectory=subdirectory,
+                start_cleaner=start_cleaner,
+                preset=preset
+            )
 
         return get_logger
 
@@ -350,6 +400,8 @@ if _has_fastapi:
         exclude_methods: Optional[List[str]] = None,
         log_request_body: bool = False,
         log_response_body: bool = False,
+        log_headers: bool = True,
+        sensitive_headers: Optional[Set[str]] = None,
     ) -> None:
         """
         為 FastAPI 應用設置日誌功能
@@ -365,6 +417,8 @@ if _has_fastapi:
             exclude_methods: 不記錄日誌的 HTTP 方法列表
             log_request_body: 是否記錄請求體，預設為 False
             log_response_body: 是否記錄響應體，預設為 False
+            log_headers: 是否記錄請求和響應頭，預設為 True
+            sensitive_headers: 敏感頭部字段集合，這些字段的值將被遮蔽
         """
         # 使用默認 logger 或創建新的
         if logger_instance is None:
@@ -381,6 +435,8 @@ if _has_fastapi:
                 exclude_methods=exclude_methods,
                 log_request_body=log_request_body,
                 log_response_body=log_response_body,
+                log_headers=log_headers,
+                sensitive_headers=sensitive_headers,
             )
             logger_instance.info("FastAPI logging middleware added")
 
@@ -403,7 +459,13 @@ if _has_fastapi:
         exclude_health_checks: bool = True,
         exclude_paths: Optional[List[str]] = None,
         exclude_methods: Optional[List[str]] = None,
-        **kwargs: Any
+        # 中間件配置
+        middleware: bool = True,
+        custom_routes: bool = False,
+        log_request_body: bool = False,
+        log_response_body: bool = False,
+        log_headers: bool = True,
+        sensitive_headers: Optional[Set[str]] = None
     ) -> None:
         """
         將 FastAPI 應用與 Pretty Loguru logger 進行完整集成
@@ -415,7 +477,12 @@ if _has_fastapi:
             exclude_health_checks: 是否排除健康檢查路徑，默認為 True
             exclude_paths: 額外排除的路徑列表
             exclude_methods: 排除的 HTTP 方法列表
-            **kwargs: 其他傳遞給 setup_fastapi_logging 的參數
+            middleware: 是否添加日誌中間件，預設為 True
+            custom_routes: 是否使用自定義 LoggingRoute，預設為 False
+            log_request_body: 是否記錄請求體，預設為 False
+            log_response_body: 是否記錄響應體，預設為 False
+            log_headers: 是否記錄請求和響應頭，預設為 True
+            sensitive_headers: 敏感頭部字段集合，這些字段的值將被遮蔽
         
         Example:
             from fastapi import FastAPI
@@ -424,7 +491,12 @@ if _has_fastapi:
             
             app = FastAPI()
             logger = create_logger("my_api", log_path="./logs")
-            integrate_fastapi(app, logger)
+            integrate_fastapi(
+                app,
+                logger,
+                log_request_body=True,  # 記錄請求體
+                log_headers=True        # 記錄頭部資訊
+            )
             
             @app.get("/")
             async def root():
@@ -444,10 +516,14 @@ if _has_fastapi:
         setup_fastapi_logging(
             app=app,
             logger_instance=logger,
-            middleware=True,
+            middleware=middleware,
+            custom_routes=custom_routes,
             exclude_paths=final_exclude_paths,
             exclude_methods=final_exclude_methods,
-            **kwargs
+            log_request_body=log_request_body,
+            log_response_body=log_response_body,
+            log_headers=log_headers,
+            sensitive_headers=sensitive_headers
         )
         
         # 配置 uvicorn 日誌（如果啟用）

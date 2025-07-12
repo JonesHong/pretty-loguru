@@ -13,8 +13,7 @@ from pretty_loguru import create_logger
 # Initialize logger
 logger = create_logger(
     name="demo",
-    log_path=
-    folder="logs",
+    log_path="logs/",
     level="INFO"
 )
 
@@ -24,7 +23,7 @@ app = FastAPI(title="My API with pretty-loguru")
 @app.on_event("startup")
 async def startup_event():
     logger.success("🚀 FastAPI application started successfully")
-    logger.info(f"Logger component: {component_name}")
+    logger.info("Logger initialized successfully")
 
 @app.on_event("shutdown")
 async def shutdown_event():

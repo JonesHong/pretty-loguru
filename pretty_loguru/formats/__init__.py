@@ -19,9 +19,11 @@ from .block import (
 from .ascii_art import (
     print_ascii_header,
     print_ascii_block,
-    is_ascii_only,
     create_ascii_methods,
 )
+
+# 導入 ASCII 驗證功能
+from ..utils.validators import is_ascii_only
 
 # 導入 Rich 組件功能
 from .rich_components import (

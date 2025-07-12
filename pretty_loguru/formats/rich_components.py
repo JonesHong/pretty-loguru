@@ -19,6 +19,7 @@ from contextlib import contextmanager
 
 from rich.console import Console
 from rich.table import Table
+from ..core.base import get_console
 from rich.tree import Tree
 from rich.columns import Columns
 from rich.progress import Progress, TaskID, BarColumn, TextColumn, TimeElapsedColumn
@@ -70,7 +71,7 @@ def print_table(
         >>> print_table("Users", data)
     """
     if console is None:
-        console = Console()
+        console = get_console()
     
     if not data:
         if logger_instance:
@@ -147,7 +148,7 @@ def print_tree(
         >>> print_tree("System Status", tree_data)
     """
     if console is None:
-        console = Console()
+        console = get_console()
     
     # 創建 Rich 樹
     tree = Tree(title, **tree_kwargs)
@@ -229,7 +230,7 @@ def print_columns(
         >>> print_columns("Available Options", items, columns=2)
     """
     if console is None:
-        console = Console()
+        console = get_console()
     
     if not items:
         if logger_instance:
@@ -410,7 +411,7 @@ def print_code(
         >>> print_code(code, language="python", title="Hello World Example")
     """
     if console is None:
-        console = Console()
+        console = get_console()
     
     if not code.strip():
         if logger_instance:
@@ -503,7 +504,7 @@ def print_code_from_file(
     import os
     
     if console is None:
-        console = Console()
+        console = get_console()
     
     if not os.path.exists(file_path):
         if logger_instance:
@@ -629,7 +630,7 @@ def print_diff(
         >>> print_diff(old, new)
     """
     if console is None:
-        console = Console()
+        console = get_console()
     
     # 創建語法高亮的程式碼
     old_syntax = Syntax(
@@ -713,7 +714,7 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
         console: 要使用的 Rich console 實例
     """
     if console is None:
-        console = Console()
+        console = get_console()
     
     # 1. 表格方法
     @ensure_target_parameters
