@@ -4,56 +4,56 @@
 [![PyPI Version](https://img.shields.io/pypi/v/pretty-loguru.svg)](https://pypi.org/project/pretty-loguru/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-增強版 Python 日誌庫，基於 [Loguru](https://github.com/Delgan/loguru)，整合 [Rich](https://github.com/Textualize/rich) 和 ASCII 藝術，讓日誌輸出更加優雅和直觀。
+An enhanced Python logging library built on [Loguru](https://github.com/Delgan/loguru), integrating [Rich](https://github.com/Textualize/rich) and ASCII art to make logging more elegant and intuitive.
 
-## ✨ 特色功能
+## ✨ Features
 
-- 🎨 **Rich 區塊日誌** - 使用 Rich 面板顯示結構化日誌
-- 🎯 **ASCII 藝術標題** - 生成引人注目的 ASCII 藝術標題
-- 🔥 **一鍵初始化** - 簡單配置即可同時設置文件和控制台日誌
-- 🚀 **FastAPI 整合** - 完美整合 FastAPI 和 Uvicorn
-- 📊 **預設配置** - 提供開發、生產、測試環境的最佳實踐
-- 🛠️ **高度自定義** - 支援自定義格式、顏色、輪換策略
+- 🎨 **Rich Block Logging** - Display structured logs using Rich panels
+- 🎯 **ASCII Art Headers** - Generate eye-catching ASCII art titles
+- 🔥 **One-Click Setup** - Simple configuration for both file and console logging
+- 🚀 **FastAPI Integration** - Perfect integration with FastAPI and Uvicorn
+- 📊 **Preset Configurations** - Best practices for development, production, and testing
+- 🛠️ **Highly Customizable** - Support for custom formats, colors, and rotation strategies
 
-## 📦 安裝
+## 📦 Installation
 
 ```bash
 pip install pretty-loguru
 ```
 
-## 🚀 快速開始
+## 🚀 Quick Start
 
-### 基本使用
+### Basic Usage
 
 ```python
 from pretty_loguru import create_logger
 
-# 創建 logger
+# Create logger
 logger = create_logger("my_app")
 
-# 基本日誌
-logger.info("應用程序啟動")
-logger.success("操作成功完成")
-logger.warning("這是一個警告")
-logger.error("發生錯誤")
+# Basic logging
+logger.info("Application started")
+logger.success("Operation completed successfully")
+logger.warning("This is a warning")
+logger.error("An error occurred")
 
-# Rich 區塊
-logger.block("系統狀態", "一切正常", border_style="green")
+# Rich blocks
+logger.block("System Status", "Everything is running smoothly", border_style="green")
 
-# ASCII 藝術
+# ASCII art
 logger.ascii_header("WELCOME", font="slant")
 ```
 
-### 使用配置物件
+### Using Configuration Objects
 
 ```python
 from pretty_loguru import create_logger, LoggerConfig, ConfigTemplates
 
-# 使用預設模板
+# Use preset templates
 config = ConfigTemplates.production()
 logger = create_logger("app", config=config)
 
-# 自定義配置
+# Custom configuration
 custom_config = LoggerConfig(
     level="DEBUG",
     log_path="logs",
@@ -62,40 +62,39 @@ custom_config = LoggerConfig(
 )
 logger = create_logger("debug_app", config=custom_config)
 
-# 更新現有 logger
-config.update(level="INFO")  # 所有使用此配置的 logger 都會更新
+# Update existing logger
+config.update(level="INFO")  # All loggers using this config will update
 ```
 
-### 多 Logger 管理
+### Multi-Logger Management
 
 ```python
-# 創建多個 logger
+# Create multiple loggers
 auth_logger = create_logger("auth", level="INFO")
 db_logger = create_logger("database", level="DEBUG")
 api_logger = create_logger("api", level="WARNING")
 
-# 統一配置管理
+# Unified configuration management
 config = LoggerConfig(level="INFO", log_path="logs")
 loggers = config.apply_to("auth", "database", "api")
 
-# 動態更新所有 logger
-config.update(level="DEBUG")  # 所有 logger 同時更新
+# Dynamic update for all loggers
+config.update(level="DEBUG")  # All loggers update simultaneously
 ```
 
-## 📖 文檔
+## 📖 Documentation
 
-完整文檔請訪問：[https://joneshong.github.io/pretty-loguru/](https://joneshong.github.io/pretty-loguru/)
+Full documentation available at: [https://joneshong.github.io/pretty-loguru/](https://joneshong.github.io/pretty-loguru/)
 
-- [使用指南](docs/guide/index.md)
-- [API 參考](docs/api/index.md)
-- [範例程式](examples/README.md)
-- [配置說明](docs/guide/custom-config.md)
+- [User Guide](docs/en/guide/index.md)
+- [API Reference](docs/en/api/index.md)
+- [Examples](examples/README.md)
+- [Configuration Guide](docs/en/guide/custom-config.md)
 
+## 🤝 Contributing
 
-## 🤝 貢獻
+Issues and Pull Requests are welcome!
 
-歡迎提交 Issue 和 Pull Request！
+## 📄 License
 
-## 📄 授權
-
-本專案採用 MIT 授權條款 - 詳見 [LICENSE](LICENSE) 文件。
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
