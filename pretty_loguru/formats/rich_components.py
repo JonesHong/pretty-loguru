@@ -26,6 +26,8 @@ from rich.progress import Progress, TaskID, BarColumn, TextColumn, TimeElapsedCo
 from rich.text import Text
 from rich.syntax import Syntax
 from rich.panel import Panel
+from rich import box as rich_box
+from rich.align import Align
 
 from ..types import EnhancedLogger
 from ..core.target_formatter import add_target_methods, ensure_target_parameters
@@ -705,6 +707,174 @@ def print_diff(
         )
 
 
+@ensure_target_parameters
+def print_panel(
+    content: Union[str, Any],
+    title: Optional[str] = None,
+    subtitle: Optional[str] = None,
+    border_style: str = "cyan",
+    box_style: Optional[str] = None,
+    title_align: str = "left",
+    subtitle_align: str = "right", 
+    width: Optional[int] = None,
+    height: Optional[int] = None,
+    padding: Union[int, tuple] = 1,
+    expand: bool = True,
+    log_level: str = "INFO",
+    logger_instance: Any = None,
+    console: Optional[Console] = None,
+    to_console_only: bool = False,
+    to_log_file_only: bool = False,
+    _target_depth: int = None,
+    **panel_kwargs
+) -> None:
+    """
+    顯示 Rich Panel（面板），這是 block 方法的原生 Rich 版本
+    
+    這個函數展示了如何直接使用 Rich Panel API，提供了更多的自定義選項。
+    相比於 logger.block() 方法，這個函數支援更多 Rich Panel 的原生功能。
+    
+    Args:
+        content: 面板內容，可以是字符串或任何 Rich 可渲染對象
+        title: 面板標題
+        subtitle: 面板副標題
+        border_style: 邊框顏色樣式 (如 "cyan", "red", "green" 等)
+        box_style: 邊框樣式名稱 (如 "rounded", "double", "heavy" 等)
+        title_align: 標題對齊方式 ("left", "center", "right")
+        subtitle_align: 副標題對齊方式 ("left", "center", "right")
+        width: 面板寬度，None 表示自動
+        height: 面板高度，None 表示自動
+        padding: 內邊距，可以是整數或 (top, right, bottom, left) 元組
+        expand: 是否擴展到可用寬度
+        log_level: 日誌級別
+        logger_instance: logger 實例
+        console: Rich console 實例
+        to_console_only: 僅輸出到控制台
+        to_log_file_only: 僅輸出到文件
+        _target_depth: 調用深度
+        **panel_kwargs: 傳遞給 Rich Panel 的額外參數
+        
+    Example:
+        >>> # 基本使用
+        >>> print_panel("Hello, World!", title="Welcome")
+        
+        >>> # 使用不同的邊框樣式
+        >>> print_panel("Important Message", title="Notice", 
+        ...            border_style="red", box_style="double")
+        
+        >>> # 使用副標題和對齊
+        >>> print_panel("System Status: OK", 
+        ...            title="Status", subtitle="Last updated: 12:00",
+        ...            title_align="center", subtitle_align="center")
+        
+        >>> # 自定義尺寸和內邊距
+        >>> print_panel("Compact info", width=40, height=5, padding=0)
+        
+        >>> # 使用 Rich 對象作為內容
+        >>> from rich.table import Table
+        >>> table = Table(title="Data")
+        >>> table.add_column("Name")
+        >>> table.add_column("Value")
+        >>> table.add_row("CPU", "45%")
+        >>> table.add_row("Memory", "2.3GB")
+        >>> print_panel(table, title="System Resources")
+    """
+    if console is None:
+        console = get_console()
+    
+    # 處理 box 樣式
+    box = rich_box.ROUNDED  # 默認圓角邊框
+    if box_style:
+        box_styles = {
+            "ascii": rich_box.ASCII,
+            "ascii2": rich_box.ASCII2,
+            "square": rich_box.SQUARE,
+            "rounded": rich_box.ROUNDED,
+            "double": rich_box.DOUBLE,
+            "heavy": rich_box.HEAVY,
+            "minimal": rich_box.MINIMAL,
+            "simple": rich_box.SIMPLE,
+            "heavy_head": rich_box.HEAVY_HEAD,
+            "double_edge": rich_box.DOUBLE_EDGE,
+            "thick": rich_box.HEAVY,  # 別名
+        }
+        box = box_styles.get(box_style.lower(), rich_box.ROUNDED)
+    
+    # 創建 Panel
+    panel = Panel(
+        content,
+        title=title,
+        subtitle=subtitle,
+        border_style=border_style,
+        box=box,
+        title_align=title_align,
+        subtitle_align=subtitle_align,
+        width=width,
+        height=height,
+        padding=padding,
+        expand=expand,
+        **panel_kwargs
+    )
+    
+    # 輸出到控制台
+    if not to_log_file_only and logger_instance:
+        display_title = title or "Panel"
+        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_console_only=True).log(
+            log_level, f"Displaying panel: {display_title}"
+        )
+        console.print(panel)
+    
+    # 輸出到文件
+    if not to_console_only and logger_instance:
+        # 創建文本版本的面板
+        panel_text = ""
+        if title:
+            panel_text += f"┌─ {title} " + "─" * (50 - len(title) - 3) + "┐\n"
+        else:
+            panel_text += "┌" + "─" * 50 + "┐\n"
+        
+        # 處理內容
+        content_str = str(content)
+        content_lines = content_str.split('\n')
+        
+        # 添加內邊距
+        if isinstance(padding, int):
+            pad_top = pad_bottom = pad_left = pad_right = padding
+        elif len(padding) == 2:
+            # (vertical, horizontal)
+            pad_top = pad_bottom = padding[0]
+            pad_left = pad_right = padding[1]
+        elif len(padding) == 4:
+            # (top, right, bottom, left)
+            pad_top, pad_right, pad_bottom, pad_left = padding
+        else:
+            # 默認值
+            pad_top = pad_bottom = pad_left = pad_right = 1
+        
+        # 頂部內邊距
+        for _ in range(pad_top):
+            panel_text += "│" + " " * 50 + "│\n"
+        
+        # 內容行
+        for line in content_lines:
+            padded_line = " " * pad_left + line + " " * pad_right
+            panel_text += f"│{padded_line:<50}│\n"
+        
+        # 底部內邊距
+        for _ in range(pad_bottom):
+            panel_text += "│" + " " * 50 + "│\n"
+        
+        # 底部邊框
+        if subtitle:
+            panel_text += "└" + "─" * (47 - len(subtitle)) + f" {subtitle} ─┘"
+        else:
+            panel_text += "└" + "─" * 50 + "┘"
+        
+        logger_instance.opt(ansi=False, depth=_target_depth).bind(to_log_file_only=True).log(
+            log_level, f"\n{panel_text}"
+        )
+
+
 def create_rich_methods(logger_instance: Any, console: Optional[Console] = None) -> None:
     """
     為 logger 實例創建 Rich 組件方法
@@ -892,7 +1062,48 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
             **syntax_kwargs
         )
     
-    # 7. 進度條方法（作為屬性）
+    # 7. Panel 方法（Rich 原生版本）
+    @ensure_target_parameters
+    def panel_method(
+        content: Union[str, Any],
+        title: Optional[str] = None,
+        subtitle: Optional[str] = None,
+        border_style: str = "cyan",
+        box_style: Optional[str] = None,
+        title_align: str = "left",
+        subtitle_align: str = "right",
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+        padding: Union[int, tuple] = 1,
+        expand: bool = True,
+        log_level: str = "INFO",
+        to_console_only: bool = False,
+        to_log_file_only: bool = False,
+        _target_depth: int = None,
+        **panel_kwargs
+    ) -> None:
+        print_panel(
+            content=content,
+            title=title,
+            subtitle=subtitle,
+            border_style=border_style,
+            box_style=box_style,
+            title_align=title_align,
+            subtitle_align=subtitle_align,
+            width=width,
+            height=height,
+            padding=padding,
+            expand=expand,
+            log_level=log_level,
+            logger_instance=logger_instance,
+            console=console,
+            to_console_only=to_console_only,
+            to_log_file_only=to_log_file_only,
+            _target_depth=_target_depth,
+            **panel_kwargs
+        )
+    
+    # 8. 進度條方法（作為屬性）
     def get_progress():
         return LoggerProgress(logger_instance, console)
     
@@ -903,6 +1114,7 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
     logger_instance.code = code_method
     logger_instance.code_file = code_file_method
     logger_instance.diff = diff_method
+    logger_instance.panel = panel_method  # 新增 panel 方法
     logger_instance.progress = get_progress()
     
     # 添加目標特定方法
@@ -912,6 +1124,7 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
     add_target_methods(logger_instance, "code", code_method)
     add_target_methods(logger_instance, "code_file", code_file_method)
     add_target_methods(logger_instance, "diff", diff_method)
+    add_target_methods(logger_instance, "panel", panel_method)  # 新增 panel 的目標方法
 
 
 # 導出的函數和類
@@ -922,6 +1135,7 @@ __all__ = [
     'print_code',
     'print_code_from_file',
     'print_diff',
+    'print_panel',
     'LoggerProgress',
     'create_rich_methods'
 ]

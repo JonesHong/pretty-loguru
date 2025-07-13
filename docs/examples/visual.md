@@ -2,9 +2,9 @@
 
 展示 Pretty-Loguru 的視覺化功能，包括 Rich 區塊、ASCII 藝術和各種視覺元件。
 
-## Rich 區塊
+## Rich 區塊與面板
 
-使用 Rich 面板創建結構化的日誌區塊：
+### 使用 block() - 簡單區塊
 
 ```python
 from pretty_loguru import create_logger
@@ -47,6 +47,74 @@ logger.block(
     ],
     border_style="red",
     log_level="ERROR"
+)
+```
+
+### 使用 panel() - 進階面板
+
+```python
+from pretty_loguru import create_logger
+from rich.table import Table
+from rich.text import Text
+
+logger = create_logger("panel_demo")
+
+# 基本 Panel
+logger.panel("重要公告", title="通知", border_style="yellow")
+
+# 帶副標題的 Panel
+logger.panel(
+    "系統維護將於今晚 10 點開始",
+    title="維護通知",
+    subtitle="預計 2 小時",
+    border_style="orange1",
+    box_style="double"
+)
+
+# 使用 Rich Text 對象
+status = Text()
+status.append("伺服器狀態：", style="bold")
+status.append("正常運行\n", style="bold green")
+status.append("上線時間：", style="bold")
+status.append("72 小時 15 分鐘\n", style="cyan")
+status.append("連接數：", style="bold")
+status.append("1,234", style="yellow")
+
+logger.panel(
+    status,
+    title="即時狀態",
+    border_style="green",
+    box_style="rounded",
+    padding=(1, 2)
+)
+
+# 在 Panel 中顯示表格
+error_table = Table(show_header=True, header_style="bold red")
+error_table.add_column("時間", style="dim", width=20)
+error_table.add_column("錯誤碼", style="red")
+error_table.add_column("描述")
+
+error_table.add_row("2025-01-13 19:45:00", "E001", "連接超時")
+error_table.add_row("2025-01-13 19:46:15", "E002", "認證失敗")
+error_table.add_row("2025-01-13 19:47:30", "E001", "連接超時")
+
+logger.panel(
+    error_table,
+    title="最近錯誤",
+    subtitle="最後更新：19:48",
+    border_style="red",
+    box_style="heavy",
+    title_align="center",
+    width=80
+)
+
+# 緊湊模式（無內邊距）
+logger.panel(
+    "緊急：系統即將重啟",
+    title="⚠️ 警告",
+    border_style="red",
+    padding=0,
+    expand=False
 )
 ```
 

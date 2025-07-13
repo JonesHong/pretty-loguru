@@ -316,6 +316,311 @@ logger.ascii_block(
 )
 ```
 
+## 🎭 Rich 組件 API
+
+Pretty-Loguru 整合了 Rich 庫的強大功能，提供多種資料視覺化方法。
+
+### `logger.panel()` - Rich Panel（面板）
+
+這是 `logger.block()` 的進階版本，提供完整的 Rich Panel API 支援。
+
+```python
+def panel(
+    content: Union[str, Any],
+    title: Optional[str] = None,
+    subtitle: Optional[str] = None,
+    border_style: str = "cyan",
+    box_style: Optional[str] = None,
+    title_align: str = "left",
+    subtitle_align: str = "right",
+    width: Optional[int] = None,
+    height: Optional[int] = None,
+    padding: Union[int, tuple] = 1,
+    expand: bool = True,
+    log_level: str = "INFO",
+    **panel_kwargs
+) -> None
+```
+
+**參數說明：**
+
+| 參數 | 類型 | 說明 |
+|------|------|------|
+| `content` | `Union[str, Any]` | 面板內容，可以是字符串或任何 Rich 可渲染對象 |
+| `title` | `Optional[str]` | 面板標題 |
+| `subtitle` | `Optional[str]` | 面板副標題（顯示在底部） |
+| `border_style` | `str` | 邊框顏色樣式（如 "cyan", "red", "green"） |
+| `box_style` | `Optional[str]` | 邊框樣式（如 "rounded", "double", "heavy"） |
+| `title_align` | `str` | 標題對齊方式（"left", "center", "right"） |
+| `subtitle_align` | `str` | 副標題對齊方式（"left", "center", "right"） |
+| `width` | `Optional[int]` | 面板寬度，None 表示自動 |
+| `height` | `Optional[int]` | 面板高度，None 表示自動 |
+| `padding` | `Union[int, tuple]` | 內邊距，可以是整數或元組 |
+| `expand` | `bool` | 是否擴展到可用寬度 |
+| `log_level` | `str` | 日誌級別 |
+
+**支援的 box_style：**
+- `"ascii"` - ASCII 字符邊框
+- `"square"` - 方形邊框
+- `"rounded"` - 圓角邊框（預設）
+- `"double"` - 雙線邊框
+- `"heavy"` / `"thick"` - 粗線邊框
+- `"minimal"` - 最小邊框
+- 更多樣式請參考 Rich 文檔
+
+**範例：**
+
+```python
+# 基本使用
+logger.panel("重要通知", title="系統訊息")
+
+# 進階功能
+from rich.table import Table
+table = Table(title="用戶統計")
+table.add_column("名稱")
+table.add_column("數量")
+table.add_row("活躍用戶", "1,234")
+table.add_row("新註冊", "56")
+
+logger.panel(
+    table,
+    title="今日統計",
+    subtitle="更新時間: 15:30",
+    border_style="green",
+    box_style="double",
+    title_align="center"
+)
+
+# 自定義內邊距
+logger.panel(
+    "緊湊顯示",
+    padding=0,  # 無內邊距
+    width=40
+)
+
+# 使用元組設定內邊距 (垂直, 水平)
+logger.panel(
+    "自定義間距",
+    padding=(2, 4)  # 上下 2 格，左右 4 格
+)
+```
+
+### `logger.table()` - 表格顯示
+
+創建並顯示格式化的表格。
+
+```python
+def table(
+    title: str,
+    data: List[Dict[str, Any]],
+    headers: Optional[List[str]] = None,
+    show_header: bool = True,
+    show_lines: bool = False,
+    log_level: str = "INFO",
+    **table_kwargs
+) -> None
+```
+
+**參數說明：**
+
+| 參數 | 類型 | 說明 |
+|------|------|------|
+| `title` | `str` | 表格標題 |
+| `data` | `List[Dict[str, Any]]` | 表格數據，每個字典代表一行 |
+| `headers` | `Optional[List[str]]` | 列標題，若不提供則使用數據的鍵 |
+| `show_header` | `bool` | 是否顯示表頭 |
+| `show_lines` | `bool` | 是否顯示行分隔線 |
+| `log_level` | `str` | 日誌級別 |
+
+**範例：**
+
+```python
+data = [
+    {"姓名": "Alice", "年齡": 30, "城市": "台北"},
+    {"姓名": "Bob", "年齡": 25, "城市": "高雄"},
+    {"姓名": "Charlie", "年齡": 35, "城市": "台中"}
+]
+
+logger.table("用戶資料", data)
+logger.table("詳細資料", data, show_lines=True)
+```
+
+### `logger.tree()` - 樹狀結構顯示
+
+顯示層級化的樹狀結構。
+
+```python
+def tree(
+    title: str,
+    tree_data: Dict[str, Any],
+    log_level: str = "INFO",
+    **tree_kwargs
+) -> None
+```
+
+**參數說明：**
+
+| 參數 | 類型 | 說明 |
+|------|------|------|
+| `title` | `str` | 樹的根節點標題 |
+| `tree_data` | `Dict[str, Any]` | 樹狀數據，值可以是字符串或嵌套字典 |
+| `log_level` | `str` | 日誌級別 |
+
+**範例：**
+
+```python
+tree_data = {
+    "專案結構": {
+        "src": {
+            "models": "資料模型",
+            "views": "視圖層",
+            "controllers": "控制器"
+        },
+        "tests": "測試檔案",
+        "docs": "文檔"
+    }
+}
+
+logger.tree("應用程式架構", tree_data)
+```
+
+### `logger.columns()` - 分欄顯示
+
+以多欄格式顯示項目列表。
+
+```python
+def columns(
+    title: str,
+    items: List[str],
+    columns: int = 3,
+    log_level: str = "INFO",
+    **columns_kwargs
+) -> None
+```
+
+**參數說明：**
+
+| 參數 | 類型 | 說明 |
+|------|------|------|
+| `title` | `str` | 分欄顯示的標題 |
+| `items` | `List[str]` | 要顯示的項目列表 |
+| `columns` | `int` | 欄數，預設 3 欄 |
+| `log_level` | `str` | 日誌級別 |
+
+**範例：**
+
+```python
+options = [
+    "選項 1", "選項 2", "選項 3",
+    "選項 4", "選項 5", "選項 6",
+    "選項 7", "選項 8", "選項 9"
+]
+
+logger.columns("可用選項", options, columns=3)
+```
+
+### `logger.code()` - 程式碼高亮顯示
+
+顯示語法高亮的程式碼。
+
+```python
+def code(
+    code: str,
+    language: str = "python",
+    theme: str = "monokai",
+    line_numbers: bool = True,
+    title: Optional[str] = None,
+    log_level: str = "INFO",
+    **syntax_kwargs
+) -> None
+```
+
+**參數說明：**
+
+| 參數 | 類型 | 說明 |
+|------|------|------|
+| `code` | `str` | 要顯示的程式碼 |
+| `language` | `str` | 程式語言（python, javascript, html 等） |
+| `theme` | `str` | 語法高亮主題 |
+| `line_numbers` | `bool` | 是否顯示行號 |
+| `title` | `Optional[str]` | 程式碼標題 |
+| `log_level` | `str` | 日誌級別 |
+
+**範例：**
+
+```python
+code_sample = '''
+def hello_world():
+    print("Hello, World!")
+    return True
+'''
+
+logger.code(code_sample, language="python", title="範例程式")
+```
+
+### `logger.diff()` - 程式碼差異對比
+
+並排顯示程式碼的前後差異。
+
+```python
+def diff(
+    old_code: str,
+    new_code: str,
+    old_title: str = "Before",
+    new_title: str = "After",
+    language: str = "python",
+    theme: str = "monokai",
+    log_level: str = "INFO",
+    **syntax_kwargs
+) -> None
+```
+
+**範例：**
+
+```python
+old = "def hello():\n    print('Hi')"
+new = "def hello():\n    print('Hello, World!')"
+
+logger.diff(old, new, old_title="修改前", new_title="修改後")
+```
+
+### `logger.progress` - 進度條
+
+提供進度追蹤功能。
+
+**範例：**
+
+```python
+# 使用上下文管理器
+with logger.progress.progress_context("處理資料", 100) as update:
+    for i in range(100):
+        # 執行工作
+        time.sleep(0.01)
+        update(1)  # 更新進度
+
+# 追蹤列表處理
+items = ["item1", "item2", "item3", "item4", "item5"]
+for item in logger.progress.track_list(items, "處理項目"):
+    # 處理每個項目
+    time.sleep(0.1)
+```
+
+### 目標導向的 Rich 組件方法
+
+所有 Rich 組件方法都支援目標導向輸出：
+
+```python
+# 僅控制台
+logger.console_panel("控制台專用面板", title="Console Only")
+logger.console_table("統計", data)
+logger.console_tree("架構", tree_data)
+
+# 僅檔案
+logger.file_panel("檔案記錄", title="File Only")
+logger.file_table("資料備份", data)
+logger.file_code(code_sample, title="程式碼備份")
+```
+
 ## 🛠️ 工具函數
 
 ### `is_ascii_only()` - ASCII 檢查
@@ -477,11 +782,22 @@ config = ConfigTemplates.production()   # 生產環境
 config = ConfigTemplates.testing()      # 測試環境
 
 # 輪替模板
-config = ConfigTemplates.daily()        # 每日輪替
-config = ConfigTemplates.hourly()       # 每小時輪替
-config = ConfigTemplates.weekly()       # 每週輪替
-config = ConfigTemplates.monthly()      # 每月輪替
+config = ConfigTemplates.daily()        # 每日輪替（午夜輪換，保留30天）
+config = ConfigTemplates.hourly()       # 每小時輪替（保留7天）
+config = ConfigTemplates.weekly()       # 每週輪替（週一輪換，保留12週）
+config = ConfigTemplates.monthly()      # 每月輪替（保留12個月）
+config = ConfigTemplates.minute()       # 每分鐘輪替（測試用，保留24小時）
 ```
+
+#### 輪替模板詳細說明
+
+| 模板 | 輪換時機 | 保留期限 | 當前檔名 | 輪換後檔名 | 適用場景 |
+|------|---------|---------|----------|-----------|---------|
+| `daily()` | 每天 00:00 | 30 天 | `[name]daily_latest.temp.log` | `[name]YYYYMMDD.log` | 一般應用日誌 |
+| `hourly()` | 每小時 | 7 天 | `[name]hourly_latest.temp.log` | `[name]YYYYMMDD_HH.log` | 高流量服務 |
+| `weekly()` | 每週一 | 12 週 | `[name]weekly_latest.temp.log` | `[name]week_YYYYWNN.log` | 週報分析 |
+| `monthly()` | 每月 | 12 個月 | `[name]monthly_latest.temp.log` | `[name]YYYYMM.log` | 長期歸檔 |
+| `minute()` | 每分鐘 | 24 小時 | `[name]minute_latest.temp.log` | `[name]YYYYMMDD_HHMM.log` | 壓力測試 |
 
 ## 📖 更多資源
 

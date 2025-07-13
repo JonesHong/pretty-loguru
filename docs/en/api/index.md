@@ -311,6 +311,311 @@ logger.ascii_block(
 )
 ```
 
+## 🎭 Rich Components API
+
+Pretty-Loguru integrates Rich library's powerful features, providing various data visualization methods.
+
+### `logger.panel()` - Rich Panel
+
+This is an advanced version of `logger.block()` that provides full Rich Panel API support.
+
+```python
+def panel(
+    content: Union[str, Any],
+    title: Optional[str] = None,
+    subtitle: Optional[str] = None,
+    border_style: str = "cyan",
+    box_style: Optional[str] = None,
+    title_align: str = "left",
+    subtitle_align: str = "right",
+    width: Optional[int] = None,
+    height: Optional[int] = None,
+    padding: Union[int, tuple] = 1,
+    expand: bool = True,
+    log_level: str = "INFO",
+    **panel_kwargs
+) -> None
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `content` | `Union[str, Any]` | Panel content, can be string or any Rich renderable object |
+| `title` | `Optional[str]` | Panel title |
+| `subtitle` | `Optional[str]` | Panel subtitle (displayed at bottom) |
+| `border_style` | `str` | Border color style (e.g., "cyan", "red", "green") |
+| `box_style` | `Optional[str]` | Border style (e.g., "rounded", "double", "heavy") |
+| `title_align` | `str` | Title alignment ("left", "center", "right") |
+| `subtitle_align` | `str` | Subtitle alignment ("left", "center", "right") |
+| `width` | `Optional[int]` | Panel width, None for automatic |
+| `height` | `Optional[int]` | Panel height, None for automatic |
+| `padding` | `Union[int, tuple]` | Padding, can be integer or tuple |
+| `expand` | `bool` | Whether to expand to available width |
+| `log_level` | `str` | Log level |
+
+**Supported box_style:**
+- `"ascii"` - ASCII character borders
+- `"square"` - Square borders
+- `"rounded"` - Rounded borders (default)
+- `"double"` - Double line borders
+- `"heavy"` / `"thick"` - Heavy borders
+- `"minimal"` - Minimal borders
+- More styles available in Rich documentation
+
+**Examples:**
+
+```python
+# Basic usage
+logger.panel("Important Notice", title="System Message")
+
+# Advanced features
+from rich.table import Table
+table = Table(title="User Statistics")
+table.add_column("Name")
+table.add_column("Count")
+table.add_row("Active Users", "1,234")
+table.add_row("New Signups", "56")
+
+logger.panel(
+    table,
+    title="Today's Statistics",
+    subtitle="Updated: 15:30",
+    border_style="green",
+    box_style="double",
+    title_align="center"
+)
+
+# Custom padding
+logger.panel(
+    "Compact display",
+    padding=0,  # No padding
+    width=40
+)
+
+# Tuple padding (vertical, horizontal)
+logger.panel(
+    "Custom spacing",
+    padding=(2, 4)  # 2 vertical, 4 horizontal
+)
+```
+
+### `logger.table()` - Table Display
+
+Create and display formatted tables.
+
+```python
+def table(
+    title: str,
+    data: List[Dict[str, Any]],
+    headers: Optional[List[str]] = None,
+    show_header: bool = True,
+    show_lines: bool = False,
+    log_level: str = "INFO",
+    **table_kwargs
+) -> None
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `title` | `str` | Table title |
+| `data` | `List[Dict[str, Any]]` | Table data, each dictionary represents a row |
+| `headers` | `Optional[List[str]]` | Column headers, uses data keys if not provided |
+| `show_header` | `bool` | Whether to show headers |
+| `show_lines` | `bool` | Whether to show row separator lines |
+| `log_level` | `str` | Log level |
+
+**Examples:**
+
+```python
+data = [
+    {"Name": "Alice", "Age": 30, "City": "NYC"},
+    {"Name": "Bob", "Age": 25, "City": "LA"},
+    {"Name": "Charlie", "Age": 35, "City": "Chicago"}
+]
+
+logger.table("User Data", data)
+logger.table("Detailed Data", data, show_lines=True)
+```
+
+### `logger.tree()` - Tree Structure Display
+
+Display hierarchical tree structures.
+
+```python
+def tree(
+    title: str,
+    tree_data: Dict[str, Any],
+    log_level: str = "INFO",
+    **tree_kwargs
+) -> None
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `title` | `str` | Tree root node title |
+| `tree_data` | `Dict[str, Any]` | Tree data, values can be strings or nested dictionaries |
+| `log_level` | `str` | Log level |
+
+**Examples:**
+
+```python
+tree_data = {
+    "Project Structure": {
+        "src": {
+            "models": "Data Models",
+            "views": "View Layer",
+            "controllers": "Controllers"
+        },
+        "tests": "Test Files",
+        "docs": "Documentation"
+    }
+}
+
+logger.tree("Application Architecture", tree_data)
+```
+
+### `logger.columns()` - Column Display
+
+Display item lists in multi-column format.
+
+```python
+def columns(
+    title: str,
+    items: List[str],
+    columns: int = 3,
+    log_level: str = "INFO",
+    **columns_kwargs
+) -> None
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `title` | `str` | Column display title |
+| `items` | `List[str]` | List of items to display |
+| `columns` | `int` | Number of columns, default 3 |
+| `log_level` | `str` | Log level |
+
+**Examples:**
+
+```python
+options = [
+    "Option 1", "Option 2", "Option 3",
+    "Option 4", "Option 5", "Option 6",
+    "Option 7", "Option 8", "Option 9"
+]
+
+logger.columns("Available Options", options, columns=3)
+```
+
+### `logger.code()` - Code Syntax Highlighting
+
+Display syntax-highlighted code.
+
+```python
+def code(
+    code: str,
+    language: str = "python",
+    theme: str = "monokai",
+    line_numbers: bool = True,
+    title: Optional[str] = None,
+    log_level: str = "INFO",
+    **syntax_kwargs
+) -> None
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `code` | `str` | Code to display |
+| `language` | `str` | Programming language (python, javascript, html, etc.) |
+| `theme` | `str` | Syntax highlighting theme |
+| `line_numbers` | `bool` | Whether to show line numbers |
+| `title` | `Optional[str]` | Code title |
+| `log_level` | `str` | Log level |
+
+**Examples:**
+
+```python
+code_sample = '''
+def hello_world():
+    print("Hello, World!")
+    return True
+'''
+
+logger.code(code_sample, language="python", title="Example Code")
+```
+
+### `logger.diff()` - Code Diff Display
+
+Show side-by-side code differences.
+
+```python
+def diff(
+    old_code: str,
+    new_code: str,
+    old_title: str = "Before",
+    new_title: str = "After",
+    language: str = "python",
+    theme: str = "monokai",
+    log_level: str = "INFO",
+    **syntax_kwargs
+) -> None
+```
+
+**Examples:**
+
+```python
+old = "def hello():\n    print('Hi')"
+new = "def hello():\n    print('Hello, World!')"
+
+logger.diff(old, new, old_title="Before", new_title="After")
+```
+
+### `logger.progress` - Progress Bar
+
+Provides progress tracking functionality.
+
+**Examples:**
+
+```python
+# Using context manager
+with logger.progress.progress_context("Processing Data", 100) as update:
+    for i in range(100):
+        # Do work
+        time.sleep(0.01)
+        update(1)  # Update progress
+
+# Track list processing
+items = ["item1", "item2", "item3", "item4", "item5"]
+for item in logger.progress.track_list(items, "Processing Items"):
+    # Process each item
+    time.sleep(0.1)
+```
+
+### Target-Oriented Rich Component Methods
+
+All Rich component methods support target-oriented output:
+
+```python
+# Console only
+logger.console_panel("Console-only panel", title="Console Only")
+logger.console_table("Statistics", data)
+logger.console_tree("Architecture", tree_data)
+
+# File only
+logger.file_panel("File log", title="File Only")
+logger.file_table("Data Backup", data)
+logger.file_code(code_sample, title="Code Backup")
+```
+
 ## 🛠️ Utility Functions
 
 ### `is_ascii_only()` - ASCII Check
@@ -425,6 +730,69 @@ except Exception as e:
         log_level="ERROR"
     )
 ```
+
+## 🛠️ Utility Functions
+
+### `get_logger(name: str) -> Optional[EnhancedLogger]`
+
+Get a registered logger instance by name.
+
+```python
+logger = get_logger("my_app")
+if logger:
+    logger.info("Found logger")
+else:
+    logger = create_logger("my_app")
+```
+
+### `cleanup_loggers() -> int`
+
+Clean up all registered loggers and related resources.
+
+```python
+# Clean up all loggers
+count = cleanup_loggers()
+print(f"Cleaned up {count} loggers")
+```
+
+### `list_loggers() -> List[str]`
+
+List all registered logger names.
+
+```python
+loggers = list_loggers()
+print(f"Currently registered loggers: {loggers}")
+```
+
+### `ConfigTemplates` - Configuration Templates
+
+Provides predefined configuration templates.
+
+```python
+from pretty_loguru import ConfigTemplates
+
+# Available templates
+config = ConfigTemplates.development()  # Development environment
+config = ConfigTemplates.production()   # Production environment
+config = ConfigTemplates.testing()      # Testing environment
+
+# Rotation templates
+config = ConfigTemplates.daily()        # Daily rotation (midnight rotation, 30-day retention)
+config = ConfigTemplates.hourly()       # Hourly rotation (7-day retention)
+config = ConfigTemplates.weekly()       # Weekly rotation (Monday rotation, 12-week retention)
+config = ConfigTemplates.monthly()      # Monthly rotation (12-month retention)
+config = ConfigTemplates.minute()       # Minute rotation (test use, 24-hour retention)
+```
+
+#### Rotation Template Details
+
+| Template | Rotation Timing | Retention Period | Current Filename | Rotated Filename | Use Case |
+|----------|-----------------|------------------|------------------|------------------|----------|
+| `daily()` | Every day 00:00 | 30 days | `[name]daily_latest.temp.log` | `[name]YYYYMMDD.log` | General application logs |
+| `hourly()` | Every hour | 7 days | `[name]hourly_latest.temp.log` | `[name]YYYYMMDD_HH.log` | High-traffic services |
+| `weekly()` | Every Monday | 12 weeks | `[name]weekly_latest.temp.log` | `[name]week_YYYYWNN.log` | Weekly report analysis |
+| `monthly()` | Every month | 12 months | `[name]monthly_latest.temp.log` | `[name]YYYYMM.log` | Long-term archiving |
+| `minute()` | Every minute | 24 hours | `[name]minute_latest.temp.log` | `[name]YYYYMMDD_HHMM.log` | Stress testing |
 
 ## 📖 More Resources
 

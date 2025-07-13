@@ -2,6 +2,115 @@
 
 日誌輪換是管理日誌檔案大小和數量的重要機制，pretty-loguru 提供靈活且強大的輪換策略。
 
+## 🎯 配置模板輪換預設
+
+Pretty-Loguru 提供了預定義的輪換配置模板，透過 `ConfigTemplates` 快速設定常用的時間輪換策略：
+
+### 每日輪換 (daily)
+
+```python
+from pretty_loguru import ConfigTemplates
+
+# 每日輪換配置
+config = ConfigTemplates.daily()
+logger = config.apply_to("daily_app")
+
+# 配置內容：
+# - rotation: "00:00" (每天午夜輪換)
+# - retention: "30 days" (保留 30 天)
+# - 當前檔名: [component]daily_latest.temp.log
+# - 輪換後壓縮檔名: [component]YYYYMMDD.log
+```
+
+### 每小時輪換 (hourly)
+
+```python
+# 每小時輪換配置
+config = ConfigTemplates.hourly()
+logger = config.apply_to("hourly_app")
+
+# 配置內容：
+# - rotation: "1 hour" (每小時輪換)
+# - retention: "7 days" (保留 7 天)
+# - 當前檔名: [component]hourly_latest.temp.log
+# - 輪換後壓縮檔名: [component]YYYYMMDD_HH.log
+```
+
+### 每週輪換 (weekly)
+
+```python
+# 每週輪換配置
+config = ConfigTemplates.weekly()
+logger = config.apply_to("weekly_app")
+
+# 配置內容：
+# - rotation: "monday" (每週一輪換)
+# - retention: "12 weeks" (保留 12 週)
+# - 當前檔名: [component]weekly_latest.temp.log
+# - 輪換後壓縮檔名: [component]week_YYYYWNN.log
+```
+
+### 每月輪換 (monthly)
+
+```python
+# 每月輪換配置
+config = ConfigTemplates.monthly()
+logger = config.apply_to("monthly_app")
+
+# 配置內容：
+# - rotation: "1 month" (每月輪換)
+# - retention: "12 months" (保留 12 個月)
+# - 當前檔名: [component]monthly_latest.temp.log
+# - 輪換後壓縮檔名: [component]YYYYMM.log
+```
+
+### 每分鐘輪換 (minute)
+
+```python
+# 每分鐘輪換配置（適用於高頻測試）
+config = ConfigTemplates.minute()
+logger = config.apply_to("minute_app")
+
+# 配置內容：
+# - rotation: "1 minute" (每分鐘輪換)
+# - retention: "24 hours" (保留 24 小時)
+# - 當前檔名: [component]minute_latest.temp.log
+# - 輪換後壓縮檔名: [component]YYYYMMDD_HHMM.log
+```
+
+### 檔案命名規則
+
+時間類輪換預設使用固定的檔名，在輪換時才根據時間範圍重新命名：
+
+| 預設類型 | 當前檔名 | 輪換後檔名格式 | 輪換後範例 |
+|---------|---------|--------------|-----------|
+| daily | `[{name}]daily_latest.temp.log` | `[{name}]{date}.log` | `[myapp]20250113.log` |
+| hourly | `[{name}]hourly_latest.temp.log` | `[{name}]{date}_{hour}.log` | `[myapp]20250113_14.log` |
+| weekly | `[{name}]weekly_latest.temp.log` | `[{name}]week_{year}W{week_num}.log` | `[myapp]week_2025W03.log` |
+| monthly | `[{name}]monthly_latest.temp.log` | `[{name}]{year}{month}.log` | `[myapp]202501.log` |
+| minute | `[{name}]minute_latest.temp.log` | `[{name}]{date}_{hour}{minute}.log` | `[myapp]20250113_1430.log` |
+
+**說明**：
+- 當前正在寫入的日誌檔案使用 `xxx_latest.temp.log` 格式
+- 當觸發輪換時，檔案會根據該檔案記錄的時間範圍重新命名
+- 例如：`[myapp]daily_latest.temp.log` 在次日午夜輪換時會變成 `[myapp]20250113.log`
+
+### 自訂輪換配置
+
+可以基於預設配置進行自訂：
+
+```python
+from pretty_loguru import ConfigTemplates
+
+# 基於每日輪換，但修改保留時間
+config = ConfigTemplates.daily()
+config.update(retention="60 days")  # 保留 60 天而非預設的 30 天
+
+# 基於每小時輪換，但修改壓縮格式
+config = ConfigTemplates.hourly()
+config.update(compression_format="backup_{name}_{date}_{hour}")
+```
+
 ## 🔄 輪換策略
 
 ### 大小基礎輪換

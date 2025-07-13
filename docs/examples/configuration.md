@@ -68,9 +68,35 @@ test_logger = create_logger("test_app", config=test_config)
 
 # 輪替模板
 daily_config = ConfigTemplates.daily()
-hourly_config = ConfigTemplates.hourly()
+# 每天午夜輪換，保留30天
+# 當前檔名：[daily_app]daily_latest.temp.log
+# 輪換後：[daily_app]YYYYMMDD.log
+daily_logger = create_logger("daily_app", config=daily_config)
+
+hourly_config = ConfigTemplates.hourly()  
+# 每小時輪換，保留7天
+# 當前檔名：[hourly_app]hourly_latest.temp.log
+# 輪換後：[hourly_app]YYYYMMDD_HH.log
+hourly_logger = create_logger("hourly_app", config=hourly_config)
+
 weekly_config = ConfigTemplates.weekly()
+# 每週一輪換，保留12週
+# 當前檔名：[weekly_app]weekly_latest.temp.log
+# 輪換後：[weekly_app]week_YYYYWNN.log  
+weekly_logger = create_logger("weekly_app", config=weekly_config)
+
 monthly_config = ConfigTemplates.monthly()
+# 每月輪換，保留12個月
+# 當前檔名：[monthly_app]monthly_latest.temp.log
+# 輪換後：[monthly_app]YYYYMM.log
+monthly_logger = create_logger("monthly_app", config=monthly_config)
+
+# 測試用：每分鐘輪換
+minute_config = ConfigTemplates.minute()
+# 每分鐘輪換，保留24小時
+# 當前檔名：[test_app]minute_latest.temp.log
+# 輪換後：[test_app]YYYYMMDD_HHMM.log
+test_logger = create_logger("test_app", config=minute_config)
 ```
 
 ## 檔案輪替策略
