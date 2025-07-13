@@ -20,7 +20,7 @@ logger = create_logger(
     level="INFO"
 )
 
-app = FastAPI(title="Pretty Loguru API Demo", version="1.0.1")
+app = FastAPI(title="Pretty Loguru API Demo", version="1.1.0")
 
 @app.on_event("startup")
 async def startup_event():
@@ -31,7 +31,7 @@ async def startup_event():
         "FastAPI 應用啟動",
         [
             "🚀 應用名稱: Pretty Loguru API Demo",
-            "📦 版本: 1.0.1",
+            "📦 版本: 1.1.0",
             "🌐 環境: Development",
             "📝 日誌系統: pretty-loguru",
             "⚡ 狀態: 準備就緒"
@@ -59,7 +59,7 @@ async def health_check():
     health_status = {
         "status": "healthy",
         "timestamp": time.time(),
-        "version": "1.0.1"
+        "version": "1.1.0"
     }
     
     logger.block(
@@ -554,7 +554,7 @@ class Settings(BaseSettings):
     """應用設定"""
     
     app_name: str = "Pretty Loguru FastAPI"
-    app_version: str = "1.0.1"
+    app_version: str = "1.1.0"
     debug: bool = False
     log_level: str = "INFO"
     log_folder: str = "api_logs"
@@ -633,7 +633,7 @@ import asyncio
 app = FastAPI(
     title="Pretty Loguru FastAPI Demo",
     description="展示 pretty-loguru 與 FastAPI 整合的完整範例",
-    version="1.0.1"
+    version="1.1.0"
 )
 
 # 添加 CORS 中間件
@@ -657,7 +657,7 @@ async def startup():
         "FastAPI 應用啟動完成",
         [
             "🚀 服務名稱: Pretty Loguru FastAPI Demo",
-            "📦 版本: 1.0.1",
+            "📦 版本: 1.1.0",
             "🌐 CORS: 已啟用",
             "📝 日誌中間件: 已載入",
             "🔧 認證系統: 已初始化",

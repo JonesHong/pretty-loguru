@@ -20,7 +20,7 @@ logger = create_logger(
     level="INFO"
 )
 
-app = FastAPI(title="Pretty Loguru API Demo", version="1.0.1")
+app = FastAPI(title="Pretty Loguru API Demo", version="1.1.0")
 
 @app.on_event("startup")
 async def startup_event():
@@ -31,7 +31,7 @@ async def startup_event():
         "FastAPI Application Startup",
         [
             "🚀 Application Name: Pretty Loguru API Demo",
-            "📦 Version: 1.0.1",
+            "📦 Version: 1.1.0",
             "🌐 Environment: Development",
             "📝 Logging System: pretty-loguru",
             "⚡ Status: Ready"
@@ -59,7 +59,7 @@ async def health_check():
     health_status = {
         "status": "healthy",
         "timestamp": time.time(),
-        "version": "1.0.1"
+        "version": "1.1.0"
     }
     
     logger.block(

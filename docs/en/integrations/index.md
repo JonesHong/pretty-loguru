@@ -193,7 +193,7 @@ logger = create_logger(
 )
 integrate_uvicorn(logger)
 
-app = FastAPI(title="Demo API", version="1.0.1")
+app = FastAPI(title="Demo API", version="1.1.0")
 
 @app.middleware("http")
 async def logging_middleware(request: Request, call_next):
@@ -245,7 +245,7 @@ async def startup_event():
         "Application Configuration",
         [
             "🌐 Name: Demo API",
-            "📦 Version: 1.0.1",
+            "📦 Version: 1.1.0",
             "🔧 Environment: Development",
             "🚀 Status: Starting"
         ],

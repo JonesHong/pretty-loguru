@@ -54,7 +54,7 @@ def get_order_logger() -> EnhancedLogger:
 app = FastAPI(
     title="Logger Dependency Injection Demo",
     description="展示 Pretty Loguru 依賴注入模式",
-    version="1.0.1"
+    version="1.1.0"
 )
 
 # === 認證服務路由 ===

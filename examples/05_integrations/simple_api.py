@@ -35,7 +35,7 @@ from pretty_loguru.integrations.fastapi import integrate_fastapi
 app = FastAPI(
     title="Pretty Loguru Demo API",
     description="展示 pretty-loguru 與 FastAPI 整合的簡單範例",
-    version="1.0.1"
+    version="1.1.0"
 )
 
 # 創建 logger 並與 FastAPI 集成
