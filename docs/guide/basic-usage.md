@@ -14,12 +14,11 @@ pretty-loguru 提供多種初始化方式，滿足不同場景的需求。
 from pretty_loguru import create_logger
 
 # 一行代碼完成所有設定
-logger  
+logger = create_logger(
     name="basic-usage_demo",
     log_path="my_logs",
     level="INFO"
 )
-print(f"Logger 已初始化，元件名稱：{component_name}")
 ```
 
 #### 自定義初始化
@@ -27,10 +26,10 @@ print(f"Logger 已初始化，元件名稱：{component_name}")
 ```python
 from pretty_loguru import create_logger
 
-create_logger(
+logger = create_logger(
+    name="my_app",
     level="INFO",
     log_path="custom_logs",
-    component_name="my_app",
     rotation="50MB",
     retention="30 days"
 )
@@ -146,21 +145,25 @@ pretty-loguru 會自動生成有意義的檔名：
 # 按檔案大小輪換
 logger = create_logger(
     name="basic-usage_demo",
-    log_path="logs", rotation="10MB",
+    log_path="logs",
+    rotation="10MB",
     level="INFO"
 )
 
 # 按時間輪換
 logger = create_logger(
     name="basic-usage_demo",
-    log_path="logs", rotation="1 day",
+    log_path="logs",
+    rotation="1 day",
     level="INFO"
 )
 
 # 按數量輪換
 logger = create_logger(
     name="basic-usage_demo",
-    log_path="logs", rotation="midnight", retention=10,
+    log_path="logs",
+    rotation="midnight",
+    retention=10,
     level="INFO"
 )
 ```
@@ -185,17 +188,17 @@ def setup_logging():
     env = os.getenv("ENVIRONMENT", "development")
     
     if env == "production":
-        return logger = create_logger(
-    name="demo",
-    log_path="prod_logs",
-    level="INFO"
-)
+        return create_logger(
+            name="demo",
+            log_path="prod_logs",
+            level="INFO"
+        )
     else:
-        return logger = create_logger(
-    name="demo",
-    log_path="dev_logs",
-    level="INFO"
-)
+        return create_logger(
+            name="demo",
+            log_path="dev_logs",
+            level="DEBUG"
+        )
 ```
 
 ### 條件式日誌
@@ -219,15 +222,14 @@ from pretty_loguru import create_logger
 def main():
     # 初始化日誌系統
     logger = create_logger(
-    name="demo",
-    log_path=
-        folder="app_logs",
+        name="demo",
+        log_path="app_logs",
         level="INFO",
         rotation="50MB",
         retention="14 days"
     )
     
-    logger.info(f"應用程式啟動，元件：{component_name}")
+    logger.info("應用程式啟動")
     
     try:
         # 模擬應用程式邏輯
@@ -290,8 +292,8 @@ A: 檢查日誌級別設定：
 ```python
 logger = create_logger(
     name="basic-usage_demo",
-    log_path="logs", level="DEBUG",
-    level="INFO"
+    log_path="logs",
+    level="DEBUG"
 )
 ```
 
@@ -307,20 +309,55 @@ A: 設定自動清理：
 ```python
 logger = create_logger(
     name="basic-usage_demo",
-    log_path="logs", retention="7 days",
+    log_path="logs",
+    retention="7 days",
     level="INFO"
 )
 ```
 
 ### Q: 如何在不同模組中使用同一個 logger？
-A: logger 是全域的，直接匯入即可：
+A: 使用 `get_logger` 函數來獲取已創建的 logger：
 ```python
-# module_a.py
+# main.py - 主程式，創建 logger
 from pretty_loguru import create_logger
+
+logger = create_logger(
+    name="my_app",
+    level="INFO",
+    log_path="logs"
+)
+logger.info("主程式啟動")
+
+# module_a.py - 模組 A
+from pretty_loguru import get_logger
+
+logger = get_logger("my_app")
 logger.info("模組 A 的訊息")
 
-# module_b.py  
+# module_b.py - 模組 B
+from pretty_loguru import get_logger
+
+logger = get_logger("my_app")
+logger.info("模組 B 的訊息")
+```
+
+或者使用更簡單的方法，在共用的 logger 模組中初始化：
+```python
+# logger.py - 共用的 logger 配置
 from pretty_loguru import create_logger
+
+logger = create_logger(
+    name="shared_app",
+    level="INFO",
+    log_path="logs"
+)
+
+# module_a.py
+from logger import logger
+logger.info("模組 A 的訊息")
+
+# module_b.py
+from logger import logger  
 logger.info("模組 B 的訊息")
 ```
 
