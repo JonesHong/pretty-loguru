@@ -14,7 +14,7 @@ export default defineConfig({
   ignoreDeadLinks: true,
   
   head: [
-    ['link', { rel: 'icon', type: 'image/png', href: `${base}logo.png` }],
+    ['link', { rel: 'icon', type: 'image/png', href: '/logo.png' }],
     ['meta', { name: 'theme-color', content: '#3c8772' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'pretty-loguru' }],
@@ -236,7 +236,7 @@ export default defineConfig({
   },
 
   themeConfig: {
-    logo: `${base}logo.png`,
+    logo: '/logo.png',
     
     socialLinks: [
       { icon: 'github', link: 'https://github.com/JonesHong/pretty-loguru' }
