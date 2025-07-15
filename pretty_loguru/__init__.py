@@ -71,11 +71,7 @@ from .formats.ascii_art import print_ascii_header, print_ascii_block
 from .utils.validators import is_ascii_only
 from .formats.rich_components import print_table, print_tree, print_columns, LoggerProgress
 
-# 導入集成功能
-from .integrations import has_uvicorn
 
-if has_uvicorn():
-    from .integrations.uvicorn import configure_uvicorn, InterceptHandler
 
 # 嘗試導入 FastAPI 集成
 try:
@@ -84,6 +80,14 @@ try:
     _has_fastapi = True
 except ImportError:
     _has_fastapi = False
+
+# 嘗試導入 Uvicorn 集成
+try:
+    from .integrations.uvicorn import setup_uvicorn_logging, integrate_uvicorn
+
+    _has_uvicorn = True
+except ImportError:
+    _has_uvicorn = False
 
     
 from .formats import has_figlet
@@ -146,17 +150,14 @@ __all__ = [
 ]
 
 # 如果 Uvicorn 可用，添加相關功能
-if has_uvicorn():
-    __all__.extend(
-        [
-            "configure_uvicorn",
-            "InterceptHandler"
-        ]
-    )
 
 # 如果 FastAPI 可用，添加相關功能
 if _has_fastapi:
     __all__.append("setup_fastapi_logging")
+
+# 如果 Uvicorn 可用，添加相關功能
+if _has_uvicorn:
+    __all__.extend(["setup_uvicorn_logging", "integrate_uvicorn"])
 
 # 如果 FIGlet 可用，添加相關功能
 if has_figlet():
