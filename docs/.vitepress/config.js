@@ -74,9 +74,26 @@ export default defineConfig({
               text: '範例集合',
               items: [
                 { text: '範例總覽', link: '/examples/' },
-                { text: '基礎用法', link: '/examples/basics/' },
-                { text: '視覺化效果', link: '/examples/visual/' },
-                { text: '進階應用', link: '/examples/presets/' }
+                { text: '快速開始', link: '/examples/quickstart' },
+                { text: '基礎範例', link: '/examples/basics' },
+                { text: '視覺化範例', link: '/examples/visual' },
+                { text: '配置管理', link: '/examples/configuration' },
+                { text: '框架整合', link: '/examples/integrations' },
+                { text: '生產環境', link: '/examples/production' },
+                { text: '進階用法', link: '/examples/advanced' },
+                { text: '企業級應用', link: '/examples/enterprise' }
+              ]
+            },
+            {
+              text: '詳細範例',
+              items: [
+                { text: '控制台 vs 檔案', link: '/examples/basics/console-vs-file' },
+                { text: '目標日誌', link: '/examples/basics/target-logging' },
+                { text: '簡單用法', link: '/examples/basics/simple-usage' },
+                { text: 'ASCII 藝術', link: '/examples/visual/ascii-art' },
+                { text: 'Rich 區塊', link: '/examples/visual/blocks' },
+                { text: 'Rich 元件', link: '/examples/visual/rich-components' },
+                { text: 'FastAPI 詳細整合', link: '/examples/integrations/fastapi-detailed' }
               ]
             }
           ],
@@ -163,9 +180,25 @@ export default defineConfig({
               text: 'Examples',
               items: [
                 { text: 'Overview', link: '/en/examples/' },
-                { text: 'Basic Usage', link: '/en/examples/basics/' },
-                { text: 'Visual Effects', link: '/en/examples/visual/' },
-                { text: 'Advanced Usage', link: '/en/examples/presets/' }
+                { text: 'Quick Start', link: '/en/examples/quickstart' },
+                { text: 'Basic Examples', link: '/en/examples/basics' },
+                { text: 'Visual Examples', link: '/en/examples/visual' },
+                { text: 'Configuration', link: '/en/examples/configuration' },
+                { text: 'Integrations', link: '/en/examples/integrations' },
+                { text: 'Production', link: '/en/examples/production' },
+                { text: 'Advanced', link: '/en/examples/advanced' },
+                { text: 'Enterprise', link: '/en/examples/enterprise' }
+              ]
+            },
+            {
+              text: 'Detailed Examples',
+              items: [
+                { text: 'Console vs File', link: '/en/examples/basics/console-vs-file' },
+                { text: 'Target Logging', link: '/en/examples/basics/target-logging' },
+                { text: 'ASCII Art', link: '/en/examples/visual/ascii-art' },
+                { text: 'Rich Blocks', link: '/en/examples/visual/blocks' },
+                { text: 'Rich Components', link: '/en/examples/visual/rich-components' },
+                { text: 'FastAPI Detailed', link: '/en/examples/integrations/fastapi-detailed' }
               ]
             }
           ],
