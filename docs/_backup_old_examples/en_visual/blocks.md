@@ -21,7 +21,7 @@ logger.block(
     "Basic Information",
     [
         "Application Name: MyApp",
-        "Version: 1.1.0",
+        "Version: 1.1.2",
         "Author: Development Team"
     ]
 )
@@ -92,7 +92,7 @@ def demo_border_colors():
         [
             "🖥️  Operating System: Linux",
             "🐍 Python Version: 3.9",
-            "📦 Package Version: 1.1.0"
+            "📦 Package Version: 1.1.2"
         ],
         border_style="blue"
     )
@@ -185,7 +185,7 @@ def application_config_report(config):
         "Application Configuration",
         [
             f"📱 Application Name: {config.get('app_name', 'Unknown')}",
-            f"🏷️  Version: {config.get('version', '1.1.0')}",
+            f"🏷️  Version: {config.get('version', '1.1.2')}",
             f"🌍 Environment: {config.get('environment', 'development')}",
             f"🔧 Debug Mode: {'On' if config.get('debug', False) else 'Off'}"
         ],

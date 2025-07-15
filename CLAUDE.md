@@ -137,7 +137,7 @@ Available templates in `ConfigTemplates`:
 - **Loguru**: Base logging functionality (>=0.6.0)
 - **Rich**: Console formatting, panels, tables (>=12.0.0)
 - **Art**: ASCII art generation (>=5.0.0)
-- **PyFiglet**: Alternative ASCII art (>=1.1.0)
+- **PyFiglet**: Alternative ASCII art (>=1.1.2)
 - **Matplotlib**: For visual components (>=3.7.0)
 - **Python-dateutil**: Relative date calculations (>=2.8.2)
 

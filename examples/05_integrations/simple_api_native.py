@@ -32,7 +32,7 @@ from pretty_loguru.integrations.fastapi import integrate_fastapi
 app = FastAPI(
     title="Pretty Loguru Native Format Demo",
     description="展示使用原生格式的 FastAPI 整合",
-    version="1.1.0"
+    version="1.1.2"
 )
 
 # 創建使用原生格式的 logger

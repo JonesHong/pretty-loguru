@@ -89,7 +89,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Enhanced API with pretty-loguru",
     description="API with comprehensive logging",
-    version="1.1.0",
+    version="1.1.2",
     lifespan=lifespan
 )
 ```

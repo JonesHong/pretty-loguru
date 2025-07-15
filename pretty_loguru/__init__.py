@@ -181,4 +181,4 @@ if _has_advanced:
     __all__.append("advanced")
 
 # 版本信息
-__version__ = "1.1.1"
+__version__ = "1.1.2"

@@ -20,7 +20,7 @@ logger.block(
     "Basic Information",
     [
         "Application Name: MyApp",
-        "Version: 1.1.0",
+        "Version: 1.1.2",
         "Start Time: 2024-06-30 10:30:00"
     ]
 )
@@ -145,7 +145,7 @@ logger.block(
     [
         "🖥️  Operating System: Ubuntu 20.04",
         "🐍 Python Version: 3.9.7",
-        "📦 Package Version: pretty-loguru 1.1.0",
+        "📦 Package Version: pretty-loguru 1.1.2",
         "🌐 Network Interface: eth0"
     ],
     border_style="blue",

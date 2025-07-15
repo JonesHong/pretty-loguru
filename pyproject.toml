@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pretty-loguru"
-version = "1.1.1"
+version = "1.1.2"
 description = "A Loguru-based logger with Rich panels, ASCII art headers, blocks and more."
 readme = "README.md"
 license = { file = "LICENSE" }
