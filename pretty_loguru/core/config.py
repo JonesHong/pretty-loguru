@@ -65,6 +65,7 @@ class LoggerConfig:
     # --- 行為控制 ---
     start_cleaner: bool = False
     use_native_format: bool = False
+    use_proxy: bool = False
     preset: Optional[str] = None
     
     # --- 傳統參數（向後兼容） ---
@@ -157,26 +158,15 @@ class LoggerConfig:
     
     def _update_attached_loggers(self):
         """更新所有附加的 logger"""
-        from ..factory.creator import reinit_logger
+        from ..factory.updater import update_logger_config
         
         for logger_name in self._attached_loggers.copy():
             try:
-                reinit_logger(
-                    name=logger_name,
-                    level=self.level,
-                    log_path=self.log_path,
-                    rotation=self.rotation,
-                    retention=self.retention,
-                    compression=self.compression,
-                    compression_format=self.compression_format,
-                    logger_format=self.logger_format,
-                    component_name=self.component_name,
-                    subdirectory=self.subdirectory,
-                    use_proxy=self.use_proxy,
-                    start_cleaner=self.start_cleaner,
-                    use_native_format=self.use_native_format,
-                    preset=self.preset
-                )
+                # 使用新的更新方法，直接更新現有 logger
+                success = update_logger_config(logger_name, self)
+                if not success:
+                    warnings.warn(f"更新 logger '{logger_name}' 失敗")
+                    self._attached_loggers.discard(logger_name)
             except Exception as e:
                 warnings.warn(f"更新 logger '{logger_name}' 失敗: {e}")
                 # 移除失效的 logger
