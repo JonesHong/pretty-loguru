@@ -83,34 +83,14 @@
       "Bash(timeout:*)",
       "Bash(touch:*)",
       "Bash(git config:*)",
-      "Bash(git remote get-url:*)"
+      "Bash(git remote get-url:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(python test_panel_box_styles.py)",
+      "Bash(python test:*)",
+      "Bash(comm:*)",
+      "Bash(twine upload:*)",
+      "Bash(git reset:*)"
     ],
     "deny": []
-  },
-  "xxx": {
-    "theme": "Default",
-    "selectedAuthType": "oauth-personal",
-    "mcpServers": {
-      "context7": {
-        "command": "npx",
-        "args": [
-          "-y",
-          "@upstash/context7-mcp"
-        ]
-      },
-      "taskmaster-ai": {
-        "command": "npx",
-        "args": [
-          "-y",
-          "--package=task-master-ai",
-          "task-master-ai"
-        ],
-        "env": {
-          "ANTHROPIC_API_KEY": "sk-ant-",
-          "OPENAI_API_KEY": "sk-proj-",
-          "GOOGLE_API_KEY": "sk-proj-"
-        }
-      }
-    }
   }
 }

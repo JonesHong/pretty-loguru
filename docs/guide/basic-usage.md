@@ -64,6 +64,60 @@ native_logger = create_logger(
 native_logger.info("這是原生格式的訊息")
 ```
 
+## 🎨 使用配置模板
+
+pretty-loguru 提供了預設的配置模板，適合不同的使用場景：
+
+### 內建配置模板
+
+```python
+from pretty_loguru import ConfigTemplates
+
+# 開發環境配置
+dev_config = ConfigTemplates.development()
+dev_logger = dev_config.apply_to("dev_app")
+# - DEBUG 級別
+# - 原生格式
+# - 7 天保留
+
+# 生產環境配置
+prod_config = ConfigTemplates.production()
+prod_logger = prod_config.apply_to("prod_app")
+# - INFO 級別
+# - 壓縮儲存
+# - 30 天保留
+# - 自動清理
+
+# 測試環境配置
+test_config = ConfigTemplates.testing()
+test_logger = test_config.apply_to("test_app")
+# - WARNING 級別
+# - 3 天保留
+```
+
+### 模板的優勢
+
+1. **一致性**：確保相同環境的應用使用相同配置
+2. **最佳實踐**：內建經過優化的配置參數
+3. **快速切換**：輕鬆在不同環境間切換
+
+```python
+import os
+from pretty_loguru import ConfigTemplates
+
+# 根據環境變數自動選擇配置
+env = os.getenv('APP_ENV', 'development')
+
+if env == 'production':
+    config = ConfigTemplates.production()
+elif env == 'testing':
+    config = ConfigTemplates.testing()
+else:
+    config = ConfigTemplates.development()
+
+logger = config.apply_to("my_app")
+```
+
 ## 📊 日誌級別
 
 pretty-loguru 支援標準的日誌級別，並新增了 `SUCCESS` 級別：

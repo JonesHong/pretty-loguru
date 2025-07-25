@@ -54,7 +54,7 @@ class LoggerConfig:
     log_path: Optional[LogPathType] = None
     rotation: Optional[LogRotationType] = LOG_ROTATION
     retention: Optional[str] = LOG_RETENTION
-    compression: Optional[Union[str, Callable]] = None
+    compression: Optional[Union[bool, Callable]] = None
     compression_format: Optional[str] = None
     
     # --- 格式化 ---

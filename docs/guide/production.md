@@ -26,7 +26,7 @@ def create_production_logger(service_name):
         log_path=f"{log_path}/{service_name}.log",
         rotation="100 MB",          # 適中的檔案大小
         retention="30 days",        # 合規要求的保留期
-        compression="gzip",         # 壓縮節省空間
+        compression=True,          # 壓縮節省空間
         enqueue=True,              # 非同步處理提升效能
         backtrace=False,           # 生產環境不需要完整追蹤
         diagnose=False,            # 關閉診斷資訊
@@ -75,7 +75,7 @@ class MicroserviceLogger:
             log_path=f"/var/log/{self.service_name}/{self.service_name}.log",
             rotation="daily",
             retention="7 days",
-            compression="gzip",
+            compression=True,
             enqueue=True,
             # 微服務標準格式
             format='{"timestamp": "{time:YYYY-MM-DD HH:mm:ss.SSS}", "level": "{level}", "service": "' + self.service_name + '", "instance": "' + self.instance_id + '", "version": "' + self.version + '", "message": "{message}", "extra": {extra}}',
@@ -226,7 +226,7 @@ data:
       "log_level": "INFO",
       "rotation": "100 MB",
       "retention": "7 days",
-      "compression": "gzip"
+      "compression": true
     }
 ```
 
@@ -447,7 +447,7 @@ class SecureLogger:
             log_path=f"/var/log/secure/{service_name}.log",
             rotation="daily",
             retention="90 days",  # 安全日誌長期保留
-            compression="gzip",
+            compression=True,
             # 確保檔案權限安全
             enqueue=True
         )
@@ -548,7 +548,7 @@ class FaultTolerantLogger:
                 log_path=f"/var/log/{service_name}/{service_name}.log",
                 rotation="100 MB",
                 retention="30 days",
-                compression="gzip",
+                compression=True,
                 enqueue=True
             )
         except Exception as e:
@@ -746,7 +746,7 @@ class ProductionConfig:
             log_path=f"{self.log_path}/application.log",
             rotation="100 MB",
             retention="30 days",
-            compression="gzip",
+            compression=True,
             enqueue=True,
             format="{time:YYYY-MM-DD HH:mm:ss.SSS} | {level: <8} | {name} | {function}:{line} - {message}",
             catch=True
@@ -760,7 +760,7 @@ class ProductionConfig:
             log_path=f"{self.log_path}/access.log",
             rotation="daily",
             retention="90 days",
-            compression="gzip",
+            compression=True,
             format="{time:YYYY-MM-DD HH:mm:ss.SSS} | {message}",
             serialize=True
         )
@@ -773,7 +773,7 @@ class ProductionConfig:
             log_path=f"{self.log_path}/error.log",
             rotation="50 MB",
             retention="90 days",
-            compression="gzip",
+            compression=True,
             backtrace=True,
             diagnose=True
         )
@@ -786,7 +786,7 @@ class ProductionConfig:
             log_path=f"{self.log_path}/audit.log",
             rotation="daily",
             retention="2555 days",  # 7年合規要求
-            compression="gzip",
+            compression=True,
             format='{"timestamp": "{time:YYYY-MM-DD HH:mm:ss.SSS}", "service": "' + self.service_name + '", "event": "audit", "message": "{message}", "data": {extra}}',
             serialize=True
         )

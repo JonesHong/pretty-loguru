@@ -4,6 +4,46 @@ pretty-loguru 提供靈活的配置選項，讓您能夠根據需求自訂日誌
 
 ## 🎯 配置方式
 
+### 使用 LoggerConfig 類（推薦）
+
+```python
+from pretty_loguru import LoggerConfig
+
+# 創建配置物件
+config = LoggerConfig(
+    level="INFO",
+    log_path="logs/app",
+    rotation="100 MB",
+    retention="30 days",
+    compression=True
+)
+
+# 應用到單個 logger
+logger = config.apply_to("my_app")
+
+# 或應用到多個 logger
+api_logger, db_logger = config.apply_to("api", "database")
+
+# 動態更新配置（所有使用此配置的 logger 都會更新）
+config.update(level="DEBUG")
+```
+
+### LoggerConfig 的優勢
+
+1. **統一管理**：一個配置可以管理多個 logger
+2. **動態更新**：修改配置會自動更新所有相關 logger
+3. **配置複用**：可以克隆和繼承配置
+
+```python
+# 克隆配置
+api_config = config.clone()
+api_config.update(level="WARNING", retention="7 days")
+
+# 從父配置繼承
+test_config = LoggerConfig()
+test_config.inherit_from(config, level="DEBUG")
+```
+
 ### 基本配置
 
 ```python
@@ -16,7 +56,7 @@ logger = create_logger(
     log_path="logs/app",
     rotation="10 MB",
     retention="30 days",
-    compression="gzip"
+    compression=True
 )
 ```
 
@@ -32,7 +72,7 @@ logger = create_logger(
     log_path="logs/advanced",
     rotation="daily",
     retention="1 week",
-    compression="zip",
+    compression=True,
     # 自訂格式
     format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
     # 過濾器
@@ -243,7 +283,7 @@ if env == "production":
         log_path="/var/log/app",
         rotation="daily",
         retention="30 days",
-        compression="gzip",
+        compression=True,
         format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}",
         serialize=True  # JSON 格式用於日誌聚合
     )

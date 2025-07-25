@@ -21,7 +21,7 @@ logger = create_logger(
     log_path="quick_start_logs",
     level="INFO"
 )
-print(f"日誌系統已初始化，元件 ID: {component_name}")
+print("日誌系統已初始化")
 
 # 基本日誌輸出
 logger.debug("這是除錯訊息")
@@ -118,11 +118,11 @@ from pretty_loguru import create_logger
 
 def main():
     # 初始化
-    logger  
-    name="quick-start_demo",
-    log_path="demo_logs",
-    level="INFO"
-)
+    logger = create_logger(
+        name="quick-start_demo",
+        log_path="demo_logs",
+        level="INFO"
+    )
     
     # 應用啟動
     logger.ascii_header("APP STARTUP", font="slant", border_style="blue")

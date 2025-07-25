@@ -108,7 +108,7 @@ def create_logger(
     log_path: Optional[LogPathType] = None,
     rotation: Optional[LogRotationType] = None,
     retention: Optional[str] = None,
-    compression: Optional[Union[str, Callable]] = None,
+    compression: Optional[Union[bool, Callable]] = None,
     compression_format: Optional[str] = None,
     # 格式化配置
     level: Optional[LogLevelType] = None,
@@ -266,7 +266,7 @@ def reinit_logger(
     log_path: Optional[LogPathType] = None,
     rotation: Optional[LogRotationType] = None,
     retention: Optional[str] = None,
-    compression: Optional[Union[str, Callable]] = None,
+    compression: Optional[Union[bool, Callable]] = None,
     compression_format: Optional[str] = None,
     # 格式化配置
     level: Optional[LogLevelType] = None,

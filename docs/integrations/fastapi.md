@@ -496,7 +496,7 @@ def create_environment_logger(env: str = None):
             log_path="/var/log/fastapi/app.log",
             rotation="100 MB",
             retention="30 days",
-            compression="gzip",
+            compression=True,
             serialize=True,
             enqueue=True
         )
@@ -507,7 +507,7 @@ def create_environment_logger(env: str = None):
             log_path="logs/staging.log",
             rotation="50 MB",
             retention="14 days",
-            compression="gzip"
+            compression=True
         )
     else:  # development
         return create_logger(

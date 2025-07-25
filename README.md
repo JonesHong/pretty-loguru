@@ -23,12 +23,10 @@ pip install pretty-loguru
 
 ## 🚀 Quick Start
 
-### Basic Usage
-
 ```python
 from pretty_loguru import create_logger
 
-# Create logger
+# Create logger - it's this simple!
 logger = create_logger("my_app")
 
 # Basic logging
@@ -37,50 +35,17 @@ logger.success("Operation completed successfully")
 logger.warning("This is a warning")
 logger.error("An error occurred")
 
-# Rich blocks
+# Rich visual blocks
 logger.block("System Status", "Everything is running smoothly", border_style="green")
 
-# ASCII art
+# ASCII art headers
 logger.ascii_header("WELCOME", font="slant")
+
+# With file output
+logger = create_logger("my_app", log_path="logs", level="INFO")
 ```
 
-### Using Configuration Objects
-
-```python
-from pretty_loguru import create_logger, LoggerConfig, ConfigTemplates
-
-# Use preset templates
-config = ConfigTemplates.production()
-logger = create_logger("app", config=config)
-
-# Custom configuration
-custom_config = LoggerConfig(
-    level="DEBUG",
-    log_path="logs",
-    rotation="1 day",
-    retention="7 days"
-)
-logger = create_logger("debug_app", config=custom_config)
-
-# Update existing logger
-config.update(level="INFO")  # All loggers using this config will update
-```
-
-### Multi-Logger Management
-
-```python
-# Create multiple loggers
-auth_logger = create_logger("auth", level="INFO")
-db_logger = create_logger("database", level="DEBUG")
-api_logger = create_logger("api", level="WARNING")
-
-# Unified configuration management
-config = LoggerConfig(level="INFO", log_path="logs")
-loggers = config.apply_to("auth", "database", "api")
-
-# Dynamic update for all loggers
-config.update(level="DEBUG")  # All loggers update simultaneously
-```
+> 📚 **Want more?** Check out our [User Guide](https://joneshong.github.io/pretty-loguru/) for advanced features like configuration templates, multi-logger management, and framework integrations.
 
 ## 📖 Documentation
 

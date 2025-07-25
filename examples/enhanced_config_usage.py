@@ -32,7 +32,7 @@ def basic_usage():
         log_path="logs/web",
         rotation="daily",
         retention="30 days",
-        compression="gzip"
+        compression=True
     )
     
     # 2. 套用到多個 logger - 這就是您要的優雅 API！
@@ -150,7 +150,7 @@ def dynamic_management():
     
     # 3. 調整輪替策略
     print("\n調整輪替策略...")
-    app_config.update(rotation="daily", compression="gzip")
+    app_config.update(rotation="daily", compression=True)
     
     # 4. 分離不需要的 logger
     print("\n分離 scheduler logger...")
@@ -217,7 +217,7 @@ def microservices_example():
         level="INFO",
         rotation="daily",
         retention="30 days",
-        compression="gzip"
+        compression=True
     )
     
     # 2. 為不同服務創建專用配置

@@ -1,6 +1,6 @@
-# 增強配置管理
+# 進階配置管理
 
-pretty-loguru 提供了強大的增強配置系統，讓您能夠創建可重用的配置模板，並優雅地管理多個 logger。
+pretty-loguru 提供了強大的配置系統，讓您能夠創建可重用的配置模板，並優雅地管理多個 logger。
 
 ## 🎯 核心特性
 
@@ -19,10 +19,10 @@ pretty-loguru 提供了強大的增強配置系統，讓您能夠創建可重用
 ### 基本使用
 
 ```python
-from pretty_loguru import EnhancedLoggerConfig
+from pretty_loguru import LoggerConfig
 
 # 1. 創建配置模板
-config = EnhancedLoggerConfig(
+config = LoggerConfig(
     level="INFO",
     log_path="logs/app",
     rotation="daily",
@@ -181,7 +181,7 @@ base_config = EnhancedLoggerConfig(
     level="INFO",
     rotation="daily",
     retention="30 days",
-    compression="gzip"
+    compression=True
 )
 
 # 為不同服務創建專用配置

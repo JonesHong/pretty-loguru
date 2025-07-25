@@ -45,7 +45,7 @@ class ConfigTemplates:
             log_path=log_path,
             rotation="100 MB",
             retention="30 days",
-            compression="gzip",
+            compression=True,
             start_cleaner=True
         )
     
@@ -78,7 +78,7 @@ class ConfigTemplates:
             log_path="logs/perf",
             rotation="500 MB",
             retention="7 days",
-            compression="gzip"
+            compression=True
         )
     
     @staticmethod
