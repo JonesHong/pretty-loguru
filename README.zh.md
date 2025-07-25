@@ -3,8 +3,10 @@
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![PyPI Version](https://img.shields.io/pypi/v/pretty-loguru.svg)](https://pypi.org/project/pretty-loguru/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Documentation](https://img.shields.io/badge/docs-latest-brightgreen)](https://joneshong.github.io/pretty-loguru/)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://github.com/JonesHong/pretty-loguru)
 
-增強版 Python 日誌庫，基於 [Loguru](https://github.com/Delgan/loguru)，整合 [Rich](https://github.com/Textualize/rich) 和 ASCII 藝術，讓日誌輸出更加優雅和直觀。
+增強版 Python 日誌庫，基於 [Loguru](https://github.com/Delgan/loguru)，整合 [Rich](https://github.com/Textualize/rich) 和 ASCII 藝術 [art](https://github.com/sepandhaghighi/art)，讓日誌輸出更加優雅和直觀。
 
 ## ✨ 特色功能
 

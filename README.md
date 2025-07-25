@@ -3,8 +3,10 @@
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![PyPI Version](https://img.shields.io/pypi/v/pretty-loguru.svg)](https://pypi.org/project/pretty-loguru/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Documentation](https://img.shields.io/badge/docs-latest-brightgreen)](https://joneshong.github.io/pretty-loguru/)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://github.com/JonesHong/pretty-loguru)
 
-An enhanced Python logging library built on [Loguru](https://github.com/Delgan/loguru), integrating [Rich](https://github.com/Textualize/rich) and ASCII art to make logging more elegant and intuitive.
+An enhanced Python logging library built on [Loguru](https://github.com/Delgan/loguru), integrating [Rich](https://github.com/Textualize/rich) and ASCII [art](https://github.com/sepandhaghighi/art) to make logging more elegant and intuitive.
 
 ## ✨ Features
 
