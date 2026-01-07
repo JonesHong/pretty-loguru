@@ -22,7 +22,7 @@ from pretty_loguru import create_logger
 # Create logger instance
 logger = create_logger(
     name="demo",
-    log_path="logs",
+    log_dir="logs",
     level="INFO"
 )
 
@@ -33,10 +33,10 @@ logger.ascii_block(
         "記憶體使用: 2.1GB", 
         "磁碟空間: 120GB 可用"
     ],
-    ascii_header="STATUS",   # ASCII 標題文字
-    ascii_font="standard",   # ASCII 字體
+    header_text="STATUS",   # ASCII 標題文字
+    font="standard",   # ASCII 字體
     border_style="green",    # 邊框顏色
-    log_level="INFO"         # 日誌級別
+    level="INFO"         # 日誌級別
 )
 ```
 
@@ -51,10 +51,10 @@ logger.ascii_block(
         "服務檢查: 全部通過",
         "負載均衡: 已啟用"
     ],
-    ascii_header="DEPLOYED",
-    ascii_font="block",
+    header_text="DEPLOYED",
+    font="block",
     border_style="green",
-    log_level="SUCCESS"
+    level="SUCCESS"
 )
 ```
 
@@ -72,10 +72,10 @@ logger.ascii_block(
         "✅ API 服務啟動",
         "✅ 健康檢查通過"
     ],
-    ascii_header="READY",
-    ascii_font="slant",
+    header_text="READY",
+    font="slant",
     border_style="green",
-    log_level="SUCCESS"
+    level="SUCCESS"
 )
 ```
 
@@ -90,10 +90,10 @@ logger.ascii_block(
         "⚠️  磁碟 I/O: 高負載",
         "💡 建議: 擴展資源或優化程序"
     ],
-    ascii_header="WARNING",
-    ascii_font="doom",
+    header_text="WARNING",
+    font="doom",
     border_style="yellow",
-    log_level="WARNING"
+    level="WARNING"
 )
 ```
 
@@ -108,10 +108,10 @@ logger.ascii_block(
         "❌ API 健康檢查失敗",
         "🔧 修復動作: 重啟相關服務"
     ],
-    ascii_header="ERROR",
-    ascii_font="doom", 
+    header_text="ERROR",
+    font="doom", 
     border_style="red",
-    log_level="ERROR"
+    level="ERROR"
 )
 ```
 
@@ -129,8 +129,8 @@ def application_startup():
             "🔧 初始化日誌系統", 
             "🔧 建立資料庫連接池"
         ],
-        ascii_header="STARTUP",
-        ascii_font="slant",
+        header_text="STARTUP",
+        font="slant",
         border_style="blue"
     )
     
@@ -144,10 +144,10 @@ def application_startup():
             f"🌐 監聽埠: {port}",
             f"⏱️  啟動耗時: {startup_time}秒"
         ],
-        ascii_header="ONLINE",
-        ascii_font="block",
+        header_text="ONLINE",
+        font="block",
         border_style="green",
-        log_level="SUCCESS"
+        level="SUCCESS"
     )
 ```
 
@@ -165,10 +165,10 @@ def deployment_report(deployment_info):
             f"✅ 健康檢查: {deployment_info['health_check']}",
             f"📊 成功率: {deployment_info['success_rate']}%"
         ],
-        ascii_header="DEPLOYED",
-        ascii_font="standard",
+        header_text="DEPLOYED",
+        font="standard",
         border_style="green" if deployment_info['success_rate'] == 100 else "yellow",
-        log_level="SUCCESS" if deployment_info['success_rate'] == 100 else "WARNING"
+        level="SUCCESS" if deployment_info['success_rate'] == 100 else "WARNING"
     )
 ```
 
@@ -186,10 +186,10 @@ def data_pipeline_summary(stats):
             f"🚀 處理速度: {stats['records_per_second']:,} 記錄/秒",
             f"💾 輸出大小: {stats['output_size']}"
         ],
-        ascii_header="COMPLETE",
-        ascii_font="block",
+        header_text="COMPLETE",
+        font="block",
         border_style="green",
-        log_level="SUCCESS"
+        level="SUCCESS"
     )
 ```
 
@@ -228,10 +228,10 @@ def system_health_dashboard():
             f"⏰ 檢查時間: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
             f"🔄 系統運行時間: {get_uptime()}"
         ],
-        ascii_header=header,
-        ascii_font="standard",
+        header_text=header,
+        font="standard",
         border_style=color,
-        log_level=level
+        level=level
     )
 ```
 
@@ -249,10 +249,10 @@ def api_request_summary(request_stats):
             f"🚀 最快響應: {request_stats['min_response_time']:.2f}ms",
             f"🐌 最慢響應: {request_stats['max_response_time']:.2f}ms"
         ],
-        ascii_header="API STATS",
-        ascii_font="small",
+        header_text="API STATS",
+        font="small",
         border_style="blue",
-        log_level="INFO"
+        level="INFO"
     )
 ```
 
@@ -280,10 +280,10 @@ def dynamic_status_report(services):
     logger.ascii_block(
         "服務健康檢查",
         content,
-        ascii_header="HEALTHY" if all_healthy else "ISSUES",
-        ascii_font="slant",
+        header_text="HEALTHY" if all_healthy else "ISSUES",
+        font="slant",
         border_style="green" if all_healthy else "red",
-        log_level="SUCCESS" if all_healthy else "ERROR"
+        level="SUCCESS" if all_healthy else "ERROR"
     )
 ```
 
@@ -315,10 +315,10 @@ def build_result_report(build_success, test_results, deployment_ready):
     logger.ascii_block(
         "建構與測試報告",
         content,
-        ascii_header=header,
-        ascii_font="doom",
+        header_text=header,
+        font="doom",
         border_style=color,
-        log_level=level
+        level=level
     )
 ```
 
@@ -351,10 +351,10 @@ class ProgressTracker:
         logger.ascii_block(
             f"階段 {self.current_stage} 完成",
             progress_content,
-            ascii_header=f"STAGE {self.current_stage}",
-            ascii_font="small",
+            header_text=f"STAGE {self.current_stage}",
+            font="small",
             border_style="cyan",
-            log_level="SUCCESS"
+            level="SUCCESS"
         )
         
         # 如果全部完成
@@ -362,10 +362,10 @@ class ProgressTracker:
             logger.ascii_block(
                 "所有階段完成",
                 [f"🎉 {stage} 已完成" for stage in self.completed_stages],
-                ascii_header="COMPLETE",
-                ascii_font="block",
+                header_text="COMPLETE",
+                font="block",
                 border_style="green",
-                log_level="SUCCESS"
+                level="SUCCESS"
             )
 
 # 使用範例
@@ -388,8 +388,8 @@ logger.ascii_block(
         "環境: Production", 
         "狀態: 成功"
     ],
-    ascii_header="DEPLOY",
-    ascii_font="slant"
+    header_text="DEPLOY",
+    font="slant"
 )
 
 # 不推薦 - 內容過於冗長
@@ -399,8 +399,8 @@ logger.ascii_block(
         "這是一個非常長的內容行，包含了太多的資訊，可能會影響視覺效果...",
         "又是一行很長的內容..."
     ],
-    ascii_header="VERY LONG HEADER",
-    ascii_font="standard"
+    header_text="VERY LONG HEADER",
+    font="standard"
 )
 ```
 
@@ -408,19 +408,19 @@ logger.ascii_block(
 
 ```python
 # 成功 - 綠色
-logger.ascii_block(..., border_style="green", log_level="SUCCESS")
+logger.ascii_block(..., border_style="green", level="SUCCESS")
 
 # 警告 - 黃色
-logger.ascii_block(..., border_style="yellow", log_level="WARNING")
+logger.ascii_block(..., border_style="yellow", level="WARNING")
 
 # 錯誤 - 紅色  
-logger.ascii_block(..., border_style="red", log_level="ERROR")
+logger.ascii_block(..., border_style="red", level="ERROR")
 
 # 資訊 - 藍色
-logger.ascii_block(..., border_style="blue", log_level="INFO")
+logger.ascii_block(..., border_style="blue", level="INFO")
 
 # 特殊 - 紫色/青色
-logger.ascii_block(..., border_style="magenta", log_level="INFO")
+logger.ascii_block(..., border_style="magenta", level="INFO")
 ```
 
 ## 🚀 下一步

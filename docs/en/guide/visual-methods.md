@@ -229,12 +229,12 @@ logger.ascii_header("PHASE 1", font="small")
 
 1. **Simple First**: If `block()` meets your needs, don't use `panel()`
 2. **Batch Display**: Avoid frequent visual method calls in loops
-3. **Target-Oriented**: Use `console_*` and `file_*` prefixes to control output targets
+3. **Target-Oriented**: Use `to_console_only=True` / `to_file_only=True` to control output targets
 
 ```python
 # Console shows progress, file logs results
-logger.console_panel(progress_table, title="Progress")
-logger.file_panel(final_results, title="Final Results")
+logger.panel(progress_table, title="Progress", to_console_only=True)
+logger.panel(final_results, title="Final Results", to_file_only=True)
 ```
 
 ## 📚 Best Practices

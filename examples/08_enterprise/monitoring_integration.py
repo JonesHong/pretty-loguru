@@ -173,7 +173,7 @@ class MonitoringIntegration:
         # 建立監控日誌記錄器
         self.logger = create_logger(
             name="monitoring_integration",
-            log_path="logs/monitoring",
+            log_dir="logs/monitoring",
             level="INFO",
             rotation="hourly",
             retention="30 days"

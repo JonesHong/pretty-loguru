@@ -14,7 +14,7 @@ from rich.console import Console
 # Initialize the logging system
 logger = create_logger(
     name="rich-components_demo",
-    log_path="rich_components_demo",
+    log_dir="rich_components_demo",
     level="INFO"
 )
 

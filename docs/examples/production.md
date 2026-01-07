@@ -8,7 +8,8 @@
 
 ```python
 import os
-from pretty_loguru import create_logger, ConfigTemplates, LoggerConfig
+from pretty_loguru import LoggerConfig, create_logger
+from pretty_loguru.addons import ConfigTemplates
 
 def get_environment_config() -> LoggerConfig:
     """根據環境變數獲取配置"""
@@ -19,7 +20,7 @@ def get_environment_config() -> LoggerConfig:
         "testing": ConfigTemplates.testing(),
         "staging": LoggerConfig(
             level="INFO",
-            log_path="logs/staging",
+            log_dir="logs/staging",
             rotation="100 MB",
             retention="14 days",
             compression="zip"
@@ -32,7 +33,7 @@ def get_environment_config() -> LoggerConfig:
     # 環境特定覆寫
     if env == "production":
         # 生產環境使用 JSON 格式便於日誌聚合
-        config.logger_format = '{"time":"{time}", "level":"{level}", "message":"{message}"}'
+        config.format = '{"time":"{time}", "level":"{level}", "message":"{message}"}'
     
     return config
 
@@ -57,7 +58,7 @@ import psutil
 import asyncio
 from functools import wraps
 
-logger = create_logger("performance", log_path="logs/metrics")
+logger = create_logger("performance", log_dir="logs/metrics")
 
 def monitor_performance(func):
     """性能監控裝飾器"""
@@ -175,7 +176,7 @@ from typing import Dict, Any
 
 logger = create_logger(
     "error_tracker",
-    log_path="logs/errors",
+    log_dir="logs/errors",
     rotation="1 day",
     retention="30 days",
     level="INFO"
@@ -220,7 +221,7 @@ class ErrorTracker:
             f"❌ Error Report - {error_type}",
             error_details,
             border_style="red",
-            log_level="ERROR"
+            level="ERROR"
         )
         
         # 頻繁錯誤警告
@@ -248,7 +249,7 @@ class ErrorTracker:
             "📊 Error Summary",
             summary[:10],  # Top 10 errors
             border_style="yellow",
-            log_level="INFO"
+            level="INFO"
         )
         
         return summary
@@ -325,7 +326,7 @@ def custom_compression(file_path: str) -> str:
 # 使用自定義壓縮
 logger = create_logger(
     "production",
-    log_path="logs/prod",
+    log_dir="logs/prod",
     rotation="50 MB",
     retention="30 days",
     compression=custom_compression,
@@ -337,8 +338,8 @@ def cleanup_old_logs(log_dir: str, days: int = 30):
     """清理超過指定天數的日誌"""
     import time
     
-    log_path = Path(log_dir)
-    if not log_path.exists():
+    log_dir = Path(log_dir)
+    if not log_dir.exists():
         return
     
     current_time = time.time()
@@ -347,7 +348,7 @@ def cleanup_old_logs(log_dir: str, days: int = 30):
     cleaned_count = 0
     cleaned_size = 0
     
-    for file_path in log_path.glob("*.log*"):
+    for file_path in log_dir.glob("*.log*"):
         if file_path.stat().st_mtime < cutoff_time:
             file_size = file_path.stat().st_size
             file_path.unlink()
@@ -399,7 +400,7 @@ def production_checklist():
         "🚀 生產環境部署檢查",
         checks,
         border_style="blue",
-        log_level="INFO"
+        level="INFO"
     )
     
     return all("✅" in check for check in checks)

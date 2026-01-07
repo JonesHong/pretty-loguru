@@ -12,8 +12,9 @@ from rich.console import Console
 from rich import box as rich_box
 from ..core.base import get_console
 
-from ..types import EnhancedLogger
-from ..core.target_formatter import add_target_methods, ensure_target_parameters
+from ..types import PrettyLogger
+from ..core.target_formatter import ensure_target_parameters
+from ..core.pretty_event import PRETTY_VERSION_V1, build_renderable, render_renderable_to_text
 
 
 # Box style mapping
@@ -68,7 +69,7 @@ def get_box_style(box_name: Optional[str] = None):
 
 def format_block_message(
     title: str,
-    message_list: List[str],
+    lines: Union[str, List[str]],
     separator: str = "=",
     separator_length: int = 50,
 ) -> str:
@@ -77,15 +78,19 @@ def format_block_message(
     
     Args:
         title: 區塊的標題
-        message_list: 消息列表
+        lines: 內容（可為單行字串或多行列表）
         separator: 分隔線字符，預設為 "="
         separator_length: 分隔線長度，預設為 50
         
     Returns:
         str: 格式化後的消息字符串
     """
-    # 合併消息列表為單一字符串
-    message = "\n".join(message_list)
+    if isinstance(lines, str):
+        normalized_lines = [lines]
+    else:
+        normalized_lines = [str(x) for x in lines]
+
+    message = "\n".join(normalized_lines)
     
     # 創建分隔線
     separator_line = separator * separator_length
@@ -97,14 +102,14 @@ def format_block_message(
 @ensure_target_parameters
 def print_block(
     title: str,
-    message_list: List[str],
+    lines: Union[str, List[str]],
     border_style: Union[str, None] = "cyan",
     box: Union[str, None] = None,
-    log_level: str = "INFO",
+    level: str = "INFO",
     logger_instance: Any = None,
     console: Optional[Console] = None,
     to_console_only: bool = False,
-    to_log_file_only: bool = False,
+    to_file_only: bool = False,
     _target_depth: int = None,
 ) -> None:
     """
@@ -112,15 +117,15 @@ def print_block(
     
     Args:
         title: 區塊的標題
-        message_list: 日誌的內容列表
+        lines: 日誌的內容（可為單行字串或多行列表）
         border_style: 區塊邊框顏色（如 "cyan", "red" 等）或 box 樣式名稱（如 "double", "rounded" 等）
                      為了向後兼容，如果傳入的是 box 樣式名稱，會自動識別
         box: 明確指定的 box 樣式名稱，會覆蓋 border_style 中的 box 樣式
-        log_level: 日誌級別，預設為 "INFO"
+        level: 日誌級別，預設為 "INFO"
         logger_instance: 要使用的 logger 實例，如果為 None 則不記錄日誌
         console: 要使用的 rich console 實例，如果為 None 則創建新的
         to_console_only: 是否僅輸出到控制台，預設為 False
-        to_log_file_only: 是否僅輸出到日誌文件，預設為 False
+        to_file_only: 是否僅輸出到日誌文件，預設為 False
         _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置
     """
     # 如果沒有提供 console，則創建一個新的
@@ -140,37 +145,39 @@ def print_block(
     # 獲取 box 樣式對象
     box_style = get_box_style(actual_box)
     
-    # 構造區塊內容，將多行訊息合併為單一字串
-    message = "\n".join(message_list)
-    panel = Panel(
-        message,
-        title=title,  # 設定區塊標題
-        title_align="left",  # 標題靠左對齊
-        border_style=actual_border_style,  # 設定邊框顏色
-        box=box_style,  # 設定 box 樣式
-    )
-    
-    # 只有當非僅文件模式時，才輸出到控制台
-    if not to_log_file_only and logger_instance is not None:
-        # 將日誌寫入到終端，僅顯示在終端中
-        # 使用動態設置的 depth 來捕獲實際調用者的位置
-        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_console_only=True).log(
-            log_level, f"CustomBlock: {title}"
-        )
-        
-        # 打印區塊到終端
-        console.print(panel)
+    if isinstance(lines, str):
+        normalized_lines = [lines]
+    else:
+        normalized_lines = [str(x) for x in lines]
 
-    # 只有當非僅控制台模式時，才輸出到文件
-    if not to_console_only and logger_instance is not None:
-        # 格式化訊息，方便寫入日誌文件
-        formatted_message = f"{title}\n{'=' * 50}\n{message}\n{'=' * 50}"
+    message = "\n".join(normalized_lines)
 
-        # 將格式化後的訊息寫入日誌文件，僅寫入文件中
-        # 使用動態設置的 depth 來捕獲實際調用者的位置
-        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_log_file_only=True).log(
-            log_level, f"\n{formatted_message}"
-        )
+    if logger_instance is None:
+        return
+
+    payload = {
+        "title": title,
+        "lines": normalized_lines,
+        "border_style": actual_border_style,
+        "box": actual_box,
+    }
+
+    renderable = build_renderable("block", payload)
+    pretty_text = "\n" + render_renderable_to_text(renderable) + "\n"
+
+    # 單一路徑：只送出一筆 event，console/file 端依 payload（與 pretty_text）渲染
+    bind_kwargs = {
+        "pretty_kind": "block",
+        "pretty_version": PRETTY_VERSION_V1,
+        "pretty_payload": payload,
+        "pretty_text": pretty_text,
+    }
+    if to_console_only:
+        bind_kwargs["to_console_only"] = True
+    if to_file_only:
+        bind_kwargs["to_file_only"] = True
+
+    logger_instance.opt(colors=True, depth=_target_depth).bind(**bind_kwargs).log(level, f"CustomBlock: {title}")
 
 
 def create_block_method(logger_instance: Any, console: Optional[Console] = None) -> None:
@@ -187,12 +194,12 @@ def create_block_method(logger_instance: Any, console: Optional[Console] = None)
     @ensure_target_parameters
     def block_method(
         title: str,
-        message_list: List[str],
+        lines: Union[str, List[str]],
         border_style: Union[str, None] = "cyan",
         box: Union[str, None] = None,
-        log_level: str = "INFO",
+        level: str = "INFO",
         to_console_only: bool = False,
-        to_log_file_only: bool = False,
+        to_file_only: bool = False,
         _target_depth: int = None,
     ) -> None:
         """
@@ -200,31 +207,30 @@ def create_block_method(logger_instance: Any, console: Optional[Console] = None)
         
         Args:
             title: 區塊的標題
-            message_list: 區塊內的內容列表
+            lines: 區塊內的內容（可為單行字串或多行列表）
             border_style: 邊框顏色（如 "cyan", "red" 等）或 box 樣式名稱（如 "double", "rounded" 等）
                          為了向後兼容，如果傳入的是 box 樣式名稱，會自動識別
             box: 明確指定的 box 樣式名稱，會覆蓋 border_style 中的 box 樣式
-            log_level: 日誌級別，預設為 "INFO"
+            level: 日誌級別，預設為 "INFO"
             to_console_only: 是否僅輸出到控制台，預設為 False
-            to_log_file_only: 是否僅輸出到日誌文件，預設為 False
+            to_file_only: 是否僅輸出到日誌文件，預設為 False
             _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置
         """
         # 直接傳遞明確參數
         print_block(
             title,
-            message_list,
+            lines,
             border_style=border_style,
             box=box,
-            log_level=log_level,
+            level=level,
             logger_instance=logger_instance,
             console=console,
             to_console_only=to_console_only,
-            to_log_file_only=to_log_file_only,
+            to_file_only=to_file_only,
             _target_depth=_target_depth
         )
     
     # 將方法添加到 logger 實例
     logger_instance.block = block_method
     
-    # 添加目標特定方法
-    add_target_methods(logger_instance, "block", block_method)
+    # 不再注入 console_*/file_* 目標方法：統一走單一路徑（loguru pipeline）

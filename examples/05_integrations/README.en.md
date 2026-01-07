@@ -93,7 +93,7 @@ curl http://localhost:8002/logs/stats
 from pretty_loguru import create_logger
 from fastapi import FastAPI
 
-logger = create_logger("my_api", log_path="./logs")
+logger = create_logger("my_api", log_dir="./logs")
 app = FastAPI()
 
 @app.get("/")
@@ -119,11 +119,13 @@ setup_fastapi_logging(
 ### Dependency Injection
 ```python
 from pretty_loguru.integrations.fastapi import get_logger_dependency
+from pretty_loguru import create_logger
 
-user_logger_dep = get_logger_dependency(name="user_service")
+logger = create_logger("user_service")
+user_logger_dep = get_logger_dependency(logger)
 
 @app.get("/users")
-async def get_users(logger: EnhancedLogger = Depends(user_logger_dep)):
+async def get_users(logger: PrettyLogger = Depends(user_logger_dep)):
     logger.info("Querying user list")
     return {"users": []}
 ```
@@ -146,10 +148,11 @@ logs/
 ### 1. Layered Logging
 ```python
 # Concise messages for users
-logger.console_info("Processing your request...")
+from pretty_loguru.addons import log_to_targets
+log_to_targets(logger, "Processing your request...", level="INFO", console_only=True)
 
 # Detailed information for system records
-logger.file_info(f"API request - Endpoint: {request.url}, User: {user_id}")
+log_to_targets(logger, f"API request - Endpoint: {request.url}, User: {user_id}", level="INFO", file_only=True)
 ```
 
 ### 2. Error Handling
@@ -159,7 +162,7 @@ try:
     logger.success("Data processing completed")
 except Exception as e:
     logger.error(f"Processing failed: {str(e)}")
-    logger.file_error("Detailed error information", exc_info=True)
+    logger.opt(exception=True).bind(to_file_only=True).error("Detailed error information")
     raise HTTPException(status_code=500, detail="Processing failed")
 ```
 

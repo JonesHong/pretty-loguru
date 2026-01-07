@@ -21,7 +21,7 @@
 ### 🔧 進階配置
 深入了解高級功能和最佳實踐：
 
-7. **[增強配置管理](./enhanced-config)** - 可重用配置模板系統
+7. **[配置模板管理](./config-templates)** - 可重用配置模板系統
 8. **[自定義配置](./custom-config)** - 客製化日誌行為
 9. **[日誌輪換](./log-rotation)** - 檔案管理和清理
 10. **[效能最佳化](./performance)** - 生產環境調優
@@ -44,7 +44,7 @@ from pretty_loguru import create_logger, create_logger
 # 方式一：快速開始（推薦）
 logger  = create_logger(
     name="guide_demo",
-    log_path="logs",
+    log_dir="logs",
     level="INFO"
 )
 
@@ -52,14 +52,14 @@ logger  = create_logger(
 my_logger = create_logger(
     name="my_app",
     level="DEBUG",
-    log_path="custom_logs"
+    log_dir="custom_logs"
 )
 
 # 方式三：進階配置
 from pretty_loguru import create_logger
 create_logger(
     level="INFO",
-    log_path="logs",
+    log_dir="logs",
     component_name="web_app",
     rotation="10MB",
     retention="7 days"
@@ -90,8 +90,8 @@ logger.ascii_header("STARTUP", font="slant")
 logger.ascii_block(
     "報告",
     ["狀態: 正常", "時間: 10:30"],
-    ascii_header="REPORT",
-    ascii_font="small"
+    header_text="REPORT",
+    font="small"
 )
 ```
 

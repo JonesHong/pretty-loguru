@@ -22,7 +22,7 @@ def basic_formatting():
     print("📝 基本格式化")
     print("-" * 30)
     
-    logger = create_logger("formatting_basic", log_path="./logs/basics")
+    logger = create_logger("formatting_basic", log_dir="./logs/basics")
     
     # 1. 字符串格式化
     user_name = "張三"
@@ -43,7 +43,7 @@ def structured_logging():
     print("\n🏗️ 結構化日誌")
     print("-" * 30)
     
-    logger = create_logger("structured", log_path="./logs/basics")
+    logger = create_logger("structured", log_dir="./logs/basics")
     
     # 1. 字典格式化
     user_data = {
@@ -85,7 +85,7 @@ def performance_logging():
     print("\n⚡ 性能相關日誌")
     print("-" * 30)
     
-    logger = create_logger("performance", log_path="./logs/basics")
+    logger = create_logger("performance", log_dir="./logs/basics")
     
     # 1. 執行時間記錄
     import time
@@ -131,7 +131,7 @@ def error_formatting():
     print("\n🚨 錯誤格式化")
     print("-" * 30)
     
-    logger = create_logger("error_format", log_path="./logs/basics")
+    logger = create_logger("error_format", log_dir="./logs/basics")
     
     def process_data(data):
         """模擬數據處理函數"""
@@ -178,7 +178,7 @@ def multiline_formatting():
     print("\n📄 多行格式化")
     print("-" * 30)
     
-    logger = create_logger("multiline", log_path="./logs/basics")
+    logger = create_logger("multiline", log_dir="./logs/basics")
     
     # 1. 多行字符串
     config_info = """
@@ -222,7 +222,7 @@ def custom_formatting_functions():
     print("\n🎨 自定義格式化函數")
     print("-" * 30)
     
-    logger = create_logger("custom_format", log_path="./logs/basics")
+    logger = create_logger("custom_format", log_dir="./logs/basics")
     
     def format_bytes(bytes_value):
         """格式化位元組大小"""

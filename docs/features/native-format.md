@@ -10,7 +10,7 @@
 
 ## 🔄 格式對比
 
-### Enhanced 格式 (預設)
+### Pretty 格式（預設）
 ```python
 from pretty_loguru import create_logger
 
@@ -36,7 +36,7 @@ logger.info("用戶登入成功")
 
 ## 📊 詳細差異
 
-| 特性 | Enhanced 格式 | Native 格式 |
+| 特性 | Pretty 格式 | Native 格式 |
 |------|---------------|-------------|
 | **顯示名稱** | 自定義名稱 | 檔案名稱 |
 | **時間格式** | `HH:mm:ss` | `HH:mm:ss.SSS` (含毫秒) |
@@ -113,7 +113,7 @@ logger = create_logger(use_native_format=True)
 logger = create_logger(
     name="my_app",
     use_native_format=True,
-    log_path="./logs",
+    log_dir="./logs",
     level="DEBUG",
     rotation="10MB",
     retention="7 days"
@@ -132,7 +132,7 @@ logger = create_logger(
 
 ## 📁 檔案命名差異
 
-### Enhanced 格式檔案命名
+### Pretty 格式檔案命名
 ```
 logs/
 ├── [api_service]_20250630-201530.log
@@ -156,7 +156,7 @@ def setup_logger(service_name: str, env: str):
     return create_logger(
         name=service_name,
         use_native_format=(env == "development"),
-        log_path=f"logs/{env}",
+        log_dir=f"logs/{env}",
         level="DEBUG" if env == "development" else "INFO"
     )
 ```
@@ -168,7 +168,7 @@ def create_team_logger(name: str, for_development: bool = False):
     return create_logger(
         name=name,
         use_native_format=for_development,
-        log_path="logs",
+        log_dir="logs",
         preset="detailed" if not for_development else None
     )
 
@@ -189,7 +189,7 @@ class LoggerMigration:
         return create_logger(
             name=self.service_name,
             use_native_format=not self.migration_complete,
-            log_path="logs"
+            log_dir="logs"
         )
 ```
 
@@ -215,7 +215,7 @@ logger = create_logger("app", use_native_format=True, force_new_instance=True)
 ### Q: 如何選擇格式？
 **A:** 
 - **開發階段**：使用 Native 格式便於調試
-- **生產環境**：使用 Enhanced 格式便於監控
+- **生產環境**：使用 Pretty 格式便於監控
 - **遷移場景**：使用 Native 格式保持一致性
 
 ## 🔗 相關文檔

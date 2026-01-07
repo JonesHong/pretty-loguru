@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 # Using 'detailed' preset which now has the loguru_suffix time_source
 logger = create_logger(
     name="CompressionTest",
-    log_path="./test_logs",
+    log_dir="./test_logs",
     rotation="1 KB",  # Small size to force rotation
     retention="1 day",
     preset="detailed"

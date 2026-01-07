@@ -8,6 +8,7 @@ version = "1.2.0"
 description = "A Loguru-based logger with Rich panels, ASCII art headers, blocks and more."
 readme = "README.md"
 license = { file = "LICENSE" }
+requires-python = ">=3.8"
 authors = [
   { name = "JonesHong", email = "latte831104@gmail.com" }
 ]
@@ -15,20 +16,40 @@ dependencies = [
   "loguru>=0.6.0",
   "rich>=12.0.0",
   "art>=5.0.0",
-  "pyfiglet>=1.0.1",
-  "matplotlib>=3.7.0",
-  "python-dateutil>=2.8.2", # Added for relativedelta
+  "psutil>=5.9.0",
+  "fastapi>=0.100.0",
+  "uvicorn>=0.20.0",
 ]
 classifiers = [
   "Programming Language :: Python :: 3",
   "Operating System :: OS Independent"
 ]
 
+[project.optional-dependencies]
+# 注意：目前採「一包就好（預設全裝）」策略，所以 integrations 仍在 base dependencies。
+# extras 主要用於「額外能力/可選依賴」與更清楚的安裝指令。
+integrations = [
+  "fastapi>=0.100.0",
+  "uvicorn>=0.20.0",
+]
+figlet = [
+  "pyfiglet>=0.8.post1",
+]
+all = [
+  "pyfiglet>=0.8.post1",
+]
+
 [project.urls]
 "Source" = "https://github.com/JonesHong/pretty-loguru"
 "Tracker" = "https://github.com/JonesHong/pretty-loguru/issues"
 
+[dependency-groups]
+  dev = [
+    "httpx>=0.24.0",
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.23.0",
+  ]
+
 [tool.setuptools.packages.find]
 include = ["pretty_loguru*"]
 exclude = ["logs*"]
-

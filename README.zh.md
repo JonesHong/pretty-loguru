@@ -1,12 +1,30 @@
 # Pretty-Loguru 🎨
 
-[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![PyPI Version](https://img.shields.io/pypi/v/pretty-loguru.svg)](https://pypi.org/project/pretty-loguru/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Documentation](https://img.shields.io/badge/docs-latest-brightgreen)](https://joneshong.github.io/pretty-loguru/)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://github.com/JonesHong/pretty-loguru)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/JonesHong/pretty-loguru/refs/heads/master/docs/public/logo.png" alt="pretty-loguru icon" width="200"/>
+</p>
+
+<p align="center">
+  <a href="https://pypi.org/project/pretty-loguru/">
+    <img alt="PyPI version" src="https://img.shields.io/pypi/v/pretty-loguru.svg">
+  </a>
+  <a href="https://pypi.org/project/pretty-loguru/">
+    <img alt="Python versions" src="https://img.shields.io/pypi/pyversions/pretty-loguru.svg">
+  </a>
+  <a href="https://joneshong.github.io/pretty-loguru/">
+    <img alt="Documentation" src="https://img.shields.io/badge/docs-ghpages-blue.svg">
+  </a>
+  <a href="https://github.com/JonesHong/pretty-loguru/blob/master/LICENSE">
+    <img alt="License" src="https://img.shields.io/github/license/JonesHong/pretty-loguru.svg">
+  </a>
+  <a href="https://deepwiki.com/JonesHong/pretty-loguru">
+    <img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki">
+  </a>
+</p>
 
 增強版 Python 日誌庫，基於 [Loguru](https://github.com/Delgan/loguru)，整合 [Rich](https://github.com/Textualize/rich) 和 ASCII 藝術 [art](https://github.com/sepandhaghighi/art)，讓日誌輸出更加優雅和直觀。
+
+---
 
 ## ✨ 特色功能
 
@@ -20,7 +38,21 @@
 ## 📦 安裝
 
 ```bash
+# 推薦（uv）
+uv add pretty-loguru
+
+# 備用（pip）
 pip install pretty-loguru
+```
+
+可選 extras（加裝能力）：
+
+```bash
+# FIGlet 支援（可選）
+uv add "pretty-loguru[figlet]"
+
+# integrations 別名（FastAPI/Uvicorn）
+uv add "pretty-loguru[integrations]"
 ```
 
 ## 🚀 快速開始
@@ -46,10 +78,24 @@ logger.block("系統狀態", "一切正常", border_style="green")
 logger.ascii_header("WELCOME", font="slant")
 ```
 
+## ✅ 語意一致（console ↔ file）
+
+pretty-loguru 遵守一個簡單合約：
+
+- **一次呼叫 → 一筆 Loguru event**（不在 logging API 內額外 `console.print(...)` 走旁路）
+- console/file 只是同一筆 event 的**不同 renderer**
+- 視覺化方法（例如 `block/table/tree/...`）會把 `pretty_kind`、`pretty_payload`、`pretty_text` 放進 `record["extra"]`
+
+可觀測性建議路線：
+
+- 先用 `serialize=True` 產生 JSON 檔案日誌，再用 Filebeat/Fluent Bit（ELK）或 Promtail/Grafana Agent（Loki）收集
+- `loki_enabled=True` 直推僅建議用於簡單場景（best-effort：不重試 / 無離線緩衝 / 無 backpressure）
+
 ### 使用配置物件
 
 ```python
-from pretty_loguru import create_logger, LoggerConfig, ConfigTemplates
+from pretty_loguru import LoggerConfig, create_logger
+from pretty_loguru.addons import ConfigTemplates
 
 # 使用預設模板
 config = ConfigTemplates.production()
@@ -58,7 +104,7 @@ logger = create_logger("app", config=config)
 # 自定義配置
 custom_config = LoggerConfig(
     level="DEBUG",
-    log_path="logs",
+    log_dir="logs",
     rotation="1 day",
     retention="7 days"
 )
@@ -77,7 +123,7 @@ db_logger = create_logger("database", level="DEBUG")
 api_logger = create_logger("api", level="WARNING")
 
 # 統一配置管理
-config = LoggerConfig(level="INFO", log_path="logs")
+config = LoggerConfig(level="INFO", log_dir="logs")
 loggers = config.apply_to("auth", "database", "api")
 
 # 動態更新所有 logger

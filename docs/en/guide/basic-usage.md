@@ -1,322 +1,139 @@
 # Basic Usage
 
-This page provides a detailed introduction to the basic concepts and core features of pretty-loguru.
+This page covers the core usage patterns of pretty-loguru.
 
-## 🎯 Core Concepts
+## 🚀 Quick start
 
-### Logger Initialization
-
-pretty-loguru offers multiple initialization methods to meet the needs of different scenarios.
-
-#### Quick Initialization (Recommended)
+### Console-only logger (no files)
 
 ```python
 from pretty_loguru import create_logger
 
-# Complete all settings with one line of code
-logger  
-    name="basic-usage_demo",
-    log_path="my_logs",
-    level="INFO"
-)
-print(f"Logger has been initialized, component name: {component_name}")
+logger = create_logger("my_app", level="INFO")
+logger.info("Hello from pretty-loguru")
 ```
 
-#### Custom Initialization
+### File logging (log_dir is a directory)
 
 ```python
 from pretty_loguru import create_logger
 
-create_logger(
+logger = create_logger(
+    name="my_app",
     level="INFO",
-    log_path="custom_logs",
-    component_name="my_app",
-    rotation="50MB",
-    retention="30 days"
+    log_dir="logs/my_app",
+    rotation="100 MB",
+    retention="30 days",
+    compression="gz",
 )
+logger.success("File logging enabled")
 ```
 
-#### Creating a Dedicated Logger
+## ✅ Semantic consistency (core contract)
+
+- One API call emits **one Loguru event** (no side-channel `console.print(...)` inside logging methods).
+- Console/file are different renderers of the **same event**.
+- Pretty methods (e.g. `block/table/tree/...`) put `pretty_kind` + `pretty_payload` + `pretty_text` into `record["extra"]`.
+
+## 🔁 Reinitializing an existing logger
+
+Use `reinit_logger()` when you want to update the existing registered logger instance:
+
+```python
+from pretty_loguru import create_logger, reinit_logger
+
+logger = create_logger("service", log_dir="logs/service", level="INFO")
+reinit_logger("service", level="DEBUG", rotation="10 MB")
+logger.debug("Now DEBUG is enabled")
+```
+
+By default (`reset_handlers=False`), pretty-loguru keeps sinks you added via `logger.add(...)`.  
+Pass `reset_handlers=True` to remove those sinks as well (explicit choice).
+
+## 🧩 Using LoggerConfig and templates
+
+`LoggerConfig` is a reusable configuration template. `apply_to()` applies the config to named loggers and attaches them so future `update()` calls are synchronized.  
+In the latest version, `create_if_missing=True` by default: missing loggers are created automatically.
+
+```python
+from pretty_loguru import LoggerConfig, create_logger
+
+config = LoggerConfig(level="INFO", log_dir="logs/app", rotation="00:00", retention="14 days")
+
+create_logger("api", config=config)
+create_logger("worker", config=config)
+config.apply_to("api", "worker")
+
+config.update(level="DEBUG")
+```
+
+Built-in templates:
+
+```python
+from pretty_loguru import create_logger
+from pretty_loguru.addons import ConfigTemplates
+
+prod = ConfigTemplates.production()
+create_logger("my_app", config=prod)
+prod.apply_to("my_app")
+```
+
+## 🎯 Console-only vs file-only per message
+
+Use `log_to_targets()` to route specific messages:
+
+```python
+from pretty_loguru import create_logger
+from pretty_loguru.addons import log_to_targets
+
+logger = create_logger("targets", log_dir="logs/targets")
+
+log_to_targets(logger, "This goes to both", level="INFO")
+log_to_targets(logger, "Console only", level="INFO", console_only=True)
+log_to_targets(logger, "File only", level="INFO", file_only=True)
+```
+
+## 📦 Shipping logs to ELK/Loki (recommended approach)
+
+- ELK: set `serialize=True` and ship JSON logs via Filebeat/Fluent Bit
+- Loki: ship via Promtail/Grafana Agent (or enable `loki_enabled=True` direct push; best-effort: no retries, no offline buffer, no backpressure; failures are dropped)
+
+### Minimal examples
+
+#### 1) Semantic consistency (pretty methods)
 
 ```python
 from pretty_loguru import create_logger
 
-# Create a dedicated logger for the API
-api_logger = create_logger(
-    name="api_service",
-    level="DEBUG",
-    log_path="logs/api"
-)
+logger = create_logger("demo", log_dir="logs/demo", level="INFO")
 
-api_logger.info("API service has been started")
+# One call -> one Loguru event
+logger.block("BOOT", ["step=1", "step=2"])
+logger.table("Users", [{"name": "Alice", "age": 30}])
 ```
 
-## 📊 Log Levels
-
-pretty-loguru supports standard log levels and adds a `SUCCESS` level:
-
-### Basic Log Levels
+#### 2) JSON file logs (ELK/Filebeat)
 
 ```python
-# Debug message (lowest level)
-logger.debug("Detailed debug information")
-
-# General information
-logger.info("Application is running normally")
-
-# Success message (specific to pretty-loguru)
-logger.success("Operation completed successfully")
-
-# Warning message
-logger.warning("Memory usage is high")
-
-# Error message
-logger.error("Failed to connect to the database")
-
-# Critical error
-logger.critical("System is about to crash")
-```
-
-### Level Description Table
-
-| Level    | Value | Purpose                  | Color      |
-|----------|-------|--------------------------|------------|
-| DEBUG    | 10    | Detailed debug info      | Blue       |
-| INFO     | 20    | General operational info | White      |
-| SUCCESS  | 25    | Successful operations    | Green      |
-| WARNING  | 30    | Warning messages         | Yellow     |
-| ERROR    | 40    | Error messages           | Red        |
-| CRITICAL | 50    | Critical errors          | Red (Bold) |
-
-## 🎯 Output Control
-
-### Simultaneous Output (Default Behavior)
-
-```python
-# By default, output is sent to both the console and the file
-logger.info("This message will appear in two places")
-```
-
-### Console-Only Output
-
-```python
-# Display only in the console, not written to the file
-logger.console_info("Display only in the console")
-logger.console_warning("Console warning")
-logger.console_error("Console error")
-```
-
-### File-Only Output
-
-```python
-# Write only to the file, not displayed in the console
-logger.file_info("Write only to the log file")
-logger.file_debug("File debug message")
-logger.file_error("File error record")
-```
-
-## 📁 File Management
-
-### Automatic File Naming
-
-pretty-loguru automatically generates meaningful filenames:
-
-```
-Format: [component_name]_YYYYMMDD-HHMMSS.log
-Example: [my_app_20240630_143022]_20240630-143022.log
-```
-
-### Log Rotation
-
-```python
-# Rotate by file size
-logger = create_logger(
-    name="basic-usage_demo",
-    log_path="logs", rotation="10MB",
-    level="INFO"
-)
-
-# Rotate by time
-logger = create_logger(
-    name="basic-usage_demo",
-    log_path="logs", rotation="1 day",
-    level="INFO"
-)
-
-# Rotate by count (at midnight)
-logger = create_logger(
-    name="basic-usage_demo",
-    log_path="logs", rotation="midnight", retention=10,
-    level="INFO"
-)
-```
-
-### Log Cleanup
-
-```python
-# Automatically clean up old files
-logger = create_logger(
-    name="demo",
-    log_path="logs",
-    level="INFO"
-)
-```
-
-### Multi-Environment Configuration
-
-```python
-import os
-
-def setup_logging():
-    env = os.getenv("ENVIRONMENT", "development")
-    
-    if env == "production":
-        return logger = create_logger(
-    name="demo",
-    log_path="prod_logs",
-    level="INFO"
-)
-    else:
-        return logger = create_logger(
-    name="demo",
-    log_path="dev_logs",
-    level="INFO"
-)
-```
-
-### Conditional Logging
-
-```python
-import logging
-
-# Set log level
-if logger.level("DEBUG").no >= logging.DEBUG:
-    logger.debug("This is a debug message")
-```
-
-## 🎮 Practical Example
-
-### Complete Application Example
-
-```python
-import time
 from pretty_loguru import create_logger
 
-def main():
-    # Initialize the logging system
-    logger = create_logger(
-    name="demo",
-    log_path=
-        folder="app_logs",
-        level="INFO",
-        rotation="50MB",
-        retention="14 days"
-    )
-    
-    logger.info(f"Application started, component: {component_name}")
-    
-    try:
-        # Simulate application logic
-        logger.info("Loading configuration file...")
-        time.sleep(0.5)
-        logger.success("Configuration file loaded successfully")
-        
-        logger.info("Connecting to the database...")
-        time.sleep(1)
-        logger.success("Database connection successful")
-        
-        logger.info("Starting web service...")
-        time.sleep(0.8)
-        logger.success("Web service started, listening on port 8080")
-        
-        # Simulate a warning
-        logger.warning("Memory usage reached 75%")
-        
-        logger.info("Application running normally")
-        
-    except Exception as e:
-        logger.error(f"Application startup failed: {e}")
-        logger.critical("System is about to exit")
-        return 1
-    
-    logger.info("Application shut down normally")
-    return 0
-
-if __name__ == "__main__":
-    exit(main())
+logger = create_logger("json_demo", log_dir="logs/json_demo", level="INFO", serialize=True)
+logger.block("STRUCTURED", ["this line is also inside record.extra.pretty_text"])
 ```
 
-### Error Handling Example
+#### 3) Loki direct push (optional)
 
 ```python
-def process_data(data):
-    try:
-        logger.info(f"Starting to process data, size: {len(data)}")
-        
-        # Processing logic
-        result = some_complex_operation(data)
-        
-        logger.success(f"Data processing complete, result: {len(result)} records")
-        return result
-        
-    except ValueError as e:
-        logger.error(f"Data format error: {e}")
-        raise
-    except Exception as e:
-        logger.critical(f"A critical error occurred during processing: {e}")
-        raise
-    finally:
-        logger.debug("Data processing flow finished")
-```
-
-## ❓ Frequently Asked Questions
-
-### Q: Why can't I see DEBUG level logs?
-A: Check the log level setting:
-```python
-logger = create_logger(
-    name="basic-usage_demo",
-    log_path="logs", level="DEBUG",
-    level="INFO"
-)
-```
-
-### Q: How to log sensitive information only in the file?
-A: Use the file-specific method:
-```python
-logger.file_info(f"User password reset: {user_id}")  # Writes only to file
-logger.console_info("User password reset successful")      # Displays only in console
-```
-
-### Q: What to do if there are too many log files?
-A: Set up automatic cleanup:
-```python
-logger = create_logger(
-    name="basic-usage_demo",
-    log_path="logs", retention="7 days",
-    level="INFO"
-)
-```
-
-### Q: How to use the same logger in different modules?
-A: The logger is global, just import it directly:
-```python
-# module_a.py
 from pretty_loguru import create_logger
-logger.info("Message from Module A")
 
-# module_b.py  
-from pretty_loguru import create_logger
-logger.info("Message from Module B")
+logger = create_logger(
+    "loki_demo",
+    log_dir="logs/loki_demo",
+    level="INFO",
+    serialize=True,
+    loki_enabled=True,
+    loki_base_url="http://localhost:3100",
+    loki_labels={"app": "loki_demo"},
+)
+logger.info("hello loki")
 ```
-
-## 🚀 Next Steps
-
-Now that you have mastered the basic usage of pretty-loguru, you can:
-
-- [Explore Visualization Features](../features/) - Rich blocks and ASCII art
-- [View Practical Examples](../examples/) - Complete application scenarios
-- [Learn about Framework Integration](../integrations/) - FastAPI and Uvicorn integration
-- [Dive into the API Documentation](../api/) - Detailed technical reference
-
-Start building beautiful and practical logging systems!

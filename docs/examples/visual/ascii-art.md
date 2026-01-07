@@ -12,7 +12,7 @@ from pretty_loguru import create_logger
 # 初始化日誌系統
 logger = create_logger(
     name="ascii-art_demo",
-    log_path="ascii_demo",
+    log_dir="ascii_demo",
     level="INFO"
 )
 
@@ -501,7 +501,7 @@ def complete_ascii_demo():
     
     logger = create_logger(
     name="ascii-art_demo",
-    log_path="complete_ascii_demo",
+    log_dir="complete_ascii_demo",
     level="INFO"
 )
     

@@ -21,7 +21,7 @@ def basic_error_handling():
     print("🚨 基本錯誤處理")
     print("-" * 30)
     
-    logger = create_logger("error_demo", log_path="./logs/basics")
+    logger = create_logger("error_demo", log_dir="./logs/basics")
     
     try:
         # 模擬一個可能出錯的操作
@@ -43,7 +43,7 @@ def exception_logging_with_context():
     print("\n📝 帶上下文的異常記錄")
     print("-" * 30)
     
-    logger = create_logger("context_error", log_path="./logs/basics")
+    logger = create_logger("context_error", log_dir="./logs/basics")
     
     def process_user_data(user_id, user_data):
         """處理用戶資料"""
@@ -91,7 +91,7 @@ def error_classification():
     print("\n📊 錯誤分類和等級策略")
     print("-" * 30)
     
-    logger = create_logger("error_classification", log_path="./logs/basics")
+    logger = create_logger("error_classification", log_dir="./logs/basics")
     
     def classify_and_log_error(error_type, error_msg, severity="error"):
         """分類並記錄錯誤"""
@@ -126,7 +126,7 @@ def retry_with_logging():
     print("\n🔄 帶日誌的重試機制")
     print("-" * 30)
     
-    logger = create_logger("retry_demo", log_path="./logs/basics")
+    logger = create_logger("retry_demo", log_dir="./logs/basics")
     
     def unreliable_function():
         """模擬不穩定的函數"""

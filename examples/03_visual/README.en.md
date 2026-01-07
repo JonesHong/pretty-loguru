@@ -273,11 +273,12 @@ logger.block("⚠️ Error Details", error_info, border_style="red")
 ### 3. Performance Considerations
 ```python
 # Show complex visualizations only in console
-logger.console_info("Displaying detailed dashboard...")
+from pretty_loguru.addons import log_to_targets
+log_to_targets(logger, "Displaying detailed dashboard...", level="INFO", console_only=True)
 logger.table(...)  # Complex table
 
 # Keep file records concise
-logger.file_info("System status: CPU 45%, Memory 68%")
+log_to_targets(logger, "System status: CPU 45%, Memory 68%", level="INFO", file_only=True)
 ```
 
 ## 📁 Generated Log Files

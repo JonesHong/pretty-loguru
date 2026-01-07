@@ -16,7 +16,7 @@ import uvicorn
 # Initialize the logging system
 logger = create_logger(
     name="fastapi_demo",
-    log_path="fastapi_logs", preset="development",
+    log_dir="fastapi_logs", preset="development",
     level="INFO"
 )
 
@@ -37,7 +37,7 @@ async def startup_event():
             "⚡ Status: Ready"
         ],
         border_style="green",
-        log_level="SUCCESS"
+        level="SUCCESS"
     )
 
 @app.on_event("shutdown")
@@ -121,7 +121,7 @@ class PrettyLoguruMiddleware(BaseHTTPMiddleware):
                     f"⏱️  Processing Time: {process_time:.3f}s"
                 ],
                 border_style=color,
-                log_level=level
+                level=level
             )
             
             return response
@@ -135,9 +135,9 @@ class PrettyLoguruMiddleware(BaseHTTPMiddleware):
                     f"❌ Error: {str(e)}",
                     f"⏱️  Processing Time: {process_time:.3f}s"
                 ],
-                ascii_header="ERROR",
+                header_text="ERROR",
                 border_style="red",
-                log_level="ERROR"
+                level="ERROR"
             )
             
             raise
@@ -173,9 +173,9 @@ class AuthService:
                     f"✅ User: {username}",
                     f"🎯 Status: Authenticated"
                 ],
-                ascii_header="SUCCESS",
+                header_text="SUCCESS",
                 border_style="green",
-                log_level="SUCCESS"
+                level="SUCCESS"
             )
             return {"access_token": "fake-token", "token_type": "bearer"}
         else:
@@ -185,9 +185,9 @@ class AuthService:
                     f"❌ User: {username}",
                     f"🚫 Reason: Invalid credentials"
                 ],
-                ascii_header="FAILED",
+                header_text="FAILED",
                 border_style="red",
-                log_level="WARNING"
+                level="WARNING"
             )
             raise HTTPException(
                 status_code=401,

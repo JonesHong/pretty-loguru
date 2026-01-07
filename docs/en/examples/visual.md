@@ -32,7 +32,7 @@ logger.block(
         "Status: Healthy"
     ],
     border_style="green",
-    log_level="SUCCESS"
+    level="SUCCESS"
 )
 
 # Error report block
@@ -46,7 +46,7 @@ logger.block(
         "Suggested Action: Check database service status"
     ],
     border_style="red",
-    log_level="ERROR"
+    level="ERROR"
 )
 ```
 
@@ -176,8 +176,8 @@ logger.ascii_block(
         "🟡 Cache Service: Performance degraded",
         "🔴 Mail Service: Offline"
     ],
-    ascii_header="STATUS",
-    ascii_font="small",
+    header_text="STATUS",
+    font="small",
     border_style="cyan"
 )
 
@@ -193,10 +193,10 @@ logger.ascii_block(
         "Deploy Duration: 3m 15s",
         "Version: v2.1.0 → v2.2.0"
     ],
-    ascii_header="DEPLOY",
-    ascii_font="block",
+    header_text="DEPLOY",
+    font="block",
     border_style="green",
-    log_level="SUCCESS"
+    level="SUCCESS"
 )
 ```
 
@@ -211,11 +211,10 @@ logger = create_logger("rich_components")
 
 # Table
 table_data = [
-    ["Service Name", "Status", "Memory", "CPU"],
-    ["Web Server", "🟢 Running", "125MB", "12%"],
-    ["Database", "🟢 Running", "512MB", "25%"],
-    ["Cache", "🟡 Warning", "256MB", "45%"],
-    ["Queue", "🔴 Stopped", "0MB", "0%"]
+    {"Service Name": "Web Server", "Status": "🟢 Running", "Memory": "125MB", "CPU": "12%"},
+    {"Service Name": "Database", "Status": "🟢 Running", "Memory": "512MB", "CPU": "25%"},
+    {"Service Name": "Cache", "Status": "🟡 Warning", "Memory": "256MB", "CPU": "45%"},
+    {"Service Name": "Queue", "Status": "🔴 Stopped", "Memory": "0MB", "CPU": "0%"},
 ]
 logger.table("Service Monitor", table_data, style="blue")
 
@@ -234,19 +233,18 @@ tree_data = {
 logger.tree("Directory Structure", tree_data, style="green")
 
 # Progress bar
-with logger.progress("Processing Files") as progress:
-    task = progress.add_task("Download", total=100)
+with logger.progress.progress_context("Processing Files", total=100) as update:
     for i in range(100):
-        progress.update(task, advance=1)
+        update(1)
         time.sleep(0.01)
 
 # Multi-column display
 columns_data = [
-    ["Feature A", "✅ Complete\nTests passed"],
-    ["Feature B", "🚧 In Progress\n70% done"],
-    ["Feature C", "📅 Planned\nNext week"]
+    "Feature A: ✅ Complete (tests passed)",
+    "Feature B: 🚧 In Progress (70% done)",
+    "Feature C: 📅 Planned (next week)",
 ]
-logger.columns("Development Progress", columns_data, style="cyan")
+logger.columns("Development Progress", columns_data, padding=(0, 2))
 ```
 
 [View complete code](https://github.com/JonesHong/pretty-loguru/blob/master/examples/03_visual/rich_components.py)
@@ -302,7 +300,7 @@ Use Figlet fonts to create large ASCII art:
 from pretty_loguru import create_logger, has_figlet
 
 if has_figlet():
-    from pretty_loguru import print_figlet_header, get_figlet_fonts
+    from pretty_loguru.addons import print_figlet_header, get_figlet_fonts
     
     logger = create_logger("figlet_demo")
     

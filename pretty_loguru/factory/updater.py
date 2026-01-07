@@ -5,7 +5,7 @@ Logger 動態更新功能
 """
 
 from typing import Optional
-from ..types import EnhancedLogger, LogLevelType
+from ..types import PrettyLogger, LogLevelType
 from ..core.registry import get_logger
 from ..core.base import configure_logger
 from ..core.config import LoggerConfig
@@ -29,46 +29,41 @@ def update_logger_level(name: str, level: LogLevelType) -> bool:
     if logger is None:
         warnings.warn(f"Logger '{name}' not found")
         return False
-    
-    # 保存當前的 handlers 配置
-    handlers_config = []
-    for handler_id, handler in logger._core.handlers.items():
-        # 保存 handler 的配置
-        config = {
-            'sink': handler.sink,
-            'level': level,  # 使用新的 level
-            'format': handler.format,
-            'filter': handler.filter,
-            'colorize': handler.colorize,
-            'serialize': handler.serialize,
-            'backtrace': handler.backtrace,
-            'diagnose': handler.diagnose,
-            'enqueue': handler.enqueue,
-            'catch': handler.catch
-        }
-        handlers_config.append((handler_id, config))
-    
-    # 移除所有現有 handlers
-    for handler_id, _ in handlers_config:
-        try:
-            logger.remove(handler_id)
-        except:
-            pass
-    
-    # 重新添加 handlers，使用新的 level
-    for _, config in handlers_config:
-        logger.add(**config)
-    
+
+    # 最新版本：避免直接操作 logger._core.handlers（多 logger 共用 core 時會波及其他 logger）
+    cfg = getattr(logger, "_pretty_loguru_config", None)
+    if cfg is None:
+        warnings.warn(
+            f"Logger '{name}' has no stored config; cannot safely update level. "
+            "Please reinit_logger() or update_logger_config() instead."
+        )
+        return False
+
+    try:
+        updated = cfg.clone(level=level)
+    except Exception:
+        # fallback：若 clone() 失敗，直接改值（仍交由 configure_logger 做驗證）
+        updated = cfg
+        setattr(updated, "level", level)
+
+    updated.name = name
+    configure_logger(logger, updated)
     return True
 
 
-def update_logger_config(name: str, config: LoggerConfig) -> bool:
+def update_logger_config(
+    name: str,
+    config: LoggerConfig,
+    restart_cleaner: bool = False,
+    reset_handlers: bool = False,
+) -> bool:
     """
     使用 LoggerConfig 更新現有 logger
     
     Args:
         name: Logger 名稱
         config: 新的配置
+        restart_cleaner: 是否重啟清理器以套用新的清理設定
         
     Returns:
         bool: 更新是否成功
@@ -78,21 +73,22 @@ def update_logger_config(name: str, config: LoggerConfig) -> bool:
         warnings.warn(f"Logger '{name}' not found")
         return False
     
-    # 保存現有 handlers 的 IDs
-    handler_ids = list(logger._core.handlers.keys())
-    
-    # 移除所有 handlers
-    for handler_id in handler_ids:
-        try:
-            logger.remove(handler_id)
-        except:
-            pass
-    
     # 確保配置有正確的名稱
     updated_config = config.clone()
     updated_config.name = name
     
     # 使用新配置重新配置 logger
-    configure_logger(logger, updated_config)
+    configure_logger(logger, updated_config, reset_handlers=reset_handlers)
+
+    # 需要時重啟清理器以套用新設定
+    if restart_cleaner and updated_config.start_cleaner and updated_config.log_dir:
+        from .creator import _restart_cleaner_for_path
+        _restart_cleaner_for_path(
+            str(updated_config.log_dir),
+            logger_instance=logger,
+            verbose=updated_config.verbose,
+            include_patterns=updated_config.cleaner_include_patterns,
+            exclude_patterns=updated_config.cleaner_exclude_patterns,
+        )
     
     return True

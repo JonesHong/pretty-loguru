@@ -8,7 +8,8 @@ Using different log configurations for different environments:
 
 ```python
 import os
-from pretty_loguru import create_logger, ConfigTemplates, LoggerConfig
+from pretty_loguru import LoggerConfig, create_logger
+from pretty_loguru.addons import ConfigTemplates
 
 def get_environment_config() -> LoggerConfig:
     """Get configuration based on environment variables"""
@@ -19,7 +20,7 @@ def get_environment_config() -> LoggerConfig:
         "testing": ConfigTemplates.testing(),
         "staging": LoggerConfig(
             level="INFO",
-            log_path="logs/staging",
+            log_dir="logs/staging",
             rotation="100 MB",
             retention="14 days",
             compression="zip"
@@ -32,7 +33,7 @@ def get_environment_config() -> LoggerConfig:
     # Environment-specific overrides
     if env == "production":
         # Use JSON format in production for log aggregation
-        config.logger_format = '{"time":"{time}", "level":"{level}", "message":"{message}"}'
+        config.format = '{"time":"{time}", "level":"{level}", "message":"{message}"}'
     
     return config
 
@@ -57,7 +58,7 @@ import psutil
 import asyncio
 from functools import wraps
 
-logger = create_logger("performance", log_path="logs/metrics")
+logger = create_logger("performance", log_dir="logs/metrics")
 
 def monitor_performance(func):
     """Performance monitoring decorator"""
@@ -136,7 +137,7 @@ class ErrorTracker:
         self.service_name = service_name
         self.logger = create_logger(
             f"{service_name}_errors",
-            log_path=f"logs/errors/{service_name}",
+            log_dir=f"logs/errors/{service_name}",
             level="WARNING"
         )
         
@@ -200,7 +201,7 @@ class ErrorTracker:
         # Visual error report for console
         if self.error_counts[error_type] == 1:
             # First occurrence
-            self.logger.console_block(
+            self.logger.block(
                 f"🆕 New Error Type: {error_type}",
                 [
                     f"Message: {str(error)}",
@@ -208,15 +209,17 @@ class ErrorTracker:
                     f"User: {user_id or 'Unknown'}",
                     f"Request: {request_id or 'None'}"
                 ],
-                border_style="red"
+                border_style="red",
+                to_console_only=True,
             )
         elif self.error_counts[error_type] % 10 == 0:
             # Every 10th occurrence
-            self.logger.console_panel(
+            self.logger.panel(
                 f"⚠️ Recurring Error: {error_type}\n"
                 f"Occurrences: {self.error_counts[error_type]}",
                 title="Error Pattern Detected",
-                border_style="yellow"
+                border_style="yellow",
+                to_console_only=True,
             )
     
     def _generate_error_hash(self, error: Exception) -> str:
@@ -261,7 +264,8 @@ except Exception as e:
 Managing logs in production with proper rotation and archival:
 
 ```python
-from pretty_loguru import create_logger, ConfigTemplates
+from pretty_loguru import create_logger
+from pretty_loguru.addons import ConfigTemplates
 import os
 import shutil
 from datetime import datetime, timedelta
@@ -281,7 +285,7 @@ class ProductionLogManager:
         # Create logger with production settings
         config = ConfigTemplates.production()
         config.update(
-            log_path=f"{self.log_base_path}/current",
+            log_dir=f"{self.log_base_path}/current",
             rotation=self._rotation_function,
             retention=self._retention_function,
             compression="gz"
@@ -322,18 +326,18 @@ class ProductionLogManager:
         
         return False
     
-    def _compress_log(self, log_path):
+    def _compress_log(self, log_dir):
         """Compress log file with gzip"""
-        compressed_path = f"{log_path}.gz"
+        compressed_path = f"{log_dir}.gz"
         
-        with open(log_path, 'rb') as f_in:
+        with open(log_dir, 'rb') as f_in:
             with gzip.open(compressed_path, 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
         
         # Remove original file
-        os.unlink(log_path)
+        os.unlink(log_dir)
         
-        self.logger.info(f"Compressed archived log: {log_path.name}")
+        self.logger.info(f"Compressed archived log: {log_dir.name}")
     
     def get_logger(self):
         """Get the configured logger"""
@@ -391,7 +395,7 @@ class HealthMonitor:
         self.app_name = app_name
         self.logger = create_logger(
             f"{app_name}_health",
-            log_path="logs/health"
+            log_dir="logs/health"
         )
         self.checks = {}
         self.last_results = {}
@@ -488,9 +492,10 @@ class HealthMonitor:
                 "Duration": result.get("duration", "N/A")
             })
         
-        self.logger.console_table(
+        self.logger.table(
             "Health Check Summary",
-            table_data
+            table_data,
+            to_console_only=True,
         )
 
 # Define health checks
@@ -559,7 +564,7 @@ class DeploymentLogger:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.logger = create_logger(
             "deployment",
-            log_path=f"logs/deployments/{timestamp}"
+            log_dir=f"logs/deployments/{timestamp}"
         )
         
         # Also log to file for permanent record
@@ -604,7 +609,7 @@ class DeploymentLogger:
         
         steps = [
             ("git pull origin main", "Pull latest code"),
-            ("pip install -r requirements.txt", "Install dependencies"),
+            ("uv sync", "Install dependencies"),
             ("python -m pytest tests/", "Run tests"),
             ("python manage.py migrate", "Run database migrations"),
             ("python manage.py collectstatic --noinput", "Collect static files"),
@@ -613,18 +618,20 @@ class DeploymentLogger:
         ]
         
         # Display deployment plan
-        self.logger.console_block(
+        self.logger.block(
             "Deployment Plan",
             [f"{i+1}. {desc}" for i, (_, desc) in enumerate(steps)],
-            border_style="cyan"
+            border_style="cyan",
+            to_console_only=True,
         )
         
         # Execute steps
         for i, (command, description) in enumerate(steps):
-            self.logger.console_panel(
+            self.logger.panel(
                 f"Step {i+1}/{len(steps)}: {description}",
                 title="🚀 Deploying",
-                border_style="yellow"
+                border_style="yellow",
+                to_console_only=True,
             )
             
             if not self.run_command(command, description):

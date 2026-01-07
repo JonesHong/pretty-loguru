@@ -83,7 +83,7 @@ logger = create_logger(
     name="my_app",
     config_file="./config/production.json",  # 配置檔案
     level=os.getenv("LOG_LEVEL", "INFO"),    # 環境變數
-    log_path="./logs"                        # 程式碼指定
+    log_dir="./logs"                        # 程式碼指定
 )
 ```
 
@@ -92,7 +92,7 @@ logger = create_logger(
 # 大小輪替
 logger = create_logger(
     name="size_rotation",
-    log_path="./logs",
+    log_dir="./logs",
     rotation="10MB",
     retention="5 files"
 )
@@ -100,7 +100,7 @@ logger = create_logger(
 # 時間輪替
 logger = create_logger(
     name="time_rotation", 
-    log_path="./logs",
+    log_dir="./logs",
     rotation="daily",
     retention="30 days"
 )

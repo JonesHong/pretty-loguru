@@ -8,6 +8,12 @@
 
 pretty-loguru 提供多種初始化方式，滿足不同場景的需求。
 
+### ✅ 語意一致（核心合約）
+
+- 一次 API 呼叫只會送出**一筆 Loguru event**（不在 logging 方法內額外 `console.print(...)` 走旁路）
+- console/file 只是同一筆 event 的**不同 renderer**
+- 視覺化方法（例如 `block/table/tree/...`）會把 `pretty_kind`、`pretty_payload`、`pretty_text` 放進 `record["extra"]`
+
 #### 快速初始化 (推薦)
 
 ```python
@@ -16,7 +22,7 @@ from pretty_loguru import create_logger
 # 一行代碼完成所有設定
 logger = create_logger(
     name="basic-usage_demo",
-    log_path="my_logs",
+    log_dir="my_logs",
     level="INFO"
 )
 ```
@@ -29,7 +35,7 @@ from pretty_loguru import create_logger
 logger = create_logger(
     name="my_app",
     level="INFO",
-    log_path="custom_logs",
+    log_dir="custom_logs",
     rotation="50MB",
     retention="30 days"
 )
@@ -44,7 +50,7 @@ from pretty_loguru import create_logger
 api_logger = create_logger(
     name="api_service",
     level="DEBUG",
-    log_path="logs/api"
+    log_dir="logs/api"
 )
 
 api_logger.info("API 服務已啟動")
@@ -57,7 +63,7 @@ api_logger.info("API 服務已啟動")
 native_logger = create_logger(
     name="migration_app",
     use_native_format=True,  # 使用原生格式
-    log_path="logs"
+    log_dir="logs"
 )
 
 # 輸出格式：file.name:function:line - message
@@ -71,7 +77,7 @@ pretty-loguru 提供了預設的配置模板，適合不同的使用場景：
 ### 內建配置模板
 
 ```python
-from pretty_loguru import ConfigTemplates
+from pretty_loguru.addons import ConfigTemplates
 
 # 開發環境配置
 dev_config = ConfigTemplates.development()
@@ -103,7 +109,7 @@ test_logger = test_config.apply_to("test_app")
 
 ```python
 import os
-from pretty_loguru import ConfigTemplates
+from pretty_loguru.addons import ConfigTemplates
 
 # 根據環境變數自動選擇配置
 env = os.getenv('APP_ENV', 'development')
@@ -164,22 +170,66 @@ logger.critical("系統即將崩潰")
 logger.info("這條訊息會出現在兩個地方")
 ```
 
+### ✅ 最小範例（建議照這個心智模型）
+
+#### 1) 語意一致（視覺化方法）
+
+```python
+from pretty_loguru import create_logger
+
+logger = create_logger("demo", log_dir="logs/demo", level="INFO")
+
+# 一次呼叫 -> 一筆 Loguru event
+logger.block("BOOT", ["step=1", "step=2"])
+logger.table("Users", [{"name": "Alice", "age": 30}])
+```
+
+#### 2) JSON 檔案日誌（ELK/Filebeat）
+
+```python
+from pretty_loguru import create_logger
+
+logger = create_logger("json_demo", log_dir="logs/json_demo", level="INFO", serialize=True)
+logger.block("STRUCTURED", ["檔案輸出會是 JSON line，extra 內含 pretty payload"])
+```
+
+#### 3) Loki 直推（可選）
+
+```python
+from pretty_loguru import create_logger
+
+logger = create_logger(
+    "loki_demo",
+    log_dir="logs/loki_demo",
+    level="INFO",
+    serialize=True,
+    loki_enabled=True,
+    loki_base_url="http://localhost:3100",
+    loki_labels={"app": "loki_demo"},
+)
+logger.info("hello loki")
+```
+
 ### 僅控制台輸出
 
 ```python
 # 只在控制台顯示，不寫入檔案
-logger.console_info("只在控制台顯示")
-logger.console_warning("控制台警告")
-logger.console_error("控制台錯誤")
+from pretty_loguru.addons import log_to_targets
+
+log_to_targets(logger, "只在控制台顯示", console_only=True)
+log_to_targets(logger, "控制台警告", level="WARNING", console_only=True)
+log_to_targets(logger, "控制台錯誤", level="ERROR", console_only=True)
 ```
 
 ### 僅檔案輸出
 
 ```python
 # 只寫入檔案，不在控制台顯示
-logger.file_info("只寫入日誌檔案")
-logger.file_debug("檔案除錯訊息")
-logger.file_error("檔案錯誤記錄")
+from pretty_loguru.addons import log_to_targets
+
+log_to_targets(logger, "只寫入日誌檔案", file_only=True)
+log_to_targets(logger, "檔案除錯訊息", level="DEBUG", file_only=True)
+log_to_targets(logger, "檔案錯誤記錄", level="ERROR", file_only=True)
 ```
 
 ## 📁 檔案管理
@@ -199,7 +249,7 @@ pretty-loguru 會自動生成有意義的檔名：
 # 按檔案大小輪換
 logger = create_logger(
     name="basic-usage_demo",
-    log_path="logs",
+    log_dir="logs",
     rotation="10MB",
     level="INFO"
 )
@@ -207,7 +257,7 @@ logger = create_logger(
 # 按時間輪換
 logger = create_logger(
     name="basic-usage_demo",
-    log_path="logs",
+    log_dir="logs",
     rotation="1 day",
     level="INFO"
 )
@@ -215,7 +265,7 @@ logger = create_logger(
 # 按數量輪換
 logger = create_logger(
     name="basic-usage_demo",
-    log_path="logs",
+    log_dir="logs",
     rotation="midnight",
     retention=10,
     level="INFO"
@@ -228,7 +278,7 @@ logger = create_logger(
 # 自動清理舊檔案
 logger = create_logger(
     name="demo",
-    log_path="logs",
+    log_dir="logs",
     level="INFO"
 )
 ```
@@ -244,13 +294,13 @@ def setup_logging():
     if env == "production":
         return create_logger(
             name="demo",
-            log_path="prod_logs",
+            log_dir="prod_logs",
             level="INFO"
         )
     else:
         return create_logger(
             name="demo",
-            log_path="dev_logs",
+            log_dir="dev_logs",
             level="DEBUG"
         )
 ```
@@ -277,7 +327,7 @@ def main():
     # 初始化日誌系統
     logger = create_logger(
         name="demo",
-        log_path="app_logs",
+        log_dir="app_logs",
         level="INFO",
         rotation="50MB",
         retention="14 days"
@@ -346,7 +396,7 @@ A: 檢查日誌級別設定：
 ```python
 logger = create_logger(
     name="basic-usage_demo",
-    log_path="logs",
+    log_dir="logs",
     level="DEBUG"
 )
 ```
@@ -354,8 +404,10 @@ logger = create_logger(
 ### Q: 如何只在檔案中記錄敏感資訊？
 A: 使用檔案專用方法：
 ```python
-logger.file_info(f"用戶密碼重設：{user_id}")  # 只寫入檔案
-logger.console_info("用戶密碼重設成功")        # 只顯示在控制台
+from pretty_loguru.addons import log_to_targets
+
+log_to_targets(logger, f"用戶密碼重設：{user_id}", file_only=True)  # 只寫入檔案
+log_to_targets(logger, "用戶密碼重設成功", console_only=True)        # 只顯示在控制台
 ```
 
 ### Q: 日誌檔案太多怎麼辦？
@@ -363,7 +415,7 @@ A: 設定自動清理：
 ```python
 logger = create_logger(
     name="basic-usage_demo",
-    log_path="logs",
+    log_dir="logs",
     retention="7 days",
     level="INFO"
 )
@@ -378,7 +430,7 @@ from pretty_loguru import create_logger
 logger = create_logger(
     name="my_app",
     level="INFO",
-    log_path="logs"
+    log_dir="logs"
 )
 logger.info("主程式啟動")
 
@@ -403,7 +455,7 @@ from pretty_loguru import create_logger
 logger = create_logger(
     name="shared_app",
     level="INFO",
-    log_path="logs"
+    log_dir="logs"
 )
 
 # module_a.py

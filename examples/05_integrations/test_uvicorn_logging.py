@@ -8,10 +8,10 @@ from pretty_loguru import create_logger
 from pretty_loguru.integrations.uvicorn import integrate_uvicorn
 
 # 創建一個 logger 實例
-logger = create_logger(name="FastAPIApp", log_path="./test_logs")
+logger = create_logger(name="FastAPIApp", log_dir="./test_logs")
 
-# 將 Uvicorn 與 logger 集成
-integrate_uvicorn(logger, level="INFO")
+# 建立 uvicorn 的 log_config（non-monkeypatch，推薦）
+log_config = integrate_uvicorn(logger, log_level="INFO")
 
 app = FastAPI()
 
@@ -22,4 +22,4 @@ async def read_root():
 
 if __name__ == "__main__":
     logger.info("Starting FastAPI application...")
-    uvicorn.run(app, host="127.0.0.1", port=8012)
+    uvicorn.run(app, host="127.0.0.1", port=8012, log_config=log_config)

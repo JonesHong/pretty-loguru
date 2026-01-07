@@ -12,7 +12,7 @@ from pretty_loguru import create_logger
 # Initialize the logging system
 logger = create_logger(
     name="ascii-art_demo",
-    log_path="ascii_demo",
+    log_dir="ascii_demo",
     level="INFO"
 )
 

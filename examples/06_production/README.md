@@ -91,7 +91,7 @@ from pretty_loguru import create_logger
 # 環境變數驅動配置
 logger = create_logger(
     name=os.getenv("SERVICE_NAME", "myapp"),
-    log_path=os.getenv("LOG_PATH", "/var/log/myapp"),
+    log_dir=os.getenv("LOG_PATH", "/var/log/myapp"),
     level=os.getenv("LOG_LEVEL", "INFO"),
     rotation=os.getenv("LOG_ROTATION", "100MB"),
     retention=os.getenv("LOG_RETENTION", "30 days"),
@@ -139,8 +139,8 @@ import shutil
 
 def monitor_log_space():
     """監控日誌空間使用"""
-    log_path = "/var/log/myapp"
-    usage = shutil.disk_usage(log_path)
+    log_dir = "/var/log/myapp"
+    usage = shutil.disk_usage(log_dir)
     
     used_percent = (usage.used / usage.total) * 100
     
@@ -148,7 +148,7 @@ def monitor_log_space():
         logger.warning(
             "磁碟空間不足",
             extra={
-                "path": log_path,
+                "path": log_dir,
                 "used_percent": used_percent,
                 "free_gb": usage.free / (1024**3)
             }

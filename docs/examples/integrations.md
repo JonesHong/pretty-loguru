@@ -16,7 +16,7 @@ app = FastAPI(title="My API")
 # 設定日誌
 setup_fastapi_logging(
     app,
-    log_path="logs/api",
+    log_dir="logs/api",
     level="INFO"
 )
 
@@ -47,7 +47,7 @@ from pretty_loguru import create_logger
 import time
 
 app = FastAPI()
-logger = create_logger("api", log_path="logs/api")
+logger = create_logger("api", log_dir="logs/api")
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
@@ -97,7 +97,7 @@ async def slow_endpoint():
 ```python
 from fastapi import FastAPI, Depends
 from typing import Annotated
-from pretty_loguru import create_logger, EnhancedLogger
+from pretty_loguru import create_logger, PrettyLogger
 
 app = FastAPI()
 
@@ -107,21 +107,21 @@ db_logger = create_logger("database", level="DEBUG")
 auth_logger = create_logger("auth", level="WARNING")
 
 # 依賴注入函數
-def get_api_logger() -> EnhancedLogger:
+def get_api_logger() -> PrettyLogger:
     return api_logger
 
-def get_db_logger() -> EnhancedLogger:
+def get_db_logger() -> PrettyLogger:
     return db_logger
 
-def get_auth_logger() -> EnhancedLogger:
+def get_auth_logger() -> PrettyLogger:
     return auth_logger
 
 # 使用依賴注入
 @app.post("/users/")
 async def create_user(
     user_data: dict,
-    logger: Annotated[EnhancedLogger, Depends(get_api_logger)],
-    db_logger: Annotated[EnhancedLogger, Depends(get_db_logger)]
+    logger: Annotated[PrettyLogger, Depends(get_api_logger)],
+    db_logger: Annotated[PrettyLogger, Depends(get_db_logger)]
 ):
     logger.info(f"Creating user: {user_data.get('username')}")
     
@@ -134,7 +134,7 @@ async def create_user(
 @app.post("/auth/login")
 async def login(
     credentials: dict,
-    logger: Annotated[EnhancedLogger, Depends(get_auth_logger)]
+    logger: Annotated[PrettyLogger, Depends(get_auth_logger)]
 ):
     logger.warning(f"Login attempt for: {credentials.get('username')}")
     
@@ -153,7 +153,8 @@ async def login(
 ```python
 import uvicorn
 from fastapi import FastAPI
-from pretty_loguru.integrations.uvicorn import configure_uvicorn
+from pretty_loguru import create_logger
+from pretty_loguru.integrations.uvicorn import integrate_uvicorn
 
 app = FastAPI()
 
@@ -162,38 +163,38 @@ async def root():
     return {"message": "Hello World"}
 
 if __name__ == "__main__":
-    # 配置 Uvicorn 日誌
-    configure_uvicorn(
-        log_path="logs/uvicorn",
-        level="INFO",
-        intercept_levels=["INFO", "WARNING", "ERROR"]
-    )
-    
-    # 運行伺服器
+    logger = create_logger("uvicorn_app", log_dir="logs/uvicorn", level="INFO")
+
+    # 建立 uvicorn 的 log_config（non-monkeypatch，推薦）
+    log_config = integrate_uvicorn(logger, log_level="INFO")
+
     uvicorn.run(
         app,
         host="0.0.0.0",
         port=8000,
-        log_config=None  # 重要：禁用預設配置
+        log_config=log_config,
     )
 ```
 
 Uvicorn 配置選項：
 ```python
-from pretty_loguru import LoggerConfig, ConfigTemplates
+from pretty_loguru import LoggerConfig
+from pretty_loguru.addons import ConfigTemplates
 
 # 使用配置模板
 config = ConfigTemplates.production()
-configure_uvicorn(config=config)
+logger = create_logger("web", config=config)
+log_config = integrate_uvicorn(logger, log_level=config.level)
 
 # 自定義配置
 custom_config = LoggerConfig(
     level="DEBUG",
-    log_path="logs/server",
+    log_dir="logs/server",
     rotation="100 MB",
     retention="30 days"
 )
-configure_uvicorn(config=custom_config)
+logger = create_logger("web_debug", config=custom_config)
+log_config = integrate_uvicorn(logger, log_level=custom_config.level)
 ```
 
 [查看完整程式碼](https://github.com/JonesHong/pretty-loguru/blob/master/examples/05_integrations/test_uvicorn_logging.py)
@@ -204,7 +205,8 @@ configure_uvicorn(config=custom_config)
 
 ```python
 from fastapi import FastAPI, Request, HTTPException
-from pretty_loguru import create_logger, ConfigTemplates
+from pretty_loguru import create_logger
+from pretty_loguru.addons import ConfigTemplates
 from pretty_loguru.integrations.fastapi import setup_fastapi_logging
 import time
 
@@ -216,7 +218,7 @@ config = ConfigTemplates.production()
 logger = create_logger("webapp", config=config)
 
 # 設定 FastAPI 日誌
-setup_fastapi_logging(app, config=config)
+setup_fastapi_logging(app, logger_instance=logger)
 
 # 全局異常處理
 @app.exception_handler(Exception)
@@ -234,7 +236,7 @@ async def global_exception_handler(request: Request, exc: Exception):
             f"請求路徑: {request.url.path}",
         ],
         border_style="red",
-        log_level="ERROR"
+        level="ERROR"
     )
     
     return {"error": "Internal server error"}
@@ -249,7 +251,7 @@ async def startup_event():
             "環境: Production",
             "版本: v1.0.0",
             "配置: 生產環境預設",
-            f"日誌路徑: {config.log_path}"
+            f"日誌路徑: {config.log_dir}"
         ],
         border_style="green"
     )
@@ -268,10 +270,9 @@ async def process_data(data: dict):
     logger.info(f"處理請求: {data.get('id')}")
     
     # 模擬處理
-    with logger.progress("處理數據") as progress:
-        task = progress.add_task("分析", total=100)
+    with logger.progress.progress_context("處理數據", total=100) as update:
         for i in range(100):
-            progress.update(task, advance=1)
+            update(1)
             await asyncio.sleep(0.01)
     
     logger.success("處理完成")
@@ -302,7 +303,8 @@ async def root():
 ```python
 import os
 from fastapi import FastAPI
-from pretty_loguru import create_logger, ConfigTemplates
+from pretty_loguru import create_logger
+from pretty_loguru.addons import ConfigTemplates
 
 app = FastAPI()
 

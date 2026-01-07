@@ -17,6 +17,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from pretty_loguru import create_logger
+from pretty_loguru.addons import log_to_targets
 import time
 import psutil
 import threading
@@ -28,13 +29,13 @@ def system_performance_monitor():
     print("=== 系統性能監控 ===\n")
     
     logger = create_logger("system_monitor", 
-                          log_path="./logs/performance", 
+                          log_dir="./logs/performance", 
                           preset="hourly",
                           retention="7 days")
     
     logger.ascii_header("SYSTEM PERF", font="slant", border_style="blue")
     
-    logger.console_info("📊 開始系統性能監控...")
+    log_to_targets(logger, "📊 開始系統性能監控...", level="INFO", console_only=True)
     
     # 收集系統指標
     def collect_system_metrics():
@@ -90,7 +91,7 @@ def system_performance_monitor():
     metrics_history = []
     
     for cycle in range(monitoring_cycles):
-        logger.console_info(f"📈 收集第 {cycle + 1} 輪指標...")
+        log_to_targets(logger, f"📈 收集第 {cycle + 1} 輪指標...", level="INFO", console_only=True)
         
         metrics = collect_system_metrics()
         metrics['timestamp'] = datetime.now().isoformat()
@@ -144,7 +145,7 @@ def application_performance_monitor():
     print("\n=== 應用性能監控 ===\n")
     
     logger = create_logger("apm_monitor",
-                          log_path="./logs/performance",
+                          log_dir="./logs/performance",
                           preset="daily",
                           retention="30 days")
     
@@ -161,10 +162,10 @@ def application_performance_monitor():
     
     performance_data = []
     
-    logger.console_info("🔍 監控應用性能...")
+    log_to_targets(logger, "🔍 監控應用性能...", level="INFO", console_only=True)
     
     for operation in operations:
-        logger.console_info(f"📏 測試操作: {operation['name']}")
+        log_to_targets(logger, f"📏 測試操作: {operation['name']}", level="INFO", console_only=True)
         
         # 模擬多次操作
         times = []
@@ -228,7 +229,7 @@ def database_performance_monitor():
     print("\n=== 資料庫性能監控 ===\n")
     
     logger = create_logger("db_monitor",
-                          log_path="./logs/performance",
+                          log_dir="./logs/performance",
                           rotation="20 MB",
                           retention="14 days")
     
@@ -243,7 +244,7 @@ def database_performance_monitor():
         {"type": "JOIN", "table": "users_orders", "rows": 856}
     ]
     
-    logger.console_info("🗄️ 監控資料庫性能...")
+    log_to_targets(logger, "🗄️ 監控資料庫性能...", level="INFO", console_only=True)
     
     db_performance_data = []
     total_queries = 0
@@ -317,13 +318,13 @@ def real_time_monitoring():
     print("\n=== 實時監控 ===\n")
     
     logger = create_logger("realtime_monitor",
-                          log_path="./logs/performance",
+                          log_dir="./logs/performance",
                           preset="minute",
                           retention="24 hours")
     
     logger.ascii_header("REALTIME", font="slant", border_style="magenta")
     
-    logger.console_info("🔴 啟動實時監控 (運行 10 秒)...")
+    log_to_targets(logger, "🔴 啟動實時監控 (運行 10 秒)...", level="INFO", console_only=True)
     
     # 監控指標
     metrics = {
@@ -381,7 +382,7 @@ def performance_optimization_tips():
     """性能優化建議"""
     print("\n=== 性能優化建議 ===\n")
     
-    logger = create_logger("optimization_tips", log_path="./logs/performance")
+    logger = create_logger("optimization_tips", log_dir="./logs/performance")
     
     logger.ascii_header("OPTIMIZE", font="slant", border_style="cyan")
     
@@ -414,7 +415,7 @@ def performance_optimization_tips():
     }
     
     for category, tips in optimization_categories.items():
-        logger.console_info(f"📋 {category}優化建議")
+        log_to_targets(logger, f"📋 {category}優化建議", level="INFO", console_only=True)
         logger.block(f"💡 {category}", tips, border_style="cyan")
         logger.info(f"提供 {category} 優化建議 - {len(tips)} 項")
         time.sleep(0.5)

@@ -16,7 +16,7 @@ app = FastAPI(title="My API")
 # Setup logging
 setup_fastapi_logging(
     app,
-    log_path="logs/api",
+    log_dir="logs/api",
     level="INFO"
 )
 
@@ -47,7 +47,7 @@ from pretty_loguru import create_logger
 import time
 
 app = FastAPI()
-logger = create_logger("api", log_path="logs/api")
+logger = create_logger("api", log_dir="logs/api")
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
@@ -97,21 +97,21 @@ Using FastAPI's dependency injection system to manage loggers:
 ```python
 from fastapi import FastAPI, Depends
 from typing import Annotated
-from pretty_loguru import create_logger, EnhancedLogger
+from pretty_loguru import create_logger, PrettyLogger
 import uuid
 
 app = FastAPI()
 
 # Create base logger
-base_logger = create_logger("api", log_path="logs/api")
+base_logger = create_logger("api", log_dir="logs/api")
 
-async def get_logger() -> EnhancedLogger:
+async def get_logger() -> PrettyLogger:
     """Provide logger as dependency"""
     return base_logger
 
 async def get_request_logger(
-    logger: Annotated[EnhancedLogger, Depends(get_logger)]
-) -> EnhancedLogger:
+    logger: Annotated[PrettyLogger, Depends(get_logger)]
+) -> PrettyLogger:
     """Create request-specific logger"""
     request_id = str(uuid.uuid4())
     return logger.bind(request_id=request_id)
@@ -119,7 +119,7 @@ async def get_request_logger(
 @app.get("/users/{user_id}")
 async def get_user(
     user_id: int,
-    logger: Annotated[EnhancedLogger, Depends(get_request_logger)]
+    logger: Annotated[PrettyLogger, Depends(get_request_logger)]
 ):
     """Endpoint with injected logger"""
     logger.info(f"Fetching user {user_id}")
@@ -133,7 +133,7 @@ async def get_user(
 @app.post("/users")
 async def create_user(
     user_data: dict,
-    logger: Annotated[EnhancedLogger, Depends(get_request_logger)]
+    logger: Annotated[PrettyLogger, Depends(get_request_logger)]
 ):
     """Create new user with logging"""
     logger.info("Creating new user", user_data=user_data)
@@ -161,7 +161,7 @@ import json
 from contextlib import asynccontextmanager
 
 # Create logger
-logger = create_logger("api", log_path="logs/api")
+logger = create_logger("api", log_dir="logs/api")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -235,7 +235,7 @@ class LoggingMiddleware:
         }
         
         # Log request with visual block
-        logger.console_block(
+        logger.block(
             "📥 Incoming Request",
             [
                 f"Method: {request_info['method']}",
@@ -243,7 +243,8 @@ class LoggingMiddleware:
                 f"Client: {request_info['client']}",
                 f"Query: {request_info['query'] or 'None'}"
             ],
-            border_style="blue"
+            border_style="blue",
+            to_console_only=True,
         )
         
         # Process request
@@ -271,7 +272,7 @@ class LoggingMiddleware:
             border_color = "red"
             level = "error"
         
-        logger.console_block(
+        logger.block(
             "📤 Response Sent",
             [
                 f"Status: {status_code}",
@@ -279,7 +280,8 @@ class LoggingMiddleware:
                 f"Path: {request_info['path']}"
             ],
             border_style=border_color,
-            log_level=level.upper()
+            level=level.upper(),
+            to_console_only=True,
         )
 
 # Add middleware
@@ -294,13 +296,14 @@ async def root():
 @app.get("/health")
 async def health_check():
     """Health check with detailed logging"""
-    logger.console_table(
+    logger.table(
         "System Health",
         [
             {"Component": "API", "Status": "🟢 Healthy", "Details": "Running"},
             {"Component": "Database", "Status": "🟢 Connected", "Details": "5ms ping"},
             {"Component": "Cache", "Status": "🟡 Warning", "Details": "High memory"}
-        ]
+        ],
+        to_console_only=True,
     )
     return {"status": "healthy"}
 ```
@@ -310,54 +313,29 @@ async def health_check():
 Integrating with Uvicorn server:
 
 ```python
-from pretty_loguru.integrations.uvicorn import setup_uvicorn_logging
 from pretty_loguru import create_logger
+from pretty_loguru.integrations.uvicorn import integrate_uvicorn
 import uvicorn
 from fastapi import FastAPI
 
 # Create FastAPI app
 app = FastAPI()
 
-# Setup Uvicorn logging
-logger = setup_uvicorn_logging(
-    log_path="logs/server",
-    level="INFO",
-    access_log=True
-)
+logger = create_logger("server", log_dir="logs/server", level="INFO")
+log_config = integrate_uvicorn(logger, log_level="INFO")
 
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
 if __name__ == "__main__":
-    # Configure Uvicorn with Pretty-Loguru
-    config = uvicorn.Config(
+    uvicorn.run(
         app,
         host="0.0.0.0",
         port=8000,
-        log_config=None,  # Disable default logging
-        access_log=False  # We handle this in Pretty-Loguru
+        log_config=log_config,  # Use Pretty-Loguru's log_config
+        log_level="info",
     )
-    
-    # Custom server class with logging
-    class LoggingServer(uvicorn.Server):
-        def __init__(self, config):
-            super().__init__(config)
-            
-        async def startup(self, sockets=None):
-            logger.ascii_header("SERVER", font="block", border_style="green")
-            logger.info(f"Starting server on {config.host}:{config.port}")
-            await super().startup(sockets)
-            logger.success("Server started successfully")
-        
-        async def shutdown(self, sockets=None):
-            logger.info("Shutting down server...")
-            await super().shutdown(sockets)
-            logger.ascii_header("STOPPED", font="block", border_style="yellow")
-    
-    # Run server
-    server = LoggingServer(config)
-    server.run()
 ```
 
 ## Background Tasks with Logging
@@ -370,9 +348,9 @@ from pretty_loguru import create_logger
 import asyncio
 
 app = FastAPI()
-logger = create_logger("tasks", log_path="logs/tasks")
+logger = create_logger("tasks", log_dir="logs/tasks")
 
-async def process_data(item_id: int, logger: EnhancedLogger):
+async def process_data(item_id: int, logger: PrettyLogger):
     """Background task with logging"""
     task_logger = logger.bind(
         task="process_data",
@@ -417,7 +395,7 @@ async def trigger_processing(
 async def task_status():
     """Show task processing status"""
     # In real app, query task status from database
-    logger.console_tree(
+    logger.tree(
         "Task Status",
         {
             "Running": {
@@ -431,7 +409,8 @@ async def task_status():
             "Failed": {
                 "Recent": ["item_999 - Timeout", "item_888 - Invalid data"]
             }
-        }
+        },
+        to_console_only=True,
     )
     
     return {"status": "displayed in console"}
@@ -447,7 +426,7 @@ from pretty_loguru import create_logger
 import json
 
 app = FastAPI()
-logger = create_logger("websocket", log_path="logs/websocket")
+logger = create_logger("websocket", log_dir="logs/websocket")
 
 class ConnectionManager:
     """Manage WebSocket connections with logging"""
@@ -460,19 +439,21 @@ class ConnectionManager:
         await websocket.accept()
         self.active_connections.append(websocket)
         self.logger.info(f"Client {client_id} connected")
-        self.logger.console_panel(
+        self.logger.panel(
             f"New WebSocket connection from {client_id}",
             title="🔌 Connected",
-            border_style="green"
+            border_style="green",
+            to_console_only=True,
         )
     
     def disconnect(self, websocket: WebSocket, client_id: str):
         self.active_connections.remove(websocket)
         self.logger.info(f"Client {client_id} disconnected")
-        self.logger.console_panel(
+        self.logger.panel(
             f"Client {client_id} disconnected",
             title="🔌 Disconnected",
-            border_style="yellow"
+            border_style="yellow",
+            to_console_only=True,
         )
     
     async def broadcast(self, message: str, sender_id: str):

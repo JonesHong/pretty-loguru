@@ -10,7 +10,7 @@
 
 ## 🔄 Format Comparison
 
-### Enhanced Format (Default)
+### Pretty Format (Default)
 ```python
 from pretty_loguru import create_logger
 
@@ -36,7 +36,7 @@ logger.info("User login successful")
 
 ## 📊 Detailed Differences
 
-| Feature | Enhanced Format | Native Format |
+| Feature | Pretty Format | Native Format |
 |---------|-----------------|---------------|
 | **Display Name** | Custom name | Filename |
 | **Time Format** | `HH:mm:ss` | `HH:mm:ss.SSS` (with milliseconds) |
@@ -80,7 +80,7 @@ def create_app_logger():
     else:
         return create_logger(
             "prod_app", 
-            use_native_format=False,  # Use enhanced format in production
+            use_native_format=False,  # Use Pretty format in production
             level="INFO"
         )
 ```
@@ -93,7 +93,7 @@ debug_logger = create_logger("debug", use_native_format=True)
 service_logger = create_logger("service", use_native_format=False) 
 
 debug_logger.debug("Variable check", var="value")      # Native format
-service_logger.info("API request processed")           # Enhanced format
+service_logger.info("API request processed")           # Pretty format
 ```
 
 ## 🔧 Configuration Examples
@@ -113,7 +113,7 @@ logger = create_logger(use_native_format=True)
 logger = create_logger(
     name="my_app",
     use_native_format=True,
-    log_path="./logs",
+    log_dir="./logs",
     level="DEBUG",
     rotation="10MB",
     retention="7 days"
@@ -132,7 +132,7 @@ logger = create_logger(
 
 ## 📁 File Naming Differences
 
-### Enhanced Format File Naming
+### Pretty Format File Naming
 ```
 logs/
 ├── [api_service]_20250630-201530.log
@@ -156,7 +156,7 @@ def setup_logger(service_name: str, env: str):
     return create_logger(
         name=service_name,
         use_native_format=(env == "development"),
-        log_path=f"logs/{env}",
+        log_dir=f"logs/{env}",
         level="DEBUG" if env == "development" else "INFO"
     )
 ```
@@ -168,7 +168,7 @@ def create_team_logger(name: str, for_development: bool = False):
     return create_logger(
         name=name,
         use_native_format=for_development,
-        log_path="logs",
+        log_dir="logs",
         preset="detailed" if not for_development else None
     )
 
@@ -189,7 +189,7 @@ class LoggerMigration:
         return create_logger(
             name=self.service_name,
             use_native_format=not self.migration_complete,
-            log_path="logs"
+            log_dir="logs"
         )
 ```
 
@@ -215,7 +215,7 @@ logger = create_logger("app", use_native_format=True, force_new_instance=True)
 ### Q: How to choose the format?
 **A:** 
 - **Development**: Use Native format for easier debugging
-- **Production**: Use Enhanced format for better monitoring
+- **Production**: Use Pretty format for better monitoring
 - **Migration**: Use Native format for consistency
 
 ## 🔗 Related Documentation

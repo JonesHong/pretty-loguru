@@ -4,7 +4,20 @@
 此模組提供統一的依賴檢查功能，避免在多個地方重複相同的檢查邏輯。
 """
 
+import warnings
 from typing import Optional, Any
+
+
+def art():
+    """延遲導入 art（方便測試 patch 與避免硬依賴）"""
+    import art as _art  # type: ignore
+    return _art
+
+
+def pyfiglet():
+    """延遲導入 pyfiglet（方便測試 patch 與避免硬依賴）"""
+    import pyfiglet as _pyfiglet  # type: ignore
+    return _pyfiglet
 
 
 def ensure_art_dependency(logger_instance: Optional[Any] = None) -> None:
@@ -18,7 +31,7 @@ def ensure_art_dependency(logger_instance: Optional[Any] = None) -> None:
         ImportError: 如果 art 庫未安裝
     """
     try:
-        import art
+        art()
         return True
     except ImportError:
         error_msg = "The 'art' library is not installed. Please install it using 'pip install art'."
@@ -38,7 +51,7 @@ def ensure_pyfiglet_dependency(logger_instance: Optional[Any] = None) -> None:
         ImportError: 如果 pyfiglet 庫未安裝
     """
     try:
-        import pyfiglet
+        pyfiglet()
         return True
     except ImportError:
         error_msg = "The 'pyfiglet' library is not installed. Please install it using 'pip install pyfiglet'."
@@ -55,7 +68,7 @@ def check_art_availability() -> bool:
         bool: True 如果 art 庫可用，否則 False
     """
     try:
-        import art
+        art()
         return True
     except ImportError:
         return False
@@ -69,7 +82,7 @@ def check_pyfiglet_availability() -> bool:
         bool: True 如果 pyfiglet 庫可用，否則 False
     """
     try:
-        import pyfiglet
+        pyfiglet()
         return True
     except ImportError:
         return False
@@ -92,8 +105,11 @@ def warn_missing_dependency(
         bool: return_value 參數的值
     """
     warning_msg = f"'{dependency_name}' library is not installed. Skipping related functionality."
-    if logger_instance and hasattr(logger_instance, "warning"):
-        logger_instance.warning(warning_msg)
+    try:
+        from .warn_once import warn_once
+        warn_once(warning_msg, ImportWarning, key=f"missing_{dependency_name}")
+    except Exception:
+        warnings.warn(warning_msg, ImportWarning)
     return return_value
 
 

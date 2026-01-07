@@ -14,7 +14,7 @@ from loguru import logger as loguru_logger
 pretty_logger = create_logger("advanced")
 
 # Access underlying Loguru logger
-# Pretty-Loguru's logger is an enhanced version of Loguru
+# Pretty-Loguru's logger is built on Loguru (same core API, plus injected pretty methods)
 pretty_logger.info("This is a Pretty-Loguru log")
 
 # Use Loguru's advanced features
@@ -193,7 +193,8 @@ logger.add(
 Using environment-specific configurations:
 
 ```python
-from pretty_loguru import LoggerConfig, ConfigTemplates
+from pretty_loguru import LoggerConfig
+from pretty_loguru.addons import ConfigTemplates
 import os
 from typing import Optional
 

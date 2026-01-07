@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Pretty-Loguru is an enhanced logging library built on top of Loguru, featuring Rich panels, ASCII art headers, visual blocks, and comprehensive integrations. The library provides beautiful, structured logging with both console and file output capabilities.
+Pretty-Loguru is a pretty logging library built on top of Loguru, featuring Rich panels, ASCII art headers, visual blocks, and comprehensive integrations. The library provides beautiful, structured logging with both console and file output capabilities.
 
 ## Development Commands
 
@@ -48,7 +48,7 @@ npm run preview # Preview production build
 python -c "from pretty_loguru import create_logger; logger = create_logger('test'); logger.info('Test successful')"
 
 # Test configuration system
-python -c "from pretty_loguru import ConfigTemplates; config = ConfigTemplates.production(); logger = config.apply_to('test'); logger.info('Config test')"
+python -c "from pretty_loguru.addons import ConfigTemplates; config = ConfigTemplates.production(); logger = config.apply_to('test'); logger.info('Config test')"
 
 # Test visual features (requires art/pyfiglet)
 python examples/03_visual/ascii_art.py
@@ -89,13 +89,14 @@ The library follows a layered architecture:
 
 **Target-Oriented Logging**: Supports different output targets:
 - `logger.info()` - outputs to both console and file
-- `logger.console_block()` - console-only rich blocks
-- `logger.file_ascii_header()` - file-only ASCII headers
+- `log_to_targets(logger, "...", console_only=True)` - console-only plain logs
+- `logger.block(..., to_console_only=True)` - console-only rich blocks
+- `logger.ascii_header(..., to_file_only=True)` - file-only ASCII headers
 
 **Visual Logging Methods**: Dynamically injected methods:
 - `logger.block(title, content, border_style="green")` - Rich panels
 - `logger.ascii_header("STARTUP", font="slant")` - ASCII art titles
-- `logger.ascii_block(title, content, ascii_header="STATUS")` - Combined blocks
+- `logger.ascii_block(title, content, header_text="STATUS")` - Combined blocks
 
 ## Configuration System
 
@@ -108,7 +109,7 @@ config = ConfigTemplates.production()
 logger = config.apply_to("app")
 
 # Multi-logger management
-config = LoggerConfig(level="INFO", log_path="logs")
+config = LoggerConfig(level="INFO", log_dir="logs")
 loggers = config.apply_to("service1", "service2", "service3")
 
 # Dynamic configuration updates
@@ -120,7 +121,7 @@ config.update(level="DEBUG")  # All attached loggers update automatically
 from pretty_loguru import create_logger
 
 # Traditional single logger creation
-logger = create_logger("app", level="INFO", log_path="logs")
+logger = create_logger("app", level="INFO", log_dir="logs")
 ```
 
 ### Configuration Templates
@@ -172,7 +173,7 @@ Available templates in `ConfigTemplates`:
 from pretty_loguru.integrations.fastapi import setup_fastapi_logging
 
 app = FastAPI()
-setup_fastapi_logging(app, log_path="logs/api")
+setup_fastapi_logging(app, log_dir="logs/api")
 ```
 
 ### Custom Integration Pattern

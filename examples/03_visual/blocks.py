@@ -17,11 +17,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from pretty_loguru import create_logger
+from pretty_loguru.addons import log_to_targets
 import time
 
 def basic_blocks_demo():
     """基本區塊格式化演示"""
-    logger = create_logger("blocks_demo", log_path="./logs")
+    logger = create_logger("blocks_demo", log_dir="./logs")
     
     print("=== 基本區塊格式化 ===\n")
     
@@ -40,7 +41,7 @@ def basic_blocks_demo():
 
 def colored_blocks_demo():
     """彩色區塊演示"""
-    logger = create_logger("colored_blocks", log_path="./logs")
+    logger = create_logger("colored_blocks", log_dir="./logs")
     
     print("\n=== 彩色區塊演示 ===\n")
     
@@ -55,12 +56,12 @@ def colored_blocks_demo():
 
 def real_world_scenarios():
     """真實應用場景演示"""
-    logger = create_logger("app_status", log_path="./logs")
+    logger = create_logger("app_status", log_dir="./logs")
     
     print("\n=== 真實應用場景 ===\n")
     
     # 1. 應用啟動報告
-    logger.console_info("正在啟動應用...")
+    log_to_targets(logger, "正在啟動應用...", level="INFO", console_only=True)
     startup_info = [
         "應用名稱: MyWebApp",
         "版本: v2.1.0",
@@ -97,7 +98,7 @@ def real_world_scenarios():
 
 def deployment_status():
     """部署狀態報告"""
-    logger = create_logger("deployment", log_path="./logs")
+    logger = create_logger("deployment", log_dir="./logs")
     
     print("\n=== 部署狀態報告 ===\n")
     

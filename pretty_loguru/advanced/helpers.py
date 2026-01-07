@@ -23,7 +23,7 @@ def create_rich_table_log(
     title: str,
     data: List[Dict[str, Any]],
     log_level: str = "INFO",
-    **table_kwargs
+    table_kwargs: Optional[Dict[str, Any]] = None,
 ) -> None:
     """
     Create a Rich table and log it using pretty-loguru logger.
@@ -36,7 +36,7 @@ def create_rich_table_log(
         title: Table title
         data: List of dictionaries representing table rows
         log_level: Log level for the table log entry
-        **table_kwargs: Additional arguments passed directly to Rich Table
+        table_kwargs: Additional arguments passed directly to Rich Table
         
     Example:
         >>> from pretty_loguru import create_logger
@@ -44,7 +44,7 @@ def create_rich_table_log(
         >>> 
         >>> logger = create_logger("app")
         >>> data = [{"name": "Alice", "score": 95}, {"name": "Bob", "score": 87}]
-        >>> create_rich_table_log(logger, "Scores", data, show_header=True)
+        >>> create_rich_table_log(logger, "Scores", data, table_kwargs={"show_header": True})
     """
     if not HAS_RICH:
         logger_instance.warning("Rich library not available, skipping table display")
@@ -55,7 +55,7 @@ def create_rich_table_log(
         return
     
     # Use Rich Table API exactly as intended
-    table = Table(title=title, **table_kwargs)
+    table = Table(title=title, **(table_kwargs or {}))
     
     # Auto-add columns from first row
     for key in data[0].keys():
@@ -79,7 +79,7 @@ def create_rich_table_log(
     for row in data:
         table_text += " | ".join(f"{k}: {v}" for k, v in row.items()) + "\n"
     
-    logger_instance.file_info(table_text)
+    logger_instance.opt(depth=1).bind(to_file_only=True).log(log_level, table_text)
 
 def create_mixed_ascii_panel(
     logger_instance: Any,
@@ -140,11 +140,10 @@ def create_mixed_ascii_panel(
     
     # File log version
     file_content = f"{panel_title or 'ASCII Art'}:\n{ascii_text}"
-    logger_instance.file_info(file_content)
+    logger_instance.opt(depth=1).bind(to_file_only=True).log(log_level, file_content)
 
 def create_loguru_rich_sink(
     console: Optional[Console] = None,
-    **sink_kwargs
 ) -> Console:
     """
     Create a Rich Console configured as a Loguru sink.
@@ -154,7 +153,6 @@ def create_loguru_rich_sink(
     
     Args:
         console: Optional existing Rich Console instance
-        **sink_kwargs: Additional arguments for loguru.add()
         
     Returns:
         Console: The Rich Console instance that can be used as a Loguru sink

@@ -29,25 +29,28 @@ except ImportError:
     print("請先安裝依賴：pip install fastapi uvicorn")
     exit(1)
 
-from pretty_loguru import create_logger, EnhancedLogger,configure_uvicorn
+from pretty_loguru import PrettyLogger, create_logger
+from pretty_loguru.addons import log_to_targets
+from pretty_loguru.integrations.uvicorn import integrate_uvicorn
 from typing import Dict, Any
-configure_uvicorn()
+
 # 創建主應用 logger
-main_logger = create_logger("dependency_app", log_path="./logs/fastapi")
+main_logger = create_logger("dependency_app", log_dir="./logs/fastapi")
+uvicorn_log_config = integrate_uvicorn(main_logger, log_level="WARNING")
 
 # 創建不同服務的 logger 實例
-auth_logger = create_logger("auth_service", log_path="./logs/fastapi") 
-user_logger = create_logger("user_service", log_path="./logs/fastapi")
-order_logger = create_logger("order_service", log_path="./logs/fastapi")
+auth_logger = create_logger("auth_service", log_dir="./logs/fastapi") 
+user_logger = create_logger("user_service", log_dir="./logs/fastapi")
+order_logger = create_logger("order_service", log_dir="./logs/fastapi")
 
 # 創建 logger 依賴函數
-def get_auth_logger() -> EnhancedLogger:
+def get_auth_logger() -> PrettyLogger:
     return auth_logger
 
-def get_user_logger() -> EnhancedLogger:
+def get_user_logger() -> PrettyLogger:
     return user_logger
 
-def get_order_logger() -> EnhancedLogger:
+def get_order_logger() -> PrettyLogger:
     return order_logger
 
 # 創建 FastAPI 應用
@@ -59,27 +62,27 @@ app = FastAPI(
 
 # === 認證服務路由 ===
 @app.get("/auth/status")
-async def auth_status(logger: EnhancedLogger = Depends(get_auth_logger)):
+async def auth_status(logger: PrettyLogger = Depends(get_auth_logger)):
     """檢查認證服務狀態 - 使用認證服務 logger"""
     logger.info("檢查認證服務狀態")
-    logger.file_info("認證服務狀態檢查")
+    log_to_targets(logger, "認證服務狀態檢查", level="INFO", file_only=True)
     
     return {"status": "ok", "message": "認證服務運行正常"}
 @app.post("/auth/login")
 async def login(
     credentials: Dict[str, str] = {"username": "demo", "password": "123456"},
-    logger: EnhancedLogger = Depends(get_auth_logger)
+    logger: PrettyLogger = Depends(get_auth_logger)
 ):
     """用戶登入 - 使用認證服務 logger"""
     username = credentials.get("username", "unknown")
     
     logger.info(f"用戶登入嘗試：{username}")
-    logger.file_info(f"登入嘗試 - 用戶名：{username}, IP: client_ip")
+    log_to_targets(logger, f"登入嘗試 - 用戶名：{username}, IP: client_ip", level="INFO", file_only=True)
     
     # 模擬認證邏輯
     if username == "demo" and credentials.get("password") == "123456":
         logger.success(f"用戶 {username} 登入成功")
-        logger.file_success(f"成功登入 - 用戶：{username}")
+        log_to_targets(logger, f"成功登入 - 用戶：{username}", level="SUCCESS", file_only=True)
         
         return {
             "status": "success",
@@ -88,15 +91,15 @@ async def login(
         }
     else:
         logger.warning(f"用戶 {username} 登入失敗")
-        logger.file_warning(f"登入失敗 - 用戶：{username}, 原因：密碼錯誤")
+        log_to_targets(logger, f"登入失敗 - 用戶：{username}, 原因：密碼錯誤", level="WARNING", file_only=True)
         
         raise HTTPException(status_code=401, detail="用戶名或密碼錯誤")
 
 @app.post("/auth/logout")
-async def logout(logger: EnhancedLogger = Depends(get_auth_logger)):
+async def logout(logger: PrettyLogger = Depends(get_auth_logger)):
     """用戶登出"""
     logger.info("用戶登出")
-    logger.file_info("用戶登出操作")
+    log_to_targets(logger, "用戶登出操作", level="INFO", file_only=True)
     
     return {"status": "success", "message": "已成功登出"}
 
@@ -104,11 +107,11 @@ async def logout(logger: EnhancedLogger = Depends(get_auth_logger)):
 @app.get("/users/profile")
 async def get_profile(
     user_id: str = "demo_user",
-    logger: EnhancedLogger = Depends(get_user_logger)
+    logger: PrettyLogger = Depends(get_user_logger)
 ):
     """獲取用戶資料 - 使用用戶服務 logger"""
     logger.info(f"查詢用戶資料：{user_id}")
-    logger.file_info(f"資料查詢 - 用戶ID：{user_id}")
+    log_to_targets(logger, f"資料查詢 - 用戶ID：{user_id}", level="INFO", file_only=True)
     
     # 模擬資料庫查詢
     profile = {
@@ -119,24 +122,24 @@ async def get_profile(
     }
     
     logger.success(f"成功獲取用戶 {user_id} 的資料")
-    logger.file_success(f"資料查詢成功 - 用戶：{user_id}")
+    log_to_targets(logger, f"資料查詢成功 - 用戶：{user_id}", level="SUCCESS", file_only=True)
     
     return profile
 
 @app.put("/users/profile")
 async def update_profile(
     profile_data: Dict[str, Any],
-    logger: EnhancedLogger = Depends(get_user_logger)
+    logger: PrettyLogger = Depends(get_user_logger)
 ):
     """更新用戶資料"""
     user_id = profile_data.get("user_id", "unknown")
     
     logger.info(f"更新用戶資料：{user_id}")
-    logger.file_info(f"資料更新 - 用戶ID：{user_id}, 更新欄位：{list(profile_data.keys())}")
+    log_to_targets(logger, f"資料更新 - 用戶ID：{user_id}, 更新欄位：{list(profile_data.keys())}", level="INFO", file_only=True)
     
     # 模擬更新邏輯
     logger.success(f"用戶 {user_id} 資料更新成功")
-    logger.file_success(f"資料更新成功 - 用戶：{user_id}")
+    log_to_targets(logger, f"資料更新成功 - 用戶：{user_id}", level="SUCCESS", file_only=True)
     
     return {"status": "success", "message": "資料更新成功"}
 
@@ -144,7 +147,7 @@ async def update_profile(
 @app.post("/orders/create")
 async def create_order(
     order_data: Dict[str, Any] = {"product": "demo_product", "quantity": 1, "price": 99.99},
-    logger: EnhancedLogger = Depends(get_order_logger)
+    logger: PrettyLogger = Depends(get_order_logger)
 ):
     """創建訂單 - 使用訂單服務 logger"""
     product = order_data.get("product", "unknown")
@@ -152,13 +155,13 @@ async def create_order(
     price = order_data.get("price", 0)
     
     logger.info(f"創建新訂單：{product} x {quantity}")
-    logger.file_info(f"訂單創建 - 產品：{product}, 數量：{quantity}, 金額：${price}")
+    log_to_targets(logger, f"訂單創建 - 產品：{product}, 數量：{quantity}, 金額：${price}", level="INFO", file_only=True)
     
     # 模擬訂單處理
     order_id = f"ORDER_{hash(str(order_data)) % 10000:04d}"
     
     logger.success(f"訂單創建成功：{order_id}")
-    logger.file_success(f"訂單處理成功 - 訂單ID：{order_id}, 總金額：${price * quantity}")
+    log_to_targets(logger, f"訂單處理成功 - 訂單ID：{order_id}, 總金額：${price * quantity}", level="SUCCESS", file_only=True)
     
     return {
         "order_id": order_id,
@@ -170,11 +173,11 @@ async def create_order(
 @app.get("/orders/{order_id}")
 async def get_order(
     order_id: str,
-    logger: EnhancedLogger = Depends(get_order_logger)
+    logger: PrettyLogger = Depends(get_order_logger)
 ):
     """查詢訂單"""
     logger.info(f"查詢訂單：{order_id}")
-    logger.file_info(f"訂單查詢 - 訂單ID：{order_id}")
+    log_to_targets(logger, f"訂單查詢 - 訂單ID：{order_id}", level="INFO", file_only=True)
     
     # 模擬訂單查詢
     if order_id.startswith("ORDER_"):
@@ -186,12 +189,12 @@ async def get_order(
         }
         
         logger.success(f"訂單 {order_id} 查詢成功")
-        logger.file_success(f"訂單查詢成功 - 訂單ID：{order_id}")
+        log_to_targets(logger, f"訂單查詢成功 - 訂單ID：{order_id}", level="SUCCESS", file_only=True)
         
         return order
     else:
         logger.warning(f"訂單 {order_id} 不存在")
-        logger.file_warning(f"訂單查詢失敗 - 訂單ID：{order_id} 不存在")
+        log_to_targets(logger, f"訂單查詢失敗 - 訂單ID：{order_id} 不存在", level="WARNING", file_only=True)
         
         raise HTTPException(status_code=404, detail="訂單不存在")
 
@@ -200,7 +203,7 @@ async def get_order(
 async def root():
     """首頁 - 使用主應用 logger"""
     main_logger.info("收到首頁請求")
-    main_logger.console_info("歡迎使用依賴注入示範 API")
+    log_to_targets(main_logger, "歡迎使用依賴注入示範 API", level="INFO", console_only=True)
     
     return {
         "message": "Logger 依賴注入示範 API",
@@ -233,7 +236,7 @@ async def get_log_stats():
 async def startup():
     """啟動事件"""
     main_logger.success("依賴注入示範 API 啟動成功")
-    main_logger.console_success("🔧 Logger 依賴注入已配置完成")
+    log_to_targets(main_logger, "🔧 Logger 依賴注入已配置完成", level="SUCCESS", console_only=True)
     
     print("\n" + "="*60)
     print("服務架構：")
@@ -258,7 +261,8 @@ def main():
         host=host,
         port=port,
         reload=False,
-        log_level="warning"
+        log_level="warning",
+        log_config=uvicorn_log_config,
     )
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ const base = process.env.VITE_BASE_PATH || '/pretty-loguru/'
 
 export default defineConfig({
   title: 'pretty-loguru',
-  description: 'Enhanced Python Logging Library - Based on Loguru, integrated with Rich and ASCII Art',
+  description: 'Pretty Python Logging Library - Based on Loguru, integrated with Rich and ASCII Art',
   
   // GitHub Pages 配置
   base: base,
@@ -18,7 +18,7 @@ export default defineConfig({
     ['meta', { name: 'theme-color', content: '#3c8772' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'pretty-loguru' }],
-    ['meta', { property: 'og:description', content: 'Enhanced Python Logging Library' }],
+    ['meta', { property: 'og:description', content: 'Pretty Python Logging Library' }],
   ],
 
   // i18n settings - moved to top level
@@ -28,7 +28,7 @@ export default defineConfig({
       label: '繁體中文',
       lang: 'zh-TW',
       title: 'pretty-loguru',
-      description: '增強版 Python 日誌庫 - 基於 Loguru，集成 Rich 和 ASCII Art',
+      description: '漂亮的 Python 日誌庫 - 基於 Loguru，集成 Rich 和 ASCII Art',
       themeConfig: {
         nav: [
           { text: '首頁', link: '/' },
@@ -47,7 +47,18 @@ export default defineConfig({
                 { text: '簡介', link: '/guide/' },
                 { text: '快速開始', link: '/guide/quick-start' },
                 { text: '安裝', link: '/guide/installation' },
-                { text: '基本用法', link: '/guide/basic-usage' }
+                { text: '基本用法', link: '/guide/basic-usage' },
+                { text: '視覺方法總覽', link: '/guide/visual-methods' }
+              ]
+            },
+            {
+              text: '進階配置',
+              items: [
+                { text: '配置模板管理', link: '/guide/config-templates' },
+                { text: '自定義配置', link: '/guide/custom-config' },
+                { text: '日誌輪換', link: '/guide/log-rotation' },
+                { text: '效能最佳化', link: '/guide/performance' },
+                { text: '生產環境部署', link: '/guide/production' }
               ]
             }
           ],
@@ -134,7 +145,7 @@ export default defineConfig({
       label: 'English',
       lang: 'en-US',
       title: 'pretty-loguru',
-      description: 'Enhanced Python Logging Library - Based on Loguru, integrated with Rich and ASCII Art',
+      description: 'Pretty Python Logging Library - Based on Loguru, integrated with Rich and ASCII Art',
       themeConfig: {
         nav: [
           { text: 'Home', link: '/en/' },
@@ -153,7 +164,18 @@ export default defineConfig({
                 { text: 'Introduction', link: '/en/guide/' },
                 { text: 'Quick Start', link: '/en/guide/quick-start' },
                 { text: 'Installation', link: '/en/guide/installation' },
-                { text: 'Basic Usage', link: '/en/guide/basic-usage' }
+                { text: 'Basic Usage', link: '/en/guide/basic-usage' },
+                { text: 'Visual Methods Overview', link: '/en/guide/visual-methods' }
+              ]
+            },
+            {
+              text: 'Advanced Configuration',
+              items: [
+                { text: 'Configuration Templates', link: '/en/guide/config-templates' },
+                { text: 'Custom Configuration', link: '/en/guide/custom-config' },
+                { text: 'Log Rotation', link: '/en/guide/log-rotation' },
+                { text: 'Performance Optimization', link: '/en/guide/performance' },
+                { text: 'Production Deployment', link: '/en/guide/production' }
               ]
             }
           ],

@@ -4,7 +4,23 @@
 
 ## 🚀 快速安裝
 
-### 使用 pip（推薦）
+### 使用 uv（推薦）
+
+```bash
+uv add pretty-loguru
+```
+
+可選 extras（加裝能力）：
+
+```bash
+# FIGlet（可選）
+uv add "pretty-loguru[figlet]"
+
+# integrations 別名（FastAPI/Uvicorn）
+uv add "pretty-loguru[integrations]"
+```
+
+### 使用 pip（備用）
 
 ```bash
 pip install pretty-loguru
@@ -34,7 +50,7 @@ pretty-loguru 會自動安裝以下依賴：
 - **[loguru](https://github.com/Delgan/loguru)** - 核心日誌功能
 - **[rich](https://github.com/Textualize/rich)** - 豐富的控制台輸出
 - **[art](https://github.com/sepandhaghighi/art)** - ASCII 藝術生成
-- **[pyfiglet](https://github.com/pwaller/pyfiglet)** - 文字藝術字體
+- （可選）**[pyfiglet](https://github.com/pwaller/pyfiglet)** - 文字藝術字體（需安裝 `pretty-loguru[figlet]`）
 
 ## 🔧 安裝驗證
 
@@ -47,7 +63,7 @@ from pretty_loguru import create_logger
 # 測試基本功能
 logger  = create_logger(
     name="installation_demo",
-    log_path="test_logs",
+    log_dir="test_logs",
     level="INFO"
 )
 logger.info("✅ pretty-loguru 安裝成功！")
@@ -60,7 +76,7 @@ logger.block(
         "✅ loguru: 正常",
         "✅ rich: 正常", 
         "✅ art: 正常",
-        "✅ pyfiglet: 正常"
+        "✅ pyfiglet: （可選，需安裝 pretty-loguru[figlet]）"
     ],
     border_style="green"
 )
@@ -78,7 +94,7 @@ logger.ascii_header("SUCCESS", font="slant")
 如果你想使用最新的開發版本：
 
 ```bash
-pip install git+https://github.com/JonesHong/pretty-loguru.git
+uv add "pretty-loguru @ git+https://github.com/JonesHong/pretty-loguru.git"
 ```
 
 ### 從原始碼安裝
@@ -88,11 +104,11 @@ pip install git+https://github.com/JonesHong/pretty-loguru.git
 git clone https://github.com/JonesHong/pretty-loguru.git
 cd pretty-loguru
 
-# 安裝依賴
-pip install -r requirements.txt
+# 同步環境（含 dev 依賴，如 pytest）
+uv sync --group dev
 
-# 安裝套件
-pip install -e .
+# 安裝套件（editable）
+uv pip install -e .
 ```
 
 ### 虛擬環境安裝（推薦）
@@ -101,16 +117,10 @@ pip install -e .
 
 ```bash
 # 建立虛擬環境
-python -m venv pretty_loguru_env
-
-# 啟動虛擬環境
-# Windows:
-pretty_loguru_env\Scripts\activate
-# macOS/Linux:
-source pretty_loguru_env/bin/activate
+uv venv
 
 # 安裝 pretty-loguru
-pip install pretty-loguru
+uv pip install pretty-loguru
 ```
 
 ## 🐳 Docker 環境
@@ -120,8 +130,9 @@ pip install pretty-loguru
 ```dockerfile
 FROM python:3.9-slim
 
-# 安裝 pretty-loguru
-RUN pip install pretty-loguru
+# 安裝 uv 與 pretty-loguru
+RUN pip install -U uv
+RUN uv pip install pretty-loguru
 
 # 其他設定...
 ```
@@ -133,18 +144,17 @@ RUN pip install pretty-loguru
 #### 1. 安裝失敗：權限不足
 
 ```bash
-# 解決方案：使用 --user 安裝
-pip install --user pretty-loguru
+# 解決方案：使用 uv 的虛擬環境（建議）
+uv venv
+uv pip install pretty-loguru
 ```
 
 #### 2. 依賴衝突
 
 ```bash
-# 解決方案：使用虛擬環境
-python -m venv new_env
-source new_env/bin/activate  # Linux/Mac
-# 或 new_env\Scripts\activate  # Windows
-pip install pretty-loguru
+# 解決方案：使用 uv 的虛擬環境（建議）
+uv venv
+uv pip install pretty-loguru
 ```
 
 #### 3. Python 版本過舊
@@ -161,9 +171,8 @@ python --version
 如果 ASCII 藝術功能有問題，可能是字體套件問題：
 
 ```bash
-# 重新安裝相關套件
-pip uninstall art pyfiglet
-pip install art pyfiglet
+# 若要啟用 FIGlet 功能，請加裝 extras
+uv add "pretty-loguru[figlet]"
 ```
 
 ### 詳細診斷
@@ -183,7 +192,7 @@ def check_installation():
     print(f"Python 版本: {sys.version}")
     
     # 檢查主要依賴
-    packages = ['loguru', 'rich', 'art', 'pyfiglet']
+    packages = ['loguru', 'rich', 'art']
     
     for package in packages:
         try:
@@ -200,7 +209,7 @@ def check_installation():
         # 基本功能測試
         logger  = create_logger(
     name="installation_demo",
-    log_path="diagnose_test",
+    log_dir="diagnose_test",
     level="INFO"
 )
         logger.info("基本功能測試通過")
@@ -235,7 +244,7 @@ if __name__ == "__main__":
 升級到最新版本：
 
 ```bash
-pip install --upgrade pretty-loguru
+uv add -U pretty-loguru
 ```
 
 檢查版本：

@@ -21,7 +21,7 @@ def main():
     # 創建 logger
     logger = create_logger(
         name="code_highlight_demo",
-        log_path="./logs",
+        log_dir="./logs",
         level="INFO"
     )
     
@@ -280,7 +280,7 @@ def hello_world():
     logger.code(
         code=test_code,
         title="文件專用",
-        to_log_file_only=True
+        to_file_only=True
     )
     
     logger.info("所有程式碼高亮功能測試完成！")

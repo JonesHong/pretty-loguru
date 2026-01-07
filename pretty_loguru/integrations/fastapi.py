@@ -6,7 +6,7 @@ FastAPI 整合模組
 """
 
 import time
-from typing import Callable, Optional, Dict, Any, Union, List, Set
+from typing import Callable, Optional, Dict, Any, Union, List, Set, Tuple
 import typing
 import warnings
 
@@ -18,17 +18,53 @@ try:
     _has_fastapi = True
 except ImportError:
     _has_fastapi = False
-    warnings.warn(
-        "The 'fastapi' package is not installed. FastAPI integration will not be available. You can install it using 'pip install fastapi'.",
-        ImportWarning,
-        stacklevel=2,
-    )
 
-from ..types import EnhancedLogger, LogLevelType, LogRotationType, LogPathType
+from ..types import PrettyLogger, LogLevelType, LogRotationType, LogDirType
 from ..factory.creator import create_logger, default_logger
+from ._errors import missing_dependency
 
 
 if _has_fastapi:
+
+    async def _peek_request_body(request: Request, max_bytes: int) -> Tuple[bytes, bool]:
+        """
+        讀取最多 max_bytes 的 request body 預覽，並保留原始資料供後續處理。
+        """
+        cached_body = getattr(request, "_body", None)
+        if cached_body is not None:
+            return cached_body[:max_bytes], len(cached_body) > max_bytes
+
+        receive = request._receive
+        buffered = []
+        preview = b""
+        collected = 0
+        more_body = True
+        truncated = False
+
+        while more_body and collected < max_bytes:
+            message = await receive()
+            buffered.append(message)
+            body = message.get("body", b"")
+            if body:
+                take = min(max_bytes - collected, len(body))
+                preview += body[:take]
+                if take < len(body):
+                    truncated = True
+                collected += take
+            more_body = message.get("more_body", False)
+            if not more_body:
+                break
+
+        if more_body:
+            truncated = True
+
+        async def new_receive():
+            if buffered:
+                return buffered.pop(0)
+            return await receive()
+
+        request._receive = new_receive
+        return preview, truncated
 
     class LoggingMiddleware(BaseHTTPMiddleware):
         """
@@ -38,13 +74,15 @@ if _has_fastapi:
         def __init__(
             self,
             app: FastAPI,
-            logger_instance: Optional[EnhancedLogger] = None,
+            logger_instance: Optional[PrettyLogger] = None,
             exclude_paths: Optional[List[str]] = None,
             exclude_methods: Optional[List[str]] = None,
             log_request_body: bool = False,
             log_response_body: bool = False,
             log_headers: bool = True,
             sensitive_headers: Optional[Set[str]] = None,
+            log_request_body_if_unknown_length: bool = False,
+            max_body_bytes: int = 1000,
         ):
             """
             初始化日誌中間件
@@ -58,6 +96,8 @@ if _has_fastapi:
                 log_response_body: 是否記錄響應體，預設為 False
                 log_headers: 是否記錄請求和響應頭，預設為 True
                 sensitive_headers: 敏感頭部字段集合，這些字段的值將被遮蔽
+                log_request_body_if_unknown_length: 若無 content-length 是否記錄請求體
+                max_body_bytes: 記錄 body 的最大大小（bytes），預設為 1000
             """
             super().__init__(app)
             # 使用函數調用而不是直接引用，確保延遲初始化
@@ -67,6 +107,8 @@ if _has_fastapi:
             self.log_request_body = log_request_body
             self.log_response_body = log_response_body
             self.log_headers = log_headers
+            self.log_request_body_if_unknown_length = log_request_body_if_unknown_length
+            self.max_body_bytes = max_body_bytes
             self.sensitive_headers = {
                 h.lower()
                 for h in (
@@ -116,20 +158,47 @@ if _has_fastapi:
             # 記錄請求體
             if self.log_request_body:
                 try:
-                    # 僅讀取內容而不消耗流
-                    body = await request.body()
-                    try:
-                        # 嘗試解碼為文本
-                        body_text = body.decode("utf-8")
-                        # 如果內容太長，則截斷
-                        if len(body_text) > 1000:
-                            body_text = body_text[:1000] + "... (truncated)"
-                        self.logger.debug(f"Request [{request_id}] body: {body_text}")
-                    except UnicodeDecodeError:
-                        # 如果無法解碼為文本，則記錄大小
-                        self.logger.debug(
-                            f"Request [{request_id}] body: <binary data, size: {len(body)} bytes>"
-                        )
+                    content_length = request.headers.get("content-length")
+                    if content_length and content_length.isdigit():
+                        if int(content_length) > self.max_body_bytes:
+                            self.logger.debug(
+                                f"Request [{request_id}] body: <skipped, size {content_length} bytes exceeds limit>"
+                            )
+                        else:
+                            body = await request.body()
+                            try:
+                                if len(body) > self.max_body_bytes:
+                                    body = body[: self.max_body_bytes]
+                                    suffix = "... (truncated)"
+                                else:
+                                    suffix = ""
+                                body_text = body.decode("utf-8")
+                                self.logger.debug(
+                                    f"Request [{request_id}] body: {body_text}{suffix}"
+                                )
+                            except UnicodeDecodeError:
+                                self.logger.debug(
+                                    f"Request [{request_id}] body: <binary data, size: {len(body)} bytes>"
+                                )
+                    else:
+                        if not self.log_request_body_if_unknown_length:
+                            self.logger.debug(
+                                f"Request [{request_id}] body: <skipped, content-length unknown>"
+                            )
+                        else:
+                            preview, truncated = await _peek_request_body(
+                                request, self.max_body_bytes
+                            )
+                            try:
+                                body_text = preview.decode("utf-8")
+                                suffix = "... (truncated)" if truncated else ""
+                                self.logger.debug(
+                                    f"Request [{request_id}] body: {body_text}{suffix}"
+                                )
+                            except UnicodeDecodeError:
+                                self.logger.debug(
+                                    f"Request [{request_id}] body: <binary data, size: {len(preview)} bytes>"
+                                )
                 except Exception as e:
                     self.logger.debug(
                         f"Request [{request_id}] body: <unable to read body: {type(e).__name__}>"
@@ -156,26 +225,40 @@ if _has_fastapi:
 
                 # 記錄響應體
                 if self.log_response_body:
-                    # 需要使用特殊技術來讀取響應體而不影響發送給客戶端
-                    # 在實際應用中可能需要更複雜的實現
-                    # 這裡僅作為示例
                     try:
-                        body = b""
-                        for chunk in response.body_iterator:
-                            body += chunk
-                        response.body_iterator = [body]
-
-                        try:
-                            body_text = body.decode("utf-8")
-                            if len(body_text) > 1000:
-                                body_text = body_text[:1000] + "... (truncated)"
+                        body = getattr(response, "body", None)
+                        if body is None:
                             self.logger.debug(
-                                f"Response [{request_id}] body: {body_text}"
+                                f"Response [{request_id}] body: <streaming or not buffered>"
                             )
-                        except UnicodeDecodeError:
-                            self.logger.debug(
-                                f"Response [{request_id}] body: <binary data, size: {len(body)} bytes>"
-                            )
+                        else:
+                            if isinstance(body, memoryview):
+                                body = body.tobytes()
+                            if isinstance(body, bytes):
+                                try:
+                                    if len(body) > self.max_body_bytes:
+                                        preview = body[: self.max_body_bytes]
+                                        suffix = "... (truncated)"
+                                    else:
+                                        preview = body
+                                        suffix = ""
+                                    body_text = preview.decode("utf-8")
+                                    self.logger.debug(
+                                        f"Response [{request_id}] body: {body_text}{suffix}"
+                                    )
+                                except UnicodeDecodeError:
+                                    self.logger.debug(
+                                        f"Response [{request_id}] body: <binary data, size: {len(body)} bytes>"
+                                    )
+                            else:
+                                body_text = str(body)
+                                if len(body_text.encode('utf-8')) > self.max_body_bytes:
+                                    body_text = body_text.encode("utf-8")[: self.max_body_bytes].decode(
+                                        "utf-8", errors="ignore"
+                                    ) + "... (truncated)"
+                                self.logger.debug(
+                                    f"Response [{request_id}] body: {body_text}"
+                                )
                     except Exception as e:
                         self.logger.debug(
                             f"Response [{request_id}] body: <unable to read body: {type(e).__name__}>"
@@ -217,18 +300,39 @@ if _has_fastapi:
         def __init__(
             self,
             *args: Any,
-            logger_instance: Optional[EnhancedLogger] = None,
+            logger_instance: Optional[PrettyLogger] = None,
             log_request_body: bool = False,
             log_response_body: bool = False,
+            log_request_body_if_unknown_length: bool = False,
+            max_body_bytes: int = 1000,
             **kwargs: Any,
         ):
+            """
+            建立帶有日誌功能的 route。
+
+            Args:
+                logger_instance: 用於輸出路由日誌的 logger（預設 `default_logger()`）。
+                log_request_body: 是否記錄 request body（注意隱私與大小）。
+                log_response_body: 是否記錄 response body（注意隱私與大小）。
+                log_request_body_if_unknown_length: 沒有 content-length 時是否仍嘗試記錄 request body。
+                max_body_bytes: 最多記錄多少 bytes（超過會截斷或略過）。
+            """
             # 使用函數調用而不是直接引用，確保延遲初始化
             self.logger = logger_instance or default_logger()
             self.log_request_body = log_request_body
             self.log_response_body = log_response_body
+            self.log_request_body_if_unknown_length = log_request_body_if_unknown_length
+            self.max_body_bytes = max_body_bytes
             super().__init__(*args, **kwargs)
 
         def get_route_handler(self) -> Callable:
+            """
+            回傳 FastAPI 用來處理 request 的 handler（帶有日誌紀錄）。
+
+            實作策略：
+            - 先取得 FastAPI 原始 handler
+            - 用 wrapper 包一層，在呼叫前後記錄 request/response（可選 body）
+            """
             original_route_handler = super().get_route_handler()
 
             async def custom_route_handler(request: Request) -> Response:
@@ -241,19 +345,47 @@ if _has_fastapi:
                 # 記錄請求體
                 if self.log_request_body:
                     try:
-                        body = await request.body()
-                        request._receive = self._receive_factory(body)
-                        try:
-                            body_text = body.decode("utf-8")
-                            if len(body_text) > 1000:
-                                body_text = body_text[:1000] + "... (truncated)"
-                            self.logger.debug(
-                                f"API Route [{request_id}] request body: {body_text}"
-                            )
-                        except UnicodeDecodeError:
-                            self.logger.debug(
-                                f"API Route [{request_id}] request body: <binary data, size: {len(body)} bytes>"
-                            )
+                        content_length = request.headers.get("content-length")
+                        if content_length and content_length.isdigit():
+                            if int(content_length) > self.max_body_bytes:
+                                self.logger.debug(
+                                    f"API Route [{request_id}] request body: <skipped, size {content_length} bytes exceeds limit>"
+                                )
+                            else:
+                                try:
+                                    body = await request.body()
+                                    if len(body) > self.max_body_bytes:
+                                        body = body[: self.max_body_bytes]
+                                        suffix = "... (truncated)"
+                                    else:
+                                        suffix = ""
+                                    body_text = body.decode("utf-8")
+                                    self.logger.debug(
+                                        f"API Route [{request_id}] request body: {body_text}{suffix}"
+                                    )
+                                except UnicodeDecodeError:
+                                    self.logger.debug(
+                                        f"API Route [{request_id}] request body: <binary data, size: {len(body)} bytes>"
+                                    )
+                        else:
+                            if not self.log_request_body_if_unknown_length:
+                                self.logger.debug(
+                                    f"API Route [{request_id}] request body: <skipped, content-length unknown>"
+                                )
+                            else:
+                                preview, truncated = await _peek_request_body(
+                                    request, self.max_body_bytes
+                                )
+                                try:
+                                    body_text = preview.decode("utf-8")
+                                    suffix = "... (truncated)" if truncated else ""
+                                    self.logger.debug(
+                                        f"API Route [{request_id}] request body: {body_text}{suffix}"
+                                    )
+                                except UnicodeDecodeError:
+                                    self.logger.debug(
+                                        f"API Route [{request_id}] request body: <binary data, size: {len(preview)} bytes>"
+                                    )
                     except Exception as e:
                         self.logger.debug(
                             f"API Route [{request_id}] request body: <unable to read body: {type(e).__name__}>"
@@ -272,18 +404,39 @@ if _has_fastapi:
                     # 記錄響應體
                     if self.log_response_body:
                         try:
-                            body = getattr(response, "body", b"")
-                            try:
-                                body_text = body.decode("utf-8")
-                                if len(body_text) > 1000:
-                                    body_text = body_text[:1000] + "... (truncated)"
+                            body = getattr(response, "body", None)
+                            if body is None:
                                 self.logger.debug(
-                                    f"API Route [{request_id}] response body: {body_text}"
+                                    f"API Route [{request_id}] response body: <streaming or not buffered>"
                                 )
-                            except UnicodeDecodeError:
-                                self.logger.debug(
-                                    f"API Route [{request_id}] response body: <binary data, size: {len(body)} bytes>"
-                                )
+                            else:
+                                if isinstance(body, memoryview):
+                                    body = body.tobytes()
+                                if isinstance(body, bytes):
+                                    try:
+                                        if len(body) > self.max_body_bytes:
+                                            preview = body[: self.max_body_bytes]
+                                            suffix = "... (truncated)"
+                                        else:
+                                            preview = body
+                                            suffix = ""
+                                        body_text = preview.decode("utf-8")
+                                        self.logger.debug(
+                                            f"API Route [{request_id}] response body: {body_text}{suffix}"
+                                        )
+                                    except UnicodeDecodeError:
+                                        self.logger.debug(
+                                            f"API Route [{request_id}] response body: <binary data, size: {len(body)} bytes>"
+                                        )
+                                else:
+                                    body_text = str(body)
+                                    if len(body_text.encode('utf-8')) > self.max_body_bytes:
+                                        body_text = body_text.encode("utf-8")[: self.max_body_bytes].decode(
+                                            "utf-8", errors="ignore"
+                                        ) + "... (truncated)"
+                                    self.logger.debug(
+                                        f"API Route [{request_id}] response body: {body_text}"
+                                    )
                         except Exception as e:
                             self.logger.debug(
                                 f"API Route [{request_id}] response body: <unable to read body: {type(e).__name__}>"
@@ -308,92 +461,126 @@ if _has_fastapi:
 
             return receive
 
-    def get_logger_dependency(
-        name: Optional[str] = None,
-        service_tag: Optional[str] = None,
-        # 檔案輸出配置
-        log_path: Optional[LogPathType] = None,
-        rotation: Optional[LogRotationType] = None,
-        retention: Optional[str] = None,
-        compression: Optional[Union[bool, Callable]] = None,
-        compression_format: Optional[str] = None,
-        # 格式化配置
-        level: Optional[LogLevelType] = None,
-        logger_format: Optional[str] = None,
-        component_name: Optional[str] = None,
-        subdirectory: Optional[str] = None,
-        # 行為控制
-        start_cleaner: Optional[bool] = None,
-        use_native_format: bool = False,
-        # 預設配置
-        preset: Optional[str] = None
-    ) -> Callable[[], EnhancedLogger]:
+    def get_logger_dependency(logger_instance: PrettyLogger) -> Callable[[], PrettyLogger]:
         """
         創建一個返回 logger 實例的依賴函數。
 
-        該函數可用於在 FastAPI 路由中注入 logger 實例。
+        該函數只做一件事：回傳「既有的 logger」。
+
+        這樣可以避免在 request scope 內隱式建立/更新 logger，讓 DI 行為更可預期。
 
         Args:
-            name: logger 實例的名稱，如果為 None 則使用路由路徑
-            service_tag: 服務名稱 (已廢棄，使用 component_name 替代)
-            log_path: 日誌檔案輸出路徑
-            rotation: 日誌輪轉設定
-            retention: 日誌保留設定
-            compression: 壓縮設定
-            compression_format: 壓縮格式
-            level: 日誌等級
-            logger_format: 自定義日誌格式字符串
-            component_name: 組件名稱
-            subdirectory: 子目錄
-            start_cleaner: 是否啟動自動清理器
-            use_native_format: 是否使用 loguru 原生格式
-            preset: 預設配置名稱
+            logger_instance: 既有的 pretty-loguru logger 實例
 
         Returns:
-            Callable[[], EnhancedLogger]: 依賴函數，返回 logger 實例
+            Callable[[], PrettyLogger]: 依賴函數，返回 logger 實例
 
         Example::
 
             from fastapi import FastAPI, Depends
             from pretty_loguru.integrations.fastapi import get_logger_dependency
+            from pretty_loguru import create_logger
 
             app = FastAPI()
-            route_logger = get_logger_dependency(
-                name="my_api",
-                log_path="./logs",
-                level="INFO"
-            )
+            logger = create_logger("my_api", log_dir="./logs", level="INFO")
+            route_logger = get_logger_dependency(logger)
 
             @app.get("/items/")
-            async def get_items(logger: EnhancedLogger = Depends(route_logger)):
+            async def get_items(logger: PrettyLogger = Depends(route_logger)):
                 logger.info("Getting items")
                 return {"items": []}
         """
-        def get_logger() -> EnhancedLogger:
-            # 處理向後兼容的 service_tag 參數
-            final_component_name = component_name or service_tag
-            
-            return create_logger(
-                name=name,
-                use_native_format=use_native_format,
-                log_path=log_path,
-                rotation=rotation,
-                retention=retention,
-                compression=compression,
-                compression_format=compression_format,
-                level=level,
-                logger_format=logger_format,
-                component_name=final_component_name,
-                subdirectory=subdirectory,
-                start_cleaner=start_cleaner,
-                preset=preset
+        def _get_logger() -> PrettyLogger:
+            return logger_instance
+
+        return _get_logger
+
+    def install_fastapi_middleware(
+        app: FastAPI,
+        *,
+        logger_instance: Optional[PrettyLogger] = None,
+        exclude_paths: Optional[List[str]] = None,
+        exclude_methods: Optional[List[str]] = None,
+        log_request_body: bool = False,
+        log_response_body: bool = False,
+        log_headers: bool = True,
+        sensitive_headers: Optional[Set[str]] = None,
+        log_request_body_if_unknown_length: bool = False,
+        max_body_bytes: int = 1000,
+    ) -> PrettyLogger:
+        """
+        安裝 FastAPI LoggingMiddleware（較低階 building block）。
+
+        回傳實際使用的 logger_instance，方便呼叫端串接其他安裝步驟。
+        """
+        if logger_instance is None:
+            logger_instance = create_logger(
+                name="fastapi",
+                component_name="fastapi_app",
+        )
+
+        app.add_middleware(
+            LoggingMiddleware,
+            logger_instance=logger_instance,
+            exclude_paths=exclude_paths,
+            exclude_methods=exclude_methods,
+            log_request_body=log_request_body,
+            log_response_body=log_response_body,
+            log_headers=log_headers,
+            sensitive_headers=sensitive_headers,
+            log_request_body_if_unknown_length=log_request_body_if_unknown_length,
+            max_body_bytes=max_body_bytes,
+        )
+        try:
+            import types
+            if not hasattr(app.state, "_pretty_loguru_original_middleware_len"):
+                app.state._pretty_loguru_original_middleware_len = len(app.user_middleware) - 1
+        except Exception:
+            pass
+        logger_instance.info("FastAPI logging middleware added")
+        return logger_instance
+
+    def install_fastapi_route_class(
+        app: FastAPI,
+        *,
+        logger_instance: Optional[PrettyLogger] = None,
+        log_request_body: bool = False,
+        log_response_body: bool = False,
+        log_request_body_if_unknown_length: bool = False,
+        max_body_bytes: int = 1000,
+    ) -> PrettyLogger:
+        """
+        安裝 FastAPI LoggingRoute route_class（較低階 building block）。
+
+        回傳實際使用的 logger_instance，方便呼叫端串接其他安裝步驟。
+        """
+        if logger_instance is None:
+            logger_instance = create_logger(
+                name="fastapi",
+                component_name="fastapi_app",
             )
 
-        return get_logger
+        if not hasattr(app.state, "_pretty_loguru_original_route_class"):
+            try:
+                app.state._pretty_loguru_original_route_class = app.router.route_class
+            except Exception:
+                pass
+
+        app.router.route_class = lambda *args, **kwargs: LoggingRoute(
+            *args,
+            **kwargs,
+            logger_instance=logger_instance,
+            log_request_body=log_request_body,
+            log_response_body=log_response_body,
+            log_request_body_if_unknown_length=log_request_body_if_unknown_length,
+            max_body_bytes=max_body_bytes,
+        )
+        logger_instance.info("FastAPI custom route class has been set")
+        return logger_instance
 
     def setup_fastapi_logging(
         app: FastAPI,
-        logger_instance: Optional[EnhancedLogger] = None,
+        logger_instance: Optional[PrettyLogger] = None,
         middleware: bool = True,
         custom_routes: bool = False,
         exclude_paths: Optional[List[str]] = None,
@@ -402,6 +589,8 @@ if _has_fastapi:
         log_response_body: bool = False,
         log_headers: bool = True,
         sensitive_headers: Optional[Set[str]] = None,
+        log_request_body_if_unknown_length: bool = False,
+        max_body_bytes: int = 1000,
     ) -> None:
         """
         為 FastAPI 應用設置日誌功能
@@ -419,17 +608,20 @@ if _has_fastapi:
             log_response_body: 是否記錄響應體，預設為 False
             log_headers: 是否記錄請求和響應頭，預設為 True
             sensitive_headers: 敏感頭部字段集合，這些字段的值將被遮蔽
+            log_request_body_if_unknown_length: 若無 content-length 是否記錄請求體
+            max_body_bytes: 記錄 body 的最大大小（bytes），預設為 1000
         """
         # 使用默認 logger 或創建新的
         if logger_instance is None:
             logger_instance = create_logger(
-                name="fastapi", service_tag="fastapi_app", reuse_existing=True
+                name="fastapi",
+                component_name="fastapi_app",
             )
 
         # 添加中間件
         if middleware:
-            app.add_middleware(
-                LoggingMiddleware,
+            install_fastapi_middleware(
+                app,
                 logger_instance=logger_instance,
                 exclude_paths=exclude_paths,
                 exclude_methods=exclude_methods,
@@ -437,24 +629,25 @@ if _has_fastapi:
                 log_response_body=log_response_body,
                 log_headers=log_headers,
                 sensitive_headers=sensitive_headers,
+                log_request_body_if_unknown_length=log_request_body_if_unknown_length,
+                max_body_bytes=max_body_bytes,
             )
-            logger_instance.info("FastAPI logging middleware added")
 
         # 設置自定義路由類
         if custom_routes:
-            app.router.route_class = lambda *args, **kwargs: LoggingRoute(
-                *args,
-                **kwargs,
+            install_fastapi_route_class(
+                app,
                 logger_instance=logger_instance,
                 log_request_body=log_request_body,
                 log_response_body=log_response_body,
+                log_request_body_if_unknown_length=log_request_body_if_unknown_length,
+                max_body_bytes=max_body_bytes,
             )
-            logger_instance.info("FastAPI custom route class has been set")
 
 
     def integrate_fastapi(
         app: FastAPI,
-        logger: EnhancedLogger,
+        logger: PrettyLogger,
         enable_uvicorn: bool = True,
         exclude_health_checks: bool = True,
         exclude_paths: Optional[List[str]] = None,
@@ -465,7 +658,9 @@ if _has_fastapi:
         log_request_body: bool = False,
         log_response_body: bool = False,
         log_headers: bool = True,
-        sensitive_headers: Optional[Set[str]] = None
+        sensitive_headers: Optional[Set[str]] = None,
+        log_request_body_if_unknown_length: bool = False,
+        max_body_bytes: int = 1000,
     ) -> None:
         """
         將 FastAPI 應用與 Pretty Loguru logger 進行完整集成
@@ -483,6 +678,8 @@ if _has_fastapi:
             log_response_body: 是否記錄響應體，預設為 False
             log_headers: 是否記錄請求和響應頭，預設為 True
             sensitive_headers: 敏感頭部字段集合，這些字段的值將被遮蔽
+            log_request_body_if_unknown_length: 若無 content-length 是否記錄請求體
+            max_body_bytes: 記錄 body 的最大大小（bytes），預設為 1000
         
         Example:
             from fastapi import FastAPI
@@ -490,7 +687,7 @@ if _has_fastapi:
             from pretty_loguru.integrations.fastapi import integrate_fastapi
             
             app = FastAPI()
-            logger = create_logger("my_api", log_path="./logs")
+            logger = create_logger("my_api", log_dir="./logs")
             integrate_fastapi(
                 app,
                 logger,
@@ -512,25 +709,145 @@ if _has_fastapi:
         # 設置排除方法
         final_exclude_methods = exclude_methods or ["OPTIONS"]
         
-        # 設置 FastAPI 日誌
-        setup_fastapi_logging(
-            app=app,
-            logger_instance=logger,
-            middleware=middleware,
-            custom_routes=custom_routes,
-            exclude_paths=final_exclude_paths,
-            exclude_methods=final_exclude_methods,
-            log_request_body=log_request_body,
-            log_response_body=log_response_body,
-            log_headers=log_headers,
-            sensitive_headers=sensitive_headers
-        )
+        # 設置 FastAPI 日誌（可組裝）
+        if middleware:
+            install_fastapi_middleware(
+                app,
+                logger_instance=logger,
+                exclude_paths=final_exclude_paths,
+                exclude_methods=final_exclude_methods,
+                log_request_body=log_request_body,
+                log_response_body=log_response_body,
+                log_headers=log_headers,
+                sensitive_headers=sensitive_headers,
+                log_request_body_if_unknown_length=log_request_body_if_unknown_length,
+                max_body_bytes=max_body_bytes,
+            )
+
+        if custom_routes:
+            install_fastapi_route_class(
+                app,
+                logger_instance=logger,
+                log_request_body=log_request_body,
+                log_response_body=log_response_body,
+                log_request_body_if_unknown_length=log_request_body_if_unknown_length,
+                max_body_bytes=max_body_bytes,
+            )
         
         # 配置 uvicorn 日誌（如果啟用）
         if enable_uvicorn:
             try:
                 from .uvicorn import integrate_uvicorn
-                integrate_uvicorn(logger)
+                integrate_uvicorn(logger, monkeypatch=True)
             except ImportError:
                 logger.warning("Uvicorn not available, skipping uvicorn logging setup")
+
+
+    def build_fastapi_logging_options(
+        logger_instance: Optional[PrettyLogger] = None,
+        *,
+        exclude_paths: Optional[List[str]] = None,
+        exclude_methods: Optional[List[str]] = None,
+        log_request_body: bool = False,
+        log_response_body: bool = False,
+        log_headers: bool = True,
+        sensitive_headers: Optional[Set[str]] = None,
+        log_request_body_if_unknown_length: bool = False,
+        max_body_bytes: int = 1000,
+    ) -> Dict[str, Any]:
+        """
+        提供 FastAPI 日誌中間件與 route_class 的「非直接安裝」選項。
+
+        回傳的內容可以讓呼叫端自行決定是否套用，避免直接改寫 app。
+        """
+        if logger_instance is None:
+            logger_instance = create_logger(
+                name="fastapi",
+                component_name="fastapi_app",
+            )
+
+        return {
+            "middleware_class": LoggingMiddleware,
+            "middleware_kwargs": {
+                "logger_instance": logger_instance,
+                "exclude_paths": exclude_paths or [],
+                "exclude_methods": exclude_methods or ["OPTIONS"],
+                "log_request_body": log_request_body,
+                "log_response_body": log_response_body,
+                "log_headers": log_headers,
+                "sensitive_headers": sensitive_headers,
+                "log_request_body_if_unknown_length": log_request_body_if_unknown_length,
+                "max_body_bytes": max_body_bytes,
+            },
+            "route_class_factory": lambda *args, **kwargs: LoggingRoute(
+                *args,
+                **kwargs,
+                logger_instance=logger_instance,
+                log_request_body=log_request_body,
+                log_response_body=log_response_body,
+                log_request_body_if_unknown_length=log_request_body_if_unknown_length,
+                max_body_bytes=max_body_bytes,
+            ),
+        }
+
+    def restore_fastapi_logging(app: FastAPI) -> None:
+        """
+        嘗試還原 integrate_fastapi/setup_fastapi_logging 對 app 的變更。
+
+        備註：middleware 刪除 FastAPI 未提供原生 API，這裡僅還原 route_class，並記錄提示。
+        """
+        try:
+            if hasattr(app.state, "_pretty_loguru_original_route_class"):
+                app.router.route_class = app.state._pretty_loguru_original_route_class
+            # middleware 無法安全移除，留訊息讓使用者知悉
+            if hasattr(app.state, "_pretty_loguru_original_middleware_len"):
+                expected = getattr(app.state, "_pretty_loguru_original_middleware_len")
+                if len(app.user_middleware) > expected:
+                    warnings.warn("FastAPI middleware added by pretty-loguru cannot be auto-removed; recreate app to fully restore.", UserWarning)
+        except Exception:
+            warnings.warn("Failed to restore FastAPI logging state.", UserWarning)
+
+
+if not _has_fastapi:
+
+    def _require_fastapi() -> None:
+        """當 `fastapi` 未安裝時，統一拋出缺少依賴的錯誤。"""
+        warnings.warn("fastapi not installed; FastAPI integration stubs will raise missing_dependency.", ImportWarning)
+        raise missing_dependency("fastapi", extra="integrations")
+
+    def setup_fastapi_logging(*args: Any, **kwargs: Any) -> None:  # type: ignore[name-defined]
+        """`setup_fastapi_logging` 的 stub（缺少 `fastapi` 時會拋錯）。"""
+        _require_fastapi()
+
+    def integrate_fastapi(*args: Any, **kwargs: Any) -> None:  # type: ignore[name-defined]
+        """`integrate_fastapi` 的 stub（缺少 `fastapi` 時會拋錯）。"""
+        _require_fastapi()
+
+    def get_logger_dependency(*args: Any, **kwargs: Any) -> Any:  # type: ignore[name-defined]
+        """`get_logger_dependency` 的 stub（缺少 `fastapi` 時會拋錯）。"""
+        _require_fastapi()
+
+    def install_fastapi_middleware(*args: Any, **kwargs: Any) -> Any:  # type: ignore[name-defined]
+        """`install_fastapi_middleware` 的 stub（缺少 `fastapi` 時會拋錯）。"""
+        _require_fastapi()
+
+    def install_fastapi_route_class(*args: Any, **kwargs: Any) -> Any:  # type: ignore[name-defined]
+        """`install_fastapi_route_class` 的 stub（缺少 `fastapi` 時會拋錯）。"""
+        _require_fastapi()
+
+    def build_fastapi_logging_options(*args: Any, **kwargs: Any) -> Any:  # type: ignore[name-defined]
+        """`build_fastapi_logging_options` 的 stub（缺少 `fastapi` 時會拋錯）。"""
+        _require_fastapi()
+
+    class LoggingMiddleware:  # type: ignore[name-defined]
+        """`LoggingMiddleware` 的 stub（缺少 `fastapi` 時會拋錯）。"""
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            """建立 stub；任何呼叫都會拋出缺少依賴錯誤。"""
+            _require_fastapi()
+
+    class LoggingRoute:  # type: ignore[name-defined]
+        """`LoggingRoute` 的 stub（缺少 `fastapi` 時會拋錯）。"""
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            """建立 stub；任何呼叫都會拋出缺少依賴錯誤。"""
+            _require_fastapi()
         

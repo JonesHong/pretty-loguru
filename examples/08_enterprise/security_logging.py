@@ -53,19 +53,19 @@ class SecurityLogger:
         # 建立安全日誌記錄器
         self.logger = create_logger(
             name="security_audit",
-            log_path="logs/security",
+            log_dir="logs/security",
             level="INFO",
-            rotation="daily",
-            retention="7 years"  # 合規要求：安全日誌保留7年
+            preset="daily",
+            retention="2555 days"  # 合規要求：安全日誌保留 7 years ≈ 2555 days
         )
         
         # 建立審計日誌記錄器
         self.audit_logger = create_logger(
             name="audit_trail",
-            log_path="logs/audit",
+            log_dir="logs/audit",
             level="INFO",
-            rotation="daily",
-            retention="7 years"
+            preset="daily",
+            retention="2555 days"
         )
         
         self.logger.info("🔒 安全日誌系統啟動")

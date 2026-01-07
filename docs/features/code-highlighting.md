@@ -320,7 +320,7 @@ logger.code(
 logger.code(
     code=config_dump,
     title="配置轉儲",
-    to_log_file_only=True
+    to_file_only=True
 )
 ```
 
@@ -368,7 +368,7 @@ logger.diff(
 logger.code(debug_snippet, to_console_only=True)
 
 # 重要的程式碼快照保存到文件
-logger.code(production_config, to_log_file_only=True)
+logger.code(production_config, to_file_only=True)
 ```
 
 ## 與現有功能集成
@@ -382,7 +382,7 @@ logger.code(critical_code, language="python")
 
 # 與目標特定日誌配合
 logger.console.code(console_code, to_console_only=True)
-logger.file.code(file_code, to_log_file_only=True)
+logger.file.code(file_code, to_file_only=True)
 
 # 與 Rich 組件集成
 logger.code(api_code, language="python", title="API 處理器")

@@ -28,17 +28,17 @@ def create_sample_configs():
     # 1. JSON 配置檔案
     json_config = {
         "development": {
-            "log_path": "./logs/configuration/dev",
+            "log_dir": "./logs/configuration/dev",
             "preset": "detailed",
             "retention": "1 day"
         },
         "production": {
-            "log_path": "./logs/configuration/prod", 
+            "log_dir": "./logs/configuration/prod", 
             "preset": "daily",
             "retention": "30 days"
         },
         "testing": {
-            "log_path": "./logs/configuration/test",
+            "log_dir": "./logs/configuration/test",
             "preset": "simple",
             "retention": "3 days"
         }
@@ -53,22 +53,22 @@ def create_sample_configs():
         "version": "1.0.0",
         "logging": {
             "default": {
-                "log_path": "./logs/app",
+                "log_dir": "./logs/app",
                 "preset": "daily"
             },
             "modules": {
                 "auth": {
-                    "log_path": "./logs/app/auth",
+                    "log_dir": "./logs/app/auth",
                     "preset": "detailed",
                     "retention": "7 days"
                 },
                 "api": {
-                    "log_path": "./logs/app/api",
+                    "log_dir": "./logs/app/api",
                     "preset": "hourly",
                     "retention": "3 days"
                 },
                 "database": {
-                    "log_path": "./logs/app/db",
+                    "log_dir": "./logs/app/db",
                     "preset": "simple",
                     "retention": "14 days"
                 }
@@ -150,7 +150,7 @@ def config_file_watcher():
     # 獲取檔案修改時間
     initial_mtime = config_file.stat().st_mtime
     
-    logger = create_logger("config_watcher", log_path="./logs/configuration")
+    logger = create_logger("config_watcher", log_dir="./logs/configuration")
     logger.info(f"開始監控配置檔案：{config_file}")
     logger.info(f"初始修改時間：{initial_mtime}")
     
@@ -172,7 +172,7 @@ def config_validation_from_file():
         """驗證日誌配置"""
         errors = []
         
-        required_fields = ["log_path"]
+        required_fields = ["log_dir"]
         for field in required_fields:
             if field not in config:
                 errors.append(f"缺少必要欄位：{field}")
@@ -194,7 +194,7 @@ def config_validation_from_file():
         with open(config_file, "r", encoding="utf-8") as f:
             configs = json.load(f)
         
-        logger = create_logger("validator", log_path="./logs/configuration")
+        logger = create_logger("validator", log_dir="./logs/configuration")
         logger.success("配置檔案載入成功")
         
         # 驗證每個環境的配置
@@ -206,10 +206,10 @@ def config_validation_from_file():
                 logger.success(f"環境 {env_name} 配置驗證通過")
                 
     except json.JSONDecodeError as e:
-        logger = create_logger("validator_error", log_path="./logs/configuration")
+        logger = create_logger("validator_error", log_dir="./logs/configuration")
         logger.error(f"JSON 解析錯誤：{e}")
     except Exception as e:
-        logger = create_logger("validator_error", log_path="./logs/configuration")
+        logger = create_logger("validator_error", log_dir="./logs/configuration")
         logger.error(f"載入配置檔案時發生錯誤：{e}")
 
 def environment_specific_loading():
@@ -230,7 +230,7 @@ def environment_specific_loading():
         if not config_file.exists():
             print(f"⚠️ 環境 {env} 的配置檔案不存在，使用默認配置")
             return {
-                "log_path": f"./logs/{env}",
+                "log_dir": f"./logs/{env}",
                 "preset": "simple",
                 "retention": "7 days"
             }
@@ -259,13 +259,13 @@ def config_inheritance():
     # 創建具有繼承關係的配置檔案
     inheritance_config = {
         "base": {
-            "log_path": "./logs/base",
+            "log_dir": "./logs/base",
             "retention": "7 days"
         },
         "development": {
             "inherits": "base",
             "preset": "detailed",
-            "log_path": "./logs/dev"  # 覆蓋父配置
+            "log_dir": "./logs/dev"  # 覆蓋父配置
         },
         "production": {
             "inherits": "base",

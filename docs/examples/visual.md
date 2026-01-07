@@ -32,7 +32,7 @@ logger.block(
         "狀態: 健康運行"
     ],
     border_style="green",
-    log_level="SUCCESS"
+    level="SUCCESS"
 )
 
 # 錯誤報告區塊
@@ -46,7 +46,7 @@ logger.block(
         "建議動作: 檢查資料庫服務狀態"
     ],
     border_style="red",
-    log_level="ERROR"
+    level="ERROR"
 )
 ```
 
@@ -176,8 +176,8 @@ logger.ascii_block(
         "🟡 快取服務: 效能降低",
         "🔴 郵件服務: 離線"
     ],
-    ascii_header="STATUS",
-    ascii_font="small",
+    header_text="STATUS",
+    font="small",
     border_style="cyan"
 )
 
@@ -193,10 +193,10 @@ logger.ascii_block(
         "部署耗時: 3分15秒",
         "版本號: v2.1.0 → v2.2.0"
     ],
-    ascii_header="DEPLOY",
-    ascii_font="block",
+    header_text="DEPLOY",
+    font="block",
     border_style="green",
-    log_level="SUCCESS"
+    level="SUCCESS"
 )
 ```
 
@@ -211,11 +211,10 @@ logger = create_logger("rich_components")
 
 # 表格
 table_data = [
-    ["服務名稱", "狀態", "記憶體", "CPU"],
-    ["Web Server", "🟢 運行中", "125MB", "12%"],
-    ["Database", "🟢 運行中", "512MB", "25%"],
-    ["Cache", "🟡 警告", "256MB", "45%"],
-    ["Queue", "🔴 停止", "0MB", "0%"]
+    {"服務名稱": "Web Server", "狀態": "🟢 運行中", "記憶體": "125MB", "CPU": "12%"},
+    {"服務名稱": "Database", "狀態": "🟢 運行中", "記憶體": "512MB", "CPU": "25%"},
+    {"服務名稱": "Cache", "狀態": "🟡 警告", "記憶體": "256MB", "CPU": "45%"},
+    {"服務名稱": "Queue", "狀態": "🔴 停止", "記憶體": "0MB", "CPU": "0%"},
 ]
 logger.table("服務監控", table_data, style="blue")
 
@@ -234,19 +233,18 @@ tree_data = {
 logger.tree("目錄結構", tree_data, style="green")
 
 # 進度條
-with logger.progress("處理檔案") as progress:
-    task = progress.add_task("下載", total=100)
+with logger.progress.progress_context("處理檔案", total=100) as update:
     for i in range(100):
-        progress.update(task, advance=1)
+        update(1)
         time.sleep(0.01)
 
 # 多欄顯示
 columns_data = [
-    ["功能 A", "✅ 完成\n測試通過"],
-    ["功能 B", "🚧 進行中\n完成度 70%"],
-    ["功能 C", "📅 計劃中\n預計下週"]
+    "功能 A：✅ 完成（測試通過）",
+    "功能 B：🚧 進行中（完成度 70%）",
+    "功能 C：📅 計劃中（預計下週）",
 ]
-logger.columns("開發進度", columns_data, style="cyan")
+logger.columns("開發進度", columns_data, padding=(0, 2))
 ```
 
 [查看完整程式碼](https://github.com/JonesHong/pretty-loguru/blob/master/examples/03_visual/rich_components.py)
@@ -302,7 +300,7 @@ logger.code("配置檔案", json_code, language="json")
 from pretty_loguru import create_logger, has_figlet
 
 if has_figlet():
-    from pretty_loguru import print_figlet_header, get_figlet_fonts
+    from pretty_loguru.addons import print_figlet_header, get_figlet_fonts
     
     logger = create_logger("figlet_demo")
     

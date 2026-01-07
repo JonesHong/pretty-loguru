@@ -1,0 +1,20 @@
+filebeat.inputs:
+  - type: filestream
+    id: pretty-loguru-logs
+    enabled: true
+    paths:
+      - /logs/elk-events/**/*.log
+    parsers:
+      - ndjson:
+          target: pretty_loguru
+          overwrite_keys: false
+          add_error_key: true
+    fields:
+      "service.name": pretty-loguru
+    fields_under_root: true
+
+processors:
+  - add_host_metadata: ~
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]

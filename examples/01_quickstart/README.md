@@ -79,7 +79,7 @@ logger.success("這就是成功的顏色！")
 ### 添加檔案輸出
 ```python
 # 同時輸出到控制台和檔案
-logger = create_logger("my_app", log_path="./logs")
+logger = create_logger("my_app", log_dir="./logs")
 ```
 
 ### 視覺化日誌

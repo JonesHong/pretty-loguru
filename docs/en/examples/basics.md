@@ -19,14 +19,14 @@ logger.success("See! Using Pretty-Loguru is that easy!")
 # With file output
 logger_with_file = create_logger(
     name="with_file",
-    log_path="logs/demo"
+    log_dir="logs/demo"
 )
 
 # Custom level and format
 custom_logger = create_logger(
     name="custom",
     level="DEBUG",
-    log_path="logs/custom",
+    log_dir="logs/custom",
     rotation="100 MB",
     retention="30 days"
 )
@@ -42,14 +42,14 @@ Managing multiple loggers in large applications:
 from pretty_loguru import create_logger, LoggerConfig, list_loggers
 
 # Create loggers for different modules
-app_logger = create_logger("app", log_path="logs/app")
-db_logger = create_logger("database", log_path="logs/db", level="DEBUG")
-api_logger = create_logger("api", log_path="logs/api", level="WARNING")
+app_logger = create_logger("app", log_dir="logs/app")
+db_logger = create_logger("database", log_dir="logs/db", level="DEBUG")
+api_logger = create_logger("api", log_dir="logs/api", level="WARNING")
 
 # Use unified configuration
 config = LoggerConfig(
     level="INFO",
-    log_path="logs/services",
+    log_dir="logs/services",
     rotation="1 day",
     retention="7 days"
 )
@@ -75,31 +75,34 @@ Controlling output targets separately:
 
 ```python
 from pretty_loguru import create_logger
+from pretty_loguru.addons import log_to_targets
 
-logger = create_logger("output_demo", log_path="logs")
+logger = create_logger("output_demo", log_dir="logs")
 
 # Output to both console and file
 logger.info("This message appears in console and file")
 
 # Console only
-logger.console_info("This message only shows in console")
-logger.console_success("✅ Console-exclusive success message")
+log_to_targets(logger, "This message only shows in console", level="INFO", console_only=True)
+log_to_targets(logger, "✅ Console-exclusive success message", level="SUCCESS", console_only=True)
 
 # File only
-logger.file_info("This message only logs to file")
-logger.file_error("File-exclusive error log")
+log_to_targets(logger, "This message only logs to file", level="INFO", file_only=True)
+log_to_targets(logger, "File-exclusive error log", level="ERROR", file_only=True)
 
 # Visual elements with target control
-logger.console_block(
+logger.block(
     "Console-exclusive block",
     ["Won't appear in log files", "Only shows in terminal"],
-    border_style="cyan"
+    border_style="cyan",
+    to_console_only=True,
 )
 
-logger.file_block(
+logger.block(
     "File-exclusive block",
     ["Won't appear in console", "Only in log files"],
-    border_style="yellow"
+    border_style="yellow",
+    to_file_only=True,
 )
 ```
 

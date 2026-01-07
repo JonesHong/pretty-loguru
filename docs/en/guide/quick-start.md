@@ -5,7 +5,7 @@ Welcome to pretty-loguru! This page will guide you through experiencing all core
 ## 🚀 Installation
 
 ```bash
-pip install pretty-loguru
+uv add pretty-loguru
 ```
 
 ## ⚡ Your First Program
@@ -18,7 +18,7 @@ from pretty_loguru import create_logger
 # Create logger instance
 logger = create_logger(
     name="quick_start_demo",
-    log_path="quick_start_logs",
+    log_dir="quick_start_logs",
     level="DEBUG"
 )
 
@@ -49,7 +49,7 @@ logger.block(
         "Service Status: Running"
     ],
     border_style="green",
-    log_level="INFO"
+    level="INFO"
 )
 
 # Warning block
@@ -62,7 +62,7 @@ logger.block(
         "Recommended action: Check for memory leaks"
     ],
     border_style="yellow", 
-    log_level="WARNING"
+    level="WARNING"
 )
 ```
 
@@ -74,7 +74,7 @@ logger.ascii_header(
     "SYSTEM STARTUP",
     font="slant",
     border_style="blue",
-    log_level="INFO"
+    level="INFO"
 )
 
 # Try different fonts
@@ -99,10 +99,10 @@ logger.ascii_block(
         "Memory usage: 45MB",
         "Ready: ✓"
     ],
-    ascii_header="READY",
-    ascii_font="small",
+    header_text="READY",
+    font="small",
     border_style="green",
-    log_level="SUCCESS"
+    level="SUCCESS"
 )
 ```
 
@@ -119,7 +119,7 @@ def main():
     # Create logger instance
     logger = create_logger(
         name="quick_demo",
-        log_path="demo_logs",
+        log_dir="demo_logs",
         level="INFO"
     )
     
@@ -162,8 +162,8 @@ def main():
             "Execution time: 3.2 seconds",
             "Status: Normal"
         ],
-        ascii_header="COMPLETE",
-        ascii_font="block", 
+        header_text="COMPLETE",
+        font="block", 
         border_style="green"
     )
 

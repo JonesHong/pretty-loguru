@@ -6,28 +6,28 @@
 """
 
 from .protocols import (
-    EnhancedLoggerProtocol,
-    EnhancedLogger,
+    PrettyLoggerProtocol,
+    PrettyLogger,
     LogLevelType,
     LogHandlerIdType,
     LogFilterType,
     LogConfigType,
-    LogPathType,
+    LogDirType,
     LogNameFormatType,
     LogRotationType,
 )
 
 __all__ = [
     # 基本類型
-    "EnhancedLoggerProtocol",
-    "EnhancedLogger",
+    "PrettyLoggerProtocol",
+    "PrettyLogger",
     
     # 特定類型
     "LogLevelType",
     "LogHandlerIdType",
     "LogFilterType",
     "LogConfigType",
-    "LogPathType",
+    "LogDirType",
     "LogNameFormatType",
     "LogRotationType",
 ]

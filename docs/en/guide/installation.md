@@ -4,7 +4,23 @@ This page will guide you through the installation process of pretty-loguru.
 
 ## 🚀 Quick Install
 
-### Using pip (Recommended)
+### Using uv (Recommended)
+
+```bash
+uv add pretty-loguru
+```
+
+Optional extras:
+
+```bash
+# FIGlet support (optional)
+uv add "pretty-loguru[figlet]"
+
+# Integrations alias (FastAPI/Uvicorn)
+uv add "pretty-loguru[integrations]"
+```
+
+### Using pip (Alternative)
 
 ```bash
 pip install pretty-loguru
@@ -34,7 +50,7 @@ pretty-loguru will automatically install the following dependencies:
 - **[loguru](https://github.com/Delgan/loguru)** - Core logging functionality
 - **[rich](https://github.com/Textualize/rich)** - Rich console output
 - **[art](https://github.com/sepandhaghighi/art)** - ASCII art generation
-- **[pyfiglet](https://github.com/pwaller/pyfiglet)** - Text art fonts
+- (Optional) **[pyfiglet](https://github.com/pwaller/pyfiglet)** - Text art fonts (install via `pretty-loguru[figlet]`)
 
 ## 🔧 Installation Verification
 
@@ -47,7 +63,7 @@ from pretty_loguru import create_logger
 # Test basic functionality
 logger  = create_logger(
     name="installation_demo",
-    log_path="test_logs",
+    log_dir="test_logs",
     level="INFO"
 )
 logger.info("✅ pretty-loguru installed successfully!")
@@ -60,7 +76,7 @@ logger.block(
         "✅ loguru: OK",
         "✅ rich: OK", 
         "✅ art: OK",
-        "✅ pyfiglet: OK"
+        "✅ pyfiglet: (optional)"
     ],
     border_style="green"
 )
@@ -78,7 +94,7 @@ If you see colorful output without errors, the installation was successful!
 If you want to use the latest development version:
 
 ```bash
-pip install git+https://github.com/JonesHong/pretty-loguru.git
+uv add "pretty-loguru @ git+https://github.com/JonesHong/pretty-loguru.git"
 ```
 
 ### Installing from Source
@@ -88,11 +104,11 @@ pip install git+https://github.com/JonesHong/pretty-loguru.git
 git clone https://github.com/JonesHong/pretty-loguru.git
 cd pretty-loguru
 
-# Install dependencies
-pip install -r requirements.txt
+# Sync environment (including dev dependencies, e.g. pytest)
+uv sync --group dev
 
-# Install the package
-pip install -e .
+# Install the package (editable)
+uv pip install -e .
 ```
 
 ### Installing in a Virtual Environment (Recommended)
@@ -101,16 +117,10 @@ Using a virtual environment can prevent package conflicts:
 
 ```bash
 # Create a virtual environment
-python -m venv pretty_loguru_env
-
-# Activate the virtual environment
-# Windows:
-pretty_loguru_env\Scripts\activate
-# macOS/Linux:
-source pretty_loguru_env/bin/activate
+uv venv
 
 # Install pretty-loguru
-pip install pretty-loguru
+uv pip install pretty-loguru
 ```
 
 ## 🐳 Docker Environment
@@ -120,8 +130,9 @@ If you use Docker, you can add this to your Dockerfile:
 ```dockerfile
 FROM python:3.9-slim
 
-# Install pretty-loguru
-RUN pip install pretty-loguru
+# Install uv and pretty-loguru
+RUN pip install -U uv
+RUN uv pip install pretty-loguru
 
 # Other settings...
 ```
@@ -133,18 +144,17 @@ RUN pip install pretty-loguru
 #### 1. Installation Failed: Insufficient Permissions
 
 ```bash
-# Solution: Use --user to install
-pip install --user pretty-loguru
+# Solution: Use a virtual environment (recommended)
+uv venv
+uv pip install pretty-loguru
 ```
 
 #### 2. Dependency Conflict
 
 ```bash
-# Solution: Use a virtual environment
-python -m venv new_env
-source new_env/bin/activate  # Linux/Mac
-# or new_env\Scripts\activate  # Windows
-pip install pretty-loguru
+# Solution: Use uv virtual environment (recommended)
+uv venv
+uv pip install pretty-loguru
 ```
 
 #### 3. Outdated Python Version
@@ -161,9 +171,8 @@ python --version
 If ASCII art features are problematic, it might be a font package issue:
 
 ```bash
-# Reinstall related packages
-pip uninstall art pyfiglet
-pip install art pyfiglet
+# FIGlet support is optional, install via extras
+uv add "pretty-loguru[figlet]"
 ```
 
 ### Detailed Diagnostics
@@ -183,7 +192,7 @@ def check_installation():
     print(f"Python Version: {sys.version}")
     
     # Check main dependencies
-    packages = ['loguru', 'rich', 'art', 'pyfiglet']
+    packages = ['loguru', 'rich', 'art']
     
     for package in packages:
         try:
@@ -200,7 +209,7 @@ def check_installation():
         # Basic functionality test
         logger  = create_logger(
     name="installation_demo",
-    log_path="diagnose_test",
+    log_dir="diagnose_test",
     level="INFO"
 )
         logger.info("Basic functionality test passed")
@@ -235,7 +244,7 @@ In PyCharm, set the interpreter to point to your virtual environment.
 To upgrade to the latest version:
 
 ```bash
-pip install --upgrade pretty-loguru
+uv add -U pretty-loguru
 ```
 
 To check the version:

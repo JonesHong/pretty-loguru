@@ -1,316 +1,94 @@
-# 自定義配置
+# 自訂配置
 
-pretty-loguru 提供靈活的配置選項，讓您能夠根據需求自訂日誌行為。
+本頁聚焦在「最新版」pretty-loguru 的可落地做法：盡量沿用 loguru 原生心智模型，避免自創太多參數與路徑。
 
-## 🎯 配置方式
+## ✅ 優先使用 `LoggerConfig`（可重用、可同步更新）
 
-### 使用 LoggerConfig 類（推薦）
+```python
+from pretty_loguru import LoggerConfig, create_logger
+
+config = LoggerConfig(
+    level="INFO",
+    log_dir="logs/app",
+    rotation="100 MB",
+    retention="30 days",
+    compression="gz",
+)
+
+logger = create_logger("my_app", config=config, component_name="my_app")
+config.apply_to("my_app")
+```
+
+`apply_to()` 會把 config 附加到 logger，之後 `config.update(...)` 會同步更新已附加的 logger。
+
+## 📦 JSON 檔案日誌（ELK/Filebeat 建議）
+
+只要開啟 `serialize=True`，pretty-loguru 的檔案輸出就會是 JSON line（利於 agent 收集與解析）：
+
+```python
+from pretty_loguru import create_logger
+
+logger = create_logger(
+    "json_app",
+    log_dir="logs/json_app",
+    serialize=True,
+)
+logger.info("structured message: user_id={user_id}", user_id=123)
+```
+
+## 🔧 追加 sinks（loguru 原生）
+
+pretty-loguru 回傳的是 loguru logger，所以你可以直接用 `logger.add(...)` 加自己想要的 sink（這是最貼近 loguru 的方式）。
+
+```python
+from pretty_loguru import create_logger
+
+logger = create_logger("app", log_dir="logs/app")
+
+# 額外寫一份 warning 以上到另一個檔案
+logger.add("logs/app/extra.log", level="WARNING")
+```
+
+注意：預設（`reset_handlers=False`）下，`reinit_logger()` 只會重建 pretty-loguru 自己管理的 handlers，保留你手動 `logger.add(...)` 的 sinks。  
+若你希望連同手動 sinks 也一起移除，請顯式傳 `reset_handlers=True`。
+
+## 🧩 Loki 直推（可選）
+
+大多數生產環境更建議「`serialize=True` + Promtail/Grafana Agent」；若你無法部署 agent，才考慮直推：
+
+- best-effort：不重試、無離線緩衝、無 backpressure；失敗即丟棄
+- `loki_labels` 請避免高基數（例如 user_id / request_id）
+
+```python
+from pretty_loguru import create_logger
+
+logger = create_logger(
+    "loki_app",
+    log_dir="logs/loki_app",
+    serialize=True,
+    loki_enabled=True,
+    loki_base_url="http://localhost:3100",
+    loki_labels={"app": "loki_app"},
+)
+logger.info("hello loki")
+```
+
+## 💾 從 JSON 檔案載入 / 保存配置
+
+pretty-loguru 使用 `LoggerConfig.save()` / `LoggerConfig.load()`：
 
 ```python
 from pretty_loguru import LoggerConfig
 
-# 創建配置物件
-config = LoggerConfig(
-    level="INFO",
-    log_path="logs/app",
-    rotation="100 MB",
-    retention="30 days",
-    compression=True
-)
+config = LoggerConfig(level="INFO", log_dir="logs/app", serialize=True)
+config.save("configs/logging.json")
 
-# 應用到單個 logger
-logger = config.apply_to("my_app")
-
-# 或應用到多個 logger
-api_logger, db_logger = config.apply_to("api", "database")
-
-# 動態更新配置（所有使用此配置的 logger 都會更新）
-config.update(level="DEBUG")
+loaded = LoggerConfig.load("configs/logging.json")
 ```
 
-### LoggerConfig 的優勢
-
-1. **統一管理**：一個配置可以管理多個 logger
-2. **動態更新**：修改配置會自動更新所有相關 logger
-3. **配置複用**：可以克隆和繼承配置
+如果你的覆寫來源是 dict（例如讀取 JSON/ENV），請用 `update_from_dict()`：
 
 ```python
-# 克隆配置
-api_config = config.clone()
-api_config.update(level="WARNING", retention="7 days")
-
-# 從父配置繼承
-test_config = LoggerConfig()
-test_config.inherit_from(config, level="DEBUG")
+loaded.update_from_dict({"level": "DEBUG", "serialize": True})
 ```
 
-### 基本配置
-
-```python
-from pretty_loguru import create_logger
-
-# 基本自訂配置
-logger = create_logger(
-    name="my_app",
-    level="INFO",
-    log_path="logs/app",
-    rotation="10 MB",
-    retention="30 days",
-    compression=True
-)
-```
-
-### 進階配置
-
-```python
-from pretty_loguru import create_logger
-
-# 進階自訂配置
-logger = create_logger(
-    name="advanced_app",
-    level="DEBUG",
-    log_path="logs/advanced",
-    rotation="daily",
-    retention="1 week",
-    compression=True,
-    # 自訂格式
-    format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
-    # 過濾器
-    filter=lambda record: "sensitive" not in record["message"].lower(),
-    # 序列化
-    serialize=True
-)
-```
-
-## 📁 配置文件
-
-### JSON 配置
-
-建立 `config/logging.json`:
-
-```json
-{
-    "version": 1,
-    "formatters": {
-        "detailed": {
-            "format": "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}"
-        }
-    },
-    "handlers": {
-        "console": {
-            "sink": "sys.stdout",
-            "level": "INFO",
-            "format": "detailed"
-        },
-        "file": {
-            "sink": "logs/app.log",
-            "level": "DEBUG",
-            "rotation": "10 MB",
-            "retention": "7 days"
-        }
-    },
-    "loggers": {
-        "app": {
-            "handlers": ["console", "file"],
-            "level": "DEBUG"
-        }
-    }
-}
-```
-
-### 使用配置文件
-
-```python
-from pretty_loguru import create_logger_from_config
-
-# 從 JSON 配置創建
-logger = create_logger_from_config("config/logging.json")
-```
-
-## 🎨 格式自訂
-
-### 自訂格式字符串
-
-```python
-# 簡潔格式
-simple_format = "{time:HH:mm:ss} | {level} | {message}"
-
-# 詳細格式
-detailed_format = "{time:YYYY-MM-DD HH:mm:ss.SSS} | {level: <8} | {process} | {thread} | {name}:{function}:{line} - {message}"
-
-# 生產環境格式（JSON）
-json_format = '{"timestamp": "{time:YYYY-MM-DD HH:mm:ss.SSS}", "level": "{level}", "logger": "{name}", "message": "{message}", "extra": {extra}}'
-```
-
-### 彩色輸出控制
-
-```python
-# 啟用/停用彩色輸出
-logger = create_logger(
-    name="colorful",
-    colorize=True,  # 啟用彩色
-    # 或
-    colorize=False  # 停用彩色
-)
-```
-
-## 🔄 輪替策略
-
-### 大小輪替
-
-```python
-logger = create_logger(
-    name="size_rotation",
-    rotation="50 MB"  # 檔案達到 50MB 時輪替
-)
-```
-
-### 時間輪替
-
-```python
-# 每日輪替
-logger = create_logger(name="daily", rotation="daily")
-
-# 每週輪替
-logger = create_logger(name="weekly", rotation="weekly")
-
-# 自訂時間輪替
-logger = create_logger(name="hourly", rotation="1 hour")
-```
-
-### 複合輪替
-
-```python
-# 同時使用大小和時間條件
-logger = create_logger(
-    name="hybrid",
-    rotation=["100 MB", "1 day"]  # 任一條件滿足即輪替
-)
-```
-
-## 🗂️ 保留策略
-
-```python
-# 保留最近 10 個檔案
-logger = create_logger(retention=10)
-
-# 保留 30 天內的檔案
-logger = create_logger(retention="30 days")
-
-# 保留 1 週內的檔案
-logger = create_logger(retention="1 week")
-
-# 複合保留策略
-logger = create_logger(retention=["7 days", 50])  # 7天內或最多50個檔案
-```
-
-## 🗜️ 壓縮選項
-
-```python
-# 啟用 gzip 壓縮
-logger = create_logger(compression="gz")
-
-# 啟用 zip 壓縮
-logger = create_logger(compression="zip")
-
-# 啟用 bz2 壓縮
-logger = create_logger(compression="bz2")
-```
-
-## 🎯 過濾器
-
-### 基本過濾
-
-```python
-# 過濾敏感訊息
-def sensitive_filter(record):
-    return "password" not in record["message"].lower()
-
-logger = create_logger(
-    name="filtered",
-    filter=sensitive_filter
-)
-```
-
-### 級別過濾
-
-```python
-# 只記錄錯誤以上級別
-def error_only_filter(record):
-    return record["level"].no >= 40  # ERROR 級別
-
-logger = create_logger(
-    name="errors_only",
-    filter=error_only_filter
-)
-```
-
-## 🏷️ 環境變數配置
-
-```bash
-# 設定環境變數
-export PRETTY_LOGURU_LEVEL=DEBUG
-export PRETTY_LOGURU_PATH=/var/log/myapp
-export PRETTY_LOGURU_ROTATION=daily
-```
-
-```python
-import os
-from pretty_loguru import create_logger
-
-# 使用環境變數
-logger = create_logger(
-    name="env_config",
-    level=os.getenv("PRETTY_LOGURU_LEVEL", "INFO"),
-    log_path=os.getenv("PRETTY_LOGURU_PATH", "logs"),
-    rotation=os.getenv("PRETTY_LOGURU_ROTATION", "10 MB")
-)
-```
-
-## 📚 完整範例
-
-```python
-from pretty_loguru import create_logger
-import os
-
-# 根據環境建立不同配置
-env = os.getenv("ENVIRONMENT", "development")
-
-if env == "production":
-    logger = create_logger(
-        name="prod_app",
-        level="INFO",
-        log_path="/var/log/app",
-        rotation="daily",
-        retention="30 days",
-        compression=True,
-        format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}",
-        serialize=True  # JSON 格式用於日誌聚合
-    )
-elif env == "development":
-    logger = create_logger(
-        name="dev_app",
-        level="DEBUG",
-        log_path="logs/dev",
-        rotation="100 MB",
-        retention="7 days",
-        colorize=True  # 開發時使用彩色輸出
-    )
-else:  # testing
-    logger = create_logger(
-        name="test_app",
-        level="WARNING",
-        log_path="logs/test",
-        rotation="10 MB",
-        retention="1 day"
-    )
-
-# 使用配置好的 logger
-logger.info("應用程式啟動", extra={"environment": env})
-```
-
-## 🔗 相關資源
-
-- [基本用法](./basic-usage) - 基礎功能使用
-- [日誌輪換](./log-rotation) - 詳細輪換設定
-- [API 文檔](../api/) - 完整 API 參考

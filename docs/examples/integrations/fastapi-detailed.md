@@ -16,7 +16,7 @@ import uvicorn
 # 初始化日誌系統
 logger = create_logger(
     name="fastapi_demo",
-    log_path="fastapi_logs", preset="development",
+    log_dir="fastapi_logs", preset="development",
     level="INFO"
 )
 
@@ -37,7 +37,7 @@ async def startup_event():
             "⚡ 狀態: 準備就緒"
         ],
         border_style="green",
-        log_level="SUCCESS"
+        level="SUCCESS"
     )
 
 @app.on_event("shutdown")
@@ -141,7 +141,7 @@ class PrettyLoguruMiddleware(BaseHTTPMiddleware):
                     f"✅ 狀態: {'成功' if response.status_code < 400 else '失敗'}"
                 ],
                 border_style=color,
-                log_level=level
+                level=level
             )
             
             return response
@@ -157,10 +157,10 @@ class PrettyLoguruMiddleware(BaseHTTPMiddleware):
                     f"🔍 請求: {method} {url}",
                     f"💻 客戶端: {client_ip}"
                 ],
-                ascii_header="ERROR",
-                ascii_font="doom",
+                header_text="ERROR",
+                font="doom",
                 border_style="red",
-                log_level="ERROR"
+                level="ERROR"
             )
             
             raise
@@ -189,10 +189,10 @@ async def http_exception_handler(request: Request, exc: HTTPException):
             f"📊 請求方法: {request.method}",
             f"💻 客戶端 IP: {request.client.host if request.client else 'unknown'}"
         ],
-        ascii_header="HTTP ERROR",
-        ascii_font="standard",
+        header_text="HTTP ERROR",
+        font="standard",
         border_style="red",
-        log_level="ERROR"
+        level="ERROR"
     )
     
     return JSONResponse(
@@ -213,10 +213,10 @@ async def general_exception_handler(request: Request, exc: Exception):
             f"📊 請求方法: {request.method}",
             f"🔍 需要檢查: 程式碼邏輯"
         ],
-        ascii_header="EXCEPTION", 
-        ascii_font="doom",
+        header_text="EXCEPTION", 
+        font="doom",
         border_style="red",
-        log_level="CRITICAL"
+        level="CRITICAL"
     )
     
     return JSONResponse(
@@ -278,10 +278,10 @@ class AuthService:
                     f"🔒 算法: {self.algorithm}",
                     f"🎯 狀態: 認證成功"
                 ],
-                ascii_header="SUCCESS",
-                ascii_font="slant",
+                header_text="SUCCESS",
+                font="slant",
                 border_style="green",
-                log_level="SUCCESS"
+                level="SUCCESS"
             )
             
             return {"access_token": token, "token_type": "bearer"}
@@ -296,10 +296,10 @@ class AuthService:
                     f"🔍 建議: 檢查用戶名和密碼",
                     f"📊 失敗次數: 需要追蹤"
                 ],
-                ascii_header="FAILED",
-                ascii_font="doom",
+                header_text="FAILED",
+                font="doom",
                 border_style="red",
-                log_level="WARNING"
+                level="WARNING"
             )
             
             raise HTTPException(
@@ -392,10 +392,10 @@ class UserService:
                     f"🎯 狀態: 已激活",
                     f"📊 資料庫: 已同步"
                 ],
-                ascii_header="CREATED",
-                ascii_font="slant",
+                header_text="CREATED",
+                font="slant",
                 border_style="green",
-                log_level="SUCCESS"
+                level="SUCCESS"
             )
             
             return {"user_id": user_id, "status": "created"}
@@ -409,10 +409,10 @@ class UserService:
                     f"🔍 需要檢查: 輸入驗證",
                     f"💾 資料庫狀態: 未變更"
                 ],
-                ascii_header="FAILED",
-                ascii_font="doom", 
+                header_text="FAILED",
+                font="doom", 
                 border_style="red",
-                log_level="ERROR"
+                level="ERROR"
             )
             
             raise HTTPException(
@@ -499,7 +499,7 @@ def performance_monitor(func):
                     f"📈 效能等級: {'優秀' if execution_time < 0.1 else '良好' if execution_time < 0.5 else '需優化'}"
                 ],
                 border_style=color,
-                log_level=level
+                level=level
             )
             
             return result
@@ -516,10 +516,10 @@ def performance_monitor(func):
                     f"⏱️  執行時間: {execution_time:.3f}s",
                     f"🔍 需要調查: 異常原因"
                 ],
-                ascii_header="EXCEPTION",
-                ascii_font="doom",
+                header_text="EXCEPTION",
+                font="doom",
                 border_style="red",
-                log_level="ERROR"
+                level="ERROR"
             )
             
             raise
@@ -575,10 +575,14 @@ async def startup_with_config():
     """使用配置啟動"""
     
     # 根據環境配置日誌
-    if settings.debug:
-        create_logger(preset="debug", folder=settings.log_folder)
-    else:
-        create_logger(preset="production", folder=settings.log_folder)
+    from pretty_loguru import reinit_logger
+
+    reinit_logger(
+        "fastapi_demo",
+        preset="debug" if settings.debug else "production",
+        log_dir=settings.log_folder,  # log_dir 是目錄
+        level=settings.log_level,
+    )
     
     logger.ascii_header("CONFIG LOADED", font="standard", border_style="cyan")
     
@@ -625,9 +629,17 @@ async def get_config():
 from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pretty_loguru import create_logger
+from pretty_loguru.integrations.uvicorn import integrate_uvicorn
 import uvicorn
 import time
 import asyncio
+
+# 建立 logger（完整範例只需建立一次）
+logger = create_logger(
+    name="fastapi_complete_demo",
+    log_dir="fastapi_complete_logs",
+    level="INFO",
+)
 
 # 初始化應用
 app = FastAPI(
@@ -651,8 +663,6 @@ app.add_middleware(PrettyLoguruMiddleware)
 @app.on_event("startup")
 async def startup():
     """應用啟動"""
-    create_logger(preset="development", folder="fastapi_complete_logs")
-    
     logger.ascii_block(
         "FastAPI 應用啟動完成",
         [
@@ -664,10 +674,10 @@ async def startup():
             "💾 服務連接: 準備就緒",
             "⚡ 狀態: 完全啟動"
         ],
-        ascii_header="ONLINE",
-        ascii_font="block",
+        header_text="ONLINE",
+        font="block",
         border_style="green",
-        log_level="SUCCESS"
+        level="SUCCESS"
     )
 
 @app.on_event("shutdown")
@@ -682,10 +692,10 @@ async def shutdown():
             "🔒 關閉認證系統",
             "✅ 優雅關閉完成"
         ],
-        ascii_header="SHUTDOWN",
-        ascii_font="standard",
+        header_text="SHUTDOWN",
+        font="standard",
         border_style="yellow",
-        log_level="WARNING"
+        level="WARNING"
     )
 
 # 包含所有路由
@@ -694,12 +704,14 @@ app.include_router(user_router, prefix="/users", tags=["用戶"])
 app.include_router(monitor_router, prefix="/monitor", tags=["監控"])
 
 if __name__ == "__main__":
+    log_config = integrate_uvicorn(logger, log_level="INFO")
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
         port=8000,
         reload=True,
-        log_config=None  # 使用 pretty-loguru 而不是 uvicorn 的日誌
+        log_config=log_config,  # 使用 pretty-loguru 的 log_config
+        log_level="info",
     )
 ```
 

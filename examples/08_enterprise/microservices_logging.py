@@ -82,14 +82,14 @@ class DistributedTracing:
 class MicroserviceLogger:
     """微服務專用日誌記錄器"""
     
-    def __init__(self, service_name: str, log_path: str = "logs/microservices"):
+    def __init__(self, service_name: str, log_dir: str = "logs/microservices"):
         self.service_name = service_name
         self.tracer = DistributedTracing()
         
         # 建立服務專用的日誌記錄器
         self.logger = create_logger(
             name=f"microservice_{service_name}",
-            log_path=f"{log_path}/{service_name}",
+            log_dir=f"{log_dir}/{service_name}",
             level="INFO",
             rotation="daily",
             retention="30 days"
@@ -349,7 +349,7 @@ async def main():
     # 建立服務聚合日誌記錄器
     aggregator_logger = create_logger(
         name="microservices_aggregator",
-        log_path="logs/aggregator",
+        log_dir="logs/aggregator",
         level="INFO",
         rotation="daily"
     )

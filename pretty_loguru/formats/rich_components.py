@@ -14,7 +14,7 @@ Rich 組件集成模組
 """
 
 import time
-from typing import List, Dict, Any, Optional, Union, Callable
+from typing import List, Dict, Any, Optional, Union, Callable, Tuple, Literal
 from contextlib import contextmanager
 
 from rich.console import Console
@@ -29,8 +29,54 @@ from rich.panel import Panel
 from rich import box as rich_box
 from rich.align import Align
 
-from ..types import EnhancedLogger
-from ..core.target_formatter import add_target_methods, ensure_target_parameters
+from ..types import PrettyLogger
+from ..core.target_formatter import ensure_target_parameters
+from ..core.pretty_event import PRETTY_VERSION_V1, build_renderable, render_renderable_to_text
+
+
+@ensure_target_parameters
+def print_renderable(
+    renderable: Any,
+    title: Optional[str] = None,
+    level: str = "INFO",
+    logger_instance: Any = None,
+    console: Optional[Console] = None,
+    to_console_only: bool = False,
+    to_file_only: bool = False,
+    _target_depth: int = None,
+) -> None:
+    """
+    顯示任意 Rich renderable，並以「單 event」方式記錄到 console/file。
+
+    這個入口用於「原生物件優先」的進階使用情境：使用者自行建立 Rich 的 Table/Tree/Panel/...，
+    pretty-loguru 只負責把同一份輸出在 console/file 呈現一致。
+    """
+    if console is None:
+        console = get_console()
+
+    if logger_instance is None:
+        return
+
+    text = render_renderable_to_text(renderable)
+    payload = {
+        "title": title,
+        "text": text,
+    }
+    pretty_text = "\n" + text + "\n"
+
+    display_title = title or "Renderable"
+    bind_kwargs = {
+        "pretty_kind": "renderable",
+        "pretty_version": PRETTY_VERSION_V1,
+        "pretty_payload": payload,
+        "pretty_text": pretty_text,
+    }
+    if to_console_only:
+        bind_kwargs["to_console_only"] = True
+    if to_file_only:
+        bind_kwargs["to_file_only"] = True
+
+    logger_instance.opt(colors=True, depth=_target_depth).bind(**bind_kwargs).log(level, f"Renderable: {display_title}")
 
 
 @ensure_target_parameters
@@ -40,13 +86,13 @@ def print_table(
     headers: Optional[List[str]] = None,
     show_header: bool = True,
     show_lines: bool = False,
-    log_level: str = "INFO",
+    style: str = "none",
+    level: str = "INFO",
     logger_instance: Any = None,
     console: Optional[Console] = None,
     to_console_only: bool = False,
-    to_log_file_only: bool = False,
+    to_file_only: bool = False,
     _target_depth: int = None,
-    **table_kwargs
 ) -> None:
     """
     創建並顯示 Rich 表格，同時記錄到日誌
@@ -57,13 +103,13 @@ def print_table(
         headers: 可選的列標題，如果不提供則使用數據的鍵
         show_header: 是否顯示表頭
         show_lines: 是否顯示行分隔線
-        log_level: 日誌級別
+        style: Rich Table 的 style（例如 "blue"）
+        level: 日誌級別
         logger_instance: logger 實例
         console: Rich console 實例
         to_console_only: 僅輸出到控制台
-        to_log_file_only: 僅輸出到文件
+        to_file_only: 僅輸出到文件
         _target_depth: 調用深度
-        **table_kwargs: 傳遞給 Rich Table 的額外參數
         
     Example:
         >>> data = [
@@ -80,50 +126,49 @@ def print_table(
             logger_instance.warning(f"Table '{title}' has no data to display")
         return
     
-    # 創建 Rich 表格
-    table = Table(title=title, show_header=show_header, show_lines=show_lines, **table_kwargs)
-    
-    # 添加列
-    column_names = headers or list(data[0].keys())
-    for col_name in column_names:
-        table.add_column(str(col_name), justify="left")
-    
-    # 添加行
-    for row in data:
-        table.add_row(*[str(row.get(col, "")) for col in column_names])
-    
-    # 輸出到控制台
-    if not to_log_file_only and logger_instance:
-        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_console_only=True).log(
-            log_level, f"Displaying table: {title}"
-        )
-        console.print(table)
-    
-    # 輸出到文件
-    if not to_console_only and logger_instance:
-        # 創建文本版本的表格
-        table_text = f"Table: {title}\n"
-        table_text += " | ".join(column_names) + "\n"
-        table_text += "-" * (len(" | ".join(column_names))) + "\n"
-        for row in data:
-            table_text += " | ".join(str(row.get(col, "")) for col in column_names) + "\n"
-        
-        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_log_file_only=True).log(
-            log_level, f"\n{table_text}"
-        )
+    column_names = [str(x) for x in (headers or list(data[0].keys()))]
+    rows = [{str(col): str(row.get(col, "")) for col in column_names} for row in data]
+
+    if logger_instance is None:
+        return
+
+    payload = {
+        "title": title,
+        "headers": column_names,
+        "rows": rows,
+        "show_header": show_header,
+        "show_lines": show_lines,
+        "style": style,
+    }
+    renderable = build_renderable("table", payload)
+    pretty_text = "\n" + render_renderable_to_text(renderable) + "\n"
+
+    bind_kwargs = {
+        "pretty_kind": "table",
+        "pretty_version": PRETTY_VERSION_V1,
+        "pretty_payload": payload,
+        "pretty_text": pretty_text,
+    }
+    if to_console_only:
+        bind_kwargs["to_console_only"] = True
+    if to_file_only:
+        bind_kwargs["to_file_only"] = True
+
+    logger_instance.opt(colors=True, depth=_target_depth).bind(**bind_kwargs).log(level, f"Table: {title}")
 
 
 @ensure_target_parameters  
 def print_tree(
     title: str,
     tree_data: Dict[str, Any],
-    log_level: str = "INFO",
+    style: str = "tree",
+    guide_style: str = "tree.line",
+    level: str = "INFO",
     logger_instance: Any = None,
     console: Optional[Console] = None,
     to_console_only: bool = False,
-    to_log_file_only: bool = False,
+    to_file_only: bool = False,
     _target_depth: int = None,
-    **tree_kwargs
 ) -> None:
     """
     創建並顯示 Rich 樹狀結構
@@ -131,13 +176,14 @@ def print_tree(
     Args:
         title: 樹的根節點標題
         tree_data: 樹狀數據結構，字典的值可以是字符串或嵌套字典
-        log_level: 日誌級別
+        style: Rich Tree 的 style（例如 "green"）
+        guide_style: Rich Tree 的 guide_style（例如 "tree.line"）
+        level: 日誌級別
         logger_instance: logger 實例
         console: Rich console 實例
         to_console_only: 僅輸出到控制台
-        to_log_file_only: 僅輸出到文件
+        to_file_only: 僅輸出到文件
         _target_depth: 調用深度
-        **tree_kwargs: 傳遞給 Rich Tree 的額外參數
         
     Example:
         >>> tree_data = {
@@ -152,65 +198,49 @@ def print_tree(
     if console is None:
         console = get_console()
     
-    # 創建 Rich 樹
-    tree = Tree(title, **tree_kwargs)
-    
-    def add_tree_nodes(parent_node, data):
-        """遞歸添加樹節點"""
-        if isinstance(data, dict):
-            for key, value in data.items():
-                if isinstance(value, dict):
-                    branch = parent_node.add(str(key))
-                    add_tree_nodes(branch, value)
-                else:
-                    parent_node.add(f"{key}: {value}")
-        else:
-            parent_node.add(str(data))
-    
-    add_tree_nodes(tree, tree_data)
-    
-    # 輸出到控制台
-    if not to_log_file_only and logger_instance:
-        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_console_only=True).log(
-            log_level, f"Displaying tree: {title}"
-        )
-        console.print(tree)
-    
-    # 輸出到文件 
-    if not to_console_only and logger_instance:
-        # 創建文本版本的樹
-        def format_tree_text(data, indent=0):
-            lines = []
-            prefix = "  " * indent
-            if isinstance(data, dict):
-                for key, value in data.items():
-                    if isinstance(value, dict):
-                        lines.append(f"{prefix}{key}:")
-                        lines.extend(format_tree_text(value, indent + 1))
-                    else:
-                        lines.append(f"{prefix}{key}: {value}")
-            return lines
-        
-        tree_text = f"Tree: {title}\n"
-        tree_text += "\n".join(format_tree_text(tree_data))
-        
-        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_log_file_only=True).log(
-            log_level, f"\n{tree_text}"
-        )
+    if logger_instance is None:
+        return
+
+    payload = {
+        "title": title,
+        "data": tree_data,
+        "style": style,
+        "guide_style": guide_style,
+    }
+    renderable = build_renderable("tree", payload)
+    pretty_text = "\n" + render_renderable_to_text(renderable) + "\n"
+
+    bind_kwargs = {
+        "pretty_kind": "tree",
+        "pretty_version": PRETTY_VERSION_V1,
+        "pretty_payload": payload,
+        "pretty_text": pretty_text,
+    }
+    if to_console_only:
+        bind_kwargs["to_console_only"] = True
+    if to_file_only:
+        bind_kwargs["to_file_only"] = True
+
+    logger_instance.opt(colors=True, depth=_target_depth).bind(**bind_kwargs).log(level, f"Tree: {title}")
 
 
 @ensure_target_parameters
 def print_columns(
     title: str,
     items: List[str],
-    columns: int = 3,
-    log_level: str = "INFO", 
+    padding: Union[int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]] = (0, 1),
+    width: Optional[int] = None,
+    expand: bool = False,
+    equal: bool = False,
+    column_first: bool = False,
+    right_to_left: bool = False,
+    align: Optional[Literal["left", "center", "right"]] = None,
+    level: str = "INFO", 
     logger_instance: Any = None,
     console: Optional[Console] = None,
     to_console_only: bool = False,
-    to_log_file_only: bool = False,
+    to_file_only: bool = False,
     _target_depth: int = None,
-    **columns_kwargs
 ) -> None:
     """
     以分欄格式顯示項目列表
@@ -218,18 +248,23 @@ def print_columns(
     Args:
         title: 分欄顯示的標題
         items: 要顯示的項目列表
-        columns: 欄數，默認 3 欄
-        log_level: 日誌級別
+        padding: Rich Columns 的 padding
+        width: Rich Columns 的 width
+        expand: Rich Columns 的 expand
+        equal: Rich Columns 的 equal
+        column_first: Rich Columns 的 column_first
+        right_to_left: Rich Columns 的 right_to_left
+        align: Rich Columns 的 align（"left"/"center"/"right"）
+        level: 日誌級別
         logger_instance: logger 實例
         console: Rich console 實例
         to_console_only: 僅輸出到控制台
-        to_log_file_only: 僅輸出到文件
+        to_file_only: 僅輸出到文件
         _target_depth: 調用深度
-        **columns_kwargs: 傳遞給 Rich Columns 的額外參數
         
     Example:
         >>> items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"]
-        >>> print_columns("Available Options", items, columns=2)
+        >>> print_columns("Available Options", items, padding=(0, 2))
     """
     if console is None:
         console = get_console()
@@ -239,30 +274,35 @@ def print_columns(
             logger_instance.warning(f"Column display '{title}' has no items")
         return
     
-    # 創建 Rich 分欄顯示
-    rich_columns = Columns(items, **columns_kwargs)
-    
-    # 輸出到控制台
-    if not to_log_file_only and logger_instance:
-        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_console_only=True).log(
-            log_level, f"Displaying columns: {title}"
-        )
-        console.print(f"[bold]{title}[/bold]")
-        console.print(rich_columns)
-    
-    # 輸出到文件
-    if not to_console_only and logger_instance:
-        # 創建文本版本的分欄
-        columns_text = f"Columns: {title}\n"
-        
-        # 按指定欄數分組
-        for i in range(0, len(items), columns):
-            row_items = items[i:i+columns]
-            columns_text += " | ".join(f"{item:<20}" for item in row_items) + "\n"
-        
-        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_log_file_only=True).log(
-            log_level, f"\n{columns_text}"
-        )
+    if logger_instance is None:
+        return
+
+    payload = {
+        "title": title,
+        "items": [str(x) for x in items],
+        "padding": padding,
+        "width": width,
+        "expand": expand,
+        "equal": equal,
+        "column_first": column_first,
+        "right_to_left": right_to_left,
+        "align": align,
+    }
+    renderable = build_renderable("columns", payload)
+    pretty_text = "\n" + render_renderable_to_text(renderable) + "\n"
+
+    bind_kwargs = {
+        "pretty_kind": "columns",
+        "pretty_version": PRETTY_VERSION_V1,
+        "pretty_payload": payload,
+        "pretty_text": pretty_text,
+    }
+    if to_console_only:
+        bind_kwargs["to_console_only"] = True
+    if to_file_only:
+        bind_kwargs["to_file_only"] = True
+
+    logger_instance.opt(colors=True, depth=_target_depth).bind(**bind_kwargs).log(level, f"Columns: {title}")
 
 
 class LoggerProgress:
@@ -279,6 +319,15 @@ class LoggerProgress:
         log_start: bool = True,
         log_complete: bool = True
     ):
+        """
+        建立與 logger 綁定的 progress helper。
+
+        Args:
+            logger_instance: pretty-loguru logger（用於記錄 start/complete 訊息）。
+            console: Rich Console（預設會建立新的 Console）。
+            log_start: 是否在開始時記錄一筆 info。
+            log_complete: 是否在結束時記錄一筆 success。
+        """
         self.logger = logger_instance
         self.console = console or Console()
         self.log_start = log_start
@@ -377,13 +426,12 @@ def print_code(
     word_wrap: bool = False,
     indent_guides: bool = True,
     title: Optional[str] = None,
-    log_level: str = "INFO",
+    level: str = "INFO",
     logger_instance: Any = None,
     console: Optional[Console] = None,
     to_console_only: bool = False,
-    to_log_file_only: bool = False,
+    to_file_only: bool = False,
     _target_depth: int = None,
-    **syntax_kwargs
 ) -> None:
     """
     顯示語法高亮的程式碼
@@ -396,13 +444,12 @@ def print_code(
         word_wrap: 是否自動換行
         indent_guides: 是否顯示縮排引導線
         title: 可選的程式碼標題
-        log_level: 日誌級別
+        level: 日誌級別
         logger_instance: logger 實例
         console: Rich console 實例
         to_console_only: 僅輸出到控制台
-        to_log_file_only: 僅輸出到文件
+        to_file_only: 僅輸出到文件
         _target_depth: 調用深度
-        **syntax_kwargs: 傳遞給 Rich Syntax 的額外參數
         
     Example:
         >>> code = '''
@@ -420,46 +467,34 @@ def print_code(
             logger_instance.warning("Code block is empty")
         return
     
-    # 創建 Rich Syntax 對象
-    syntax = Syntax(
-        code,
-        language,
-        theme=theme,
-        line_numbers=line_numbers,
-        word_wrap=word_wrap,
-        indent_guides=indent_guides,
-        **syntax_kwargs
-    )
-    
-    # 輸出到控制台
-    if not to_log_file_only and logger_instance:
-        display_title = title or f"Code ({language.upper()})"
-        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_console_only=True).log(
-            log_level, f"Displaying code: {display_title}"
-        )
-        
-        if title:
-            console.print(f"[bold cyan]{title}[/bold cyan]")
-        console.print(syntax)
-    
-    # 輸出到文件
-    if not to_console_only and logger_instance:
-        # 創建純文本版本的程式碼
-        code_text = f"Code: {title or f'({language.upper()})'}\n"
-        code_text += "=" * 50 + "\n"
-        
-        if line_numbers:
-            lines = code.split('\n')
-            for i, line in enumerate(lines, 1):
-                code_text += f"{i:4d} | {line}\n"
-        else:
-            code_text += code + "\n"
-        
-        code_text += "=" * 50
-        
-        logger_instance.opt(ansi=False, depth=_target_depth).bind(to_log_file_only=True).log(
-            log_level, f"\n{code_text}"
-        )
+    if logger_instance is None:
+        return
+
+    payload = {
+        "title": title,
+        "code": code,
+        "language": language,
+        "theme": theme,
+        "line_numbers": line_numbers,
+        "word_wrap": word_wrap,
+        "indent_guides": indent_guides,
+    }
+    renderable = build_renderable("code", payload)
+    pretty_text = "\n" + render_renderable_to_text(renderable) + "\n"
+
+    display_title = title or f"({str(language).upper()})"
+    bind_kwargs = {
+        "pretty_kind": "code",
+        "pretty_version": PRETTY_VERSION_V1,
+        "pretty_payload": payload,
+        "pretty_text": pretty_text,
+    }
+    if to_console_only:
+        bind_kwargs["to_console_only"] = True
+    if to_file_only:
+        bind_kwargs["to_file_only"] = True
+
+    logger_instance.opt(colors=True, depth=_target_depth).bind(**bind_kwargs).log(level, f"Code: {display_title}")
 
 
 @ensure_target_parameters
@@ -472,13 +507,12 @@ def print_code_from_file(
     indent_guides: bool = True,
     start_line: Optional[int] = None,
     end_line: Optional[int] = None,
-    log_level: str = "INFO",
+    level: str = "INFO",
     logger_instance: Any = None,
     console: Optional[Console] = None,
     to_console_only: bool = False,
-    to_log_file_only: bool = False,
+    to_file_only: bool = False,
     _target_depth: int = None,
-    **syntax_kwargs
 ) -> None:
     """
     從文件讀取並顯示語法高亮的程式碼
@@ -492,13 +526,12 @@ def print_code_from_file(
         indent_guides: 是否顯示縮排引導線
         start_line: 開始行號 (1-based)
         end_line: 結束行號 (1-based)
-        log_level: 日誌級別
+        level: 日誌級別
         logger_instance: logger 實例
         console: Rich console 實例
         to_console_only: 僅輸出到控制台
-        to_log_file_only: 僅輸出到文件
+        to_file_only: 僅輸出到文件
         _target_depth: 調用深度
-        **syntax_kwargs: 傳遞給 Rich Syntax 的額外參數
         
     Example:
         >>> print_code_from_file("example.py", start_line=10, end_line=20)
@@ -562,30 +595,21 @@ def print_code_from_file(
             range_info = f" (lines {start_line or 1}-{end_line or len(lines)})"
         title = f"{os.path.basename(file_path)}{range_info}"
         
-        # 確保不與 syntax_kwargs 衝突
-        code_kwargs = {
-            'code': code,
-            'language': language,
-            'theme': theme,
-            'line_numbers': line_numbers,
-            'word_wrap': word_wrap,
-            'indent_guides': indent_guides,
-            'title': title,
-            'log_level': log_level,
-            'logger_instance': logger_instance,
-            'console': console,
-            'to_console_only': to_console_only,
-            'to_log_file_only': to_log_file_only,
-            '_target_depth': _target_depth
-        }
-        
-        # 合併額外參數，但不覆蓋已定義的參數
-        for key, value in syntax_kwargs.items():
-            if key not in code_kwargs:
-                code_kwargs[key] = value
-        
-        # 調用 print_code
-        print_code(**code_kwargs)
+        print_code(
+            code=code,
+            language=language,
+            theme=theme,
+            line_numbers=line_numbers,
+            word_wrap=word_wrap,
+            indent_guides=indent_guides,
+            title=title,
+            level=level,
+            logger_instance=logger_instance,
+            console=console,
+            to_console_only=to_console_only,
+            to_file_only=to_file_only,
+            _target_depth=_target_depth,
+        )
         
     except Exception as e:
         if logger_instance:
@@ -600,13 +624,12 @@ def print_diff(
     new_title: str = "After",
     language: str = "python",
     theme: str = "monokai",
-    log_level: str = "INFO",
+    level: str = "INFO",
     logger_instance: Any = None,
     console: Optional[Console] = None,
     to_console_only: bool = False,
-    to_log_file_only: bool = False,
+    to_file_only: bool = False,
     _target_depth: int = None,
-    **syntax_kwargs
 ) -> None:
     """
     並排顯示程式碼差異對比，使用紅色（舊版本）和綠色（新版本）視覺區分
@@ -618,13 +641,12 @@ def print_diff(
         new_title: 新版本標題
         language: 程式語言
         theme: 語法高亮主題
-        log_level: 日誌級別
+        level: 日誌級別
         logger_instance: logger 實例
         console: Rich console 實例
         to_console_only: 僅輸出到控制台
-        to_log_file_only: 僅輸出到文件
+        to_file_only: 僅輸出到文件
         _target_depth: 調用深度
-        **syntax_kwargs: 傳遞給 Rich Syntax 的額外參數
         
     Example:
         >>> old = "def hello():\n    print('Hi')"
@@ -634,77 +656,32 @@ def print_diff(
     if console is None:
         console = get_console()
     
-    # 創建語法高亮的程式碼
-    old_syntax = Syntax(
-        old_code,
-        language,
-        theme=theme,
-        line_numbers=True,
-        **syntax_kwargs
-    )
-    
-    new_syntax = Syntax(
-        new_code,
-        language,
-        theme=theme,
-        line_numbers=True,
-        **syntax_kwargs
-    )
-    
-    # 輸出到控制台
-    if not to_log_file_only and logger_instance:
-        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_console_only=True).log(
-            log_level, "Displaying code diff"
-        )
-        
-        # 使用 Panel 包裝，加上紅色和綠色邊框
-        old_panel = Panel(
-            old_syntax,
-            title=f"[bold red]- {old_title}[/bold red]",
-            border_style="red",
-            title_align="left"
-        )
-        
-        new_panel = Panel(
-            new_syntax,
-            title=f"[bold green]+ {new_title}[/bold green]",
-            border_style="green", 
-            title_align="left"
-        )
-        
-        # 顯示差異標題
-        console.print(f"\n[bold cyan]Code Diff: {old_title} → {new_title}[/bold cyan]")
-        
-        # 並排顯示帶邊框的程式碼
-        columns = Columns([old_panel, new_panel], equal=True, expand=True)
-        console.print(columns)
-        console.print()
-    
-    # 輸出到文件
-    if not to_console_only and logger_instance:
-        diff_text = f"Code Diff: {old_title} → {new_title}\n"
-        diff_text += "=" * 60 + "\n"
-        diff_text += f"\n[-] {old_title}:\n"
-        diff_text += "-" * 30 + "\n"
-        
-        # 為舊程式碼每行添加 - 前綴
-        old_lines = old_code.strip().split('\n')
-        for i, line in enumerate(old_lines, 1):
-            diff_text += f"- {i:3d} | {line}\n"
-        
-        diff_text += f"\n[+] {new_title}:\n"
-        diff_text += "+" * 30 + "\n"
-        
-        # 為新程式碼每行添加 + 前綴
-        new_lines = new_code.strip().split('\n')
-        for i, line in enumerate(new_lines, 1):
-            diff_text += f"+ {i:3d} | {line}\n"
-            
-        diff_text += "\n" + "=" * 60
-        
-        logger_instance.opt(ansi=False, depth=_target_depth).bind(to_log_file_only=True).log(
-            log_level, f"\n{diff_text}"
-        )
+    if logger_instance is None:
+        return
+
+    payload = {
+        "old_title": old_title,
+        "new_title": new_title,
+        "old_code": old_code,
+        "new_code": new_code,
+        "language": language,
+        "theme": theme,
+    }
+    renderable = build_renderable("diff", payload)
+    pretty_text = "\n" + render_renderable_to_text(renderable) + "\n"
+
+    bind_kwargs = {
+        "pretty_kind": "diff",
+        "pretty_version": PRETTY_VERSION_V1,
+        "pretty_payload": payload,
+        "pretty_text": pretty_text,
+    }
+    if to_console_only:
+        bind_kwargs["to_console_only"] = True
+    if to_file_only:
+        bind_kwargs["to_file_only"] = True
+
+    logger_instance.opt(colors=True, depth=_target_depth).bind(**bind_kwargs).log(level, f"Code Diff: {old_title} → {new_title}")
 
 
 @ensure_target_parameters
@@ -720,13 +697,12 @@ def print_panel(
     height: Optional[int] = None,
     padding: Union[int, tuple] = 1,
     expand: bool = True,
-    log_level: str = "INFO",
+    level: str = "INFO",
     logger_instance: Any = None,
     console: Optional[Console] = None,
     to_console_only: bool = False,
-    to_log_file_only: bool = False,
+    to_file_only: bool = False,
     _target_depth: int = None,
-    **panel_kwargs
 ) -> None:
     """
     顯示 Rich Panel（面板），這是 block 方法的原生 Rich 版本
@@ -746,13 +722,12 @@ def print_panel(
         height: 面板高度，None 表示自動
         padding: 內邊距，可以是整數或 (top, right, bottom, left) 元組
         expand: 是否擴展到可用寬度
-        log_level: 日誌級別
+        level: 日誌級別
         logger_instance: logger 實例
         console: Rich console 實例
         to_console_only: 僅輸出到控制台
-        to_log_file_only: 僅輸出到文件
+        to_file_only: 僅輸出到文件
         _target_depth: 調用深度
-        **panel_kwargs: 傳遞給 Rich Panel 的額外參數
         
     Example:
         >>> # 基本使用
@@ -782,97 +757,44 @@ def print_panel(
     if console is None:
         console = get_console()
     
-    # 處理 box 樣式
-    box = rich_box.ROUNDED  # 默認圓角邊框
-    if box_style:
-        box_styles = {
-            "ascii": rich_box.ASCII,
-            "ascii2": rich_box.ASCII2,
-            "square": rich_box.SQUARE,
-            "rounded": rich_box.ROUNDED,
-            "double": rich_box.DOUBLE,
-            "heavy": rich_box.HEAVY,
-            "minimal": rich_box.MINIMAL,
-            "simple": rich_box.SIMPLE,
-            "heavy_head": rich_box.HEAVY_HEAD,
-            "double_edge": rich_box.DOUBLE_EDGE,
-            "thick": rich_box.HEAVY,  # 別名
-        }
-        box = box_styles.get(box_style.lower(), rich_box.ROUNDED)
-    
-    # 創建 Panel
-    panel = Panel(
-        content,
-        title=title,
-        subtitle=subtitle,
-        border_style=border_style,
-        box=box,
-        title_align=title_align,
-        subtitle_align=subtitle_align,
-        width=width,
-        height=height,
-        padding=padding,
-        expand=expand,
-        **panel_kwargs
-    )
-    
-    # 輸出到控制台
-    if not to_log_file_only and logger_instance:
-        display_title = title or "Panel"
-        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_console_only=True).log(
-            log_level, f"Displaying panel: {display_title}"
-        )
-        console.print(panel)
-    
-    # 輸出到文件
-    if not to_console_only and logger_instance:
-        # 創建文本版本的面板
-        panel_text = ""
-        if title:
-            panel_text += f"┌─ {title} " + "─" * (50 - len(title) - 3) + "┐\n"
-        else:
-            panel_text += "┌" + "─" * 50 + "┐\n"
-        
-        # 處理內容
-        content_str = str(content)
-        content_lines = content_str.split('\n')
-        
-        # 添加內邊距
-        if isinstance(padding, int):
-            pad_top = pad_bottom = pad_left = pad_right = padding
-        elif len(padding) == 2:
-            # (vertical, horizontal)
-            pad_top = pad_bottom = padding[0]
-            pad_left = pad_right = padding[1]
-        elif len(padding) == 4:
-            # (top, right, bottom, left)
-            pad_top, pad_right, pad_bottom, pad_left = padding
-        else:
-            # 默認值
-            pad_top = pad_bottom = pad_left = pad_right = 1
-        
-        # 頂部內邊距
-        for _ in range(pad_top):
-            panel_text += "│" + " " * 50 + "│\n"
-        
-        # 內容行
-        for line in content_lines:
-            padded_line = " " * pad_left + line + " " * pad_right
-            panel_text += f"│{padded_line:<50}│\n"
-        
-        # 底部內邊距
-        for _ in range(pad_bottom):
-            panel_text += "│" + " " * 50 + "│\n"
-        
-        # 底部邊框
-        if subtitle:
-            panel_text += "└" + "─" * (47 - len(subtitle)) + f" {subtitle} ─┘"
-        else:
-            panel_text += "└" + "─" * 50 + "┘"
-        
-        logger_instance.opt(ansi=False, depth=_target_depth).bind(to_log_file_only=True).log(
-            log_level, f"\n{panel_text}"
-        )
+    if logger_instance is None:
+        return
+
+    content_text: str
+    if isinstance(content, str):
+        content_text = content
+    else:
+        content_text = render_renderable_to_text(content)
+
+    payload = {
+        "content": content_text,
+        "title": title,
+        "subtitle": subtitle,
+        "border_style": border_style,
+        "box_style": box_style,
+        "title_align": title_align,
+        "subtitle_align": subtitle_align,
+        "width": width,
+        "height": height,
+        "padding": padding,
+        "expand": expand,
+    }
+    renderable = build_renderable("panel", payload)
+    pretty_text = "\n" + render_renderable_to_text(renderable) + "\n"
+
+    display_title = title or "Panel"
+    bind_kwargs = {
+        "pretty_kind": "panel",
+        "pretty_version": PRETTY_VERSION_V1,
+        "pretty_payload": payload,
+        "pretty_text": pretty_text,
+    }
+    if to_console_only:
+        bind_kwargs["to_console_only"] = True
+    if to_file_only:
+        bind_kwargs["to_file_only"] = True
+
+    logger_instance.opt(colors=True, depth=_target_depth).bind(**bind_kwargs).log(level, f"Panel: {display_title}")
 
 
 def create_rich_methods(logger_instance: Any, console: Optional[Console] = None) -> None:
@@ -894,11 +816,11 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
         headers: Optional[List[str]] = None,
         show_header: bool = True,
         show_lines: bool = False,
-        log_level: str = "INFO",
+        style: str = "none",
+        level: str = "INFO",
         to_console_only: bool = False,
-        to_log_file_only: bool = False,
+        to_file_only: bool = False,
         _target_depth: int = None,
-        **table_kwargs
     ) -> None:
         print_table(
             title=title,
@@ -906,13 +828,13 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
             headers=headers,
             show_header=show_header,
             show_lines=show_lines,
-            log_level=log_level,
+            style=style,
+            level=level,
             logger_instance=logger_instance,
             console=console,
             to_console_only=to_console_only,
-            to_log_file_only=to_log_file_only,
+            to_file_only=to_file_only,
             _target_depth=_target_depth,
-            **table_kwargs
         )
     
     # 2. 樹狀結構方法
@@ -920,22 +842,24 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
     def tree_method(
         title: str,
         tree_data: Dict[str, Any],
-        log_level: str = "INFO",
+        style: str = "tree",
+        guide_style: str = "tree.line",
+        level: str = "INFO",
         to_console_only: bool = False,
-        to_log_file_only: bool = False,
+        to_file_only: bool = False,
         _target_depth: int = None,
-        **tree_kwargs
     ) -> None:
         print_tree(
             title=title,
             tree_data=tree_data,
-            log_level=log_level,
+            style=style,
+            guide_style=guide_style,
+            level=level,
             logger_instance=logger_instance,
             console=console,
             to_console_only=to_console_only,
-            to_log_file_only=to_log_file_only,
+            to_file_only=to_file_only,
             _target_depth=_target_depth,
-            **tree_kwargs
         )
     
     # 3. 分欄顯示方法
@@ -943,24 +867,34 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
     def columns_method(
         title: str,
         items: List[str],
-        columns: int = 3,
-        log_level: str = "INFO",
+        padding: Union[int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]] = (0, 1),
+        width: Optional[int] = None,
+        expand: bool = False,
+        equal: bool = False,
+        column_first: bool = False,
+        right_to_left: bool = False,
+        align: Optional[Literal["left", "center", "right"]] = None,
+        level: str = "INFO",
         to_console_only: bool = False,
-        to_log_file_only: bool = False,
+        to_file_only: bool = False,
         _target_depth: int = None,
-        **columns_kwargs
     ) -> None:
         print_columns(
             title=title,
             items=items,
-            columns=columns,
-            log_level=log_level,
+            padding=padding,
+            width=width,
+            expand=expand,
+            equal=equal,
+            column_first=column_first,
+            right_to_left=right_to_left,
+            align=align,
+            level=level,
             logger_instance=logger_instance,
             console=console,
             to_console_only=to_console_only,
-            to_log_file_only=to_log_file_only,
+            to_file_only=to_file_only,
             _target_depth=_target_depth,
-            **columns_kwargs
         )
     
     # 4. 程式碼高亮方法
@@ -973,11 +907,10 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
         word_wrap: bool = False,
         indent_guides: bool = True,
         title: Optional[str] = None,
-        log_level: str = "INFO",
+        level: str = "INFO",
         to_console_only: bool = False,
-        to_log_file_only: bool = False,
+        to_file_only: bool = False,
         _target_depth: int = None,
-        **syntax_kwargs
     ) -> None:
         print_code(
             code=code,
@@ -987,13 +920,12 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
             word_wrap=word_wrap,
             indent_guides=indent_guides,
             title=title,
-            log_level=log_level,
+            level=level,
             logger_instance=logger_instance,
             console=console,
             to_console_only=to_console_only,
-            to_log_file_only=to_log_file_only,
+            to_file_only=to_file_only,
             _target_depth=_target_depth,
-            **syntax_kwargs
         )
     
     # 5. 從文件讀取程式碼方法
@@ -1007,11 +939,10 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
         indent_guides: bool = True,
         start_line: Optional[int] = None,
         end_line: Optional[int] = None,
-        log_level: str = "INFO",
+        level: str = "INFO",
         to_console_only: bool = False,
-        to_log_file_only: bool = False,
+        to_file_only: bool = False,
         _target_depth: int = None,
-        **syntax_kwargs
     ) -> None:
         print_code_from_file(
             file_path=file_path,
@@ -1022,13 +953,12 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
             indent_guides=indent_guides,
             start_line=start_line,
             end_line=end_line,
-            log_level=log_level,
+            level=level,
             logger_instance=logger_instance,
             console=console,
             to_console_only=to_console_only,
-            to_log_file_only=to_log_file_only,
+            to_file_only=to_file_only,
             _target_depth=_target_depth,
-            **syntax_kwargs
         )
     
     # 6. 程式碼差異對比方法
@@ -1040,11 +970,10 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
         new_title: str = "After",
         language: str = "python",
         theme: str = "monokai",
-        log_level: str = "INFO",
+        level: str = "INFO",
         to_console_only: bool = False,
-        to_log_file_only: bool = False,
+        to_file_only: bool = False,
         _target_depth: int = None,
-        **syntax_kwargs
     ) -> None:
         print_diff(
             old_code=old_code,
@@ -1053,13 +982,12 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
             new_title=new_title,
             language=language,
             theme=theme,
-            log_level=log_level,
+            level=level,
             logger_instance=logger_instance,
             console=console,
             to_console_only=to_console_only,
-            to_log_file_only=to_log_file_only,
+            to_file_only=to_file_only,
             _target_depth=_target_depth,
-            **syntax_kwargs
         )
     
     # 7. Panel 方法（Rich 原生版本）
@@ -1076,11 +1004,10 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
         height: Optional[int] = None,
         padding: Union[int, tuple] = 1,
         expand: bool = True,
-        log_level: str = "INFO",
+        level: str = "INFO",
         to_console_only: bool = False,
-        to_log_file_only: bool = False,
+        to_file_only: bool = False,
         _target_depth: int = None,
-        **panel_kwargs
     ) -> None:
         print_panel(
             content=content,
@@ -1094,13 +1021,33 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
             height=height,
             padding=padding,
             expand=expand,
-            log_level=log_level,
+            level=level,
             logger_instance=logger_instance,
             console=console,
             to_console_only=to_console_only,
-            to_log_file_only=to_log_file_only,
+            to_file_only=to_file_only,
             _target_depth=_target_depth,
-            **panel_kwargs
+        )
+
+    # 8. 原生 renderable（Table/Tree/Panel/...）入口
+    @ensure_target_parameters
+    def render_method(
+        renderable: Any,
+        title: Optional[str] = None,
+        level: str = "INFO",
+        to_console_only: bool = False,
+        to_file_only: bool = False,
+        _target_depth: int = None,
+    ) -> None:
+        print_renderable(
+            renderable=renderable,
+            title=title,
+            level=level,
+            logger_instance=logger_instance,
+            console=console,
+            to_console_only=to_console_only,
+            to_file_only=to_file_only,
+            _target_depth=_target_depth,
         )
     
     # 8. 進度條方法（作為屬性）
@@ -1116,15 +1063,9 @@ def create_rich_methods(logger_instance: Any, console: Optional[Console] = None)
     logger_instance.diff = diff_method
     logger_instance.panel = panel_method  # 新增 panel 方法
     logger_instance.progress = get_progress()
+    logger_instance.render = render_method
     
-    # 添加目標特定方法
-    add_target_methods(logger_instance, "table", table_method)
-    add_target_methods(logger_instance, "tree", tree_method)
-    add_target_methods(logger_instance, "columns", columns_method)
-    add_target_methods(logger_instance, "code", code_method)
-    add_target_methods(logger_instance, "code_file", code_file_method)
-    add_target_methods(logger_instance, "diff", diff_method)
-    add_target_methods(logger_instance, "panel", panel_method)  # 新增 panel 的目標方法
+    # 不再注入 console_*/file_* 目標方法：統一走單一路徑（loguru pipeline）
 
 
 # 導出的函數和類
@@ -1136,6 +1077,7 @@ __all__ = [
     'print_code_from_file',
     'print_diff',
     'print_panel',
+    'print_renderable',
     'LoggerProgress',
     'create_rich_methods'
 ]

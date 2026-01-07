@@ -86,10 +86,9 @@ def direct_loguru_usage():
         record["extra"]["hostname"] = "server-01"
         record["extra"]["app_version"] = "2.1.0"
     
-    # 修復：直接使用 patch 而不是 with 語句
-    loguru_logger.patch(add_hostname)
-    loguru_logger.info("這是帶有動態資訊的日誌")
-    loguru_logger.stop()  # 停止 patch
+    # 使用 patch() 會回傳「新的 logger」，不會就地修改原本的 logger
+    patched_logger = loguru_logger.patch(add_hostname)
+    patched_logger.info("這是帶有動態資訊的日誌")
     
     print("✅ Loguru 進階功能演示完成\n")
 
@@ -231,7 +230,7 @@ def hybrid_usage_example():
     print("=== 混合使用範例 ===\\n")
     
     # 使用 pretty-loguru 的簡便性
-    logger = create_logger("hybrid_demo", log_path="./logs")
+    logger = create_logger("hybrid_demo", log_dir="./logs")
     
     logger.info("開始混合使用演示")
     
@@ -290,7 +289,7 @@ def performance_comparison():
     """性能對比演示"""
     print("=== 性能對比演示 ===\\n")
     
-    logger = create_logger("performance_test", log_path="./logs")
+    logger = create_logger("performance_test", log_dir="./logs")
     
     # 1. pretty-loguru 標準用法
     print("1. pretty-loguru 標準用法測試")

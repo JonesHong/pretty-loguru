@@ -30,7 +30,7 @@ class MicroserviceLogger:
         # Create configuration
         config = LoggerConfig(
             level=os.getenv("LOG_LEVEL", "INFO"),
-            log_path=f"logs/{service_name}",
+            log_dir=f"logs/{service_name}",
             rotation="100 MB",
             retention="30 days",
             compression="zip"
@@ -133,7 +133,7 @@ class SecureLogger:
     def __init__(self, name: str, compliance_mode: str = "PCI"):
         config = LoggerConfig(
             level="INFO",
-            log_path=f"logs/secure/{name}",
+            log_dir=f"logs/secure/{name}",
             rotation="50 MB",
             retention="90 days",  # Compliance requirement
             compression="zip"
@@ -517,7 +517,7 @@ class HALogger:
         # Primary logger configuration
         config = LoggerConfig(
             level="INFO",
-            log_path=primary_path,
+            log_dir=primary_path,
             rotation="100 MB",
             retention="30 days",
             compression="zip"

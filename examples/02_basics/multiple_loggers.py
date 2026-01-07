@@ -21,9 +21,9 @@ def basic_multiple_loggers():
     print("-" * 30)
     
     # 創建不同用途的 logger
-    app_logger = create_logger("app", log_path="./logs/basics")
-    db_logger = create_logger("database", log_path="./logs/basics")
-    auth_logger = create_logger("auth", log_path="./logs/basics")
+    app_logger = create_logger("app", log_dir="./logs/basics")
+    db_logger = create_logger("database", log_dir="./logs/basics")
+    auth_logger = create_logger("auth", log_dir="./logs/basics")
     
     # 模擬應用程序運行
     app_logger.info("應用程序啟動")
@@ -75,10 +75,10 @@ def hierarchical_loggers():
     print("-" * 30)
     
     # 創建階層式 logger
-    app_logger = create_logger("myapp", log_path="./logs/basics")
-    user_logger = create_logger("myapp.user", log_path="./logs/basics")
-    order_logger = create_logger("myapp.order", log_path="./logs/basics")
-    payment_logger = create_logger("myapp.payment", log_path="./logs/basics")
+    app_logger = create_logger("myapp", log_dir="./logs/basics")
+    user_logger = create_logger("myapp.user", log_dir="./logs/basics")
+    order_logger = create_logger("myapp.order", log_dir="./logs/basics")
+    payment_logger = create_logger("myapp.payment", log_dir="./logs/basics")
     
     # 模擬階層式日誌記錄
     app_logger.info("=== 開始處理訂單 ===")
@@ -103,7 +103,7 @@ def logger_configuration_sharing():
     
     # 創建具有相同配置的 logger
     common_config = {
-        "log_path": "./logs/basics",
+        "log_dir": "./logs/basics",
         "preset": "detailed",
         "retention": "1 day"
     }
@@ -128,13 +128,13 @@ def logger_isolation_demo():
     # 創建完全隔離的 logger
     error_only_logger = create_logger(
         "errors_only",
-        log_path="./logs/basics",
+        log_dir="./logs/basics",
         # 注意：在實際應用中，您可能想要配置不同的日誌等級
     )
     
     debug_logger = create_logger(
         "debug_info",
-        log_path="./logs/basics"
+        log_dir="./logs/basics"
     )
     
     # 演示不同 logger 記錄不同類型的資訊
@@ -153,11 +153,11 @@ def logger_best_practices():
     print("-" * 30)
     
     # 1. 使用有意義的名稱
-    user_service_logger = create_logger("user_service", log_path="./logs/basics")
+    user_service_logger = create_logger("user_service", log_dir="./logs/basics")
     
     # 2. 為不同環境使用不同的 logger
-    dev_logger = create_logger("app_dev", log_path="./logs/basics")
-    prod_logger = create_logger("app_prod", log_path="./logs/basics")
+    dev_logger = create_logger("app_dev", log_dir="./logs/basics")
+    prod_logger = create_logger("app_prod", log_dir="./logs/basics")
     
     # 3. 記錄關鍵業務事件
     user_service_logger.info("用戶服務啟動")

@@ -39,7 +39,7 @@ app = FastAPI(
 )
 
 # 創建 logger 並與 FastAPI 集成
-logger = create_logger("simple_api", log_path="./logs/fastapi")
+logger = create_logger("simple_api", log_dir="./logs/fastapi")
 integrate_fastapi(app, logger)
 
 # 模擬資料

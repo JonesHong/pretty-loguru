@@ -9,11 +9,11 @@ Using `logger.block()` creates a panel with a title and border, perfect for disp
 ```python
 def block(
     title: str,
-    message_list: List[str],
+    lines: List[str],
     border_style: str = "cyan",
     log_level: str = "INFO",
     to_console_only: bool = False,
-    to_log_file_only: bool = False
+    to_file_only: bool = False
 ) -> None:
     ...
 ```
@@ -23,11 +23,11 @@ def block(
 | Parameter | Type | Description |
 | --- | --- | --- |
 | `title` | `str` | Title of the block. |
-| `message_list` | `List[str]` | List of messages to display within the block. |
+| `lines` | `List[str]` | List of messages to display within the block. |
 | `border_style` | `str` | Rich border style like `"solid"`, `"double"`, `"rounded"` or color name `"green"`. |
 | `log_level` | `str` | Log level for this message, such as `"INFO"`, `"WARNING"`. |
 | `to_console_only` | `bool` | If `True`, this message only appears in console, not written to file. |
-| `to_log_file_only` | `bool` | If `True`, this message only written to file, not displayed in console. |
+| `to_file_only` | `bool` | If `True`, this message only written to file, not displayed in console. |
 
 **Examples:**
 
@@ -40,7 +40,7 @@ logger.block(
         "CPU Usage: 35%",
     ],
     border_style="green",
-    log_level="SUCCESS"
+    level="SUCCESS"
 )
 ```
 
@@ -48,7 +48,7 @@ logger.block(
 
 ## ASCII Art Features
 
-This feature requires additional installation of the `art` library (`pip install art`).
+This feature requires the `art` library (installed by default with pretty-loguru; if missing, run `uv add art` or `pip install art`).
 
 ### `logger.ascii_header()` - ASCII Art Headers
 
@@ -86,9 +86,9 @@ Combines ASCII headers with structured blocks, displaying both artistic headers 
 ```python
 def ascii_block(
     title: str,
-    message_list: List[str],
+    lines: List[str],
     ascii_header: Optional[str] = None,
-    ascii_font: str = "standard",
+    font: str = "standard",
     border_style: str = "cyan",
     log_level: str = "INFO"
 ) -> None:
@@ -100,9 +100,9 @@ def ascii_block(
 | Parameter | Type | Description |
 | --- | --- | --- |
 | `title` | `str` | Title of the block. |
-| `message_list` | `List[str]` | List of messages within the block. |
+| `lines` | `List[str]` | List of messages within the block. |
 | `ascii_header` | `Optional[str]` | ASCII text to convert. If `None`, uses `title`. |
-| `ascii_font` | `str` | Font for ASCII art. |
+| `font` | `str` | Font for ASCII art. |
 | `border_style` | `str` | Border style or color. |
 | `log_level` | `str` | Log level. |
 
@@ -121,8 +121,10 @@ def table(
     title: str,
     data: List[Dict[str, Any]],
     headers: Optional[List[str]] = None,
-    log_level: str = "INFO",
-    **table_kwargs
+    show_header: bool = True,
+    show_lines: bool = False,
+    style: str = "none",
+    level: str = "INFO",
 ) -> None:
     ...
 ```
@@ -134,8 +136,10 @@ def table(
 | `title` | `str` | Title of the table. |
 | `data` | `List[Dict[str, Any]]` | Data source for the table, a list of dictionaries. |
 | `headers` | `Optional[List[str]]` | Custom headers. If `None`, uses keys from the first dictionary in `data`. |
-| `log_level` | `str` | Log level. |
-| `**table_kwargs` | `Any` | Additional parameters passed to `rich.table.Table`, such as `show_lines=True`. |
+| `show_header` | `bool` | Whether to show the table header. |
+| `show_lines` | `bool` | Whether to show row separators. |
+| `style` | `str` | Rich Table `style` (e.g. `"blue"`). |
+| `level` | `str` | Log level. |
 
 **Examples:**
 
@@ -155,8 +159,9 @@ Display hierarchical data in tree structure format.
 def tree(
     title: str,
     tree_data: Dict[str, Any],
-    log_level: str = "INFO",
-    **tree_kwargs
+    style: str = "tree",
+    guide_style: str = "tree.line",
+    level: str = "INFO",
 ) -> None:
     ...
 ```
@@ -167,8 +172,9 @@ def tree(
 | --- | --- | --- |
 | `title` | `str` | Title for the tree root node. |
 | `tree_data` | `Dict[str, Any]` | Tree structure data, supports nested dictionaries. |
-| `log_level` | `str` | Log level. |
-| `**tree_kwargs` | `Any` | Additional parameters passed to `rich.tree.Tree`. |
+| `style` | `str` | Rich Tree `style` (e.g. `"green"`). |
+| `guide_style` | `str` | Rich Tree `guide_style`. |
+| `level` | `str` | Log level. |
 
 **Examples:**
 
@@ -190,9 +196,14 @@ Arrange a list of items neatly in multiple columns.
 def columns(
     title: str,
     items: List[str],
-    columns: int = 3,
-    log_level: str = "INFO",
-    **columns_kwargs
+    padding: Union[int, tuple] = (0, 1),
+    width: Optional[int] = None,
+    expand: bool = False,
+    equal: bool = False,
+    column_first: bool = False,
+    right_to_left: bool = False,
+    align: Optional[Literal["left", "center", "right"]] = None,
+    level: str = "INFO",
 ) -> None:
     ...
 ```
@@ -203,9 +214,18 @@ def columns(
 | --- | --- | --- |
 | `title` | `str` | Title for the column display. |
 | `items` | `List[str]` | List of items to display. |
-| `columns` | `int` | Number of columns to divide into. |
-| `log_level` | `str` | Log level. |
-| `**columns_kwargs` | `Any` | Additional parameters passed to `rich.columns.Columns`. |
+| `padding` | `Union[int, tuple]` | Rich Columns `padding`. |
+| `width` | `Optional[int]` | Rich Columns `width`. |
+| `expand` | `bool` | Rich Columns `expand`. |
+| `equal` | `bool` | Rich Columns `equal`. |
+| `column_first` | `bool` | Rich Columns `column_first`. |
+| `right_to_left` | `bool` | Rich Columns `right_to_left`. |
+| `align` | `Optional[str]` | Rich Columns `align`. |
+| `level` | `str` | Log level. |
+
+**Advanced (native Rich objects)**
+
+If you need Rich's full parameter surface (e.g. building your own `Table/Panel/Columns/...`), use `logger.render(renderable, title=...)` so console/file still share the same single event output.
 
 ### `logger.progress` - Progress Bars
 
@@ -267,10 +287,9 @@ def code(
     word_wrap: bool = False,
     indent_guides: bool = True,
     title: Optional[str] = None,
-    log_level: str = "INFO",
+    level: str = "INFO",
     to_console_only: bool = False,
-    to_log_file_only: bool = False,
-    **syntax_kwargs
+    to_file_only: bool = False,
 ) -> None:
     ...
 ```
@@ -286,10 +305,11 @@ def code(
 | `word_wrap` | `bool` | Enable automatic word wrapping |
 | `indent_guides` | `bool` | Show indentation guide lines |
 | `title` | `Optional[str]` | Optional title for the code block |
-| `log_level` | `str` | Log level |
+| `level` | `str` | Log level |
 | `to_console_only` | `bool` | Display only in console |
-| `to_log_file_only` | `bool` | Save only to log files |
-| `**syntax_kwargs` | `Any` | Additional parameters for Rich Syntax |
+| `to_file_only` | `bool` | Save only to log files |
+
+If you need Rich `Syntax(...)` advanced parameters, build a `Syntax` renderable yourself and use `logger.render(renderable, title=...)`.
 
 **Examples:**
 
@@ -315,12 +335,13 @@ def code_file(
     language: Optional[str] = None,
     theme: str = "monokai",
     line_numbers: bool = True,
+    word_wrap: bool = False,
+    indent_guides: bool = True,
     start_line: Optional[int] = None,
     end_line: Optional[int] = None,
-    log_level: str = "INFO",
+    level: str = "INFO",
     to_console_only: bool = False,
-    to_log_file_only: bool = False,
-    **syntax_kwargs
+    to_file_only: bool = False,
 ) -> None:
     ...
 ```
@@ -333,12 +354,13 @@ def code_file(
 | `language` | `Optional[str]` | Override automatic language detection |
 | `theme` | `str` | Syntax highlighting theme |
 | `line_numbers` | `bool` | Whether to show line numbers |
+| `word_wrap` | `bool` | Enable automatic word wrapping |
+| `indent_guides` | `bool` | Show indentation guide lines |
 | `start_line` | `Optional[int]` | First line to display (1-based) |
 | `end_line` | `Optional[int]` | Last line to display (1-based) |
-| `log_level` | `str` | Log level |
+| `level` | `str` | Log level |
 | `to_console_only` | `bool` | Display only in console |
-| `to_log_file_only` | `bool` | Save only to log files |
-| `**syntax_kwargs` | `Any` | Additional parameters for Rich Syntax |
+| `to_file_only` | `bool` | Save only to log files |
 
 **Examples:**
 
@@ -362,10 +384,9 @@ def diff(
     new_title: str = "After",
     language: str = "python",
     theme: str = "monokai",
-    log_level: str = "INFO",
+    level: str = "INFO",
     to_console_only: bool = False,
-    to_log_file_only: bool = False,
-    **syntax_kwargs
+    to_file_only: bool = False,
 ) -> None:
     ...
 ```
@@ -380,10 +401,9 @@ def diff(
 | `new_title` | `str` | Label for new version (green border) |
 | `language` | `str` | Programming language for syntax highlighting |
 | `theme` | `str` | Syntax highlighting theme |
-| `log_level` | `str` | Log level |
+| `level` | `str` | Log level |
 | `to_console_only` | `bool` | Display only in console |
-| `to_log_file_only` | `bool` | Save only to log files |
-| `**syntax_kwargs` | `Any` | Additional parameters for Rich Syntax |
+| `to_file_only` | `bool` | Save only to log files |
 
 **Examples:**
 

@@ -354,17 +354,19 @@ logger.panel(info_msg, title="資訊", border_style="blue")
 
 ```python
 # 僅在控制台顯示進度
-logger.console_panel(
+logger.panel(
     progress_table,
     title="即時進度",
-    border_style="cyan"
+    border_style="cyan",
+    to_console_only=True,
 )
 
 # 僅在檔案記錄詳細資訊
-logger.file_panel(
+logger.panel(
     detailed_report,
     title="完整報告",
-    subtitle=f"產生時間: {datetime.now()}"
+    subtitle=f"產生時間: {datetime.now()}",
+    to_file_only=True,
 )
 ```
 

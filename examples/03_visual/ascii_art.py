@@ -17,11 +17,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from pretty_loguru import create_logger
+from pretty_loguru.addons import log_to_targets
 import time
 
 def basic_ascii_demo():
     """基本 ASCII 藝術演示"""
-    logger = create_logger("ascii_demo", log_path="./logs")
+    logger = create_logger("ascii_demo", log_dir="./logs")
     
     print("=== 基本 ASCII 藝術演示 ===\n")
     
@@ -39,7 +40,7 @@ def basic_ascii_demo():
 
 def application_branding():
     """應用品牌化演示"""
-    logger = create_logger("my_app", log_path="./logs")
+    logger = create_logger("my_app", log_dir="./logs")
     
     print("\n=== 應用品牌化演示 ===\n")
     
@@ -54,11 +55,11 @@ def application_branding():
     ]
     logger.block("應用資訊", startup_info, border_style="blue")
     
-    logger.console_success("MyApp 已成功啟動!")
+    log_to_targets(logger, "MyApp 已成功啟動!", level="SUCCESS", console_only=True)
 
 def status_headers():
     """狀態標題演示"""
-    logger = create_logger("status_app", log_path="./logs")
+    logger = create_logger("status_app", log_dir="./logs")
     logger.ascii_header("WELCOME")
     print("\n=== 狀態標題演示 ===\n")
     
@@ -83,7 +84,7 @@ def status_headers():
 
 def deployment_workflow():
     """部署工作流程演示"""
-    logger = create_logger("deploy_app", log_path="./logs")
+    logger = create_logger("deploy_app", log_dir="./logs")
     
     print("\n=== 部署工作流程演示 ===\n")
     
@@ -126,7 +127,7 @@ def deployment_workflow():
 
 def monitoring_dashboard():
     """監控儀表板演示"""
-    logger = create_logger("monitor", log_path="./logs")
+    logger = create_logger("monitor", log_dir="./logs")
     
     print("\n=== 監控儀表板演示 ===\n")
     

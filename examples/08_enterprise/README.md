@@ -191,7 +191,7 @@ class SecurityLogger:
         self.failed_attempts = {}
         self.logger = create_logger(
             "security",
-            log_path="/var/log/security",
+            log_dir="/var/log/security",
             level="INFO",
             rotation="daily",
             retention="7 years"  # 合規要求
@@ -446,8 +446,8 @@ version: '3.8'
 services:
   app:
     build: .
-    environment:
-      - LOG_LEVEL=INFO
+      environment:
+        - LOG_LEVEL=INFO
       - LOG_PATH=/var/log/app
       - ELASTICSEARCH_URL=http://elasticsearch:9200
     volumes:

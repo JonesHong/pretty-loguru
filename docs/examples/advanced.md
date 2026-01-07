@@ -386,7 +386,7 @@ console_logger = create_logger("perf_console")
 benchmark_logger(console_logger, "僅控制台")
 
 # 3. 僅檔案
-file_logger = create_logger("perf_file", log_path="logs/perf")
+file_logger = create_logger("perf_file", log_dir="logs/perf")
 benchmark_logger(file_logger, "僅檔案")
 
 # 4. 無格式化

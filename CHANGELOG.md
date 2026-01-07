@@ -1,6 +1,16 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+本檔案以「使用者行為」為主紀錄變更；內部重構若不影響使用者，請避免寫成主要條目。
+發版規則見 `RELEASE_STRATEGY.md`。
+
+## [Unreleased]
+
+### Breaking
+- `pretty_loguru` 頂層改為只匯出 core API；addons/integrations 改為顯式 import（`pretty_loguru.addons` / `pretty_loguru.integrations`）
+- `log_dir` 改為「必須是目錄」，檔案路徑（例如 `app.log`）會直接丟錯（見 `MIGRATION_1_TO_2.md`）
+
+### Fixed
+- `reinit_logger()`/`LoggerConfig.update()` 不再清除使用者自行 `logger.add()` 的 sinks（除非顯式 `reset_handlers=True`）
 
 ## [1.1.3] - 2025-07-22
 

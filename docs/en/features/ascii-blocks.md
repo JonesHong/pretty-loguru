@@ -22,7 +22,7 @@ from pretty_loguru import create_logger
 # Create logger instance
 logger = create_logger(
     name="demo",
-    log_path="logs",
+    log_dir="logs",
     level="INFO"
 )
 
@@ -33,10 +33,10 @@ logger.ascii_block(
         "Memory Usage: 2.1GB", 
         "Disk Space: 120GB Available"
     ],
-    ascii_header="STATUS",    // ASCII header text
-    ascii_font="standard",    // ASCII font
+    header_text="STATUS",    // ASCII header text
+    font="standard",    // ASCII font
     border_style="green",     // Border color
-    log_level="INFO"          // Log level
+    level="INFO"          // Log level
 )
 ```
 
@@ -51,10 +51,10 @@ logger.ascii_block(
         "Service Checks: All passed",
         "Load Balancer: Enabled"
     ],
-    ascii_header="DEPLOYED",
-    ascii_font="block",
+    header_text="DEPLOYED",
+    font="block",
     border_style="green",
-    log_level="SUCCESS"
+    level="SUCCESS"
 )
 ```
 
@@ -72,10 +72,10 @@ logger.ascii_block(
         "✅ API service started",
         "✅ Health check passed"
     ],
-    ascii_header="READY",
-    ascii_font="slant",
+    header_text="READY",
+    font="slant",
     border_style="green",
-    log_level="SUCCESS"
+    level="SUCCESS"
 )
 ```
 
@@ -90,10 +90,10 @@ logger.ascii_block(
         "⚠️  Disk I/O: High load",
         "💡 Suggestion: Scale resources or optimize the application"
     ],
-    ascii_header="WARNING",
-    ascii_font="doom",
+    header_text="WARNING",
+    font="doom",
     border_style="yellow",
-    log_level="WARNING"
+    level="WARNING"
 )
 ```
 
@@ -108,10 +108,10 @@ logger.ascii_block(
         "❌ API health check failed",
         "🔧 Corrective Action: Restart relevant services"
     ],
-    ascii_header="ERROR",
-    ascii_font="doom", 
+    header_text="ERROR",
+    font="doom", 
     border_style="red",
-    log_level="ERROR"
+    level="ERROR"
 )
 ```
 
@@ -129,8 +129,8 @@ def application_startup(app_name, app_version, port, startup_time):
             "🔧 Initializing logging system", 
             "🔧 Creating database connection pool"
         ],
-        ascii_header="STARTUP",
-        ascii_font="slant",
+        header_text="STARTUP",
+        font="slant",
         border_style="blue"
     )
     
@@ -144,10 +144,10 @@ def application_startup(app_name, app_version, port, startup_time):
             f"🌐 Listening Port: {port}",
             f"⏱️  Startup Time: {startup_time}s"
         ],
-        ascii_header="ONLINE",
-        ascii_font="block",
+        header_text="ONLINE",
+        font="block",
         border_style="green",
-        log_level="SUCCESS"
+        level="SUCCESS"
     )
 ```
 
@@ -165,10 +165,10 @@ def deployment_report(deployment_info):
             f"✅ Health Check: {deployment_info['health_check']}",
             f"📊 Success Rate: {deployment_info['success_rate']}%"
         ],
-        ascii_header="DEPLOYED",
-        ascii_font="standard",
+        header_text="DEPLOYED",
+        font="standard",
         border_style="green" if deployment_info['success_rate'] == 100 else "yellow",
-        log_level="SUCCESS" if deployment_info['success_rate'] == 100 else "WARNING"
+        level="SUCCESS" if deployment_info['success_rate'] == 100 else "WARNING"
     )
 ```
 
@@ -186,10 +186,10 @@ def data_pipeline_summary(stats):
             f"🚀 Processing Speed: {stats['records_per_second']:,} records/sec",
             f"💾 Output Size: {stats['output_size']}"
         ],
-        ascii_header="COMPLETE",
-        ascii_font="block",
+        header_text="COMPLETE",
+        font="block",
         border_style="green",
-        log_level="SUCCESS"
+        level="SUCCESS"
     )
 ```
 
@@ -227,10 +227,10 @@ def system_health_dashboard():
             f"💿 Disk Usage: {disk.percent:.1f}% ({disk.free//1024//1024//1024}GB Available)",
             f"⏰ Check Time: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
         ],
-        ascii_header=header,
-        ascii_font="standard",
+        header_text=header,
+        font="standard",
         border_style=color,
-        log_level=level
+        level=level
     )
 ```
 
@@ -248,10 +248,10 @@ def api_request_summary(request_stats):
             f"🚀 Fastest Response: {request_stats['min_response_time']:.2f}ms",
             f"🐌 Slowest Response: {request_stats['max_response_time']:.2f}ms"
         ],
-        ascii_header="API STATS",
-        ascii_font="small",
+        header_text="API STATS",
+        font="small",
         border_style="blue",
-        log_level="INFO"
+        level="INFO"
     )
 ```
 
@@ -279,10 +279,10 @@ def dynamic_status_report(services):
     logger.ascii_block(
         "Service Health Check",
         content,
-        ascii_header="HEALTHY" if all_healthy else "ISSUES",
-        ascii_font="slant",
+        header_text="HEALTHY" if all_healthy else "ISSUES",
+        font="slant",
         border_style="green" if all_healthy else "red",
-        log_level="SUCCESS" if all_healthy else "ERROR"
+        level="SUCCESS" if all_healthy else "ERROR"
     )
 ```
 
@@ -314,10 +314,10 @@ def build_result_report(build_success, test_results, deployment_ready):
     logger.ascii_block(
         "Build and Test Report",
         content,
-        ascii_header=header,
-        ascii_font="doom",
+        header_text=header,
+        font="doom",
         border_style=color,
-        log_level=level
+        level=level
     )
 ```
 
@@ -334,8 +334,8 @@ logger.ascii_block(
         "Environment: Production", 
         "Status: Success"
     ],
-    ascii_header="DEPLOY",
-    ascii_font="slant"
+    header_text="DEPLOY",
+    font="slant"
 )
 
 # Not recommended - Overly verbose content
@@ -345,8 +345,8 @@ logger.ascii_block(
         "This is a very long content line that contains too much information and may affect the visual effect...",
         "Another very long line of content..."
     ],
-    ascii_header="VERY LONG HEADER",
-    ascii_font="standard"
+    header_text="VERY LONG HEADER",
+    font="standard"
 )
 ```
 
@@ -354,19 +354,19 @@ logger.ascii_block(
 
 ```python
 # Success - Green
-logger.ascii_block(..., border_style="green", log_level="SUCCESS")
+logger.ascii_block(..., border_style="green", level="SUCCESS")
 
 # Warning - Yellow
-logger.ascii_block(..., border_style="yellow", log_level="WARNING")
+logger.ascii_block(..., border_style="yellow", level="WARNING")
 
 # Error - Red  
-logger.ascii_block(..., border_style="red", log_level="ERROR")
+logger.ascii_block(..., border_style="red", level="ERROR")
 
 # Info - Blue
-logger.ascii_block(..., border_style="blue", log_level="INFO")
+logger.ascii_block(..., border_style="blue", level="INFO")
 
 # Special - Purple/Cyan
-logger.ascii_block(..., border_style="magenta", log_level="INFO")
+logger.ascii_block(..., border_style="magenta", level="INFO")
 ```
 
 ## 🚀 Next Steps

@@ -229,12 +229,12 @@ logger.ascii_header("PHASE 1", font="small")
 
 1. **簡單優先**：如果 `block()` 能滿足需求，不要使用 `panel()`
 2. **批量顯示**：避免在循環中頻繁調用視覺化方法
-3. **目標導向**：使用 `console_*` 和 `file_*` 前綴來控制輸出目標
+3. **目標導向**：使用 `to_console_only=True` / `to_file_only=True` 控制輸出目標
 
 ```python
 # 控制台顯示進度，文件記錄結果
-logger.console_panel(progress_table, title="進度")
-logger.file_panel(final_results, title="最終結果")
+logger.panel(progress_table, title="進度", to_console_only=True)
+logger.panel(final_results, title="最終結果", to_file_only=True)
 ```
 
 ## 📚 最佳實踐

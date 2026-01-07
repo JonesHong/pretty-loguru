@@ -36,7 +36,7 @@ def demo_size_rotation():
     # 小檔案快速輪替（演示用）
     logger = create_logger(
         "size_demo",
-        log_path="./logs/rotation_demo",
+        log_dir="./logs/rotation_demo",
         rotation="1 KB",  # 小檔案用於演示
         retention="10 seconds"
     )
@@ -64,7 +64,7 @@ def demo_time_rotation():
     for preset, name, use_case in presets:
         logger = create_logger(
             f"{preset}_demo",
-            log_path="./logs/rotation_demo",
+            log_dir="./logs/rotation_demo",
             preset=preset,
             retention="30 seconds"  # 短保留期用於演示
         )
@@ -85,19 +85,19 @@ def demo_production_strategies():
     strategies = [
         {
             "name": "Web 應用",
-            "logger": create_logger("web_app", log_path="./logs/rotation_demo", 
+            "logger": create_logger("web_app", log_dir="./logs/rotation_demo", 
                                    preset="daily", retention="30 days"),
             "description": "每日歸檔，保留30天"
         },
         {
             "name": "API 服務", 
-            "logger": create_logger("api_service", log_path="./logs/rotation_demo",
+            "logger": create_logger("api_service", log_dir="./logs/rotation_demo",
                                    rotation="50 MB", retention="7 days"),
             "description": "按50MB輪替，保留7天"
         },
         {
             "name": "數據管道",
-            "logger": create_logger("data_pipeline", log_path="./logs/rotation_demo",
+            "logger": create_logger("data_pipeline", log_dir="./logs/rotation_demo",
                                    preset="hourly", retention="14 days"),
             "description": "每小時歸檔，保留14天"
         }
@@ -151,7 +151,7 @@ def demo_extreme_rotation():
     # 創建極端配置的 logger
     logger = create_logger(
         "extreme_demo",
-        log_path="./logs/extreme_demo", 
+        log_dir="./logs/extreme_demo", 
         rotation="4 KB",        # 1KB 立即輪轉
         retention="3 seconds", # 10秒後刪除所有舊檔案
         compression=extreme_compression  # 自定義 ZIP 壓縮
@@ -164,8 +164,8 @@ def demo_extreme_rotation():
     
     # 創建自定義的快速清理器類
     class FastCleaner(LoggerCleaner):
-        def __init__(self, log_path, retention_seconds=10, check_interval=1):
-            super().__init__(log_path=log_path, log_retention=30, check_interval=check_interval)
+        def __init__(self, log_dir, retention_seconds=10, check_interval=1):
+            super().__init__(log_dir=log_dir, log_retention=30, check_interval=check_interval)
             self.retention_seconds = retention_seconds  # 保留秒數
             
         def _clean_old_logs(self):
@@ -174,7 +174,7 @@ def demo_extreme_rotation():
             import time
             from pathlib import Path
             
-            if not os.path.exists(self.log_path):
+            if not os.path.exists(self.log_dir):
                 return
                 
             # 計算截止時間戳（當前時間 - 保留秒數）
@@ -184,11 +184,11 @@ def demo_extreme_rotation():
             paths_to_check = []
             
             if self.recursive:
-                for root, dirs, files in os.walk(self.log_path):
+                for root, dirs, files in os.walk(self.log_dir):
                     for file in files:
                         paths_to_check.append(os.path.join(root, file))
             else:
-                for file_path in Path(self.log_path).iterdir():
+                for file_path in Path(self.log_dir).iterdir():
                     if file_path.is_file():
                         paths_to_check.append(str(file_path))
             
@@ -221,7 +221,7 @@ def demo_extreme_rotation():
                 print(f"   ✅ 本次清理共刪除 {deleted_count} 個過期檔案")
     
     fast_cleaner = FastCleaner(
-        log_path="./logs/extreme_demo",
+        log_dir="./logs/extreme_demo",
         retention_seconds=10,  # 10秒保留期
         check_interval=1  # 每1秒檢查一次
     )

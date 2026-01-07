@@ -7,12 +7,13 @@
 使用配置物件管理 logger：
 
 ```python
-from pretty_loguru import create_logger, LoggerConfig, ConfigTemplates
+from pretty_loguru import LoggerConfig, create_logger
+from pretty_loguru.addons import ConfigTemplates
 
 # 基本 LoggerConfig 使用
 config = LoggerConfig(
     level="INFO",
-    log_path="logs/app",
+    log_dir="logs/app",
     rotation="1 day",
     retention="7 days"
 )
@@ -41,7 +42,8 @@ config.update(level="DEBUG")  # 所有使用此配置的 logger 都會更新
 使用預定義的配置模板：
 
 ```python
-from pretty_loguru import ConfigTemplates, create_logger
+from pretty_loguru import create_logger
+from pretty_loguru.addons import ConfigTemplates
 
 # 開發環境配置
 dev_config = ConfigTemplates.development()
@@ -109,7 +111,7 @@ from pretty_loguru import create_logger
 # 按大小輪替
 size_logger = create_logger(
     "size_rotation",
-    log_path="logs/size",
+    log_dir="logs/size",
     rotation="50 MB",  # 每 50MB 輪替
     retention=10       # 保留 10 個檔案
 )
@@ -117,7 +119,7 @@ size_logger = create_logger(
 # 按時間輪替
 time_logger = create_logger(
     "time_rotation",
-    log_path="logs/time",
+    log_dir="logs/time",
     rotation="1 day",   # 每天輪替
     retention="30 days" # 保留 30 天
 )
@@ -125,7 +127,7 @@ time_logger = create_logger(
 # 自定義時間輪替
 custom_time_logger = create_logger(
     "custom_time",
-    log_path="logs/custom",
+    log_dir="logs/custom",
     rotation="00:00",   # 每天午夜輪替
     retention="1 week"  # 保留 1 週
 )
@@ -133,7 +135,7 @@ custom_time_logger = create_logger(
 # 混合策略
 hybrid_logger = create_logger(
     "hybrid",
-    log_path="logs/hybrid",
+    log_dir="logs/hybrid",
     rotation="100 MB",          # 100MB 或
     retention="7 days",         # 保留 7 天
     compression="zip"           # 壓縮舊檔案
@@ -142,7 +144,7 @@ hybrid_logger = create_logger(
 # 極端情境（測試用）
 test_logger = create_logger(
     "test_rotation",
-    log_path="logs/test",
+    log_dir="logs/test",
     rotation="1 KB",            # 1KB 立即輪替
     retention="10 seconds",     # 10 秒後刪除
     compression=lambda x: f"{x}.gz"  # 自定義壓縮
@@ -162,7 +164,7 @@ import json
 # config.json 內容
 config_json = {
     "level": "INFO",
-    "log_path": "logs/app",
+    "log_dir": "logs/app",
     "rotation": "1 day",
     "retention": "30 days",
     "compression": "zip",
@@ -204,11 +206,11 @@ class MyConfigTemplates:
         """微服務配置"""
         return LoggerConfig(
             level="INFO",
-            log_path="logs/services",
+            log_dir="logs/services",
             rotation="100 MB",
             retention="14 days",
             compression="zip",
-            logger_format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {extra[service]} | {message}"
+            format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {extra[service]} | {message}"
         )
     
     @staticmethod
@@ -216,11 +218,11 @@ class MyConfigTemplates:
         """審計日誌配置"""
         return LoggerConfig(
             level="INFO",
-            log_path="logs/audit",
+            log_dir="logs/audit",
             rotation="1 day",
             retention="365 days",  # 保留一年
             compression="gz",
-            logger_format="{time} | {extra[user]} | {extra[action]} | {message}"
+            format="{time} | {extra[user]} | {extra[action]} | {message}"
         )
     
     @staticmethod
@@ -228,10 +230,10 @@ class MyConfigTemplates:
         """性能監控配置"""
         return LoggerConfig(
             level="WARNING",
-            log_path="logs/performance",
+            log_dir="logs/performance",
             rotation="1 hour",
             retention="7 days",
-            logger_format="{time} | {level} | {extra[metric]} | {message}"
+            format="{time} | {level} | {extra[metric]} | {message}"
         )
 
 # 使用自定義模板
@@ -250,35 +252,38 @@ audit_logger.bind(user="admin", action="login").info("用戶登入")
 
 ```python
 from pretty_loguru import create_logger
+from pretty_loguru.addons import log_to_targets
 
-logger = create_logger("target_demo", log_path="logs")
+logger = create_logger("target_demo", log_dir="logs")
 
 # 開發環境：所有訊息都顯示
 logger.info("一般訊息")
 logger.debug("除錯訊息")
 
 # 生產環境：只記錄重要訊息到檔案
-logger.file_info("記錄到檔案的重要事件")
-logger.file_error("記錄錯誤詳情到檔案")
+log_to_targets(logger, "記錄到檔案的重要事件", level="INFO", file_only=True)
+log_to_targets(logger, "記錄錯誤詳情到檔案", level="ERROR", file_only=True)
 
 # 控制台顯示進度，但不記錄到檔案
-logger.console_info("正在處理... 50%")
-logger.console_success("✅ 處理完成")
+log_to_targets(logger, "正在處理... 50%", level="INFO", console_only=True)
+log_to_targets(logger, "✅ 處理完成", level="SUCCESS", console_only=True)
 
 # 敏感資訊只記錄到檔案
-logger.file_info(f"用戶密碼重設: user_id=12345")
+log_to_targets(logger, "用戶密碼重設: user_id=12345", level="INFO", file_only=True)
 
 # 視覺元素分離
-logger.console_block(
+logger.block(
     "即時狀態",
     ["CPU: 45%", "記憶體: 2.3GB"],
-    border_style="green"
+    border_style="green",
+    to_console_only=True,
 )
 
-logger.file_block(
+logger.block(
     "系統快照",
     ["時間: 2024-01-20 15:30:00", "版本: v1.0.0"],
-    border_style="blue"
+    border_style="blue",
+    to_file_only=True,
 )
 ```
 

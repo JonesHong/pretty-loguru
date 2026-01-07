@@ -43,7 +43,7 @@ features:
 ## 🚀 快速安裝
 
 ```bash
-pip install pretty-loguru
+uv add pretty-loguru
 ```
 
 ## ⚡ 超快速開始
@@ -54,7 +54,7 @@ from pretty_loguru import create_logger
 # 一行代碼初始化日誌系統
 logger = create_logger(
     name="docs_demo",
-    log_path="my_logs",
+    log_dir="my_logs",
     level="INFO"
 )
 
@@ -73,7 +73,7 @@ logger.block(
         "網路連接: 正常"
     ],
     border_style="green",
-    log_level="INFO"
+    level="INFO"
 )
 
 # ASCII 藝術標題

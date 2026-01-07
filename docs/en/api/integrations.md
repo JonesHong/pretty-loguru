@@ -2,7 +2,7 @@
 
 The `pretty-loguru` integrations module is designed to work seamlessly with popular Python frameworks (such as FastAPI and Uvicorn), allowing you to easily introduce powerful logging functionality into existing projects.
 
-**Note:** Before using specific integration features, ensure the corresponding libraries are installed (e.g., `pip install fastapi uvicorn`).
+**Note:** Before using integrations, ensure dependencies are installed. Recommended: `uv add "pretty-loguru[integrations]"` (or `pip install "pretty-loguru[integrations]"`).
 
 ---
 
@@ -17,7 +17,7 @@ This is the recommended quick integration method. It automatically sets up loggi
 ```python
 def integrate_fastapi(
     app: FastAPI,
-    logger: EnhancedLogger,
+    logger: PrettyLogger,
     enable_uvicorn: bool = True,
     exclude_health_checks: bool = True,
     exclude_paths: Optional[List[str]] = None,
@@ -38,7 +38,7 @@ def integrate_fastapi(
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | `app` | `FastAPI` | - | Your FastAPI application instance. |
-| `logger` | `EnhancedLogger` | - | An already created `pretty-loguru` logger instance. |
+| `logger` | `PrettyLogger` | - | An already created `pretty-loguru` logger instance. |
 | `enable_uvicorn` | `bool` | `True` | If `True`, will also call `integrate_uvicorn` to unify logging. |
 | `exclude_health_checks` | `bool` | `True` | If `True`, automatically excludes common non-business paths like `/health`, `/metrics`, `/docs`. |
 
@@ -69,7 +69,7 @@ from pretty_loguru.integrations.fastapi import integrate_fastapi
 
 # 1. Create FastAPI app and logger
 app = FastAPI()
-logger = create_logger("my_api", log_path="logs/")
+logger = create_logger("my_api", log_dir="logs/")
 
 # 2. Basic integration
 integrate_fastapi(app, logger)
@@ -100,7 +100,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
     def __init__(
         self,
         app: FastAPI,
-        logger_instance: Optional[EnhancedLogger] = None,
+        logger_instance: Optional[PrettyLogger] = None,
         exclude_paths: Optional[List[str]] = None,
         log_request_body: bool = False,
         log_response_body: bool = False,
@@ -113,7 +113,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
 | Parameter | Type | Description |
 | --- | --- | --- |
-| `logger_instance` | `EnhancedLogger` | Logger instance used for logging. |
+| `logger_instance` | `PrettyLogger` | Logger instance used for logging. |
 | `exclude_paths` | `List[str]` | List of paths where matching requests won't be logged. |
 | `log_request_body` | `bool` | Whether to log request body content. |
 | `log_response_body` | `bool` | Whether to log response body content. |
@@ -125,26 +125,8 @@ Creates a FastAPI dependency that allows you to easily inject logger instances i
 
 ```python
 def get_logger_dependency(
-    name: Optional[str] = None,
-    service_tag: Optional[str] = None,  # Deprecated, use component_name instead
-    # File output configuration
-    log_path: Optional[LogPathType] = None,
-    rotation: Optional[LogRotationType] = None,
-    retention: Optional[str] = None,
-    compression: Optional[Union[str, Callable]] = None,
-    compression_format: Optional[str] = None,
-    # Formatting configuration
-    level: Optional[LogLevelType] = None,
-    logger_format: Optional[str] = None,
-    component_name: Optional[str] = None,
-    subdirectory: Optional[str] = None,
-    # Behavior control
-    use_proxy: Optional[bool] = None,
-    start_cleaner: Optional[bool] = None,
-    use_native_format: bool = False,
-    # Preset configuration
-    preset: Optional[str] = None
-) -> Callable[[], EnhancedLogger]:
+    logger_instance: PrettyLogger
+) -> Callable[[], PrettyLogger]:
     ...
 ```
 
@@ -152,16 +134,18 @@ def get_logger_dependency(
 
 ```python
 from fastapi import FastAPI, Depends
-from pretty_loguru.types import EnhancedLogger
+from pretty_loguru.types import PrettyLogger
 from pretty_loguru.integrations.fastapi import get_logger_dependency
+from pretty_loguru import create_logger
 
 app = FastAPI()
 
 # Create a logger dependency
-api_logger_dependency = get_logger_dependency(name="api_route", log_path="logs/api.log")
+logger = create_logger("api_route", log_dir="logs/api")
+api_logger_dependency = get_logger_dependency(logger)
 
 @app.get("/users/{user_id}")
-async def get_user(user_id: str, logger: EnhancedLogger = Depends(api_logger_dependency)):
+async def get_user(user_id: str, logger: PrettyLogger = Depends(api_logger_dependency)):
     logger.info(f"Fetching data for user {user_id}")
     # ... business logic ...
     return {"user_id": user_id}
@@ -173,15 +157,42 @@ async def get_user(user_id: str, logger: EnhancedLogger = Depends(api_logger_dep
 
 This module can intercept Uvicorn's standard logs and redirect them to `pretty-loguru`, providing unified format and output destinations for both ASGI server logs and your application logs.
 
+### `build_uvicorn_log_config()`
+
+This is the **recommended** approach: it only builds the `dict` required by `uvicorn.run(..., log_config=...)` with minimal side effects and best predictability.
+
+```python
+def build_uvicorn_log_config(
+    logger_instance: Any = None,
+    log_level: LogLevelType = "INFO",
+    logger_names: Optional[List[str]] = None,
+) -> Dict[str, Any]:
+    ...
+```
+
+**Parameter Descriptions:**
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| `logger_instance` | `Any` | The `pretty-loguru` logger instance you want Uvicorn to use. |
+| `log_level` | `LogLevelType` | Minimum log level for Uvicorn to record (aligned with `uvicorn.run(..., log_level=...)`). |
+| `logger_names` | `Optional[List[str]]` | List of standard `logging` logger names to intercept (defaults to Uvicorn-related loggers). |
+
 ### `integrate_uvicorn()`
 
-Use this function to configure Uvicorn logging. It handles all necessary underlying configuration.
+Convenient integration helper:
+
+- `monkeypatch=False` (default): equivalent to calling `build_uvicorn_log_config()` and returning `log_config`
+- `monkeypatch=True`: patches Uvicorn's logging initialization (bigger side effects; only use when you understand the impact)
 
 ```python
 def integrate_uvicorn(
-    logger: Any,
-    level: LogLevelType = "INFO"
-) -> None:
+    logger: Any = None,
+    log_level: LogLevelType = "INFO",
+    logger_names: Optional[List[str]] = None,
+    *,
+    monkeypatch: bool = False,
+) -> Optional[Dict[str, Any]]:
     ...
 ```
 
@@ -190,7 +201,9 @@ def integrate_uvicorn(
 | Parameter | Type | Description |
 | --- | --- | --- |
 | `logger` | `Any` | The `pretty-loguru` logger instance you want Uvicorn to use. |
-| `level` | `LogLevelType` | Minimum log level for Uvicorn to record. |
+| `log_level` | `LogLevelType` | Minimum log level for Uvicorn to record (aligned with `uvicorn.run(..., log_level=...)`). |
+| `logger_names` | `Optional[List[str]]` | List of `logging` logger names to intercept (defaults to Uvicorn-related loggers). |
+| `monkeypatch` | `bool` | Whether to monkeypatch Uvicorn's internal logging setup (default False; prefer passing `log_config`). |
 
 **Examples:**
 
@@ -198,16 +211,16 @@ def integrate_uvicorn(
 import uvicorn
 from fastapi import FastAPI
 from pretty_loguru import create_logger
-from pretty_loguru.integrations.uvicorn import integrate_uvicorn
+from pretty_loguru.integrations.uvicorn import build_uvicorn_log_config
 
 app = FastAPI()
-logger = create_logger("main_app", log_path="logs/")
+logger = create_logger("main_app", log_dir="logs/")
 
-# Integrate before starting uvicorn
-integrate_uvicorn(logger)
+# Build log_config before starting Uvicorn (non-monkeypatch, recommended)
+log_config = build_uvicorn_log_config(logger_instance=logger)
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_config=log_config)
 ```
 
 ### `InterceptHandler`
@@ -217,5 +230,61 @@ This is a class that inherits from `logging.Handler` and is the core of implemen
 Usually you don't need to use this class directly, as the `integrate_uvicorn` function already handles it for you.
 
 ---
+
+## Loki Integration
+
+This module provides an in-process Grafana Loki sink (best-effort): failures are swallowed, no retries, no offline buffering. For reliability, prefer `promtail`/`grafana-agent` to ship logs from files to Loki.
+
+### `LokiSinkConfig`
+
+```python
+@dataclass
+class LokiSinkConfig:
+    url: str
+    labels: Dict[str, str] = ...
+    batch_size: int = 50
+    flush_interval_seconds: float = 1.0
+    timeout_seconds: float = 2.0
+    tenant_id: Optional[str] = None
+    username: Optional[str] = None
+    password: Optional[str] = None
+    headers: Dict[str, str] = ...
+```
+
+### `create_loki_sink()`
+
+```python
+def create_loki_sink(
+    url: str,
+    labels: Optional[Dict[str, str]] = None,
+    batch_size: int = 50,
+    flush_interval_seconds: float = 1.0,
+    timeout_seconds: float = 2.0,
+    tenant_id: Optional[str] = None,
+    username: Optional[str] = None,
+    password: Optional[str] = None,
+    headers: Optional[Dict[str, str]] = None,
+) -> LokiSink:
+    ...
+```
+
+**Example (direct push)**:
+
+```python
+from pretty_loguru import create_logger
+from pretty_loguru.integrations.loki import create_loki_sink
+
+logger = create_logger("app", log_dir="logs/", serialize=True)
+
+logger.add(
+    create_loki_sink(
+        "http://localhost:3100",
+        labels={"app": "demo", "env": "local"},
+    ),
+    level="INFO",
+    serialize=True,
+    enqueue=True,
+)
+```
 
 [Back to API Overview](./index.md)

@@ -21,7 +21,7 @@ import time
 
 def tables_demo():
     """表格展示"""
-    logger = create_logger("tables_demo", log_path="./logs")
+    logger = create_logger("tables_demo", log_dir="./logs")
     
     print("=== Rich 表格展示 ===\n")
     
@@ -57,7 +57,7 @@ def tables_demo():
 
 def trees_demo():
     """樹狀圖展示"""
-    logger = create_logger("trees_demo", log_path="./logs")
+    logger = create_logger("trees_demo", log_dir="./logs")
     
     print("\n=== Rich 樹狀圖展示 ===\n")
     
@@ -128,7 +128,7 @@ def trees_demo():
 
 def columns_demo():
     """多欄位展示"""
-    logger = create_logger("columns_demo", log_path="./logs")
+    logger = create_logger("columns_demo", log_dir="./logs")
     
     print("\n=== Rich 多欄位展示 ===\n")
     
@@ -179,7 +179,7 @@ def columns_demo():
 
 def progress_demo():
     """進度條展示"""
-    logger = create_logger("progress_demo", log_path="./logs")
+    logger = create_logger("progress_demo", log_dir="./logs")
     
     print("\n=== Rich 進度條展示 ===\n")
     
@@ -211,7 +211,7 @@ def progress_demo():
 
 def real_world_dashboard():
     """真實儀表板範例"""
-    logger = create_logger("dashboard", log_path="./logs")
+    logger = create_logger("dashboard", log_dir="./logs")
     
     print("\n=== 真實監控儀表板 ===\n")
     

@@ -23,17 +23,17 @@ def environment_configs():
     # 不同環境的配置需求
     configs = {
         "development": {
-            "log_path": "./logs/environments/dev",
+            "log_dir": "./logs/environments/dev",
             "rotation": "5 MB",
             "retention": "3 days"
         },
         "testing": {
-            "log_path": "./logs/environments/test",
+            "log_dir": "./logs/environments/test",
             "rotation": "10 MB", 
             "retention": "7 days"
         },
         "production": {
-            "log_path": "./logs/environments/prod",
+            "log_dir": "./logs/environments/prod",
             "preset": "daily",
             "retention": "90 days"
         }
@@ -59,19 +59,19 @@ def service_configs():
     
     services = {
         "api_gateway": {
-            "log_path": "./logs/services/api_gateway",
+            "log_dir": "./logs/services/api_gateway",
             "preset": "hourly",
             "retention": "7 days",
             "description": "高頻請求，按小時歸檔"
         },
         "user_service": {
-            "log_path": "./logs/services/user_service",
+            "log_dir": "./logs/services/user_service",
             "preset": "daily", 
             "retention": "30 days",
             "description": "用戶操作，每日歸檔"
         },
         "payment_service": {
-            "log_path": "./logs/services/payment_service",
+            "log_dir": "./logs/services/payment_service",
             "preset": "daily",
             "retention": "365 days",
             "description": "金融資料，長期保存"
@@ -105,12 +105,12 @@ def dynamic_configs():
         
         configs = {
             'development': {
-                'log_path': './logs/dynamic/dev',
+                'log_dir': './logs/dynamic/dev',
                 'rotation': '5 MB',
                 'retention': '3 days'
             },
             'production': {
-                'log_path': './logs/dynamic/prod',
+                'log_dir': './logs/dynamic/prod',
                 'preset': 'daily', 
                 'retention': '90 days'
             }

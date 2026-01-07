@@ -7,12 +7,13 @@ Demonstrating how to use LoggerConfig, preset configurations, and various rotati
 Managing loggers with configuration objects:
 
 ```python
-from pretty_loguru import create_logger, LoggerConfig, ConfigTemplates
+from pretty_loguru import LoggerConfig, create_logger
+from pretty_loguru.addons import ConfigTemplates
 
 # Basic LoggerConfig usage
 config = LoggerConfig(
     level="INFO",
-    log_path="logs/app",
+    log_dir="logs/app",
     rotation="1 day",
     retention="7 days"
 )
@@ -41,7 +42,8 @@ config.update(level="DEBUG")  # All loggers using this config will update
 Using predefined configuration templates:
 
 ```python
-from pretty_loguru import ConfigTemplates, create_logger
+from pretty_loguru import create_logger
+from pretty_loguru.addons import ConfigTemplates
 
 # Development environment
 dev_config = ConfigTemplates.development()
@@ -112,21 +114,21 @@ from datetime import time
 # Size-based rotation
 size_logger = create_logger(
     "size_based",
-    log_path="logs/size",
+    log_dir="logs/size",
     rotation="100 MB"  # Rotate when file reaches 100MB
 )
 
 # Time-based rotation
 time_logger = create_logger(
     "time_based",
-    log_path="logs/time",
+    log_dir="logs/time",
     rotation="1 day"  # Daily rotation
 )
 
 # Specific time rotation
 specific_time_logger = create_logger(
     "specific_time",
-    log_path="logs/scheduled",
+    log_dir="logs/scheduled",
     rotation=time(2, 0)  # Rotate at 2:00 AM
 )
 
@@ -138,14 +140,14 @@ def should_rotate(message, file):
 
 custom_rotation_logger = create_logger(
     "custom_rotation",
-    log_path="logs/custom",
+    log_dir="logs/custom",
     rotation=should_rotate
 )
 
 # Multiple rotation conditions
 weekend_logger = create_logger(
     "weekend_rotation",
-    log_path="logs/weekend",
+    log_dir="logs/weekend",
     rotation="1 week"  # Weekly rotation
 )
 ```
@@ -161,7 +163,7 @@ import datetime
 # Keep by time
 time_retention_logger = create_logger(
     "time_retention",
-    log_path="logs/timed",
+    log_dir="logs/timed",
     rotation="1 day",
     retention="30 days"  # Keep logs for 30 days
 )
@@ -169,7 +171,7 @@ time_retention_logger = create_logger(
 # Keep by count
 count_retention_logger = create_logger(
     "count_retention",
-    log_path="logs/counted",
+    log_dir="logs/counted",
     rotation="100 MB",
     retention=10  # Keep only 10 log files
 )
@@ -185,7 +187,7 @@ def cleanup_old_logs(path):
 
 custom_retention_logger = create_logger(
     "custom_retention",
-    log_path="logs/custom_clean",
+    log_dir="logs/custom_clean",
     rotation="1 day",
     retention=cleanup_old_logs
 )
@@ -193,7 +195,7 @@ custom_retention_logger = create_logger(
 # No retention (keep all files)
 no_retention_logger = create_logger(
     "no_retention",
-    log_path="logs/archive",
+    log_dir="logs/archive",
     rotation="1 week",
     retention=None  # Keep all files
 )
@@ -209,7 +211,7 @@ from pretty_loguru import create_logger
 # ZIP compression
 zip_logger = create_logger(
     "zip_logs",
-    log_path="logs/compressed",
+    log_dir="logs/compressed",
     rotation="50 MB",
     compression="zip"
 )
@@ -217,7 +219,7 @@ zip_logger = create_logger(
 # GZIP compression
 gzip_logger = create_logger(
     "gzip_logs",
-    log_path="logs/gzipped",
+    log_dir="logs/gzipped",
     rotation="1 day",
     compression="gz"
 )
@@ -225,7 +227,7 @@ gzip_logger = create_logger(
 # BZ2 compression
 bz2_logger = create_logger(
     "bz2_logs",
-    log_path="logs/bzipped",
+    log_dir="logs/bzipped",
     rotation="100 MB",
     compression="bz2"
 )
@@ -242,7 +244,7 @@ def custom_compress(file_path):
 
 custom_compress_logger = create_logger(
     "custom_compress",
-    log_path="logs/custom_compressed",
+    log_dir="logs/custom_compressed",
     rotation="1 week",
     compression=custom_compress
 )
@@ -253,7 +255,8 @@ custom_compress_logger = create_logger(
 Configuring based on environment:
 
 ```python
-from pretty_loguru import create_logger, LoggerConfig, ConfigTemplates
+from pretty_loguru import LoggerConfig, create_logger
+from pretty_loguru.addons import ConfigTemplates
 import os
 
 # Get environment
@@ -264,8 +267,8 @@ ENV_CONFIGS = {
     "development": {
         "template": ConfigTemplates.development,
         "extra": {
-            "diagnose": True,
-            "backtrace": True
+            "level": "DEBUG",
+            "verbose": True
         }
     },
     "staging": {
@@ -278,9 +281,8 @@ ENV_CONFIGS = {
     "production": {
         "template": ConfigTemplates.production,
         "extra": {
-            "enqueue": True,  # Async logging
-            "catch": True,    # Catch errors
-            "compression": "gz"
+            "compression": "gz",
+            "serialize": True
         }
     }
 }
@@ -288,7 +290,7 @@ ENV_CONFIGS = {
 # Create environment-specific logger
 env_config = ENV_CONFIGS[ENV]
 config = env_config["template"]()
-config.update(**env_config["extra"])
+config.update_from_dict(env_config["extra"])
 
 logger = create_logger("app", config=config)
 logger.info(f"Logger configured for {ENV} environment")

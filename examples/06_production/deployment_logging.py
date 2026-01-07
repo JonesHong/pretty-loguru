@@ -20,6 +20,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from pretty_loguru import create_logger
+from pretty_loguru.addons import log_to_targets
 import os
 import time
 import json
@@ -31,7 +32,7 @@ def get_environment_config():
     
     configs = {
         'development': {
-            'log_path': './logs/deployment/dev',
+            'log_dir': './logs/deployment/dev',
             'rotation': '5 MB',
             'retention': '3 days',
             'level': 'DEBUG',
@@ -39,14 +40,14 @@ def get_environment_config():
             'description': '開發環境 - 詳細調試信息 (Native Format)'
         },
         'staging': {
-            'log_path': './logs/deployment/staging', 
+            'log_dir': './logs/deployment/staging', 
             'preset': 'daily',
             'retention': '14 days',
             'level': 'INFO',
             'description': '測試環境 - 功能驗證'
         },
         'production': {
-            'log_path': './logs/deployment/prod',
+            'log_dir': './logs/deployment/prod',
             'preset': 'daily',
             'retention': '90 days', 
             'level': 'WARNING',
@@ -69,8 +70,8 @@ def deployment_workflow():
     
     logger.ascii_header("DEPLOYMENT", font="slant", border_style="blue")
     
-    logger.console_info(f"🌍 當前環境: {env.upper()}")
-    logger.console_info(f"📋 配置說明: {description}")
+    log_to_targets(logger, f"🌍 當前環境: {env.upper()}", level="INFO", console_only=True)
+    log_to_targets(logger, f"📋 配置說明: {description}", level="INFO", console_only=True)
     
     # 部署步驟
     deployment_steps = [
@@ -85,7 +86,7 @@ def deployment_workflow():
     logger.info(f"開始部署流程 - 環境: {env}")
     
     for i, (step_name, step_desc) in enumerate(deployment_steps, 1):
-        logger.console_info(f"📦 步驟 {i}: {step_name}")
+        log_to_targets(logger, f"📦 步驟 {i}: {step_name}", level="INFO", console_only=True)
         
         # 模擬步驟執行時間
         time.sleep(0.5)
@@ -120,7 +121,7 @@ def deployment_workflow():
 
 def simulate_health_check(logger, env):
     """模擬服務健康檢查"""
-    logger.console_info("🔍 執行健康檢查...")
+    log_to_targets(logger, "🔍 執行健康檢查...", level="INFO", console_only=True)
     
     # 模擬不同環境的健康檢查結果
     checks = [
@@ -173,7 +174,7 @@ def environment_comparison():
     """環境配置對比"""
     print("\n=== 環境配置對比 ===\n")
     
-    logger = create_logger("env_comparison", log_path="./logs/deployment")
+    logger = create_logger("env_comparison", log_dir="./logs/deployment")
     
     logger.ascii_header("ENVIRONMENTS", font="slant", border_style="cyan")
     
@@ -218,7 +219,7 @@ def monitoring_integration():
     """監控系統整合"""
     print("\n=== 監控系統整合 ===\n")
     
-    logger = create_logger("monitoring", log_path="./logs/deployment")
+    logger = create_logger("monitoring", log_dir="./logs/deployment")
     
     logger.ascii_header("MONITORING", font="slant", border_style="yellow")
     
@@ -244,7 +245,7 @@ def monitoring_integration():
         }
     }
     
-    logger.console_info("📊 收集監控指標...")
+    log_to_targets(logger, "📊 收集監控指標...", level="INFO", console_only=True)
     
     # 記錄各類指標
     for category, category_metrics in metrics.items():
@@ -291,7 +292,7 @@ def monitoring_integration():
         ("應用響應時間正常", "info", "180ms < 200ms")
     ]
     
-    logger.console_info("🚨 處理監控告警...")
+    log_to_targets(logger, "🚨 處理監控告警...", level="INFO", console_only=True)
     
     for alert_msg, alert_level, alert_detail in alerts:
         if alert_level == "warning":
@@ -303,7 +304,7 @@ def security_audit_logging():
     """安全審計日誌"""
     print("\n=== 安全審計日誌 ===\n")
     
-    logger = create_logger("security_audit", log_path="./logs/deployment/security")
+    logger = create_logger("security_audit", log_dir="./logs/deployment/security")
     
     logger.ascii_header("SECURITY", font="slant", border_style="red")
     
@@ -341,7 +342,7 @@ def security_audit_logging():
         }
     ]
     
-    logger.console_info("🔐 記錄安全審計事件...")
+    log_to_targets(logger, "🔐 記錄安全審計事件...", level="INFO", console_only=True)
     
     security_data = []
     

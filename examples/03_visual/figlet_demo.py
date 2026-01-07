@@ -20,6 +20,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from pretty_loguru import create_logger
+from pretty_loguru.addons import log_to_targets
 from pretty_loguru.formats import has_figlet
 import time
 
@@ -35,7 +36,7 @@ def check_figlet_availability():
 
 def basic_figlet_demo():
     """基本 FIGlet 演示"""
-    logger = create_logger("figlet_demo", log_path="./logs")
+    logger = create_logger("figlet_demo", log_dir="./logs")
     
     print("=== 基本 FIGlet 文字藝術演示 ===\n")
     
@@ -61,7 +62,7 @@ def basic_figlet_demo():
 
 def font_showcase():
     """字體展示"""
-    logger = create_logger("font_showcase", log_path="./logs")
+    logger = create_logger("font_showcase", log_dir="./logs")
     
     print("\n=== FIGlet 字體展示 ===\n")
     
@@ -77,7 +78,7 @@ def font_showcase():
 
 def application_branding():
     """應用品牌化演示"""
-    logger = create_logger("brand_app", log_path="./logs")
+    logger = create_logger("brand_app", log_dir="./logs")
     
     print("\n=== 應用品牌化演示 ===\n")
     
@@ -96,11 +97,11 @@ def application_branding():
     
     # 產品標題
     logger.figlet_header("LogSys", font="small", border_style="green")
-    logger.console_success("LogSystem Pro 已成功啟動!")
+    log_to_targets(logger, "LogSystem Pro 已成功啟動!", level="SUCCESS", console_only=True)
 
 def status_displays():
     """狀態顯示演示"""
-    logger = create_logger("status_display", log_path="./logs")
+    logger = create_logger("status_display", log_dir="./logs")
     
     print("\n=== 狀態顯示演示 ===\n")
     
@@ -125,7 +126,7 @@ def status_displays():
 
 def creative_usage():
     """創意使用演示"""
-    logger = create_logger("creative_demo", log_path="./logs")
+    logger = create_logger("creative_demo", log_dir="./logs")
     
     print("\n=== 創意使用演示 ===\n")
     
@@ -149,7 +150,7 @@ def creative_usage():
 
 def deployment_workflow():
     """部署工作流程 FIGlet 演示"""
-    logger = create_logger("deploy_figlet", log_path="./logs")
+    logger = create_logger("deploy_figlet", log_dir="./logs")
     
     print("\n=== 部署工作流程 FIGlet 演示 ===\n")
     

@@ -7,6 +7,7 @@
 ASCII 藝術和 FIGlet 文本等。這些功能豐富了日誌的視覺呈現效果。
 """
 import sys
+from ..utils.warn_once import warn_once
 
 # 導入區塊格式化功能
 from .block import (
@@ -56,7 +57,7 @@ if _has_figlet:
         )
     except Exception as e:
         _has_figlet = False
-        print(f"Warning: Failed to initialize FIGlet features: {str(e)}", file=sys.stderr)
+        warn_once(f"Failed to initialize FIGlet features: {str(e)}", UserWarning, key="figlet_init_failed")
 
 # 定義對外可見的功能
 __all__ = [

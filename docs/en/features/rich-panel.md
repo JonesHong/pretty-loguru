@@ -354,17 +354,19 @@ logger.panel(info_msg, title="Info", border_style="blue")
 
 ```python
 # Console only for progress
-logger.console_panel(
+logger.panel(
     progress_table,
     title="Real-time Progress",
-    border_style="cyan"
+    border_style="cyan",
+    to_console_only=True,
 )
 
 # File only for detailed information
-logger.file_panel(
+logger.panel(
     detailed_report,
     title="Complete Report",
-    subtitle=f"Generated: {datetime.now()}"
+    subtitle=f"Generated: {datetime.now()}",
+    to_file_only=True,
 )
 ```
 

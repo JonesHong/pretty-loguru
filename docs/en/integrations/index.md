@@ -24,7 +24,7 @@ from pretty_loguru import create_logger
 # Initialize logging
 logger = create_logger(
     name="integrations_demo",
-    log_path="api_logs",
+    log_dir="api_logs",
     level="INFO"
 )
 
@@ -45,11 +45,18 @@ async def root():
 
 ```python
 from pretty_loguru.integrations.uvicorn import integrate_uvicorn
+from pretty_loguru import create_logger
+import uvicorn
+
+# Create your app logger
+logger = create_logger("my_app", log_dir="logs/my_app", level="INFO")
 
 # Unify Uvicorn logs with pretty-loguru
-integrate_uvicorn()
+log_config = integrate_uvicorn(logger)
 
-# Now all Uvicorn logs will use the pretty-loguru format upon startup
+# Pass the config to uvicorn.run(...)
+# Now all Uvicorn logs will use the pretty-loguru format
+# uvicorn.run(app, host="0.0.0.0", port=8000, log_config=log_config)
 ```
 
 ## 🎯 Integration Patterns
@@ -74,10 +81,11 @@ Complete control over logging behavior and format.
 # Middleware to log each request
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
+    from pretty_loguru.addons import log_to_targets
     import time
     start_time = time.time()
     
-    logger.console_info(f"→ {request.method} {request.url}")
+    log_to_targets(logger, f"→ {request.method} {request.url}", console_only=True)
     
     response = await call_next(request)
     
@@ -131,23 +139,25 @@ def setup_logging():
     env = os.getenv("ENVIRONMENT", "development")
     
     if env == "production":
-        return logger = create_logger(
-    name="demo",
-    log_path="prod_logs",
-    level="INFO"
-)
+        logger = create_logger(
+            name="demo",
+            log_dir="prod_logs",
+            level="INFO",
+        )
     elif env == "staging":
-        return logger = create_logger(
-    name="demo",
-    log_path="staging_logs",
-    level="INFO"
-)
+        logger = create_logger(
+            name="demo",
+            log_dir="staging_logs",
+            level="INFO",
+        )
     else:  # development
-        return logger = create_logger(
-    name="demo",
-    log_path="dev_logs",
-    level="INFO"
-)
+        logger = create_logger(
+            name="demo",
+            log_dir="dev_logs",
+            level="INFO",
+        )
+
+    return logger
 ```
 
 ### Multiple Log Targets
@@ -156,13 +166,13 @@ def setup_logging():
 from pretty_loguru import create_logger
 
 # Dedicated logger for API
-api_logger = create_logger("api", log_path="logs/api")
+api_logger = create_logger("api", log_dir="logs/api")
 
 # Dedicated logger for Database  
-db_logger = create_logger("database", log_path="logs/db")
+db_logger = create_logger("database", log_dir="logs/db")
 
 # Dedicated logger for background tasks
-task_logger = create_logger("tasks", log_path="logs/tasks")
+task_logger = create_logger("tasks", log_dir="logs/tasks")
 
 # Use in different modules
 class APIService:
@@ -181,6 +191,7 @@ class DatabaseService:
 ```python
 from fastapi import FastAPI, Request, HTTPException
 from pretty_loguru import create_logger
+from pretty_loguru.addons import log_to_targets
 from pretty_loguru.integrations.uvicorn import integrate_uvicorn
 import time
 import uvicorn
@@ -188,10 +199,10 @@ import uvicorn
 # Initialize logging system
 logger = create_logger(
     name="integrations_demo",
-    log_path="webapp_logs",
+    log_dir="webapp_logs",
     level="INFO"
 )
-integrate_uvicorn(logger)
+log_config = integrate_uvicorn(logger)
 
 app = FastAPI(title="Demo API", version="1.1.2")
 
@@ -200,7 +211,7 @@ async def logging_middleware(request: Request, call_next):
     start_time = time.time()
     
     # Request start
-    logger.console_info(f"→ {request.method} {request.url.path}")
+    log_to_targets(logger, f"→ {request.method} {request.url.path}", console_only=True)
     
     try:
         response = await call_next(request)
@@ -233,7 +244,7 @@ async def logging_middleware(request: Request, call_next):
                 f"⏱️  Time: {process_time:.3f}s"
             ],
             border_style="red",
-            log_level="ERROR"
+            level="ERROR"
         )
         raise
 
@@ -275,7 +286,7 @@ async def trigger_error():
     raise HTTPException(status_code=500, detail="Test error")
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_config=log_config)
 ```
 
 ## 💡 Best Practices
@@ -324,9 +335,9 @@ except Exception as e:
             f"User ID: {current_user.id}",
             f"Request ID: {request_id}"
         ],
-        ascii_header="ERROR",
+        header_text="ERROR",
         border_style="red",
-        log_level="ERROR"
+        level="ERROR"
     )
 ```
 

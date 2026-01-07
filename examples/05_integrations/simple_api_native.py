@@ -39,16 +39,16 @@ app = FastAPI(
 logger = create_logger(
     "simple_api_native", 
     use_native_format=True,  # 使用原生 loguru 格式
-    log_path="./logs",
+    log_dir="./logs",
     level="INFO"
 )
 integrate_fastapi(app, logger)
 
-# 同時創建一個增強格式的 logger 做比較
-enhanced_logger = create_logger(
-    "simple_api_enhanced",
-    use_native_format=False,  # 增強格式
-    log_path="./logs",
+# 同時創建一個 Pretty（預設）格式的 logger 做比較
+pretty_logger = create_logger(
+    "simple_api_pretty",
+    use_native_format=False,  # Pretty（預設）格式
+    log_dir="./logs",
     level="INFO"
 )
 
@@ -57,8 +57,8 @@ async def root():
     """首頁 - 展示兩種格式差異"""
     # 原生格式日誌
     logger.info("收到首頁請求 (Native Format)")
-    # 增強格式日誌
-    enhanced_logger.info("收到首頁請求 (Enhanced Format)")
+    # Pretty（預設）格式日誌
+    pretty_logger.info("收到首頁請求 (Pretty Format)")
     
     return {
         "message": "Native Format FastAPI Demo",
@@ -76,10 +76,10 @@ async def format_demo():
     logger.info("這是原生格式的訊息")
     logger.warning("原生格式警告訊息")
     
-    # Enhanced format 輸出
-    print("\n🔸 Enhanced Format 輸出:")
-    enhanced_logger.info("這是增強格式的訊息")
-    enhanced_logger.warning("增強格式警告訊息")
+    # Pretty format 輸出
+    print("\n🔸 Pretty Format 輸出:")
+    pretty_logger.info("這是 Pretty 格式的訊息")
+    pretty_logger.warning("Pretty 格式警告訊息")
     
     return {
         "demo": "format_comparison",
@@ -88,8 +88,8 @@ async def format_demo():
             "包含毫秒時間戳",
             "簡化檔案命名: name.log"
         ],
-        "enhanced_features": [
-            "使用自定義名稱:function:line 格式", 
+        "pretty_features": [
+            "使用自定義名稱:function:line 格式",
             "包含 process ID",
             "自定義檔案命名: [name]_timestamp.log"
         ]

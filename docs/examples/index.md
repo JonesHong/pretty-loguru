@@ -71,7 +71,7 @@ Pretty Loguru 提供豐富的範例，幫助您快速上手和掌握各種功能
 ### 安裝 Pretty-Loguru
 
 ```bash
-pip install pretty-loguru
+uv add pretty-loguru
 ```
 
 ### 第一個範例

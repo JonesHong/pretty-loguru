@@ -14,12 +14,6 @@ from .creator import (
     list_loggers,
 )
 
-from .methods import (
-    add_custom_methods,
-    add_format_methods,
-    register_extension_method,
-)
-
 # 定義對外可見的功能
 __all__ = [
     # Logger 創建和管理
@@ -29,9 +23,4 @@ __all__ = [
     "set_logger",
     "unregister_logger",
     "list_loggers",
-    
-    # 方法擴展
-    "add_custom_methods",
-    "add_output_methods",
-    "add_format_methods",
 ]

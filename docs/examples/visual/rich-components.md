@@ -14,7 +14,7 @@ from rich.console import Console
 # 初始化日誌系統
 logger = create_logger(
     name="rich-components_demo",
-    log_path="rich_components_demo",
+    log_dir="rich_components_demo",
     level="INFO"
 )
 
@@ -632,7 +632,7 @@ def complete_rich_components_demo():
     
     logger = create_logger(
     name="rich-components_demo",
-    log_path="complete_rich_demo",
+    log_dir="complete_rich_demo",
     level="INFO"
 )
     console = Console()

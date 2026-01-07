@@ -17,6 +17,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 from pretty_loguru import create_logger
+from pretty_loguru.addons import log_to_targets
 import time
 import json
 import traceback
@@ -29,7 +30,7 @@ class ErrorTracker:
     
     def __init__(self):
         self.logger = create_logger("error_tracker",
-                                   log_path="./logs/errors",
+                                   log_dir="./logs/errors",
                                    preset="daily",
                                    retention="90 days")
         self.error_counts = {}
@@ -120,10 +121,10 @@ def database_error_simulation():
         }
     ]
     
-    tracker.logger.console_info("🗄️ 模擬資料庫錯誤...")
+    log_to_targets(tracker.logger, "🗄️ 模擬資料庫錯誤...", level="INFO", console_only=True)
     
     for i, error in enumerate(db_errors):
-        tracker.logger.console_info(f"📝 記錄錯誤 {i+1}: {error['type']}")
+        log_to_targets(tracker.logger, f"📝 記錄錯誤 {i+1}: {error['type']}", level="INFO", console_only=True)
         
         tracker.log_error(
             error_type=error["type"],
@@ -138,7 +139,7 @@ def database_error_simulation():
     
     # 錯誤摘要
     summary = tracker.get_error_summary()
-    tracker.logger.console_info(f"📊 記錄了 {summary['total_errors']} 個錯誤")
+    log_to_targets(tracker.logger, f"📊 記錄了 {summary['total_errors']} 個錯誤", level="INFO", console_only=True)
     
     return tracker
 
@@ -194,7 +195,7 @@ def api_error_simulation():
         }
     ]
     
-    tracker.logger.console_info("🌐 模擬 API 錯誤...")
+    log_to_targets(tracker.logger, "🌐 模擬 API 錯誤...", level="INFO", console_only=True)
     
     api_error_data = []
     
@@ -251,7 +252,7 @@ def retry_mechanism_demo():
     """重試機制演示"""
     print("\n=== 錯誤重試機制 ===\n")
     
-    logger = create_logger("retry_demo", log_path="./logs/errors")
+    logger = create_logger("retry_demo", log_dir="./logs/errors")
     
     logger.ascii_header("RETRY", font="slant", border_style="blue")
     
@@ -265,7 +266,7 @@ def retry_mechanism_demo():
         
         for attempt in range(max_retries + 1):
             try:
-                logger.console_info(f"🔄 嘗試 {operation_name} (第 {attempt + 1} 次)")
+                log_to_targets(logger, f"🔄 嘗試 {operation_name} (第 {attempt + 1} 次)", level="INFO", console_only=True)
                 
                 # 模擬操作
                 time.sleep(0.5)
@@ -296,7 +297,7 @@ def retry_mechanism_demo():
     retry_results = []
     
     for scenario in retry_scenarios:
-        logger.console_info(f"🎯 測試 {scenario['name']} 重試機制...")
+        log_to_targets(logger, f"🎯 測試 {scenario['name']} 重試機制...", level="INFO", console_only=True)
         
         success = retry_operation(
             scenario["name"],
@@ -323,7 +324,7 @@ def error_analysis_and_reporting():
     """錯誤分析和報告"""
     print("\n=== 錯誤分析和報告 ===\n")
     
-    logger = create_logger("error_analysis", log_path="./logs/errors")
+    logger = create_logger("error_analysis", log_dir="./logs/errors")
     
     logger.ascii_header("ANALYSIS", font="slant", border_style="magenta")
     
@@ -350,14 +351,14 @@ def error_analysis_and_reporting():
         }
     }
     
-    logger.console_info("📊 生成錯誤分析報告...")
+    log_to_targets(logger, "📊 生成錯誤分析報告...", level="INFO", console_only=True)
     
     # 基本統計
     basic_stats = [
         f"24 小時內錯誤總數: {error_stats['last_24h']['total_errors']}",
         f"嚴重錯誤數量: {error_stats['last_24h']['critical_errors']}",
         f"錯誤率: {error_stats['last_24h']['error_rate']}%",
-        f"錯誤類型數: {len(error_stats["top_errors"])}"
+        f"錯誤類型數: {len(error_stats['top_errors'])}"
     ]
     
     logger.block("📈 錯誤統計概覽", basic_stats, border_style="blue")
@@ -404,7 +405,7 @@ def exception_handling_best_practices():
     """異常處理最佳實踐"""
     print("\n=== 異常處理最佳實踐 ===\n")
     
-    logger = create_logger("best_practices", log_path="./logs/errors")
+    logger = create_logger("best_practices", log_dir="./logs/errors")
     
     logger.ascii_header("BEST PRACTICES", font="slant", border_style="cyan")
     
@@ -412,7 +413,7 @@ def exception_handling_best_practices():
     def demonstrate_good_error_handling():
         """演示良好的錯誤處理"""
         
-        logger.console_info("📋 演示異常處理最佳實踐...")
+        log_to_targets(logger, "📋 演示異常處理最佳實踐...", level="INFO", console_only=True)
         
         # 1. 具體的異常捕獲
         try:
@@ -450,7 +451,7 @@ def exception_handling_best_practices():
     
     # 執行演示
     for i in range(3):
-        logger.console_info(f"🎯 執行演示 {i+1}")
+        log_to_targets(logger, f"🎯 執行演示 {i+1}", level="INFO", console_only=True)
         demonstrate_good_error_handling()
         time.sleep(0.5)
     
@@ -483,7 +484,7 @@ def exception_handling_best_practices():
     }
     
     for category, practices in best_practices.items():
-        logger.console_info(f"📚 {category}最佳實踐")
+        log_to_targets(logger, f"📚 {category}最佳實踐", level="INFO", console_only=True)
         logger.block(f"💡 {category}", practices, border_style="cyan")
         time.sleep(0.5)
 

@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: "pretty-loguru"
-  text: "Enhanced Python Logging Library"
+  text: "Pretty Python Logging Library"
   tagline: "Based on Loguru, integrated with Rich and ASCII Art for more elegant log outputs."
   image:
     src: /logo.png
@@ -44,7 +44,7 @@ features:
 ## 🚀 Quick Installation
 
 ```bash
-pip install pretty-loguru
+uv add pretty-loguru
 ```
 
 ## ⚡ Quick Start
@@ -55,7 +55,7 @@ from pretty_loguru import create_logger
 # Initialize the logging system with one line of code
 logger  = create_logger(
     name="en_demo",
-    log_path="my_logs",
+    log_dir="my_logs",
     level="INFO"
 )
 
@@ -74,7 +74,7 @@ logger.block(
         "Network Connection: Normal"
     ],
     border_style="green",
-    log_level="INFO"
+    level="INFO"
 )
 
 # ASCII Art Header

@@ -20,7 +20,7 @@ from pretty_loguru import create_logger
 # 初始化日誌
 logger = create_logger(
     name="integrations_demo",
-    log_path="api_logs",
+    log_dir="api_logs",
     level="INFO"
 )
 
@@ -40,12 +40,19 @@ async def root():
 ### Uvicorn 日誌統一
 
 ```python
-from pretty_loguru import uvicorn_init_config
+from pretty_loguru.integrations.uvicorn import integrate_uvicorn
+from pretty_loguru import create_logger
+import uvicorn
+
+# 建立你的 app logger
+logger = create_logger("my_app", log_dir="logs/my_app", level="INFO")
 
 # 統一 Uvicorn 日誌到 pretty-loguru
-uvicorn_init_config()
+log_config = integrate_uvicorn(logger)
 
+# 把 log_config 傳給 uvicorn.run(...)
 # 啟動時所有 Uvicorn 日誌都會使用 pretty-loguru 格式
+# uvicorn.run(app, host="0.0.0.0", port=8000, log_config=log_config)
 ```
 
 ## 🎯 整合模式
@@ -70,9 +77,10 @@ uvicorn_init_config()
 # 中介軟體記錄每個請求
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
+    from pretty_loguru.addons import log_to_targets
     start_time = time.time()
     
-    logger.console_info(f"→ {request.method} {request.url}")
+    log_to_targets(logger, f"→ {request.method} {request.url}", console_only=True)
     
     response = await call_next(request)
     
@@ -128,7 +136,7 @@ def setup_logging():
     if env == "production":
         return create_logger(
             name="prod_app",
-            log_path="prod_logs",
+            log_dir="prod_logs",
             level="INFO",
             rotation="100MB",
             retention="30 days"
@@ -136,7 +144,7 @@ def setup_logging():
     elif env == "staging":
         return create_logger(
             name="staging_app",
-            log_path="staging_logs",
+            log_dir="staging_logs",
             level="DEBUG",
             rotation="50MB",
             retention="14 days"
@@ -144,7 +152,7 @@ def setup_logging():
     else:  # development
         return create_logger(
             name="dev_app",
-            log_path="dev_logs",
+            log_dir="dev_logs",
             level="DEBUG",
             rotation="10MB",
             retention="7 days"
@@ -157,13 +165,13 @@ def setup_logging():
 from pretty_loguru import create_logger
 
 # API 專用 logger
-api_logger = create_logger("api", log_path="logs/api")
+api_logger = create_logger("api", log_dir="logs/api")
 
 # 資料庫專用 logger  
-db_logger = create_logger("database", log_path="logs/db")
+db_logger = create_logger("database", log_dir="logs/db")
 
 # 背景任務專用 logger
-task_logger = create_logger("tasks", log_path="logs/tasks")
+task_logger = create_logger("tasks", log_dir="logs/tasks")
 
 # 在不同模組中使用
 class APIService:
@@ -181,17 +189,19 @@ class DatabaseService:
 
 ```python
 from fastapi import FastAPI, Request, HTTPException
-from pretty_loguru import create_logger, uvicorn_init_config
+from pretty_loguru import create_logger
+from pretty_loguru.addons import log_to_targets
+from pretty_loguru.integrations.uvicorn import integrate_uvicorn
 import time
 import uvicorn
 
 # 初始化日誌系統
 logger = create_logger(
     name="integrations_demo",
-    log_path="webapp_logs",
+    log_dir="webapp_logs",
     level="INFO"
 )
-uvicorn_init_config()
+log_config = integrate_uvicorn(logger)
 
 app = FastAPI(title="Demo API", version="1.1.2")
 
@@ -200,7 +210,7 @@ async def logging_middleware(request: Request, call_next):
     start_time = time.time()
     
     # 請求開始
-    logger.console_info(f"→ {request.method} {request.url.path}")
+    log_to_targets(logger, f"→ {request.method} {request.url.path}", console_only=True)
     
     try:
         response = await call_next(request)
@@ -233,7 +243,7 @@ async def logging_middleware(request: Request, call_next):
                 f"⏱️  時間: {process_time:.3f}s"
             ],
             border_style="red",
-            log_level="ERROR"
+            level="ERROR"
         )
         raise
 
@@ -275,7 +285,7 @@ async def trigger_error():
     raise HTTPException(status_code=500, detail="測試錯誤")
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_config=log_config)
 ```
 
 ## 💡 最佳實踐
@@ -322,9 +332,9 @@ except Exception as e:
             f"用戶 ID: {current_user.id}",
             f"請求 ID: {request_id}"
         ],
-        ascii_header="ERROR",
+        header_text="ERROR",
         border_style="red",
-        log_level="ERROR"
+        level="ERROR"
     )
 ```
 

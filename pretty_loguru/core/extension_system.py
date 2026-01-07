@@ -6,7 +6,6 @@
 """
 
 from typing import Any, Callable, Dict
-from functools import wraps
 
 
 # 全局註冊表，用於存儲擴展方法

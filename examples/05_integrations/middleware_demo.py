@@ -35,7 +35,7 @@ import time
 import asyncio
 
 # 創建專用的 logger
-logger = create_logger("middleware_demo", log_path="./logs/fastapi")
+logger = create_logger("middleware_demo", log_dir="./logs/fastapi")
 
 # 創建 FastAPI 應用
 app = FastAPI(

@@ -9,12 +9,14 @@ import os
 import time
 import atexit
 import re
+import warnings
+from fnmatch import fnmatch
 from datetime import datetime, timedelta
 from pathlib import Path
 from threading import Thread, Event
-from typing import Union, Optional, Any
+from typing import Union, Optional, Any, List
 
-from ..types import LogPathType, LogRotationType
+from ..types import LogDirType, LogRotationType
 
 
 class LoggerCleaner:
@@ -26,10 +28,13 @@ class LoggerCleaner:
     def __init__(
         self,
         log_retention: Union[int, str] = "30 days",
-        log_path: Optional[LogPathType] = None,
+        log_dir: Optional[LogDirType] = None,
         check_interval: int = 3600,  # 預設每小時檢查一次
         logger_instance: Any = None,
         recursive: bool = True,  # 是否遞歸清理子目錄
+        include_patterns: Optional[List[str]] = None,
+        exclude_patterns: Optional[List[str]] = None,
+        verbose: bool = False,
     ) -> None:
         """
         初始化日誌清理器
@@ -37,15 +42,21 @@ class LoggerCleaner:
         Args:
             log_retention: 日誌保留期限。可以是整數（天數），或字串（例如 "10 days", "1 week", "6 months"）。
                            支援單位: seconds, minutes, hours, days, weeks, months, years.
-            log_path: 日誌儲存路徑，預設為當��目錄下的 logs 資料夾
+            log_dir: 日誌儲存目錄，預設為當��目錄下的 logs 資料夾
             check_interval: 檢查間隔，單位為秒，預設為 3600（1小時）
-            logger_instance: 記錄清理操作的日誌實例，如果為 None 則使用 print
+            logger_instance: 記錄清理操作的日誌實例，如果為 None 則視 verbose 決定是否輸出
             recursive: 是否遞歸清理子目錄，預設為 True
+            include_patterns: 僅處理符合模式的檔案（如 ["*.log"]）
+            exclude_patterns: 排除符合模式的檔案（如 ["*.tmp"]）
+            verbose: 是否輸出清理器訊息
         """
-        self.log_path = Path(log_path) if log_path else Path.cwd() / "logs"
+        self.log_dir = Path(log_dir) if log_dir else Path.cwd() / "logs"
         self.check_interval = check_interval
         self.logger = logger_instance
         self.recursive = recursive
+        self.include_patterns = include_patterns or []
+        self.exclude_patterns = exclude_patterns or []
+        self.verbose = verbose
 
         try:
             self.retention_delta = self._parse_retention(log_retention)
@@ -62,7 +73,7 @@ class LoggerCleaner:
         self.cleaner_thread = Thread(
             target=self._clean_logs_loop,
             args=(),
-            daemon=False,
+            daemon=True,
         )
         self._is_running = False
         atexit.register(self.stop)
@@ -108,10 +119,22 @@ class LoggerCleaner:
         """啟動日誌清理線程"""
         if self._is_running:
             self._log_message("LoggerCleaner: 已經在運行中")
-        else:
-            self.cleaner_thread.start()
-            self._log_message(f"LoggerCleaner: 清理線程已啟動，保留 {self.retention_str} 內的日誌")
+            return
+
+        if self.cleaner_thread.is_alive():
             self._is_running = True
+            self._log_message("LoggerCleaner: 清理線程已在運行中")
+            return
+
+        self._stop_event = Event()
+        self.cleaner_thread = Thread(
+            target=self._clean_logs_loop,
+            args=(),
+            daemon=True,
+        )
+        self.cleaner_thread.start()
+        self._log_message(f"LoggerCleaner: 清理線程已啟動，保留 {self.retention_str} 內的日誌")
+        self._is_running = True
 
     def stop(self) -> None:
         """優雅地停止清理線程"""
@@ -126,9 +149,23 @@ class LoggerCleaner:
     def _log_message(self, message: str, level: str = "INFO") -> None:
         """記錄日誌消息"""
         if self.logger:
-            getattr(self.logger, level.lower(), self.logger.info)(message)
-        else:
+            if self.verbose or level in ("WARNING", "ERROR"):
+                getattr(self.logger, level.lower(), self.logger.info)(message)
+        elif self.verbose:
             print(message)
+        elif level in ("WARNING", "ERROR"):
+            warnings.warn(message)
+
+    def _should_consider_file(self, file_path: Path) -> bool:
+        """依 include/exclude 規則判斷是否處理該檔案"""
+        name = file_path.name
+        if self.include_patterns:
+            if not any(fnmatch(name, pattern) for pattern in self.include_patterns):
+                return False
+        if self.exclude_patterns:
+            if any(fnmatch(name, pattern) for pattern in self.exclude_patterns):
+                return False
+        return True
 
     def _clean_logs_loop(self) -> None:
         """清理日誌的循環執行函數"""
@@ -141,9 +178,9 @@ class LoggerCleaner:
 
     def _clean_old_logs(self) -> None:
         """執行實際的日誌清理操作"""
-        if not self.log_path.exists():
-            self.log_path.mkdir(parents=True, exist_ok=True)
-            self._log_message(f"LoggerCleaner: 創建日誌目錄 {self.log_path}", "DEBUG")
+        if not self.log_dir.exists():
+            self.log_dir.mkdir(parents=True, exist_ok=True)
+            self._log_message(f"LoggerCleaner: 創建日誌目錄 {self.log_dir}", "DEBUG")
             return
 
         # 使用 self.retention_delta 來計算截止日期
@@ -152,17 +189,19 @@ class LoggerCleaner:
 
         paths_to_check = []
         if self.recursive:
-            for root, _, files in os.walk(self.log_path):
+            for root, _, files in os.walk(self.log_dir):
                 for file in files:
                     paths_to_check.append(Path(root) / file)
         else:
-            for file_path in self.log_path.iterdir():
+            for file_path in self.log_dir.iterdir():
                 if file_path.is_file():
                     paths_to_check.append(file_path)
 
         for file_path in paths_to_check:
             try:
                 if file_path.name.startswith('.'):
+                    continue
+                if not self._should_consider_file(file_path):
                     continue
 
                 file_mtime = file_path.stat().st_mtime

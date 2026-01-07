@@ -25,7 +25,7 @@ def basic_size_rotation():
     # 創建一個小文件大小輪替的 logger
     logger = create_logger(
         "size_basic",
-        log_path="./logs/rotation",
+        log_dir="./logs/rotation",
         rotation="1 KB",  # 很小的大小以便演示
         retention=5  # 保留5個檔案
     )
@@ -59,7 +59,7 @@ def different_size_thresholds():
     for config in size_configs:
         logger = create_logger(
             f"size_{config['name']}",
-            log_path="./logs/rotation/sizes",
+            log_dir="./logs/rotation/sizes",
             rotation=config["size"],
             retention=3
         )
@@ -84,7 +84,7 @@ def rotation_with_compression():
     # 使用預設配置，會自動處理壓縮
     logger = create_logger(
         "size_compressed",
-        log_path="./logs/rotation/compressed",
+        log_dir="./logs/rotation/compressed",
         preset="detailed",  # detailed 預設包含壓縮邏輯
         rotation="5 KB",
         retention=10
@@ -144,7 +144,7 @@ def custom_rotation_logic():
     for strategy in rotation_strategies:
         logger = create_logger(
             strategy["type"],
-            log_path=f"./logs/rotation/custom/{strategy['type']}",
+            log_dir=f"./logs/rotation/custom/{strategy['type']}",
             rotation=strategy["rotation"],
             retention=strategy["retention"]
         )
@@ -283,7 +283,7 @@ def rotation_best_practices():
     for practice in best_practices:
         logger = create_logger(
             f"bp_{practice['scenario'].lower().replace(' ', '_')}",
-            log_path="./logs/rotation/best_practices",
+            log_dir="./logs/rotation/best_practices",
             rotation=practice["config"]["rotation"],
             retention=practice["config"]["retention"]
         )

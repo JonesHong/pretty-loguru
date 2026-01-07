@@ -10,8 +10,26 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional, Dict, Any, Callable, Literal, List
 import warnings
-from dateutil.relativedelta import relativedelta # Added for relative date calculations
 import re # Added for regex in filename parsing
+import calendar
+
+
+def _subtract_one_month(dt: datetime) -> datetime:
+    """
+    在不依賴 python-dateutil 的情況下，將日期往前推一個月。
+
+    規則：
+    - 月份減 1（1 月 → 前一年 12 月）
+    - 若原本日期超過目標月份天數，則取該月最後一天
+    """
+    year = dt.year
+    month = dt.month - 1
+    if month == 0:
+        year -= 1
+        month = 12
+    last_day = calendar.monthrange(year, month)[1]
+    day = min(dt.day, last_day)
+    return dt.replace(year=year, month=month, day=day)
 
 # 預設類型
 PresetType = Literal["detailed", "simple", "daily", "hourly", "minute", "weekly", "monthly"]
@@ -42,9 +60,13 @@ def _create_rename_function(
                 raw_ts = suffixes[-2].lstrip('.') # e.g., "2025-05-05_23-29-33_084163"
                 try:
                     # 嘗試解析 Loguru 的時間戳格式
-                    target_time = datetime.strptime(raw_ts.split('_')[0] + '_' + raw_ts.split('_')[1], "%Y-%m-%d_%H-%M-%S")
-                except ValueError:
-                    warnings.warn(f"Could not parse timestamp from loguru suffix: {raw_ts}. Using current time.", UserWarning)
+                    parts = raw_ts.split("_")
+                    target_time = datetime.strptime(parts[0] + "_" + parts[1], "%Y-%m-%d_%H-%M-%S")
+                except (ValueError, IndexError):
+                    warnings.warn(
+                        f"Could not parse timestamp from loguru suffix: {raw_ts}. Using current time.",
+                        UserWarning,
+                    )
             else:
                 warnings.warn(f"Loguru suffix not found in {filepath}. Using current time for compression.", UserWarning)
         elif time_source == 'yesterday':
@@ -56,7 +78,7 @@ def _create_rename_function(
         elif time_source == 'last_week':
             target_time = datetime.now() - timedelta(weeks=1)
         elif time_source == 'last_month':
-            target_time = datetime.now() - relativedelta(months=1)
+            target_time = _subtract_one_month(datetime.now())
         # else: 'current' is default
 
         # 2. 提取 component_name (例如 "[fastapi_app]")

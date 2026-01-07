@@ -42,7 +42,7 @@ logger.error("這是一個錯誤訊息")
 ```python
 from pretty_loguru import create_logger
 
-# 創建只輸出到控制台的 logger（不指定 log_path）
+# 創建只輸出到控制台的 logger（不指定 log_dir）
 logger = create_logger("console_app")
 
 # 基本日誌級別
@@ -78,7 +78,7 @@ from pretty_loguru import create_logger
 # 創建同時輸出到控制台和檔案的 logger
 logger = create_logger(
     "file_app",
-    log_path="logs",           # 日誌目錄
+    log_dir="logs",           # 日誌目錄
     rotation="1 day",          # 每天輪替
     retention="7 days",        # 保留 7 天
     compression="zip"          # 壓縮舊檔案

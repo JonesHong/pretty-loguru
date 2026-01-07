@@ -19,7 +19,7 @@ def main():
     # 創建一個每5秒輪轉的 logger
     logger = create_logger(
         "rotation_test",
-        log_path="./logs/quick_rotation",
+        log_dir="./logs/quick_rotation",
         rotation="5 seconds",    # 每5秒輪轉
         retention="30 seconds",  # 保留30秒
         compression="zip"        # 壓縮舊文件

@@ -35,7 +35,7 @@ app = FastAPI(title="簡化整合示例")
 # ✅ 配置 uvicorn 日誌攔截
 # ✅ 排除健康檢查路徑
 # ✅ 設置合理的默認值
-logger = create_logger("simple_app", log_path="./logs")
+logger = create_logger("simple_app", log_dir="./logs")
 integrate_fastapi(app, logger)
 
 @app.get("/")

@@ -12,7 +12,7 @@ from pretty_loguru import create_logger
 # 初始化日誌系統
 logger = create_logger(
     name="blocks_demo",
-    log_path="blocks_demo",
+    log_dir="blocks_demo",
     level="INFO"
 )
 
@@ -39,7 +39,7 @@ logger.block(
         "✅ 服務已啟動"
     ],
     border_style="green",
-    log_level="SUCCESS"
+    level="SUCCESS"
 )
 ```
 
@@ -71,7 +71,7 @@ def demo_border_colors():
             "💡 考慮擴展資源"
         ],
         border_style="yellow",
-        log_level="WARNING"
+        level="WARNING"
     )
     
     # 紅色 - 錯誤狀態
@@ -83,7 +83,7 @@ def demo_border_colors():
             "🔧 需要立即處理"
         ],
         border_style="red",
-        log_level="ERROR"
+        level="ERROR"
     )
     
     # 藍色 - 資訊狀態
@@ -299,7 +299,7 @@ def deployment_progress_report(deployment_steps):
             "失敗步驟",
             failed_steps,
             border_style="red",
-            log_level="ERROR"
+            level="ERROR"
         )
     
     # 待執行的步驟
@@ -370,7 +370,7 @@ def api_request_statistics(stats):
                 f"🔍 主要錯誤: {stats['top_error']}"
             ],
             border_style="red",
-            log_level="WARNING"
+            level="WARNING"
         )
 ```
 
@@ -405,7 +405,7 @@ def dynamic_service_status(services):
             "異常服務",
             unhealthy_services,
             border_style="red",
-            log_level="ERROR"
+            level="ERROR"
         )
     
     # 服務摘要
@@ -450,7 +450,7 @@ def conditional_styling_example(metrics):
             f"進程數: {metrics['process_count']}"
         ],
         border_style=cpu_color,
-        log_level=cpu_level
+        level=cpu_level
     )
 ```
 
@@ -492,10 +492,10 @@ STATUS_COLORS = {
     "debug": "cyan"
 }
 
-def status_report(status, message_list):
+def status_report(status, lines):
     logger.block(
         f"{status.upper()} 報告",
-        message_list,
+        lines,
         border_style=STATUS_COLORS.get(status, "blue")
     )
 ```
@@ -525,7 +525,7 @@ def complete_blocks_demo():
     
     logger = create_logger(
     name="blocks_demo",
-    log_path="complete_blocks_demo",
+    log_dir="complete_blocks_demo",
     level="INFO"
 )
     
@@ -550,7 +550,7 @@ def complete_blocks_demo():
             "✅ 網路: 正常"
         ],
         border_style="yellow",
-        log_level="WARNING"
+        level="WARNING"
     )
     
     # 3. 服務檢查
@@ -563,7 +563,7 @@ def complete_blocks_demo():
             "✅ Queue: 處理中"
         ],
         border_style="green",
-        log_level="SUCCESS"
+        level="SUCCESS"
     )
     
     # 4. 錯誤報告 (如果有的話)
@@ -575,7 +575,7 @@ def complete_blocks_demo():
             "🔧 建議: 檢查網路和擴展記憶體"
         ],
         border_style="red",
-        log_level="ERROR"
+        level="ERROR"
     )
 
 if __name__ == "__main__":

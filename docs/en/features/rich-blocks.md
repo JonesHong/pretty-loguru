@@ -12,7 +12,7 @@ from pretty_loguru import create_logger
 # Create logger instance
 logger = create_logger(
     name="demo",
-    log_path="logs",
+    log_dir="logs",
     level="INFO"
 )
 
@@ -37,7 +37,7 @@ logger.block(
         "Disk: 150GB Available"
     ],
     border_style="green",    // Green border
-    log_level="INFO"         // Log level
+    level="INFO"             // Log level
 )
 ```
 
@@ -101,7 +101,7 @@ logger.block(
         "✅ Load balancer updated"
     ],
     border_style="green",
-    log_level="SUCCESS"
+    level="SUCCESS"
 )
 ```
 
@@ -117,7 +117,7 @@ logger.block(
         "💡 Suggestion: Scale up service instances"
     ],
     border_style="yellow",
-    log_level="WARNING"
+    level="WARNING"
 )
 ```
 
@@ -133,7 +133,7 @@ logger.block(
         "🔧 Recommendation: Check network connection"
     ],
     border_style="red", 
-    log_level="ERROR"
+    level="ERROR"
 )
 ```
 
@@ -149,7 +149,7 @@ logger.block(
         "🌐 Network Interface: eth0"
     ],
     border_style="blue",
-    log_level="INFO"
+    level="INFO"
 )
 ```
 
@@ -174,7 +174,7 @@ def log_startup_info():
             f"🌐 Working Directory: {os.getcwd()}"
         ],
         border_style="cyan",
-        log_level="INFO"
+        level="INFO"
     )
 ```
 
@@ -196,7 +196,7 @@ def log_database_status(connections):
         "Database Connection Status",
         status_items,
         border_style=overall_status,
-        log_level="INFO" if overall_status == "green" else "ERROR"
+        level="INFO" if overall_status == "green" else "ERROR"
     )
 ```
 
@@ -231,7 +231,7 @@ def log_performance_metrics():
             f"📊 Load Average: {', '.join(map(str, os.getloadavg()))}" if hasattr(os, 'getloadavg') else "📊 Load Average: N/A"
         ],
         border_style=border_color,
-        log_level=level
+        level=level
     )
 ```
 
@@ -272,7 +272,7 @@ def log_service_health(services):
         "Service Health Check",
         content,
         border_style="green" if all_healthy else "red",
-        log_level="INFO" if all_healthy else "ERROR"
+        level="INFO" if all_healthy else "ERROR"
     )
 ```
 

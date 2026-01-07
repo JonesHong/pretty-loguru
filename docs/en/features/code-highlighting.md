@@ -320,7 +320,7 @@ logger.code(
 logger.code(
     code=config_dump,
     title="Configuration Dump",
-    to_log_file_only=True
+    to_file_only=True
 )
 ```
 
@@ -368,7 +368,7 @@ logger.diff(
 logger.code(debug_snippet, to_console_only=True)
 
 # Important code snapshots saved to files
-logger.code(production_config, to_log_file_only=True)
+logger.code(production_config, to_file_only=True)
 ```
 
 ## Integration with Existing Features
@@ -382,7 +382,7 @@ logger.code(critical_code, language="python")
 
 # Works with target-specific logging
 logger.console.code(console_code, to_console_only=True)
-logger.file.code(file_code, to_log_file_only=True)
+logger.file.code(file_code, to_file_only=True)
 
 # Integrates with Rich components
 logger.code(api_code, language="python", title="API Handler")

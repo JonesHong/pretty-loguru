@@ -46,28 +46,24 @@ class TestConsoleUnification:
     
     def test_formats_use_unified_console(self):
         """測試格式化模組使用統一的 Console 實例"""
-        # 測試需要在有依賴庫的環境中運行
-        try:
-            from pretty_loguru.formats.ascii_art import print_ascii_art
-            mock_logger = MagicMock()
-            
-            # 這個測試確保不會創建新的 Console 實例
-            with patch('pretty_loguru.formats.ascii_art.get_console') as mock_get_console:
-                mock_console = MagicMock()
-                mock_get_console.return_value = mock_console
-                
-                # 測試調用時使用了統一的 Console
-                try:
-                    print_ascii_art("test", logger_instance=mock_logger)
-                except ImportError:
-                    # art 庫未安裝是預期的
-                    pass
-                    
-                # 驗證 get_console 被調用
-                mock_get_console.assert_called()
-                
-        except ImportError:
-            pytest.skip("art dependency not available")
+        # 這個測試關注「是否使用統一的 get_console()」，不應被 art 是否安裝影響。
+        # 因此用 patch 讓 ensure_art_dependency 不拋錯，並用假的 text2art 回傳固定字串。
+        from pretty_loguru.formats.ascii_art import print_ascii_header
+
+        with patch("pretty_loguru.formats.ascii_art.ensure_art_dependency") as mock_ensure_art:
+            mock_ensure_art.return_value = None
+
+            with patch("pretty_loguru.formats.ascii_art.text2art") as mock_text2art:
+                mock_text2art.return_value = "ASCII"
+
+                with patch("pretty_loguru.formats.ascii_art.get_console") as mock_get_console:
+                    mock_console = MagicMock()
+                    mock_get_console.return_value = mock_console
+
+                    print_ascii_header("test", logger_instance=None)
+
+                    mock_get_console.assert_called_once()
+                    mock_console.print.assert_called_once()
 
 
 class TestDependencyUnification:

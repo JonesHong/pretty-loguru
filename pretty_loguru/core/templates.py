@@ -5,8 +5,9 @@
 統一管理所有配置模板，移除"Enhanced"等修飾詞。
 """
 
-from typing import Dict, List, Optional, Any
-from .config import LoggerConfig
+from typing import Dict, List, Optional, Any, Union, Callable
+from .config import LoggerConfig, LOGGER_FORMAT
+from ..types import LogLevelType, LogRotationType, LogDirType
 
 
 class ConfigTemplates:
@@ -21,7 +22,7 @@ class ConfigTemplates:
         """開發環境配置"""
         return LoggerConfig(
             level="DEBUG",
-            log_path="logs/dev",
+            log_dir="logs/dev",
             rotation="10 MB",
             retention="7 days",
             use_native_format=True
@@ -35,17 +36,17 @@ class ConfigTemplates:
         
         # 根據系統選擇適當的日誌路徑
         if platform.system() == "Windows":
-            log_path = os.path.expanduser("~/AppData/Local/AppLogs")
+            log_dir = os.path.expanduser("~/AppData/Local/AppLogs")
         else:
             # 在 Unix 系統上，優先使用用戶目錄以避免權限問題
-            log_path = os.path.expanduser("~/.local/share/app/logs")
+            log_dir = os.path.expanduser("~/.local/share/app/logs")
         
         return LoggerConfig(
             level="INFO",
-            log_path=log_path,
+            log_dir=log_dir,
             rotation="100 MB",
             retention="30 days",
-            compression=True,
+            compression="gz",
             start_cleaner=True
         )
     
@@ -54,7 +55,7 @@ class ConfigTemplates:
         """測試環境配置"""
         return LoggerConfig(
             level="WARNING",
-            log_path="logs/test",
+            log_dir="logs/test",
             rotation="5 MB",
             retention="3 days"
         )
@@ -64,7 +65,7 @@ class ConfigTemplates:
         """調試配置"""
         return LoggerConfig(
             level="DEBUG",
-            log_path="logs/debug",
+            log_dir="logs/debug",
             rotation="50 MB",
             retention="1 day",
             use_native_format=True
@@ -75,10 +76,10 @@ class ConfigTemplates:
         """高效能配置"""
         return LoggerConfig(
             level="ERROR",
-            log_path="logs/perf",
+            log_dir="logs/perf",
             rotation="500 MB",
             retention="7 days",
-            compression=True
+            compression="gz"
         )
     
     @staticmethod
@@ -86,7 +87,7 @@ class ConfigTemplates:
         """最小配置"""
         return LoggerConfig(
             level="INFO",
-            log_path=None,  # 只輸出到控制台
+            log_dir=None,  # 只輸出到控制台
             rotation=None,
             retention=None
         )
@@ -99,7 +100,7 @@ class ConfigTemplates:
         preset_config = get_preset_config("detailed")
         return LoggerConfig(
             level="INFO",
-            log_path="logs",
+            log_dir="logs",
             rotation=preset_config["rotation"],
             retention=preset_config["retention"],
             compression=preset_config["compression"]
@@ -112,7 +113,7 @@ class ConfigTemplates:
         preset_config = get_preset_config("simple")
         return LoggerConfig(
             level="INFO",
-            log_path="logs",
+            log_dir="logs",
             rotation=preset_config["rotation"],
             retention=preset_config["retention"],
             compression=preset_config["compression"]
@@ -125,7 +126,7 @@ class ConfigTemplates:
         preset_config = get_preset_config("daily")
         return LoggerConfig(
             level="INFO",
-            log_path="logs",
+            log_dir="logs",
             rotation=preset_config["rotation"],
             retention=preset_config["retention"],
             compression=preset_config["compression"]
@@ -138,7 +139,7 @@ class ConfigTemplates:
         preset_config = get_preset_config("hourly")
         return LoggerConfig(
             level="INFO",
-            log_path="logs",
+            log_dir="logs",
             rotation=preset_config["rotation"],
             retention=preset_config["retention"],
             compression=preset_config["compression"]
@@ -151,7 +152,7 @@ class ConfigTemplates:
         preset_config = get_preset_config("minute")
         return LoggerConfig(
             level="INFO",
-            log_path="logs",
+            log_dir="logs",
             rotation=preset_config["rotation"],
             retention=preset_config["retention"],
             compression=preset_config["compression"]
@@ -164,7 +165,7 @@ class ConfigTemplates:
         preset_config = get_preset_config("weekly")
         return LoggerConfig(
             level="INFO",
-            log_path="logs",
+            log_dir="logs",
             rotation=preset_config["rotation"],
             retention=preset_config["retention"],
             compression=preset_config["compression"]
@@ -177,7 +178,7 @@ class ConfigTemplates:
         preset_config = get_preset_config("monthly")
         return LoggerConfig(
             level="INFO",
-            log_path="logs",
+            log_dir="logs",
             rotation=preset_config["rotation"],
             retention=preset_config["retention"],
             compression=preset_config["compression"]
@@ -234,20 +235,79 @@ class ConfigTemplates:
 
 
 # 便利函數
-def create_config(**kwargs) -> LoggerConfig:
-    """創建配置的便利函數"""
-    return LoggerConfig(**kwargs)
+def create_config(
+    *,
+    level: LogLevelType = "INFO",
+    log_dir: Optional[LogDirType] = None,
+    rotation: Optional[LogRotationType] = "20 MB",
+    retention: Optional[Union[str, int]] = "30 days",
+    compression: Optional[Union[str, bool, Callable]] = None,
+    compression_format: Optional[str] = None,
+    format: Optional[str] = LOGGER_FORMAT,
+    component_name: Optional[str] = None,
+    subdirectory: Optional[str] = None,
+    start_cleaner: bool = False,
+    use_native_format: bool = False,
+    use_proxy: bool = False,
+    preset: Optional[str] = None,
+    verbose: bool = False,
+    strict_validation: bool = True,
+    cleaner_include_patterns: Optional[List[str]] = None,
+    cleaner_exclude_patterns: Optional[List[str]] = None,
+    serialize: bool = False,
+    loki_enabled: bool = False,
+    loki_base_url: Optional[str] = None,
+    loki_labels: Optional[Dict[str, str]] = None,
+    loki_batch_size: int = 50,
+    loki_flush_interval_seconds: float = 1.0,
+    loki_timeout_seconds: float = 2.0,
+    loki_tenant_id: Optional[str] = None,
+    loki_username: Optional[str] = None,
+    loki_password: Optional[str] = None,
+    name: Optional[str] = None,
+) -> LoggerConfig:
+    """創建配置的便利函數（顯式欄位，避免黑盒 `**kwargs`）。"""
+    return LoggerConfig(
+        level=level,
+        log_dir=log_dir,
+        rotation=rotation,
+        retention=retention,  # type: ignore[arg-type]
+        compression=compression,
+        compression_format=compression_format,
+        format=format,
+        component_name=component_name,
+        subdirectory=subdirectory,
+        start_cleaner=start_cleaner,
+        use_native_format=use_native_format,
+        use_proxy=use_proxy,
+        preset=preset,
+        verbose=verbose,
+        strict_validation=strict_validation,
+        cleaner_include_patterns=cleaner_include_patterns,
+        cleaner_exclude_patterns=cleaner_exclude_patterns,
+        serialize=serialize,
+        loki_enabled=loki_enabled,
+        loki_base_url=loki_base_url,
+        loki_labels=loki_labels,
+        loki_batch_size=loki_batch_size,
+        loki_flush_interval_seconds=loki_flush_interval_seconds,
+        loki_timeout_seconds=loki_timeout_seconds,
+        loki_tenant_id=loki_tenant_id,
+        loki_username=loki_username,
+        loki_password=loki_password,
+        name=name,
+    )
 
 
-def config_from_template(template_name: str, **overrides) -> LoggerConfig:
-    """從模板創建配置"""
+def config_from_template(template_name: str, overrides: Optional[Dict[str, Any]] = None) -> LoggerConfig:
+    """從模板創建配置（可選 overrides dict）。"""
     config = ConfigTemplates.get(template_name)
     if config is None:
         available = ConfigTemplates.list_all()
         raise ValueError(f"未知的配置模板 '{template_name}'，可用的有: {available}")
     
     if overrides:
-        config.update(**overrides)
+        config.update_from_dict(overrides)
     
     return config
 

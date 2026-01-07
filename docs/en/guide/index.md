@@ -21,16 +21,17 @@ After mastering the basics, explore the unique features of pretty-loguru:
 ### 🔧 Advanced Configuration
 Dive deep into advanced features and best practices:
 
-7. **[Custom Configuration](./custom-config)** - Customize logging behavior
-8. **[Log Rotation](./log-rotation)** - File management and cleanup
-9. **[Performance Optimization](./performance)** - Tuning for production environments
+7. **[Configuration Templates](./config-templates)** - Reusable config templates and synchronized updates
+8. **[Custom Configuration](./custom-config)** - Customize logging behavior
+9. **[Log Rotation](./log-rotation)** - File management and cleanup
+10. **[Performance Optimization](./performance)** - Tuning for production environments
 
 ### 🌐 Application Integration
 Integrate pretty-loguru into your projects:
 
-10. **[FastAPI Integration](../integrations/fastapi)** - Web API logging
-11. **[Uvicorn Integration](../integrations/uvicorn)** - ASGI server logging
-12. **[Production Deployment](./production)** - Enterprise-level deployment guide
+11. **[FastAPI Integration](../integrations/fastapi)** - Web API logging
+12. **[Uvicorn Integration](../integrations/uvicorn)** - ASGI server logging
+13. **[Production Deployment](./production)** - Enterprise-level deployment guide
 
 ## 📚 Core Concepts
 
@@ -43,7 +44,7 @@ from pretty_loguru import create_logger, create_logger
 # Method 1: Quick Start (Recommended)
 logger  = create_logger(
     name="guide_demo",
-    log_path="logs",
+    log_dir="logs",
     level="INFO"
 )
 
@@ -51,14 +52,14 @@ logger  = create_logger(
 my_logger = create_logger(
     name="my_app",
     level="DEBUG",
-    log_path="custom_logs"
+    log_dir="custom_logs"
 )
 
 # Method 3: Advanced Configuration
 from pretty_loguru import create_logger
 create_logger(
     level="INFO",
-    log_path="logs",
+    log_dir="logs",
     component_name="web_app",
     rotation="10MB",
     retention="7 days"
@@ -89,8 +90,8 @@ logger.ascii_header("STARTUP", font="slant")
 logger.ascii_block(
     "Report",
     ["Status: Normal", "Time: 10:30"],
-    ascii_header="REPORT",
-    ascii_font="small"
+    header_text="REPORT",
+    font="small"
 )
 ```
 

@@ -12,7 +12,7 @@ from pretty_loguru import create_logger
 # Create logger instance
 logger = create_logger(
     name="blocks_demo",
-    log_path="blocks_demo",
+    log_dir="blocks_demo",
     level="INFO"
 )
 
@@ -39,7 +39,7 @@ logger.block(
         "✅ Service has started"
     ],
     border_style="green",
-    log_level="SUCCESS"
+    level="SUCCESS"
 )
 ```
 
@@ -71,7 +71,7 @@ def demo_border_colors():
             "💡 Consider scaling resources"
         ],
         border_style="yellow",
-        log_level="WARNING"
+        level="WARNING"
     )
     
     # Red - Error status
@@ -83,7 +83,7 @@ def demo_border_colors():
             "🔧 Immediate action required"
         ],
         border_style="red",
-        log_level="ERROR"
+        level="ERROR"
     )
     
     # Blue - Info status
@@ -242,10 +242,10 @@ STATUS_COLORS = {
     "debug": "cyan"
 }
 
-def status_report(status, message_list):
+def status_report(status, lines):
     logger.block(
         f"{status.upper()} Report",
-        message_list,
+        lines,
         border_style=STATUS_COLORS.get(status, "blue")
     )
 ```

@@ -9,23 +9,23 @@ Thread Safety: All registry operations are protected with RLock for concurrent a
 
 import threading
 from typing import Dict, List, Optional
-from ..types import EnhancedLogger
+from ..types import PrettyLogger
 from .event_system import post_event
 
 # Thread-safe lock for protecting registry state
 _registry_lock = threading.RLock()
 
 # Global registry for logger instances
-_logger_registry: Dict[str, EnhancedLogger] = {}
+_logger_registry: Dict[str, PrettyLogger] = {}
 
-def register_logger(name: str, logger: EnhancedLogger) -> None:
+def register_logger(name: str, logger: PrettyLogger) -> None:
     """Registers a logger instance by name. Thread-safe."""
     with _registry_lock:
         _logger_registry[name] = logger
         # Notify subscribers about logger registration
         post_event("logger_registered", name, logger)
 
-def get_logger(name: str) -> Optional[EnhancedLogger]:
+def get_logger(name: str) -> Optional[PrettyLogger]:
     """Retrieves a logger instance by name. Thread-safe."""
     with _registry_lock:
         return _logger_registry.get(name)
@@ -43,7 +43,7 @@ def list_loggers() -> List[str]:
     with _registry_lock:
         return list(_logger_registry.keys())
 
-def update_logger(name: str, logger: EnhancedLogger) -> bool:
+def update_logger(name: str, logger: PrettyLogger) -> bool:
     """Updates an existing logger instance by name. Thread-safe."""
     with _registry_lock:
         if name in _logger_registry:

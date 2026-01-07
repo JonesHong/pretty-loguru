@@ -5,7 +5,7 @@
 ## 🚀 安裝
 
 ```bash
-pip install pretty-loguru
+uv add pretty-loguru
 ```
 
 ## ⚡ 第一個程式
@@ -18,7 +18,7 @@ from pretty_loguru import create_logger
 # 初始化日誌系統
 logger = create_logger(
     name="quick-start_demo",
-    log_path="quick_start_logs",
+    log_dir="quick_start_logs",
     level="INFO"
 )
 print("日誌系統已初始化")
@@ -50,7 +50,7 @@ logger.block(
         "服務狀態: 運行中"
     ],
     border_style="green",
-    log_level="INFO"
+    level="INFO"
 )
 
 # 警告區塊
@@ -63,7 +63,7 @@ logger.block(
         "建議動作: 檢查記憶體洩漏"
     ],
     border_style="yellow", 
-    log_level="WARNING"
+    level="WARNING"
 )
 ```
 
@@ -75,7 +75,7 @@ logger.ascii_header(
     "SYSTEM STARTUP",
     font="slant",
     border_style="blue",
-    log_level="INFO"
+    level="INFO"
 )
 
 # 嘗試不同的字體
@@ -100,10 +100,10 @@ logger.ascii_block(
         "記憶體使用: 45MB",
         "準備就緒: ✓"
     ],
-    ascii_header="READY",
-    ascii_font="small",
+    header_text="READY",
+    font="small",
     border_style="green",
-    log_level="SUCCESS"
+    level="SUCCESS"
 )
 ```
 
@@ -120,7 +120,7 @@ def main():
     # 初始化
     logger = create_logger(
         name="quick-start_demo",
-        log_path="demo_logs",
+        log_dir="demo_logs",
         level="INFO"
     )
     
@@ -163,8 +163,8 @@ def main():
             "執行時間: 3.2 秒",
             "狀態: 正常"
         ],
-        ascii_header="COMPLETE",
-        ascii_font="block", 
+        header_text="COMPLETE",
+        font="block", 
         border_style="green"
     )
 

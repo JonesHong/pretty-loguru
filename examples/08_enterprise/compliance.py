@@ -100,18 +100,19 @@ class ComplianceManager:
         # 建立合規日誌記錄器
         self.logger = create_logger(
             name="compliance_manager",
-            log_path="logs/compliance",
+            log_dir="logs/compliance",
             level="INFO",
-            rotation="daily",
-            retention="permanent"  # 合規日誌永久保留
+            preset="daily",
+            # 注意：pretty-loguru 的 retention 目前嚴格遵循 loguru 的 duration 格式（days/weeks/...），不支援 "permanent"
+            retention="36500 days",  # 約 100 年，等同「近似永久保留」
         )
         
         self.data_processor_logger = create_logger(
             name="data_processor",
-            log_path="logs/data_processing",
+            log_dir="logs/data_processing",
             level="INFO",
-            rotation="daily",
-            retention="7 years"
+            preset="daily",
+            retention="2555 days",  # 7 years ≈ 2555 days
         )
         
         self.logger.info("📋 合規性管理系統啟動")
@@ -121,7 +122,9 @@ class ComplianceManager:
         detected = {}
         
         for data_type, pattern in self.sensitive_patterns.items():
-            matches = re.findall(pattern, text)
+            # 使用 finditer() 確保永遠取得「完整匹配字串」。
+            # 若 pattern 含有捕獲群組（例如 phone），re.findall() 會回傳 tuple，後續 replace() 會炸掉。
+            matches = [m.group(0) for m in re.finditer(pattern, text)]
             if matches:
                 detected[data_type] = matches
         

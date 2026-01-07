@@ -18,7 +18,7 @@ Usage:
     console = rich.Console()
     logger = loguru.logger
     
-    # Optional: Enhanced integration helpers
+    # Optional: integration helpers
     from pretty_loguru.advanced.helpers import create_rich_logger
 """
 
@@ -28,12 +28,14 @@ Usage:
 # Loguru - Core logging functionality
 try:
     import loguru
-    from loguru import logger as loguru_logger
+    from loguru import logger as _raw_loguru_logger
     HAS_LOGURU = True
 except ImportError:
     loguru = None
     loguru_logger = None
     HAS_LOGURU = False
+    import warnings
+    warnings.warn("loguru not installed; pretty_loguru.advanced.loguru is unavailable.", ImportWarning)
 
 # Rich - Terminal formatting and display
 try:
@@ -55,6 +57,8 @@ except ImportError:
     Console = Panel = Table = Progress = track = None
     Syntax = Tree = Columns = Layout = Live = Prompt = Text = None
     HAS_RICH = False
+    import warnings
+    warnings.warn("rich not installed; pretty_loguru.advanced rich exports are unavailable.", ImportWarning)
 
 # Art - ASCII art generation
 try:
@@ -65,6 +69,8 @@ except ImportError:
     art = None
     text2art = tprint = FONT_NAMES = None
     HAS_ART = False
+    import warnings
+    warnings.warn("art not installed; ASCII helpers are unavailable.", ImportWarning)
 
 # PyFiglet - FIGlet font rendering
 try:
@@ -75,6 +81,8 @@ except ImportError:
     pyfiglet = None
     Figlet = FigletFont = None
     HAS_PYFIGLET = False
+    import warnings
+    warnings.warn("pyfiglet not installed; FIGlet helpers are unavailable.", ImportWarning)
 
 # Availability flags for conditional usage
 AVAILABLE_LIBRARIES = {
@@ -88,6 +96,28 @@ AVAILABLE_LIBRARIES = {
 __all__ = ['AVAILABLE_LIBRARIES']
 
 if HAS_LOGURU:
+    def _ensure_pretty_loguru_record_defaults(record: dict) -> dict:
+        """
+        Ensure pretty-loguru's handlers won't crash when formatting a loguru record.
+
+        pretty-loguru's default handler format uses keys like `{extra[name]}` and
+        `{extra[pretty_text]}`. If users (or examples) use raw loguru without
+        these keys, Loguru will raise `KeyError` during formatting.
+        """
+        extra = record.get("extra") or {}
+        record["extra"] = extra
+
+        # Provide safe defaults without overwriting user-provided extras.
+        extra.setdefault("name", record.get("name") or record.get("module") or "")
+        extra.setdefault("logger_id", extra.get("name") or record.get("name") or "loguru")
+        extra.setdefault("pretty_text", "")
+        extra.setdefault("to_console_only", False)
+        extra.setdefault("to_file_only", False)
+        return record
+
+    # Export a patched logger that remains API-compatible with loguru.logger,
+    # while being safe to use alongside pretty-loguru's configured handlers.
+    loguru_logger = _raw_loguru_logger.patch(_ensure_pretty_loguru_record_defaults)
     __all__.extend(['loguru', 'loguru_logger'])
 
 if HAS_RICH:

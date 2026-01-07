@@ -23,7 +23,7 @@ def basic_file_logging():
     # 創建一個檔案 logger
     logger = create_logger(
         "file_demo",
-        log_path="./logs/quickstart"  # 日誌會儲存在 logs/quickstart/ 目錄
+        log_dir="./logs/quickstart"  # 日誌會儲存在 logs/quickstart/ 目錄
     )
     
     # 寫入各種日誌等級
@@ -40,8 +40,8 @@ def separate_file_logging():
     print("-" * 30)
     
     # 創建不同模組的 logger，分別寫入不同檔案
-    error_logger = create_logger("error_log", log_path="./logs/quickstart")
-    access_logger = create_logger("access_log", log_path="./logs/quickstart")
+    error_logger = create_logger("error_log", log_dir="./logs/quickstart")
+    access_logger = create_logger("access_log", log_dir="./logs/quickstart")
     
     # 記錄不同類型的事件
     access_logger.info("用戶訪問了首頁")
@@ -59,7 +59,7 @@ def custom_file_logging():
     # 使用自定義檔案名稱
     logger = create_logger(
         "custom_demo",
-        log_path="./logs/quickstart",
+        log_dir="./logs/quickstart",
         preset="simple"  # 使用簡單預設
     )
     

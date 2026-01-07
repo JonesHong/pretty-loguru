@@ -2,7 +2,7 @@
 
 `pretty-loguru` 的整合模組旨在與流行的 Python 框架（如 FastAPI 和 Uvicorn）無縫協作，讓你可以在現有專案中輕鬆地引入強大的日誌功能。
 
-**注意：** 使用特定的整合功能前，請確保已安裝對應的函式庫（例如 `pip install fastapi uvicorn`）。
+**注意：** 使用 integrations 前，請確保依賴已安裝。推薦使用 extras：`uv add "pretty-loguru[integrations]"`（或 `pip install "pretty-loguru[integrations]"`）。
 
 ---
 
@@ -17,7 +17,7 @@
 ```python
 def integrate_fastapi(
     app: FastAPI,
-    logger: EnhancedLogger,
+    logger: PrettyLogger,
     enable_uvicorn: bool = True,
     exclude_health_checks: bool = True,
     exclude_paths: Optional[List[str]] = None,
@@ -38,7 +38,7 @@ def integrate_fastapi(
 | 參數 | 類型 | 預設值 | 說明 |
 | --- | --- | --- | --- |
 | `app` | `FastAPI` | - | 你的 FastAPI 應用實例。 |
-| `logger` | `EnhancedLogger` | - | 一個已創建的 `pretty-loguru` logger 實例。 |
+| `logger` | `PrettyLogger` | - | 一個已創建的 `pretty-loguru` logger 實例。 |
 | `enable_uvicorn` | `bool` | `True` | 若為 `True`，會同時呼叫 `integrate_uvicorn` 來統一日誌。 |
 | `exclude_health_checks` | `bool` | `True` | 若為 `True`，會自動排除 `/health`, `/metrics`, `/docs` 等常見的非業務路徑。 |
 
@@ -71,7 +71,7 @@ from pretty_loguru.integrations.fastapi import integrate_fastapi
 app = FastAPI()
 logger = create_logger(
     name="my_api",
-    log_path="logs/",
+    log_dir="logs/",
     level="INFO",
     rotation="1 day"
 )
@@ -105,7 +105,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
     def __init__(
         self,
         app: FastAPI,
-        logger_instance: Optional[EnhancedLogger] = None,
+        logger_instance: Optional[PrettyLogger] = None,
         exclude_paths: Optional[List[str]] = None,
         log_request_body: bool = False,
         log_response_body: bool = False,
@@ -118,7 +118,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
 | 參數 | 類型 | 說明 |
 | --- | --- | --- |
-| `logger_instance` | `EnhancedLogger` | 用於記錄日誌的 logger 實例。 |
+| `logger_instance` | `PrettyLogger` | 用於記錄日誌的 logger 實例。 |
 | `exclude_paths` | `List[str]` | 一個路徑列表，符合的請求將不會被記錄。 |
 | `log_request_body` | `bool` | 是否記錄請求的 body 內容。 |
 | `log_response_body` | `bool` | 是否記錄回應的 body 內容。 |
@@ -130,26 +130,8 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
 ```python
 def get_logger_dependency(
-    name: Optional[str] = None,
-    service_tag: Optional[str] = None,  # 已廢棄，使用 component_name 替代
-    # 檔案輸出配置
-    log_path: Optional[LogPathType] = None,
-    rotation: Optional[LogRotationType] = None,
-    retention: Optional[str] = None,
-    compression: Optional[Union[str, Callable]] = None,
-    compression_format: Optional[str] = None,
-    # 格式化配置
-    level: Optional[LogLevelType] = None,
-    logger_format: Optional[str] = None,
-    component_name: Optional[str] = None,
-    subdirectory: Optional[str] = None,
-    # 行為控制
-    use_proxy: Optional[bool] = None,
-    start_cleaner: Optional[bool] = None,
-    use_native_format: bool = False,
-    # 預設配置
-    preset: Optional[str] = None
-) -> Callable[[], EnhancedLogger]:
+    logger_instance: PrettyLogger
+) -> Callable[[], PrettyLogger]:
     ...
 ```
 
@@ -157,16 +139,18 @@ def get_logger_dependency(
 
 ```python
 from fastapi import FastAPI, Depends
-from pretty_loguru.types import EnhancedLogger
+from pretty_loguru.types import PrettyLogger
 from pretty_loguru.integrations.fastapi import get_logger_dependency
+from pretty_loguru import create_logger
 
 app = FastAPI()
 
 # 創建一個 logger 依賴
-api_logger_dependency = get_logger_dependency(name="api_route", log_path="logs/api.log")
+logger = create_logger("api_route", log_dir="logs/api")
+api_logger_dependency = get_logger_dependency(logger)
 
 @app.get("/users/{user_id}")
-async def get_user(user_id: str, logger: EnhancedLogger = Depends(api_logger_dependency)):
+async def get_user(user_id: str, logger: PrettyLogger = Depends(api_logger_dependency)):
     logger.info(f"正在獲取使用者 {user_id} 的資料")
     # ... 業務邏輯 ...
     return {"user_id": user_id}
@@ -178,15 +162,42 @@ async def get_user(user_id: str, logger: EnhancedLogger = Depends(api_logger_dep
 
 此模組可以攔截 Uvicorn 的標準日誌，並將其重導向到 `pretty-loguru`，從而讓 ASGI 伺服器的日誌與你的應用日誌擁有統一的格式和輸出目標。
 
+### `build_uvicorn_log_config()`
+
+這是**最推薦**的方式：只產生 `uvicorn.run(..., log_config=...)` 所需的 `dict`，不做 monkeypatch，副作用最小、可預期性最好。
+
+```python
+def build_uvicorn_log_config(
+    logger_instance: Any = None,
+    log_level: LogLevelType = "INFO",
+    logger_names: Optional[List[str]] = None,
+) -> Dict[str, Any]:
+    ...
+```
+
+**參數說明：**
+
+| 參數 | 類型 | 說明 |
+| --- | --- | --- |
+| `logger_instance` | `Any` | 你希望 Uvicorn 使用的 `pretty-loguru` logger 實例。 |
+| `log_level` | `LogLevelType` | Uvicorn 要記錄的最低日誌級別（對齊 `uvicorn.run(..., log_level=...)`）。 |
+| `logger_names` | `Optional[List[str]]` | 要攔截的 `logging` logger 名稱列表（預設為 uvicorn 相關 loggers）。 |
+
 ### `integrate_uvicorn()`
 
-推薦使用此函數來設定 Uvicorn 日誌。它會處理所有必要的底層配置。
+方便的整合函數：
+
+- `monkeypatch=False`（預設）：等同於呼叫 `build_uvicorn_log_config()` 並回傳 `log_config`
+- `monkeypatch=True`：會修改 Uvicorn 的 logging 初始化流程（副作用較大，只建議在你明確理解影響時使用）
 
 ```python
 def integrate_uvicorn(
-    logger: Any,
-    level: LogLevelType = "INFO"
-) -> None:
+    logger: Any = None,
+    log_level: LogLevelType = "INFO",
+    logger_names: Optional[List[str]] = None,
+    *,
+    monkeypatch: bool = False,
+) -> Optional[Dict[str, Any]]:
     ...
 ```
 
@@ -195,7 +206,9 @@ def integrate_uvicorn(
 | 參數 | 類型 | 說明 |
 | --- | --- | --- |
 | `logger` | `Any` | 你希望 Uvicorn 使用的 `pretty-loguru` logger 實例。 |
-| `level` | `LogLevelType` | Uvicorn 要記錄的最低日誌級別。 |
+| `log_level` | `LogLevelType` | Uvicorn 要記錄的最低日誌級別（對齊 `uvicorn.run(..., log_level=...)`）。 |
+| `logger_names` | `Optional[List[str]]` | 要攔截的 `logging` logger 名稱列表（預設為 uvicorn 相關 loggers）。 |
+| `monkeypatch` | `bool` | 是否 monkeypatch uvicorn 內部 logging 初始化（預設 False，建議優先用 `log_config`）。 |
 
 **範例：**
 
@@ -203,16 +216,16 @@ def integrate_uvicorn(
 import uvicorn
 from fastapi import FastAPI
 from pretty_loguru import create_logger
-from pretty_loguru.integrations.uvicorn import integrate_uvicorn
+from pretty_loguru.integrations.uvicorn import build_uvicorn_log_config
 
 app = FastAPI()
-logger = create_logger("main_app", log_path="logs/")
+logger = create_logger("main_app", log_dir="logs/")
 
-# 在啟動 uvicorn 前進行整合
-integrate_uvicorn(logger)
+# 在啟動 uvicorn 前建立 log_config（non-monkeypatch，推薦）
+log_config = build_uvicorn_log_config(logger_instance=logger)
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_config=log_config)
 ```
 
 ### `InterceptHandler`
@@ -222,5 +235,61 @@ if __name__ == "__main__":
 通常你不需要直接使用此類別，`integrate_uvicorn` 函數已經為你處理好了。
 
 ---
+
+## Loki 整合
+
+此模組提供「程式內直推」Grafana Loki 的 sink（best-effort）：失敗會被吞掉、不重試、不提供離線緩衝。若你需要更高可靠性，建議用 `promtail`/`grafana-agent` 從檔案收集再送 Loki。
+
+### `LokiSinkConfig`
+
+```python
+@dataclass
+class LokiSinkConfig:
+    url: str
+    labels: Dict[str, str] = ...
+    batch_size: int = 50
+    flush_interval_seconds: float = 1.0
+    timeout_seconds: float = 2.0
+    tenant_id: Optional[str] = None
+    username: Optional[str] = None
+    password: Optional[str] = None
+    headers: Dict[str, str] = ...
+```
+
+### `create_loki_sink()`
+
+```python
+def create_loki_sink(
+    url: str,
+    labels: Optional[Dict[str, str]] = None,
+    batch_size: int = 50,
+    flush_interval_seconds: float = 1.0,
+    timeout_seconds: float = 2.0,
+    tenant_id: Optional[str] = None,
+    username: Optional[str] = None,
+    password: Optional[str] = None,
+    headers: Optional[Dict[str, str]] = None,
+) -> LokiSink:
+    ...
+```
+
+**範例（直接推送）**：
+
+```python
+from pretty_loguru import create_logger
+from pretty_loguru.integrations.loki import create_loki_sink
+
+logger = create_logger("app", log_dir="logs/", serialize=True)
+
+logger.add(
+    create_loki_sink(
+        "http://localhost:3100",
+        labels={"app": "demo", "env": "local"},
+    ),
+    level="INFO",
+    serialize=True,
+    enqueue=True,
+)
+```
 
 [返回 API 總覽](./index.md)

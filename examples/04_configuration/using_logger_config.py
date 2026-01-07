@@ -12,7 +12,8 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from pretty_loguru import create_logger, LoggerConfig, ConfigTemplates
+from pretty_loguru import LoggerConfig, create_logger
+from pretty_loguru.addons import ConfigTemplates
 
 def basic_config_usage():
     """基本的 LoggerConfig 使用方式"""
@@ -22,7 +23,7 @@ def basic_config_usage():
     # 創建配置物件
     config = LoggerConfig(
         level="INFO",
-        log_path="logs/config_example",
+        log_dir="logs/config_example",
         rotation="1 day",
         retention="7 days"
     )
@@ -49,9 +50,9 @@ def config_with_overrides():
     
     # 創建多個 logger，每個都有不同的覆寫
     loggers = {
-        "api": create_logger("api", config=base_config, log_path="logs/api"),
-        "worker": create_logger("worker", config=base_config, log_path="logs/worker", level="DEBUG"),
-        "scheduler": create_logger("scheduler", config=base_config, log_path="logs/scheduler", rotation="hourly")
+        "api": create_logger("api", config=base_config, log_dir="logs/api"),
+        "worker": create_logger("worker", config=base_config, log_dir="logs/worker", level="DEBUG"),
+        "scheduler": create_logger("scheduler", config=base_config, log_dir="logs/scheduler", rotation="hourly")
     }
     
     # 測試不同的 logger
@@ -84,7 +85,7 @@ def template_usage():
         logger = create_logger(
             f"{name}_logger",
             config=config,
-            log_path=f"logs/templates/{name}"
+            log_dir=f"logs/templates/{name}"
         )
         logger.info(f"使用 {name} 模板的 logger")
     
@@ -98,7 +99,7 @@ def config_management():
     # 創建共享配置
     shared_config = LoggerConfig(
         level="INFO",
-        log_path="logs/managed",
+        log_dir="logs/managed",
         rotation="daily"
     )
     
@@ -130,15 +131,15 @@ def config_inheritance():
     base = LoggerConfig(
         rotation="daily",
         retention="7 days",
-        logger_format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}"
+        format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}"
     )
     
     # 克隆並修改
     dev_config = base.clone()
-    dev_config.update(level="DEBUG", log_path="logs/inheritance/dev")
+    dev_config.update(level="DEBUG", log_dir="logs/inheritance/dev")
     
     prod_config = base.clone()
-    prod_config.update(level="INFO", log_path="logs/inheritance/prod", retention="30 days")
+    prod_config.update(level="INFO", log_dir="logs/inheritance/prod", retention="30 days")
     
     # 創建 logger
     dev_logger = create_logger("dev_service", config=dev_config)

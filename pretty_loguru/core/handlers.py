@@ -29,7 +29,7 @@ def create_destination_filters() -> Dict[str, LogFilterType]:
             bool: 如果應該顯示在控制台則返回 True，否則返回 False
         """
         # 如果記錄明確標記為只輸出到文件，則不在控制台顯示
-        if record["extra"].get("to_log_file_only", False):
+        if record["extra"].get("to_file_only", False):
             return False
         return True
 

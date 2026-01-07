@@ -21,7 +21,7 @@ logger = create_logger("my_app")
 logger.info("Hello World")
 
 # 帶檔案輸出
-logger = create_logger("my_app", log_path="logs", level="INFO")
+logger = create_logger("my_app", log_dir="logs", level="INFO")
 ```
 
 ### 2. Quick Start / 快速開始
@@ -42,7 +42,7 @@ logger = create_logger("my_app", log_path="logs", level="INFO")
 
 **ConfigTemplates 介紹模板**：
 ```python
-from pretty_loguru import ConfigTemplates
+from pretty_loguru.addons import ConfigTemplates
 
 # 使用預設配置模板
 config = ConfigTemplates.production()
@@ -64,7 +64,7 @@ from pretty_loguru import LoggerConfig
 # 創建自定義配置
 config = LoggerConfig(
     level="INFO",
-    log_path="logs",
+    log_dir="logs",
     rotation="100 MB",
     retention="30 days"
 )

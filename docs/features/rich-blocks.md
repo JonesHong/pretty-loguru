@@ -12,7 +12,7 @@ from pretty_loguru import create_logger
 # Create logger instance
 logger = create_logger(
     name="demo",
-    log_path="logs",
+    log_dir="logs",
     level="INFO"
 )
 
@@ -37,7 +37,7 @@ logger.block(
         "磁碟: 150GB 可用"
     ],
     border_style="green",    # 綠色邊框
-    log_level="INFO"         # 日誌級別
+    level="INFO"             # 日誌級別
 )
 ```
 
@@ -101,7 +101,7 @@ logger.block(
         "✅ 負載均衡器已更新"
     ],
     border_style="green",
-    log_level="SUCCESS"
+    level="SUCCESS"
 )
 ```
 
@@ -117,7 +117,7 @@ logger.block(
         "💡 建議: 擴展服務實例"
     ],
     border_style="yellow",
-    log_level="WARNING"
+    level="WARNING"
 )
 ```
 
@@ -133,7 +133,7 @@ logger.block(
         "🔧 修復建議: 檢查網路連接"
     ],
     border_style="red", 
-    log_level="ERROR"
+    level="ERROR"
 )
 ```
 
@@ -149,7 +149,7 @@ logger.block(
         "🌐 網路介面: eth0"
     ],
     border_style="blue",
-    log_level="INFO"
+    level="INFO"
 )
 ```
 
@@ -173,7 +173,7 @@ def log_startup_info():
             f"🌐 工作目錄: {os.getcwd()}"
         ],
         border_style="cyan",
-        log_level="INFO"
+        level="INFO"
     )
 ```
 
@@ -195,7 +195,7 @@ def log_database_status(connections):
         "資料庫連接狀態",
         status_items,
         border_style=overall_status,
-        log_level="INFO" if overall_status == "green" else "ERROR"
+        level="INFO" if overall_status == "green" else "ERROR"
     )
 ```
 
@@ -229,7 +229,7 @@ def log_performance_metrics():
             f"📊 負載平均: {', '.join(map(str, os.getloadavg()))}" if hasattr(os, 'getloadavg') else "📊 負載平均: N/A"
         ],
         border_style=border_color,
-        log_level=level
+        level=level
     )
 ```
 
@@ -270,7 +270,7 @@ def log_service_health(services):
         "服務健康檢查",
         content,
         border_style="green" if all_healthy else "red",
-        log_level="INFO" if all_healthy else "ERROR"
+        level="INFO" if all_healthy else "ERROR"
     )
 ```
 

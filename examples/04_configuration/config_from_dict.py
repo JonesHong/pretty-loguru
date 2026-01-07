@@ -22,7 +22,7 @@ def basic_dict_config():
     
     # 基本配置字典
     basic_config = {
-        "log_path": "./logs/configuration",
+        "log_dir": "./logs/configuration",
         "preset": "simple",
         "retention": "7 days"
     }
@@ -38,7 +38,7 @@ def advanced_dict_config():
     
     # 進階配置字典
     advanced_config = {
-        "log_path": "./logs/configuration", 
+        "log_dir": "./logs/configuration", 
         "preset": "detailed",
         "rotation": "10 MB",
         "retention": "30 days"
@@ -55,21 +55,21 @@ def environment_specific_configs():
     
     # 開發環境配置
     dev_config = {
-        "log_path": "./logs/configuration/dev",
+        "log_dir": "./logs/configuration/dev",
         "preset": "detailed",
         "retention": "1 day"
     }
     
     # 測試環境配置
     test_config = {
-        "log_path": "./logs/configuration/test",
+        "log_dir": "./logs/configuration/test",
         "preset": "simple",
         "retention": "3 days"
     }
     
     # 生產環境配置
     prod_config = {
-        "log_path": "./logs/configuration/prod",
+        "log_dir": "./logs/configuration/prod",
         "preset": "daily",
         "retention": "30 days"
     }
@@ -97,7 +97,7 @@ def modular_config_composition():
     
     # 基礎配置
     base_config = {
-        "log_path": "./logs/configuration",
+        "log_dir": "./logs/configuration",
         "retention": "7 days"
     }
     
@@ -140,8 +140,8 @@ def config_validation():
         errors = []
         
         # 檢查必要參數
-        if "log_path" not in config:
-            errors.append("缺少 log_path 參數")
+        if "log_dir" not in config:
+            errors.append("缺少 log_dir 參數")
         
         # 檢查預設類型
         valid_presets = ["simple", "detailed", "daily", "hourly", "minute", "weekly", "monthly"]
@@ -158,7 +158,7 @@ def config_validation():
     
     # 測試有效配置
     valid_config = {
-        "log_path": "./logs/configuration",
+        "log_dir": "./logs/configuration",
         "preset": "daily",
         "retention": "30 days"
     }
@@ -187,7 +187,7 @@ def dynamic_config_updates():
     
     # 初始配置
     initial_config = {
-        "log_path": "./logs/configuration",
+        "log_dir": "./logs/configuration",
         "preset": "simple"
     }
     
@@ -196,7 +196,7 @@ def dynamic_config_updates():
     
     # 模擬配置更新（注意：實際中可能需要重新創建 logger）
     updated_config = {
-        "log_path": "./logs/configuration/updated",
+        "log_dir": "./logs/configuration/updated",
         "preset": "detailed",
         "retention": "14 days"
     }
@@ -217,22 +217,22 @@ def config_templates():
     # 定義配置模板
     config_templates = {
         "web_app": {
-            "log_path": "./logs/web",
+            "log_dir": "./logs/web",
             "preset": "daily",
             "retention": "30 days"
         },
         "microservice": {
-            "log_path": "./logs/service",
+            "log_dir": "./logs/service",
             "preset": "hourly", 
             "retention": "7 days"
         },
         "batch_job": {
-            "log_path": "./logs/batch",
+            "log_dir": "./logs/batch",
             "preset": "simple",
             "retention": "14 days"
         },
         "debug": {
-            "log_path": "./logs/debug",
+            "log_dir": "./logs/debug",
             "preset": "detailed",
             "retention": "1 day"
         }

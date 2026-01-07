@@ -30,7 +30,7 @@ class MicroserviceLogger:
         # 創建配置
         config = LoggerConfig(
             level=os.getenv("LOG_LEVEL", "INFO"),
-            log_path=f"logs/{service_name}",
+            log_dir=f"logs/{service_name}",
             rotation="100 MB",
             retention="30 days",
             compression="zip"
@@ -133,12 +133,12 @@ class SecurityLogger:
     def __init__(self, service_name: str):
         self.logger = create_logger(
             f"security_{service_name}",
-            log_path="logs/security",
+            log_dir="logs/security",
             level="INFO"
         )
         self.audit_logger = create_logger(
             f"audit_{service_name}",
-            log_path="logs/audit",
+            log_dir="logs/audit",
             level="INFO",
             rotation="1 day",
             retention="365 days"  # 審計日誌保留一年
@@ -299,7 +299,7 @@ class ComplianceLogger:
         """根據合規標準獲取配置"""
         config = LoggerConfig(
             level="INFO",
-            log_path="logs/compliance",
+            log_dir="logs/compliance",
             rotation="1 day"
         )
         
@@ -471,8 +471,8 @@ class CentralizedLogger:
         # 本地 logger
         self.logger = create_logger(
             service_name,
-            log_path="logs/local",
-            logger_format='{{
+            log_dir="logs/local",
+            format='{{
                 "time": "{time:YYYY-MM-DD HH:mm:ss}",
                 "level": "{level}",
                 "service": "' + service_name + '",
@@ -654,7 +654,7 @@ class LogBackupManager:
         
         self.logger = create_logger(
             "backup_manager",
-            log_path="logs/backup"
+            log_dir="logs/backup"
         )
     
     def backup_logs(self, retention_days: int = 7):

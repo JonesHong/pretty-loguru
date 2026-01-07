@@ -27,8 +27,6 @@ from .cleaner import LoggerCleaner
 
 # 導入目標導向格式化工具
 from .target_formatter import (
-    create_target_method,
-    add_target_methods,
     ensure_target_parameters
 )
 
@@ -72,8 +70,6 @@ __all__ = [
     "LoggerCleaner",
     
     # 目標導向格式化工具
-    "create_target_method",
-    "add_target_methods",
     "ensure_target_parameters",
     
     # 註冊表功能

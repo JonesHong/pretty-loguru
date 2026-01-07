@@ -57,7 +57,7 @@ logger.block(
         "⚡  Service Status: All Running"
     ],
     border_style="green",
-    log_level="INFO"
+    level="INFO"
 )
 ```
 
@@ -82,8 +82,8 @@ logger.ascii_block(
         "🔄  Health Check: Normal", 
         "📡  Load Balancer: Enabled"
     ],
-    ascii_header="DEPLOYED",
-    ascii_font="block",
+    header_text="DEPLOYED",
+    font="block",
     border_style="green"
 )
 ```
@@ -145,11 +145,13 @@ Want to try it out now?
 pretty-loguru also provides target-oriented logging methods:
 
 ```python
+from pretty_loguru.addons import log_to_targets
+
 # Output only to the console
-logger.console_info("This will only be displayed in the console")
+log_to_targets(logger, "This will only be displayed in the console", level="INFO", console_only=True)
 
 # Write only to a file
-logger.file_debug("This will only be written to the log file") 
+log_to_targets(logger, "This will only be written to the log file", level="DEBUG", file_only=True)
 
 # Simultaneous output (default behavior)
 logger.info("This will be displayed in both the console and the file")

@@ -42,7 +42,7 @@ Console-only output configuration:
 ```python
 from pretty_loguru import create_logger
 
-# Create console-only logger (no log_path specified)
+# Create console-only logger (no log_dir specified)
 logger = create_logger("console_app")
 
 # Basic log levels
@@ -78,7 +78,7 @@ from pretty_loguru import create_logger
 # Create logger that outputs to both console and file
 logger = create_logger(
     "file_app",
-    log_path="logs",           # Log directory
+    log_dir="logs",           # Log directory
     rotation="1 day",          # Daily rotation
     retention="7 days",        # Keep for 7 days
     compression="zip"          # Compress old files
@@ -106,8 +106,9 @@ logger.block(
 )
 
 # Target-specific output
-logger.console_info("This only shows in console")
-logger.file_info("This only goes to the log file")
+from pretty_loguru.addons import log_to_targets
+log_to_targets(logger, "This only shows in console", level="INFO", console_only=True)
+log_to_targets(logger, "This only goes to the log file", level="INFO", file_only=True)
 ```
 
 [View complete code](https://github.com/JonesHong/pretty-loguru/blob/master/examples/01_quickstart/file_logging.py)
@@ -117,7 +118,7 @@ logger.file_info("This only goes to the log file")
 Using predefined configuration templates:
 
 ```python
-from pretty_loguru import ConfigTemplates
+from pretty_loguru.addons import ConfigTemplates
 
 # Development configuration - detailed logs for debugging
 dev_config = ConfigTemplates.development()
@@ -136,7 +137,7 @@ dev_logger.debug("This appears in development")  # ✅ Logged
 prod_logger.debug("This won't appear in production")  # ❌ Not logged
 
 # Visual demonstration
-dev_logger.console_block(
+dev_logger.block(
     "Development Mode",
     [
         "Log Level: DEBUG",
@@ -144,10 +145,11 @@ dev_logger.console_block(
         "Retention: 7 days",
         "Compression: None"
     ],
-    border_style="yellow"
+    border_style="yellow",
+    to_console_only=True,
 )
 
-prod_logger.console_block(
+prod_logger.block(
     "Production Mode",
     [
         "Log Level: INFO",
@@ -155,7 +157,8 @@ prod_logger.console_block(
         "Retention: 30 days",
         "Compression: ZIP"
     ],
-    border_style="green"
+    border_style="green",
+    to_console_only=True,
 )
 ```
 
@@ -209,8 +212,8 @@ logger.ascii_block(
         "✅ Build: Successful",
         "✅ Deploy: Complete"
     ],
-    ascii_header="DEPLOYED",
-    ascii_font="small",
+    header_text="DEPLOYED",
+    font="small",
     border_style="green"
 )
 ```
@@ -224,7 +227,7 @@ Basic error handling with Pretty-Loguru:
 ```python
 from pretty_loguru import create_logger
 
-logger = create_logger("error_demo", log_path="logs/errors")
+logger = create_logger("error_demo", log_dir="logs/errors")
 
 # Automatic exception catching
 @logger.catch
@@ -275,7 +278,7 @@ from pretty_loguru.integrations.fastapi import setup_fastapi_logging
 app = FastAPI()
 
 # Setup Pretty-Loguru logging
-logger = setup_fastapi_logging(app, log_path="logs/api")
+logger = setup_fastapi_logging(app, log_dir="logs/api")
 
 @app.get("/")
 async def root():
@@ -285,7 +288,7 @@ async def root():
 @app.get("/status")
 async def status():
     # Visual status display
-    logger.console_block(
+    logger.block(
         "API Status",
         [
             "🟢 API: Online",
@@ -293,7 +296,8 @@ async def status():
             "🟢 Cache: Active",
             "📊 Requests Today: 10,432"
         ],
-        border_style="green"
+        border_style="green",
+        to_console_only=True,
     )
     return {"status": "healthy"}
 
@@ -312,7 +316,7 @@ from pretty_loguru import create_logger, LoggerConfig
 # Create a shared configuration
 config = LoggerConfig(
     level="INFO",
-    log_path="logs",
+    log_dir="logs",
     rotation="1 day",
     retention="7 days"
 )
@@ -334,10 +338,11 @@ config.update(level="DEBUG")  # All three loggers now log DEBUG messages
 from pretty_loguru import list_loggers
 
 logger = create_logger("summary")
-logger.console_block(
+logger.block(
     "Active Loggers",
     list_loggers(),
-    border_style="cyan"
+    border_style="cyan",
+    to_console_only=True,
 )
 ```
 

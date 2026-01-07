@@ -7,26 +7,20 @@ FIGlet 藝術模組
 """
 
 import re
-from typing import List, Optional, Any, Set
+from typing import List, Optional, Any, Set, Union
 
 from rich.panel import Panel
 from rich.console import Console
 from pretty_loguru.core.base import get_console
 from pretty_loguru.utils.dependencies import ensure_pyfiglet_dependency, warn_missing_dependency
 
-try:
-    import pyfiglet
-    from pyfiglet import FigletFont
-    _has_pyfiglet = True
-    # print("Debug: pyfiglet successfully imported")
-except ImportError:
-    _has_pyfiglet = False
-    pyfiglet = None
-    FigletFont = None
-    print("Debug: pyfiglet import failed")
+import warnings
+from functools import lru_cache
 
-from ..types import EnhancedLogger
-from ..core.target_formatter import add_target_methods, ensure_target_parameters
+from pretty_loguru.utils.warn_once import warn_once
+from ..types import PrettyLogger
+from ..core.target_formatter import ensure_target_parameters
+from ..core.pretty_event import PRETTY_VERSION_V1, build_renderable, render_renderable_to_text
 from .block import print_block
 from ..utils.validators import is_ascii_only
 
@@ -35,13 +29,14 @@ from ..utils.validators import is_ascii_only
 def print_figlet_header(
     text: str,
     font: str = "standard",
-    log_level: str = "INFO",
+    level: str = "INFO",
     border_style: str = "cyan",
     logger_instance: Any = None,
     console: Optional[Console] = None,
     to_console_only: bool = False,
-    to_log_file_only: bool = False,
+    to_file_only: bool = False,
     _target_depth: int = None,
+    strict: bool = False,
 ) -> None:
     """
     打印 FIGlet 藝術標題
@@ -49,20 +44,20 @@ def print_figlet_header(
     Args:
         text: 要轉換為 FIGlet 藝術的文本
         font: FIGlet 藝術字體
-        log_level: 日誌級別
+        level: 日誌級別
         border_style: 邊框樣式
         logger_instance: 要使用的 logger 實例，如果為 None 則不記錄日誌
         console: 要使用的 rich console 實例，如果為 None 則創建新的
         to_console_only: 是否僅輸出到控制台，預設為 False
-        to_log_file_only: 是否僅輸出到日誌文件，預設為 False
+        to_file_only: 是否僅輸出到日誌文件，預設為 False
         _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置
         
     Raises:
         ValueError: 如果文本包含非 ASCII 字符
         ImportError: 如果未安裝 pyfiglet 庫
     """
-    # 檢查 pyfiglet 庫是否已安裝
-    ensure_pyfiglet_dependency(logger_instance)
+    if not _require_pyfiglet(logger_instance):
+        return
     
     # 如果沒有提供 console，則創建一個新的
     if console is None:
@@ -87,12 +82,15 @@ def print_figlet_header(
     
     # 使用 pyfiglet 生成 FIGlet 藝術
     try:
-        figlet_art = pyfiglet.figlet_format(text, font=font)
+        figlet_art = _cached_figlet_format(text, font)
     except Exception as e:
         error_msg = f"Failed to generate FIGlet art: {str(e)}"
+        if strict:
+            raise
+        warn_once(error_msg, UserWarning, key=("figlet_header", font, text))
         if logger_instance:
             logger_instance.error(error_msg)
-        raise
+        return
     
     # 創建一個帶有邊框的 Panel
     panel = Panel(
@@ -100,54 +98,72 @@ def print_figlet_header(
         border_style=border_style,
     )
     
-    # 控制台輸出 - 僅當非僅文件模式時
-    if not to_log_file_only:
-        console.print(panel)
-    
-    # 日誌文件輸出 - 僅當非僅控制台模式時
-    if logger_instance and not to_console_only:
-        # 使用動態設置的 depth 來捕獲實際調用者的位置
-        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_log_file_only=True).log(
-            log_level, f"\n{figlet_art}\n{'=' * 50}"
-        )
+    # 若沒有 logger_instance，保留純輸出模式（不走 loguru pipeline）
+    if logger_instance is None:
+        if not to_file_only:
+            console.print(panel)
+        return
+
+    payload = {
+        "text": text,
+        "font": font,
+        "art": figlet_art,
+        "border_style": border_style,
+    }
+    renderable = build_renderable("figlet_header", payload)
+    pretty_text = "\n" + render_renderable_to_text(renderable) + "\n"
+
+    bind_kwargs = {
+        "pretty_kind": "figlet_header",
+        "pretty_version": PRETTY_VERSION_V1,
+        "pretty_payload": payload,
+        "pretty_text": pretty_text,
+    }
+    if to_console_only:
+        bind_kwargs["to_console_only"] = True
+    if to_file_only:
+        bind_kwargs["to_file_only"] = True
+
+    logger_instance.opt(colors=True, depth=_target_depth).bind(**bind_kwargs).log(level, f"FIGletHeader: {text}")
 
 
 @ensure_target_parameters
 def print_figlet_block(
     title: str,
-    message_list: List[str],
+    lines: Union[str, List[str]],
     figlet_header: Optional[str] = None,
     figlet_font: str = "standard",
     border_style: str = "cyan",
-    log_level: str = "INFO",
+    level: str = "INFO",
     logger_instance: Any = None,
     console: Optional[Console] = None,
     to_console_only: bool = False,
-    to_log_file_only: bool = False,
+    to_file_only: bool = False,
     _target_depth: int = None,
+    strict: bool = False,
 ) -> None:
     """
     打印帶有 FIGlet 藝術標題的區塊樣式日誌
     
     Args:
         title: 區塊的標題
-        message_list: 日誌的內容列表
+        lines: 日誌的內容（可為單行字串或多行列表）
         figlet_header: FIGlet 藝術標題文本 (如果不提供，則使用 title)
         figlet_font: FIGlet 藝術字體
         border_style: 區塊邊框顏色
-        log_level: 日誌級別
+        level: 日誌級別
         logger_instance: 要使用的 logger 實例，如果為 None 則不記錄日誌
         console: 要使用的 rich console 實例，如果為 None 則創建新的
         to_console_only: 是否僅輸出到控制台，預設為 False
-        to_log_file_only: 是否僅輸出到日誌文件，預設為 False
+        to_file_only: 是否僅輸出到日誌文件，預設為 False
         _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置
         
     Raises:
         ValueError: 如果 FIGlet 標題包含非 ASCII 字符
         ImportError: 如果未安裝 pyfiglet 庫
     """
-    # 檢查 pyfiglet 庫是否已安裝
-    ensure_pyfiglet_dependency(logger_instance)
+    if not _require_pyfiglet(logger_instance):
+        return
     
     # 如果沒有提供 console，則創建一個新的
     if console is None:
@@ -175,15 +191,22 @@ def print_figlet_block(
     
     # 生成 FIGlet 藝術
     try:
-        figlet_art = pyfiglet.figlet_format(header_text, font=figlet_font)
+        figlet_art = _cached_figlet_format(header_text, figlet_font)
     except Exception as e:
         error_msg = f"Failed to generate FIGlet art: {str(e)}"
+        if strict:
+            raise
+        warn_once(error_msg, UserWarning, key=("figlet_block", figlet_font, header_text))
         if logger_instance:
             logger_instance.error(error_msg)
-        raise
+        return
     
-    # 將 FIGlet 藝術添加到消息列表的開頭
-    full_message_list = [figlet_art] + message_list
+    if isinstance(lines, str):
+        normalized_lines = [lines]
+    else:
+        normalized_lines = [str(x) for x in lines]
+
+    full_message_list = [figlet_art] + normalized_lines
     
     # 構造區塊內容
     message = "\n".join(full_message_list)
@@ -194,27 +217,29 @@ def print_figlet_block(
         border_style=border_style,
     )
     
-    # 只有當非僅文件模式時，才輸出到控制台
-    if not to_log_file_only and logger_instance is not None:
-        # 將日誌寫入到終端，僅顯示在終端中
-        # 使用動態設置的 depth 來捕獲實際調用者的位置
-        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_console_only=True).log(
-            log_level, f"CustomBlock: {title}"
-        )
-        
-        # 打印區塊到終端
-        console.print(panel)
+    if logger_instance is None:
+        return
 
-    # 只有當非僅控制台模式時，才輸出到文件
-    if not to_console_only and logger_instance is not None:
-        # 格式化訊息，方便寫入日誌文件
-        formatted_message = f"{title}\n{'=' * 50}\n{message}\n{'=' * 50}"
+    payload = {
+        "title": title,
+        "lines": [str(x) for x in full_message_list],
+        "border_style": border_style,
+    }
+    renderable = build_renderable("figlet_block", payload)
+    pretty_text = "\n" + render_renderable_to_text(renderable) + "\n"
 
-        # 將格式化後的訊息寫入日誌文件，僅寫入文件中
-        # 使用動態設置的 depth 來捕獲實際調用者的位置
-        logger_instance.opt(ansi=True, depth=_target_depth).bind(to_log_file_only=True).log(
-            log_level, f"\n{formatted_message}"
-        )
+    bind_kwargs = {
+        "pretty_kind": "figlet_block",
+        "pretty_version": PRETTY_VERSION_V1,
+        "pretty_payload": payload,
+        "pretty_text": pretty_text,
+    }
+    if to_console_only:
+        bind_kwargs["to_console_only"] = True
+    if to_file_only:
+        bind_kwargs["to_file_only"] = True
+
+    logger_instance.opt(colors=True, depth=_target_depth).bind(**bind_kwargs).log(level, f"CustomBlock: {title}")
 
 
 def get_figlet_fonts() -> Set[str]:
@@ -244,6 +269,7 @@ def create_figlet_methods(logger_instance: Any, console: Optional[Console] = Non
         bool: 如果成功添加方法則返回 True，否則返回 False
     """
     # 檢查 pyfiglet 庫是否已安裝
+    global _has_pyfiglet
     if not _has_pyfiglet:
         return warn_missing_dependency("pyfiglet", logger_instance, False)
     
@@ -255,10 +281,10 @@ def create_figlet_methods(logger_instance: Any, console: Optional[Console] = Non
     def figlet_header_method(
         text: str,
         font: str = "standard",
-        log_level: str = "INFO",
+        level: str = "INFO",
         border_style: str = "cyan",
         to_console_only: bool = False,
-        to_log_file_only: bool = False,
+        to_file_only: bool = False,
         _target_depth: int = None,
     ) -> None:
         """
@@ -267,22 +293,22 @@ def create_figlet_methods(logger_instance: Any, console: Optional[Console] = Non
         Args:
             text: 要轉換為 FIGlet 藝術的文本
             font: FIGlet 藝術字體
-            log_level: 日誌級別
+            level: 日誌級別
             border_style: 邊框樣式
             to_console_only: 是否僅輸出到控制台，預設為 False
-            to_log_file_only: 是否僅輸出到日誌文件，預設為 False
+            to_file_only: 是否僅輸出到日誌文件，預設為 False
             _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置
         """
         # 直接傳遞明確參數
         print_figlet_header(
             text,
             font=font,
-            log_level=log_level,
+            level=level,
             border_style=border_style,
             logger_instance=logger_instance,
             console=console,
             to_console_only=to_console_only,
-            to_log_file_only=to_log_file_only,
+            to_file_only=to_file_only,
             _target_depth=_target_depth
         )
     
@@ -290,13 +316,13 @@ def create_figlet_methods(logger_instance: Any, console: Optional[Console] = Non
     @ensure_target_parameters
     def figlet_block_method(
         title: str,
-        message_list: List[str],
+        lines: Union[str, List[str]],
         figlet_header: Optional[str] = None,
         figlet_font: str = "standard",
         border_style: str = "cyan",
-        log_level: str = "INFO",
+        level: str = "INFO",
         to_console_only: bool = False,
-        to_log_file_only: bool = False,
+        to_file_only: bool = False,
         _target_depth: int = None,
     ) -> None:
         """
@@ -304,27 +330,27 @@ def create_figlet_methods(logger_instance: Any, console: Optional[Console] = Non
         
         Args:
             title: 區塊的標題
-            message_list: 日誌的內容列表
+            lines: 日誌的內容（可為單行字串或多行列表）
             figlet_header: FIGlet 藝術標題文本 (如果不提供，則使用 title)
             figlet_font: FIGlet 藝術字體
             border_style: 區塊邊框顏色
-            log_level: 日誌級別
+            level: 日誌級別
             to_console_only: 是否僅輸出到控制台，預設為 False
-            to_log_file_only: 是否僅輸出到日誌文件，預設為 False
+            to_file_only: 是否僅輸出到日誌文件，預設為 False
             _target_depth: 日誌堆棧深度，用於捕獲正確的調用位置
         """
         # 直接傳遞明確參數
         print_figlet_block(
             title,
-            message_list,
+            lines,
             figlet_header=figlet_header,
             figlet_font=figlet_font,
             border_style=border_style,
-            log_level=log_level,
+            level=level,
             logger_instance=logger_instance,
             console=console,
             to_console_only=to_console_only,
-            to_log_file_only=to_log_file_only,
+            to_file_only=to_file_only,
             _target_depth=_target_depth
         )
     
@@ -340,8 +366,55 @@ def create_figlet_methods(logger_instance: Any, console: Optional[Console] = Non
     logger_instance.figlet_block = figlet_block_method
     logger_instance.get_figlet_fonts = get_fonts_method
     
-    # 添加目標特定方法
-    add_target_methods(logger_instance, "figlet_header", figlet_header_method)
-    add_target_methods(logger_instance, "figlet_block", figlet_block_method)
+    # 不再注入 console_*/file_* 目標方法：統一走單一路徑（loguru pipeline）
     
     return True
+
+
+# 狀態與 lazy 匯入
+_has_pyfiglet: bool = False
+pyfiglet = None  # type: ignore
+FigletFont = None
+_pyfiglet_module = None
+
+
+def _lazy_pyfiglet():
+    global _has_pyfiglet, _pyfiglet_module, pyfiglet, FigletFont
+    if pyfiglet is not None:
+        return pyfiglet
+    if _pyfiglet_module is not None or _has_pyfiglet:
+        return _pyfiglet_module
+    try:
+        import pyfiglet
+        _pyfiglet_module = pyfiglet
+        globals()["pyfiglet"] = pyfiglet
+        globals()["FigletFont"] = getattr(pyfiglet, "FigletFont", None)
+        _has_pyfiglet = True
+    except ImportError:
+        _pyfiglet_module = None
+        _has_pyfiglet = False
+    return _pyfiglet_module
+
+
+_has_pyfiglet = _lazy_pyfiglet() is not None
+
+
+@lru_cache(maxsize=256)
+def _cached_figlet_format(text: str, font: str) -> str:
+    mod = _lazy_pyfiglet()
+    if mod is None:
+        raise ImportError("pyfiglet not installed")
+    return mod.figlet_format(text, font=font)
+
+
+def _require_pyfiglet(logger_instance: Any = None) -> bool:
+    mod = _lazy_pyfiglet()
+    if mod is None:
+        warn_once("pyfiglet not installed; figlet features disabled.", ImportWarning, key="pyfiglet_missing")
+        return False
+    try:
+        ensure_pyfiglet_dependency(logger_instance)
+        return True
+    except ImportError as e:
+        warn_once(str(e), ImportWarning, key="pyfiglet_missing")
+        return False

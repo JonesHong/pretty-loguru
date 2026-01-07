@@ -66,7 +66,7 @@ from pretty_loguru import create_logger
 from pretty_loguru.integrations.fastapi import integrate_fastapi
 
 app = FastAPI()
-logger = create_logger("my_api", log_path="./logs")
+logger = create_logger("my_api", log_dir="./logs")
 integrate_fastapi(app, logger)
 
 @app.get("/")
@@ -132,11 +132,13 @@ setup_fastapi_logging(
 ### 3. 依賴注入模式
 ```python
 from pretty_loguru.integrations.fastapi import get_logger_dependency
+from pretty_loguru import create_logger
 
-logger_dep = get_logger_dependency(name="my_api")
+logger = create_logger("my_api")
+logger_dep = get_logger_dependency(logger)
 
 @app.get("/items/")
-async def get_items(logger: EnhancedLogger = Depends(logger_dep)):
+async def get_items(logger: PrettyLogger = Depends(logger_dep)):
     logger.info("Getting items")
     return {"items": []}
 ```

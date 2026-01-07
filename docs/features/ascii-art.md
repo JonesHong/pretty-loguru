@@ -12,7 +12,7 @@ from pretty_loguru import create_logger
 # Create logger instance
 logger = create_logger(
     name="demo",
-    log_path="logs",
+    log_dir="logs",
     level="INFO"
 )
 
@@ -27,7 +27,7 @@ logger.ascii_header(
     "SYSTEM START",
     font="slant",           # 字體樣式
     border_style="blue",    # 邊框顏色
-    log_level="INFO"        # 日誌級別
+    level="INFO"        # 日誌級別
 )
 ```
 
@@ -149,12 +149,12 @@ ASCII 標題可以與不同的日誌級別結合：
 
 ```python
 # 不同級別的 ASCII 標題
-logger.ascii_header("DEBUG MODE", log_level="DEBUG")
-logger.ascii_header("APP START", log_level="INFO")
-logger.ascii_header("SUCCESS", log_level="SUCCESS")
-logger.ascii_header("WARNING", log_level="WARNING")
-logger.ascii_header("ERROR", log_level="ERROR")
-logger.ascii_header("CRITICAL", log_level="CRITICAL")
+logger.ascii_header("DEBUG MODE", level="DEBUG")
+logger.ascii_header("APP START", level="INFO")
+logger.ascii_header("SUCCESS", level="SUCCESS")
+logger.ascii_header("WARNING", level="WARNING")
+logger.ascii_header("ERROR", level="ERROR")
+logger.ascii_header("CRITICAL", level="CRITICAL")
 ```
 
 ## 🎮 實際應用場景

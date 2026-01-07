@@ -9,11 +9,11 @@
 ```python
 def block(
     title: str,
-    message_list: List[str],
+    lines: List[str],
     border_style: str = "cyan",
     log_level: str = "INFO",
     to_console_only: bool = False,
-    to_log_file_only: bool = False
+    to_file_only: bool = False
 ) -> None:
     ...
 ```
@@ -23,11 +23,11 @@ def block(
 | 參數 | 類型 | 說明 |
 | --- | --- | --- |
 | `title` | `str` | 區塊的標題。 |
-| `message_list` | `List[str]` | 要顯示在區塊內的訊息列表。 |
+| `lines` | `List[str]` | 要顯示在區塊內的訊息列表。 |
 | `border_style` | `str` | Rich 邊框樣式，如 `"solid"`, `"double"`, `"rounded"` 或顏色名 `"green"`。 |
 | `log_level` | `str` | 此日誌的級別，如 `"INFO"`, `"WARNING"`。 |
 | `to_console_only` | `bool` | 若為 `True`，此訊息僅顯示在控制台，不寫入檔案。 |
-| `to_log_file_only` | `bool` | ��為 `True`，此訊息僅寫入檔案，不顯示在控制台。 |
+| `to_file_only` | `bool` | ��為 `True`，此訊息僅寫入檔案，不顯示在控制台。 |
 
 **範例：**
 
@@ -40,7 +40,7 @@ logger.block(
         "CPU 使用率: 35%",
     ],
     border_style="green",
-    log_level="SUCCESS"
+    level="SUCCESS"
 )
 ```
 
@@ -48,7 +48,7 @@ logger.block(
 
 ## ASCII 藝術功能
 
-此功能需要額外安裝 `art` 函式庫 (`pip install art`)。
+此功能需要 `art` 函式庫（預設隨 pretty-loguru 一起安裝；若缺少可執行 `uv add art` 或 `pip install art`）。
 
 ### `logger.ascii_header()` - ASCII 藝術標題
 
@@ -86,9 +86,9 @@ logger.ascii_header("STARTUP", font="block", border_style="magenta")
 ```python
 def ascii_block(
     title: str,
-    message_list: List[str],
+    lines: List[str],
     ascii_header: Optional[str] = None,
-    ascii_font: str = "standard",
+    font: str = "standard",
     border_style: str = "cyan",
     log_level: str = "INFO"
 ) -> None:
@@ -100,9 +100,9 @@ def ascii_block(
 | 參數 | 類型 | 說明 |
 | --- | --- | --- |
 | `title` | `str` | 區塊的標題。 |
-| `message_list` | `List[str]` | 區塊內的訊息列表。 |
+| `lines` | `List[str]` | 區塊內的訊息列表。 |
 | `ascii_header` | `Optional[str]` | 要轉換的 ASCII 文字。若為 `None`，則使用 `title`。 |
-| `ascii_font` | `str` | ASCII 藝術的字體。 |
+| `font` | `str` | ASCII 藝術的字體。 |
 | `border_style` | `str` | 邊框樣式或顏色。 |
 | `log_level` | `str` | 日誌級別。 |
 
@@ -121,8 +121,10 @@ def table(
     title: str,
     data: List[Dict[str, Any]],
     headers: Optional[List[str]] = None,
-    log_level: str = "INFO",
-    **table_kwargs
+    show_header: bool = True,
+    show_lines: bool = False,
+    style: str = "none",
+    level: str = "INFO",
 ) -> None:
     ...
 ```
@@ -134,8 +136,10 @@ def table(
 | `title` | `str` | 表格的標題。 |
 | `data` | `List[Dict[str, Any]]` | 表格的資料來源，一個字典列表。 |
 | `headers` | `Optional[List[str]]` | 自訂表頭。若�� `None`，則使用 `data` 中第一個字典的鍵。 |
-| `log_level` | `str` | 日誌級別。 |
-| `**table_kwargs` | `Any` | 傳遞給 `rich.table.Table` 的額外參數，如 `show_lines=True`。 |
+| `show_header` | `bool` | 是否顯示表頭。 |
+| `show_lines` | `bool` | 是否顯示行分隔線。 |
+| `style` | `str` | Rich Table 的 `style`（例如 `"blue"`）。 |
+| `level` | `str` | 日誌級別。 |
 
 **範例：**
 
@@ -155,8 +159,9 @@ logger.table("使用者狀態", user_data, show_lines=True)
 def tree(
     title: str,
     tree_data: Dict[str, Any],
-    log_level: str = "INFO",
-    **tree_kwargs
+    style: str = "tree",
+    guide_style: str = "tree.line",
+    level: str = "INFO",
 ) -> None:
     ...
 ```
@@ -167,8 +172,9 @@ def tree(
 | --- | --- | --- |
 | `title` | `str` | 樹的根節點標題。 |
 | `tree_data` | `Dict[str, Any]` | 樹狀結構的資料，支援巢狀字典。 |
-| `log_level` | `str` | 日誌級別。 |
-| `**tree_kwargs` | `Any` | 傳遞給 `rich.tree.Tree` 的額外參數。 |
+| `style` | `str` | Rich Tree 的 `style`（例如 `"green"`）。 |
+| `guide_style` | `str` | Rich Tree 的 `guide_style`。 |
+| `level` | `str` | 日誌級別。 |
 
 **範例：**
 
@@ -190,9 +196,14 @@ logger.tree("檔案系統", file_system)
 def columns(
     title: str,
     items: List[str],
-    columns: int = 3,
-    log_level: str = "INFO",
-    **columns_kwargs
+    padding: Union[int, tuple] = (0, 1),
+    width: Optional[int] = None,
+    expand: bool = False,
+    equal: bool = False,
+    column_first: bool = False,
+    right_to_left: bool = False,
+    align: Optional[Literal["left", "center", "right"]] = None,
+    level: str = "INFO",
 ) -> None:
     ...
 ```
@@ -203,9 +214,18 @@ def columns(
 | --- | --- | --- |
 | `title` | `str` | 分欄顯示的標題。 |
 | `items` | `List[str]` | 要顯示的項目列表。 |
-| `columns` | `int` | 要分的欄數。 |
-| `log_level` | `str` | 日誌級別。 |
-| `**columns_kwargs` | `Any` | 傳遞給 `rich.columns.Columns` 的額外參數。 |
+| `padding` | `Union[int, tuple]` | Rich Columns 的 `padding`。 |
+| `width` | `Optional[int]` | Rich Columns 的 `width`。 |
+| `expand` | `bool` | Rich Columns 的 `expand`。 |
+| `equal` | `bool` | Rich Columns 的 `equal`。 |
+| `column_first` | `bool` | Rich Columns 的 `column_first`。 |
+| `right_to_left` | `bool` | Rich Columns 的 `right_to_left`。 |
+| `align` | `Optional[str]` | Rich Columns 的 `align`。 |
+| `level` | `str` | 日誌級別。 |
+
+**進階用法（原生 Rich 物件）**
+
+若你需要 Rich 的完整參數面（例如自行建立 `Table/Panel/Columns/...`），請使用 `logger.render(renderable, title=...)`，讓 console/file 仍維持「單 event」一致輸出。
 
 ### `logger.progress` - 進度條
 

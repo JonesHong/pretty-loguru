@@ -8,7 +8,7 @@ import re
 from typing import Optional, Any
 
 # ASCII 字符檢查的正則表達式
-ASCII_PATTERN = re.compile(r'^[\x00-\x7F]+$')
+ASCII_PATTERN = re.compile(r'^[\x00-\x7F]*$')
 
 
 def is_ascii_only(text: str) -> bool:

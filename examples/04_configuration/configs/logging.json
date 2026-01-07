@@ -1,16 +1,16 @@
 {
   "development": {
-    "log_path": "./logs/configuration/dev",
+    "log_dir": "./logs/configuration/dev",
     "preset": "detailed",
     "retention": "1 day"
   },
   "production": {
-    "log_path": "./logs/configuration/prod",
+    "log_dir": "./logs/configuration/prod",
     "preset": "daily",
     "retention": "30 days"
   },
   "testing": {
-    "log_path": "./logs/configuration/test",
+    "log_dir": "./logs/configuration/test",
     "preset": "simple",
     "retention": "3 days"
   }

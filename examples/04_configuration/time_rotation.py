@@ -25,7 +25,7 @@ def basic_time_rotation():
     # 使用分鐘輪替來快速演示
     logger = create_logger(
         "time_basic",
-        log_path="./logs/rotation/time",
+        log_dir="./logs/rotation/time",
         preset="minute",  # 每分鐘輪替
         retention=10
     )
@@ -85,7 +85,7 @@ def different_time_intervals():
             # 使用預設配置
             logger = create_logger(
                 f"time_{config['name']}",
-                log_path=f"./logs/rotation/time/{config['name']}",
+                log_dir=f"./logs/rotation/time/{config['name']}",
                 preset=config["preset"],
                 retention=config["retention"]
             )
@@ -93,7 +93,7 @@ def different_time_intervals():
             # 使用自定義輪替時間
             logger = create_logger(
                 f"time_{config['name']}", 
-                log_path=f"./logs/rotation/time/{config['name']}",
+                log_dir=f"./logs/rotation/time/{config['name']}",
                 rotation=config["rotation"],
                 retention=config["retention"]
             )
@@ -160,7 +160,7 @@ def rotation_at_specific_times():
     for config in specific_configs:
         logger = create_logger(
             f"specific_{config['name']}",
-            log_path=f"./logs/rotation/time/specific/{config['name']}",
+            log_dir=f"./logs/rotation/time/specific/{config['name']}",
             rotation=config["rotation"],
             retention=20
         )
@@ -186,7 +186,7 @@ def time_based_log_analysis():
     # 創建分析用的 logger
     analysis_logger = create_logger(
         "time_analysis",
-        log_path="./logs/rotation/time/analysis",
+        log_dir="./logs/rotation/time/analysis",
         preset="minute",  # 使用分鐘輪替便於觀察
         retention=30
     )
@@ -263,7 +263,7 @@ def rotation_retention_strategies():
     for strategy in retention_strategies:
         logger = create_logger(
             f"retention_{strategy['strategy']}",
-            log_path=f"./logs/rotation/time/retention/{strategy['strategy']}",
+            log_dir=f"./logs/rotation/time/retention/{strategy['strategy']}",
             rotation=strategy["rotation"],
             retention=strategy["retention"]
         )

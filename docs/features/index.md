@@ -66,7 +66,7 @@ logger.block(
         "⚡  服務狀態: 全部運行"
     ],
     border_style="green",
-    log_level="INFO"
+    level="INFO"
 )
 ```
 
@@ -91,8 +91,8 @@ logger.ascii_block(
         "🔄  健康檢查: 正常", 
         "📡  負載均衡: 已啟用"
     ],
-    ascii_header="DEPLOYED",
-    ascii_font="block",
+    header_text="DEPLOYED",
+    font="block",
     border_style="green"
 )
 ```
@@ -154,11 +154,13 @@ logger.diff(
 pretty-loguru 還提供目標導向的日誌方法：
 
 ```python
+from pretty_loguru.addons import log_to_targets
+
 # 僅輸出到控制台
-logger.console_info("這只會在控制台顯示")
+log_to_targets(logger, "這只會在控制台顯示", level="INFO", console_only=True)
 
 # 僅寫入檔案
-logger.file_debug("這只會寫入日誌檔案") 
+log_to_targets(logger, "這只會寫入日誌檔案", level="DEBUG", file_only=True)
 
 # 同時輸出（預設行為）
 logger.info("這會同時顯示在控制台和檔案")

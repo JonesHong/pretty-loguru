@@ -112,14 +112,14 @@ from pretty_loguru import create_logger
 # 開發環境
 dev_logger = create_logger(
     name="myapp_dev",
-    log_path="./logs/dev",
+    log_dir="./logs/dev",
     level="DEBUG"
 )
 
 # 生產環境
 prod_logger = create_logger(
     name="myapp_prod", 
-    log_path="/var/log/myapp",
+    log_dir="/var/log/myapp",
     level="INFO",
     rotation="100MB",
     retention="30 days"
@@ -129,9 +129,9 @@ prod_logger = create_logger(
 ### 多服務日誌架構
 ```python
 # 服務分離
-auth_logger = create_logger("auth_service", log_path="./logs/auth")
-api_logger = create_logger("api_service", log_path="./logs/api")
-db_logger = create_logger("db_service", log_path="./logs/db")
+auth_logger = create_logger("auth_service", log_dir="./logs/auth")
+api_logger = create_logger("api_service", log_dir="./logs/api")
+db_logger = create_logger("db_service", log_dir="./logs/db")
 
 # 使用範例
 auth_logger.info("用戶登入成功")
